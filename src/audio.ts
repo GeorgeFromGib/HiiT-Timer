@@ -59,7 +59,11 @@ export function useWorkoutAudio() {
     keepAliveRef.current = null;
   };
 
-  const cueForPhase = (phase: Phase) => playCue(phase === 'high' ? 'high' : 'low');
+  const cueForPhase = (phase: Phase) => {
+    if (phase === 'high') playCue('high');
+    else if (phase === 'low') playCue('low');
+    // warmup and cooldown: no cue
+  };
 
   useEffect(() => () => {
     stopKeepAlive();

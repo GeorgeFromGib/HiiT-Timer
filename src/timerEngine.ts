@@ -186,13 +186,11 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     tick();
   }, [segments, tick]);
 
-  // Re-sync immediately whenever the app returns to the foreground, so the
-  // display is correct the instant the user looks at it.
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, []);
 
-  return { state, start, pause, resume, reset, skip };
+  return { state, start, pause, resume, reset, skip, sync: tick };
 }

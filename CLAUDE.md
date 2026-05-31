@@ -50,9 +50,13 @@ WorkoutConfig → expandWorkout() → Segment[]
 
 The silent keep-alive audio track is what defeats iOS JS timer throttling when the screen is locked. This requires:
 1. `shouldPlayInBackground: true` in `setAudioModeAsync`
-2. `UIBackgroundModes: ["audio"]` in `app.json` under `expo.ios.infoPlist` (not currently set — add before shipping)
+2. `UIBackgroundModes: ["audio"]` in `app.json` under `expo.ios.infoPlist` — **already set**
 3. A development build (not Expo Go)
 
 ### `expo-audio` API note
 
 `expo-audio` is still evolving. Always verify `setAudioModeAsync` option names and `AudioPlayer` methods against the installed version's docs before writing audio code.
+
+## Known issues / TODOs
+
+- **Missing splash config** (`app.json`): `assets/splash-icon.png` exists but `app.json` has no `"splash"` key. Expo will use its default at build time.

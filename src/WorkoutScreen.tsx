@@ -64,20 +64,21 @@ export default function WorkoutScreen() {
   const bg = state.status === 'finished' ? '#222' : meta?.color ?? '#222';
 
   const handleStart = async () => {
-    await configureAudioSession();
-    audio.startKeepAlive();
+    try {
+      await configureAudioSession();
+      audio.startKeepAlive();
+    } catch (e) {
+      console.warn('Audio session setup failed', e);
+    }
     engine.start();
   };
 
-  // Re-sync the display the instant we return to foreground (engine already
-  // reads the wall clock, but force an immediate visual update).
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (s) => {
-      // No-op hook point; the 200ms tick will refresh, this is where you'd
-      // call an explicit resync if you add one.
+    const sub = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') engine.sync();
     });
     return () => sub.remove();
-  }, []);
+  }, [engine.sync]);
 
   return (
     <View style={[styles.root, { backgroundColor: bg }]}>
