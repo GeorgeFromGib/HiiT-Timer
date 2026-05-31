@@ -57,6 +57,3 @@ The silent keep-alive audio track is what defeats iOS JS timer throttling when t
 
 `expo-audio` is still evolving. Always verify `setAudioModeAsync` option names and `AudioPlayer` methods against the installed version's docs before writing audio code.
 
-## Known issues / TODOs
-
-- **Missing splash config** (`app.json`): `assets/splash-icon.png` exists but `app.json` has no `"splash"` key. Expo will use its default at build time.
