@@ -135,7 +135,7 @@ export default function WorkoutScreen() {
 
   useEffect(() => { configureAudioSession(); }, []);
 
-  const progressAnim  = useRef(new Animated.Value(1)).current;
+  const progressAnim   = useRef(new Animated.Value(1)).current;
 
   const effectiveIndex = state.currentIndex >= 0 ? state.currentIndex : 0;
   const seg            = SEGMENTS[effectiveIndex];
@@ -143,16 +143,21 @@ export default function WorkoutScreen() {
   const meta           = PHASE_META[seg.phase];
   const nextMeta       = nextSeg ? PHASE_META[nextSeg.phase] : null;
 
+  // Snap to full instantly on segment change — no refill animation
   useEffect(() => {
-    const fraction = state.status === 'idle'
-      ? 1
-      : seg.duration > 0 ? state.remainingInSegment / seg.duration : 0;
+    progressAnim.setValue(1);
+  }, [state.currentIndex]);
+
+  // Animate depletion within the active segment
+  useEffect(() => {
+    if (state.status === 'idle') { progressAnim.setValue(1); return; }
+    const fraction = seg.duration > 0 ? state.remainingInSegment / seg.duration : 0;
     Animated.timing(progressAnim, {
       toValue: Math.max(0, Math.min(1, fraction)),
       duration: 200,
       useNativeDriver: false,
     }).start();
-  }, [state.remainingInSegment, state.currentIndex, state.status]);
+  }, [state.remainingInSegment, state.status]);
 
   const handlePlayPause = () => {
     if (state.status === 'idle' || state.status === 'finished') {
@@ -175,6 +180,12 @@ export default function WorkoutScreen() {
   const countdownHasHours     = remainingForCountdown >= 3600;
   const countdownFontSize     = countdownHasHours ? 88 : 124;
   const intervalNum           = state.currentIndex >= 0 ? state.currentIndex + 1 : 1;
+  const segStartPct           = `${(seg.startAt / TOTAL_DUR) * 100}%`;
+  const segEndPct             = `${(seg.endAt   / TOTAL_DUR) * 100}%`;
+  const chevronLeft           = progressAnim.interpolate({
+    inputRange:  [0, 1],
+    outputRange: [segEndPct, segStartPct],
+  });
 
   if (!fontsLoaded) return null;
 
@@ -248,7 +259,7 @@ export default function WorkoutScreen() {
           <>
             <Text style={styles.nextLabel}>NEXT</Text>
             <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
-            <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={15} />
+            <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={20} />
             <Text style={[styles.nextPhase, { color: nextMeta.color, marginLeft: 5 }]}>
               {nextMeta.word}
             </Text>
@@ -260,56 +271,66 @@ export default function WorkoutScreen() {
 
       {/* ── Timeline strip ── */}
       <View style={styles.timelineWrap}>
-        <View
-          style={styles.timelineBar}
-          onLayout={(e: LayoutChangeEvent) => { /* width captured for future use */ }}
-        >
-          {SEGMENTS.map((s, i) => {
-            const widthPct    = (s.duration / TOTAL_DUR) * 100;
-            const isActive    = i === state.currentIndex;
-            const isCompleted = state.currentIndex > 0 && i < state.currentIndex;
-            const phColor     = PHASE_META[s.phase].color;
+        <View style={styles.timelineBar}>
+          {/* Segments — clipped to rounded bar */}
+          <View style={styles.segmentsClip}>
+            {SEGMENTS.map((s, i) => {
+              const widthPct    = (s.duration / TOTAL_DUR) * 100;
+              const isActive    = i === state.currentIndex;
+              const isCompleted = state.currentIndex > 0 && i < state.currentIndex;
+              const phColor     = PHASE_META[s.phase].color;
 
-            if (isActive) {
+              if (isActive) {
+                return (
+                  <View
+                    key={i}
+                    style={[styles.timelineSeg, { width: `${widthPct}%`, overflow: 'hidden' }]}
+                  >
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: phColor, opacity: 0.28 }]} />
+                    <Animated.View
+                      style={{
+                        position: 'absolute',
+                        right: 0, top: 0, bottom: 0,
+                        backgroundColor: phColor,
+                        shadowColor: phColor,
+                        shadowOpacity: 0.7,
+                        shadowRadius: 6,
+                        shadowOffset: { width: 0, height: 0 },
+                        elevation: 4,
+                        width: progressAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: ['0%', '100%'],
+                        }),
+                      }}
+                    />
+                  </View>
+                );
+              }
+
               return (
                 <View
                   key={i}
-                  style={[styles.timelineSeg, { width: `${widthPct}%`, overflow: 'hidden' }]}
-                >
-                  {/* Consumed (depleted) layer */}
-                  <View style={[StyleSheet.absoluteFill, { backgroundColor: phColor, opacity: 0.28 }]} />
-                  {/* Remaining bright layer anchored to right */}
-                  <Animated.View
-                    style={{
-                      position: 'absolute',
-                      right: 0, top: 0, bottom: 0,
-                      backgroundColor: phColor,
-                      shadowColor: phColor,
-                      shadowOpacity: 0.7,
-                      shadowRadius: 6,
-                      shadowOffset: { width: 0, height: 0 },
-                      elevation: 4,
-                      width: progressAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['0%', '100%'],
-                      }),
-                    }}
-                  />
-                </View>
+                  style={[styles.timelineSeg, {
+                    width:           `${widthPct}%`,
+                    backgroundColor: phColor,
+                    opacity:         isCompleted ? 0.28 : 1.0,
+                  }]}
+                />
               );
-            }
+            })}
+          </View>
 
-            return (
-              <View
-                key={i}
-                style={[styles.timelineSeg, {
-                  width:           `${widthPct}%`,
-                  backgroundColor: phColor,
-                  opacity:         isCompleted ? 0.28 : 1.0,
-                }]}
-              />
-            );
-          })}
+          {/* Chevrons — outside clip so they're not hidden */}
+          <Animated.View style={[styles.chevron, { top: -10, left: chevronLeft }]}>
+            <Svg width={10} height={6} viewBox="0 0 10 6">
+              <Path d="M1 1L5 5L9 1" stroke="white" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </Svg>
+          </Animated.View>
+          <Animated.View style={[styles.chevron, { bottom: -10, left: chevronLeft }]}>
+            <Svg width={10} height={6} viewBox="0 0 10 6">
+              <Path d="M1 5L5 1L9 5" stroke="white" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </Svg>
+          </Animated.View>
         </View>
 
         <View style={styles.timelineLabels}>
@@ -462,35 +483,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 9,
     paddingVertical: 8,
+    marginBottom: 16,
   },
   nextLabel: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 11,
-    letterSpacing: 11 * 0.14,
+    fontSize: 15,
+    letterSpacing: 15 * 0.14,
     color: T.faintText,
   },
   nextPhase: {
     fontFamily: 'Inter_800ExtraBold',
-    fontSize: 14,
-    letterSpacing: 14 * 0.05,
+    fontSize: 19,
+    letterSpacing: 19 * 0.05,
   },
 
   // Timeline
   timelineWrap: {
     gap: 8,
-    marginBottom: 6,
+    marginBottom: 24,
     marginHorizontal: 16,
   },
   timelineBar: {
     height: 32,
-    flexDirection: 'row',
-    gap: 2,
     position: 'relative',
+  },
+  segmentsClip: {
+    flex: 1,
+    flexDirection: 'row',
+    height: '100%',
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  chevron: {
+    position: 'absolute',
+    marginLeft: -5,
   },
   timelineSeg: {
     height: '100%',
     borderRadius: 5,
-    minWidth: 2,
   },
   timelineLabels: {
     flexDirection: 'row',
