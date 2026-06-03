@@ -84,6 +84,12 @@ function PhaseIcon({ phase, color, size = 23 }: { phase: Phase; color: string; s
 
 const tfmt = (s: number) => {
   s = Math.max(0, Math.ceil(s));
+  if (s >= 3600) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 };
 
@@ -173,9 +179,12 @@ export default function WorkoutScreen() {
   const isPlaying        = state.status === 'running';
   const isIdle           = state.status === 'idle';
   const isDone           = state.status === 'finished';
-  const displayRemaining = isIdle ? tfmt(TOTAL_DUR) : tfmt(state.remainingTotal);
-  const displayCountdown = isIdle ? tfmt(SEGMENTS[0].duration) : tfmt(state.remainingInSegment);
-  const intervalNum      = state.currentIndex >= 0 ? state.currentIndex + 1 : 1;
+  const displayRemaining      = isIdle ? tfmt(TOTAL_DUR) : tfmt(state.remainingTotal);
+  const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? SEGMENTS[0].duration : state.remainingInSegment));
+  const displayCountdown      = tfmt(remainingForCountdown);
+  const countdownHasHours     = remainingForCountdown >= 3600;
+  const countdownFontSize     = countdownHasHours ? 88 : 124;
+  const intervalNum           = state.currentIndex >= 0 ? state.currentIndex + 1 : 1;
 
   if (!fontsLoaded) return null;
 
@@ -204,9 +213,21 @@ export default function WorkoutScreen() {
           {meta.word}
         </Text>
 
-        <Text style={[styles.countdown, { textShadowColor: meta.color + '3a' }]}>
-          {displayCountdown}
-        </Text>
+        <View style={styles.countdownRow}>
+          {displayCountdown.split('').map((ch, i) => (
+            <Text
+              key={i}
+              style={[styles.countdown, {
+                textShadowColor: meta.color + '3a',
+                fontSize: countdownFontSize,
+                lineHeight: countdownFontSize,
+                width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
+              }]}
+            >
+              {ch}
+            </Text>
+          ))}
+        </View>
 
         <Text style={styles.intervalCounter}>
           {'INTERVAL '}
@@ -400,11 +421,17 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 30,
   },
+  countdownRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   countdown: {
     fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 86,
-    lineHeight: 86,
+    fontSize: 120,
+    lineHeight: 120,
     color: T.text,
+    textAlign: 'center',
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 34,
   },
