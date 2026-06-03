@@ -57,3 +57,25 @@ The silent keep-alive audio track is what defeats iOS JS timer throttling when t
 
 `expo-audio` is still evolving. Always verify `setAudioModeAsync` option names and `AudioPlayer` methods against the installed version's docs before writing audio code.
 
+## Design Files
+
+High-fidelity design references live in `design/`. Read `design/README.md` for full spec — it covers all three screens, color tokens, typography, component specs, and the data model.
+
+Key files:
+- `design/HIIT Timer - Explorations.html` — open in a browser to see all screens live in both themes
+
+### Three screens
+1. **Workout Timer** — active timer with phase block, countdown, timeline strip, controls
+2. **Sessions List** — browsable card list with category filter and start button
+3. **Edit Session** — create/edit interval sequences with phase picker
+
+### Themes
+- **Tidal** (dark, deep teal — accent `#3ad6c6`)
+- **Daybreak** (light, warm paper — accent `#ff5a3d`)
+
+### Typography
+- UI/body: **Inter** (400–900)
+- Timers/numbers: **Chakra Petch** monospace (500–700)
+
+Implement pixel-close to the designs. Colors, spacing, and interactions are final.
+

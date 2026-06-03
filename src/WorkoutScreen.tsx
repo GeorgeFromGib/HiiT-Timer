@@ -1,354 +1,545 @@
-import React, { useMemo, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, AppState, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useKeepAwake } from 'expo-keep-awake';
 import {
-  WorkoutConfig,
-  Segment,
-  expandWorkout,
-  totalDuration,
-  PHASE_META,
-} from './workout';
+  useFonts,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+  Inter_900Black,
+} from '@expo-google-fonts/inter';
+import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
+import React, { useEffect, useRef } from 'react';
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  LayoutChangeEvent,
+} from 'react-native';
+import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
+import { configureAudioSession, useWorkoutAudio } from './audio';
 import { useTimerEngine } from './timerEngine';
-import { useWorkoutAudio, configureAudioSession } from './audio';
+import {
+  type Interval,
+  type Phase,
+  intervalsToSegments,
+  PHASE_META,
+  totalDuration,
+} from './workout';
 
-const DEMO: WorkoutConfig = {
-  warmup: 40,
-  high: 20,
-  low: 10,
-  rounds: 8,
-  cooldown: 20,
-  dropLastRecovery: true,
+// ─── Tidal (dark) theme ───────────────────────────────────────────────────────
+const T = {
+  bgGradient: ['#0b1d26', '#0e2832'] as const,
+  text:      '#eef6f7',
+  subText:   'rgba(255,255,255,0.72)',
+  faintText: 'rgba(255,255,255,0.44)',
+  hairline:  'rgba(255,255,255,0.10)',
+  ghostBg:   'rgba(255,255,255,0.05)',
+  accent:    '#3ad6c6',
+  btnGlyph:  '#06131a',
 };
 
-const { width: SCREEN_W } = Dimensions.get('window');
-const CIRCLE_SIZE = SCREEN_W - 16;
-const CX = CIRCLE_SIZE / 2;
-const CY = CIRCLE_SIZE / 2;
-const RING_STROKE = 18;
-const RING_R = CX - RING_STROKE / 2 - 6;
-const INNER_DIAM = (RING_R - RING_STROKE / 2) * 2;
-const N_TICKS = 180;
-const TICK_W = (2 * Math.PI * RING_R / N_TICKS) * 1.02;
+// ─── Demo workout (Tabata Burnout — 285 s total) ──────────────────────────────
+const DEMO_INTERVALS: Interval[] = [
+  { type: 'warmup',   dur: 45 },
+  { type: 'work',     dur: 30 },
+  { type: 'rest',     dur: 15 },
+  { type: 'blast',    dur: 30 },
+  { type: 'rest',     dur: 15 },
+  { type: 'work',     dur: 30 },
+  { type: 'rest',     dur: 15 },
+  { type: 'blast',    dur: 30 },
+  { type: 'rest',     dur: 15 },
+  { type: 'cooldown', dur: 60 },
+];
+const DEMO_NAME = 'Tabata Burnout';
+const SEGMENTS  = intervalsToSegments(DEMO_INTERVALS);
+const TOTAL_DUR = totalDuration(SEGMENTS);
 
-function fmtCount(seconds: number): string {
-  const s = Math.max(0, Math.ceil(seconds));
-  if (s <= 60) return String(s);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${r.toString().padStart(2, '0')}`;
-}
-
-function fmt(seconds: number): string {
-  const s = Math.max(0, Math.ceil(seconds));
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${r.toString().padStart(2, '0')}`;
-}
-
-// ─── Ring components ──────────────────────────────────────────────────────────
-
-interface RingTicksProps {
-  segments: Segment[];
-  total: number;
-  elapsed: number;
-}
-
-const RingTicks = React.memo(
-  function RingTicks({ segments, total, elapsed }: RingTicksProps) {
-    // Positions and colours only depend on segments — recomputed on segment list change only.
-    const tickData = useMemo(() => {
-      if (!total) return [];
-      const out: Array<{
-        key: number; left: number; top: number; angle: number; color: string; time: number;
-      }> = [];
-
-      for (let i = 0; i < N_TICKS; i++) {
-        const f = i / N_TICKS;
-        const t = f * total;
-
-        let seg: Segment | null = null;
-        for (const s of segments) {
-          if (t >= s.startAt && t < s.endAt) { seg = s; break; }
-        }
-        if (!seg) continue;
-
-        const rad = f * 2 * Math.PI;
-        out.push({
-          key: i,
-          left: CX + RING_R * Math.sin(rad) - TICK_W / 2,
-          top: CY - RING_R * Math.cos(rad) - RING_STROKE / 2,
-          angle: f * 360,
-          color: PHASE_META[seg.phase].color,
-          time: t,
-        });
-      }
-      return out;
-    }, [segments, total]);
-
-    return (
-      <>
-        {tickData.map(t => (
-          <View
-            key={t.key}
-            style={{
-              position: 'absolute',
-              width: TICK_W,
-              height: RING_STROKE,
-              backgroundColor: t.color,
-              opacity: t.time > elapsed ? 1 : 0.35,
-              left: t.left,
-              top: t.top,
-              transform: [{ rotate: `${t.angle}deg` }],
-            }}
-          />
-        ))}
-      </>
-    );
-  },
-);
-
-// Marker re-renders every tick but is just one View.
-function RingMarker({ elapsed, total }: { elapsed: number; total: number }) {
-  const rad = total > 0 ? (elapsed / total) * 2 * Math.PI : 0;
-  const angle = total > 0 ? (elapsed / total) * 360 : 0;
+// Phase icons — exact paths from design/themed-core.jsx (TIcon)
+// All stroke-based: fill none, strokeWidth 2.2, round caps/joins
+function PhaseIcon({ phase, color, size = 23 }: { phase: Phase; color: string; size?: number }) {
+  const p = { fill: 'none', stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   return (
-    <View
-      style={{
-        position: 'absolute',
-        width: 4,
-        height: RING_STROKE + 8,
-        borderRadius: 2,
-        backgroundColor: '#fff',
-        left: CX + RING_R * Math.sin(rad) - 2,
-        top: CY - RING_R * Math.cos(rad) - RING_STROKE / 2 - 4,
-        transform: [{ rotate: `${angle}deg` }],
-      }}
-    />
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      {phase === 'warmup' || phase === 'cooldown' ? (
+        <G {...p}>
+          <Circle cx="12" cy="12" r="4.2" />
+          <Path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8" />
+        </G>
+      ) : phase === 'work' ? (
+        <Path {...p} d="M12 2.5c3 4 6 5.5 6 10a6 6 0 0 1-12 0c0-2 1-3.4 2.4-4.6.2 1.6 1 2.4 2 2.6-1.2-3 .3-6.4 1.6-8z" />
+      ) : phase === 'blast' ? (
+        <Path {...p} d="M13 2 4 13h6l-1 9 9-12h-6l1-8z" />
+      ) : (
+        // rest — pause bars
+        <G {...p}>
+          <Rect x="6" y="5" width="4" height="14" rx="1.5" />
+          <Rect x="14" y="5" width="4" height="14" rx="1.5" />
+        </G>
+      )}
+    </Svg>
   );
 }
 
-function SegmentRing({
-  segments,
-  total,
-  elapsed,
+const tfmt = (s: number) => {
+  s = Math.max(0, Math.ceil(s));
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+};
+
+// ─── Ghost button (Reset / Skip) ─────────────────────────────────────────────
+function GhostBtn({
+  onPress,
+  disabled,
+  children,
 }: {
-  segments: Segment[];
-  total: number;
-  elapsed: number;
+  onPress: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
 }) {
-  return (
-    <View style={{ width: CIRCLE_SIZE, height: CIRCLE_SIZE }}>
-      <RingTicks segments={segments} total={total} elapsed={elapsed} />
-      <RingMarker elapsed={elapsed} total={total} />
-    </View>
-  );
-}
-
-// ─── Screen ──────────────────────────────────────────────────────────────────
-
-export default function WorkoutScreen() {
-  useKeepAwake();
-
-  const segments = useMemo(() => expandWorkout(DEMO), []);
-  const total = useMemo(() => totalDuration(segments), [segments]);
-  const audio = useWorkoutAudio();
-
-  const engine = useTimerEngine(segments, {
-    onTransition: (_from, to) => {
-      if (to) audio.cueForPhase(to.phase);
-    },
-    onCountdown: () => audio.playTick(),
-    onFinish: () => {
-      audio.playFinish();
-      audio.stopKeepAlive();
-    },
-  });
-
-  const { state } = engine;
-  const seg = state.currentIndex >= 0 ? segments[state.currentIndex] : null;
-  const meta = seg ? PHASE_META[seg.phase] : null;
-  const completedPct = total > 0 ? Math.round((state.elapsed / total) * 100) : 0;
-
-  const handleStart = async () => {
-    try {
-      await configureAudioSession();
-      audio.startKeepAlive();
-    } catch (e) {
-      console.warn('Audio session setup failed', e);
-    }
-    engine.start();
-  };
-
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (nextState) => {
-      if (nextState === 'active') engine.sync();
-    });
-    return () => sub.remove();
-  }, [engine.sync]);
-
-  return (
-    <View style={styles.root}>
-      {/* Stats row */}
-      <View style={styles.statsRow}>
-        <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Remaining</Text>
-          <Text style={styles.statValue}>{fmt(state.remainingTotal)}</Text>
-        </View>
-        <View style={styles.statBox}>
-          <Text style={[styles.statLabel, { color: '#17BF63' }]}>Completed</Text>
-          <Text style={[styles.statValue, { color: '#17BF63' }]}>{completedPct}%</Text>
-        </View>
-      </View>
-
-      {/* Circular segment ring with text inside */}
-      <View style={styles.circleArea}>
-        <SegmentRing
-          segments={segments}
-          total={total}
-          elapsed={state.elapsed}
-        />
-        {/* Coloured inner fill */}
-        <View
-          style={{
-            position: 'absolute',
-            width: INNER_DIAM,
-            height: INNER_DIAM,
-            borderRadius: INNER_DIAM / 2,
-            backgroundColor: meta?.color ?? '#0D1F2D',
-            opacity: 0.25,
-          }}
-        />
-        <View style={[StyleSheet.absoluteFill, styles.innerContent]}>
-          {state.status === 'finished' ? (
-            <Text style={styles.phaseWord}>DONE</Text>
-          ) : seg ? (
-            <>
-              <Text style={styles.phaseWord}>{meta?.word}</Text>
-              <Text style={[styles.count, state.remainingInSegment > 60 && styles.countWide]}>
-                {fmtCount(state.remainingInSegment)}
-              </Text>
-              <Text style={styles.segLabel}>{seg.label}</Text>
-            </>
-          ) : (
-            <Text style={styles.phaseWord}>READY</Text>
-          )}
-        </View>
-      </View>
-
-      {/* Controls */}
-      <View style={styles.controls}>
-        {state.status === 'idle' || state.status === 'finished' ? (
-          <Btn label="START" onPress={handleStart} />
-        ) : state.status === 'running' ? (
-          <>
-            <Btn label="PAUSE" onPress={engine.pause} />
-            <Btn label="SKIP" onPress={engine.skip} />
-          </>
-        ) : (
-          <>
-            <Btn label="RESUME" onPress={engine.resume} />
-            <Btn label="RESET" onPress={engine.reset} />
-          </>
-        )}
-      </View>
-    </View>
-  );
-}
-
-function Btn({ label, onPress }: { label: string; onPress: () => void }) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.btn, pressed && { opacity: 0.6 }]}
+      disabled={disabled}
+      style={[styles.ghostBtn, disabled && { opacity: 0.3 }]}
     >
-      <Text style={styles.btnText}>{label}</Text>
+      {children}
     </Pressable>
+  );
+}
+
+// ─── Main screen ─────────────────────────────────────────────────────────────
+export default function WorkoutScreen() {
+  useKeepAwake();
+
+  const [fontsLoaded] = useFonts({
+    Inter_700Bold,
+    Inter_800ExtraBold,
+    Inter_900Black,
+    ChakraPetch_700Bold,
+  });
+
+  const audio = useWorkoutAudio();
+
+  const { state, start, pause, resume, reset, skip } = useTimerEngine(SEGMENTS, {
+    onTransition: (_from, to) => { if (to) audio.cueForPhase(to.phase); },
+    onCountdown:  ()          => audio.playTick(),
+    onFinish:     ()          => { audio.playFinish(); audio.stopKeepAlive(); },
+  });
+
+  useEffect(() => { configureAudioSession(); }, []);
+
+  const progressAnim  = useRef(new Animated.Value(1)).current;
+  const playheadAnim  = useRef(new Animated.Value(0)).current;
+
+  const effectiveIndex = state.currentIndex >= 0 ? state.currentIndex : 0;
+  const seg            = SEGMENTS[effectiveIndex];
+  const nextSeg        = SEGMENTS[effectiveIndex + 1];
+  const meta           = PHASE_META[seg.phase];
+  const nextMeta       = nextSeg ? PHASE_META[nextSeg.phase] : null;
+
+  useEffect(() => {
+    const fraction = state.status === 'idle'
+      ? 1
+      : seg.duration > 0 ? state.remainingInSegment / seg.duration : 0;
+    Animated.timing(progressAnim, {
+      toValue: Math.max(0, Math.min(1, fraction)),
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [state.remainingInSegment, state.currentIndex, state.status]);
+
+  useEffect(() => {
+    const pct = TOTAL_DUR > 0 ? state.elapsed / TOTAL_DUR : 0;
+    Animated.timing(playheadAnim, {
+      toValue: Math.max(0, Math.min(1, pct)),
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [state.elapsed]);
+
+  const handlePlayPause = () => {
+    if (state.status === 'idle' || state.status === 'finished') {
+      audio.startKeepAlive();
+      start();
+    } else if (state.status === 'running') {
+      pause();
+    } else {
+      resume();
+    }
+  };
+
+  const pct              = TOTAL_DUR > 0 ? Math.round((state.elapsed / TOTAL_DUR) * 100) : 0;
+  const isPlaying        = state.status === 'running';
+  const isIdle           = state.status === 'idle';
+  const isDone           = state.status === 'finished';
+  const displayRemaining = isIdle ? tfmt(TOTAL_DUR) : tfmt(state.remainingTotal);
+  const displayCountdown = isIdle ? tfmt(SEGMENTS[0].duration) : tfmt(state.remainingInSegment);
+  const intervalNum      = state.currentIndex >= 0 ? state.currentIndex + 1 : 1;
+
+  if (!fontsLoaded) return null;
+
+  return (
+    <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
+      {/* ── Header ── */}
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.headerLabel}>INTERVAL SESSION</Text>
+          <Text style={styles.headerTitle}>{DEMO_NAME}</Text>
+        </View>
+        <Pressable style={styles.closeBtn}>
+          <Svg width={14} height={14} viewBox="0 0 15 15">
+            <Path d="M2 2l11 11M13 2L2 13" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
+          </Svg>
+        </Pressable>
+      </View>
+
+      {/* ── Phase center block ── */}
+      <View style={styles.phaseBlock}>
+        <View style={[styles.iconBadge, { backgroundColor: meta.color + '22', borderColor: meta.color + '55' }]}>
+          <PhaseIcon phase={seg.phase} color={meta.color} size={23} />
+        </View>
+
+        <Text style={[styles.phaseLabel, { color: meta.color, textShadowColor: meta.color + '55' }]}>
+          {meta.word}
+        </Text>
+
+        <Text style={[styles.countdown, { textShadowColor: meta.color + '3a' }]}>
+          {displayCountdown}
+        </Text>
+
+        <Text style={styles.intervalCounter}>
+          {'INTERVAL '}
+          <Text style={{ color: meta.color }}>{intervalNum}</Text>
+          {` OF ${SEGMENTS.length}`}
+        </Text>
+
+        <View style={styles.progressTrack}>
+          <Animated.View
+            style={[
+              styles.progressFill,
+              {
+                backgroundColor: meta.color,
+                shadowColor:     meta.color,
+                width: progressAnim.interpolate({
+                  inputRange:  [0, 1],
+                  outputRange: ['0%', '100%'],
+                }),
+              },
+            ]}
+          />
+        </View>
+      </View>
+
+      {/* ── Next up row ── */}
+      <View style={styles.nextUpRow}>
+        {nextMeta ? (
+          <>
+            <Text style={styles.nextLabel}>NEXT</Text>
+            <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
+            <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={15} />
+            <Text style={[styles.nextPhase, { color: nextMeta.color, marginLeft: 5 }]}>
+              {nextMeta.word}
+            </Text>
+          </>
+        ) : (
+          <Text style={[styles.nextPhase, { color: meta.color }]}>FINISH</Text>
+        )}
+      </View>
+
+      {/* ── Timeline strip ── */}
+      <View style={styles.timelineWrap}>
+        <View
+          style={styles.timelineBar}
+          onLayout={(e: LayoutChangeEvent) => { /* width captured for future use */ }}
+        >
+          {SEGMENTS.map((s, i) => {
+            const widthPct    = (s.duration / TOTAL_DUR) * 100;
+            const isActive    = i === state.currentIndex;
+            const isCompleted = state.currentIndex > 0 && i < state.currentIndex;
+            const phColor     = PHASE_META[s.phase].color;
+            return (
+              <View
+                key={i}
+                style={[
+                  styles.timelineSeg,
+                  {
+                    width:           `${widthPct}%`,
+                    backgroundColor: phColor,
+                    opacity:         isCompleted ? 0.28 : isActive ? 1 : 0.5,
+                    shadowColor:     phColor,
+                    shadowOpacity:   isActive ? 0.7 : 0,
+                    shadowRadius:    isActive ? 6 : 0,
+                    shadowOffset:    { width: 0, height: 0 },
+                    elevation:       isActive ? 4 : 0,
+                  },
+                ]}
+              />
+            );
+          })}
+
+          {/* Playhead */}
+          <Animated.View
+            style={[
+              styles.playhead,
+              {
+                left: playheadAnim.interpolate({
+                  inputRange:  [0, 1],
+                  outputRange: ['0%', '100%'],
+                }),
+              },
+            ]}
+          >
+            <View style={styles.playheadCircle} />
+            <View style={styles.playheadBar} />
+          </Animated.View>
+        </View>
+
+        <View style={styles.timelineLabels}>
+          <Text style={styles.timelineLabelText}>{pct}%</Text>
+          <Text style={styles.timelineLabelText}>{displayRemaining} left</Text>
+        </View>
+      </View>
+
+      {/* ── Controls row ── */}
+      <View style={styles.controls}>
+        {/* Reset — from design ResetIcon */}
+        <GhostBtn onPress={reset} disabled={isIdle}>
+          <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
+            <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
+            <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
+        </GhostBtn>
+
+        {/* Play/Pause — from design PlayBtnT */}
+        <Pressable onPress={handlePlayPause} style={styles.playBtn}>
+          <View style={styles.playBtnInner}>
+            {isPlaying ? (
+              <Svg width={26} height={28} viewBox="0 0 28 30">
+                <Rect x="3" y="2" width="8" height="26" rx="2.6" fill={T.btnGlyph} />
+                <Rect x="17" y="2" width="8" height="26" rx="2.6" fill={T.btnGlyph} />
+              </Svg>
+            ) : (
+              <Svg width={26} height={28} viewBox="0 0 28 30">
+                <Path d="M5 3 L25 15 L5 27 Z" fill={T.btnGlyph} stroke={T.btnGlyph} strokeWidth={3.5} strokeLinejoin="round" />
+              </Svg>
+            )}
+          </View>
+        </Pressable>
+
+        {/* Skip — from design SkipIcon */}
+        <GhostBtn onPress={skip} disabled={isIdle || isDone}>
+          <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
+            <Path d="M4 4l9 6-9 6V4z" fill={T.subText} />
+            <Rect x="15" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />
+          </Svg>
+        </GhostBtn>
+      </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#0D1F2D',
-    paddingTop: 64,
-    paddingBottom: 48,
-    paddingHorizontal: 8,
-    alignItems: 'center',
+    paddingTop: 54,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
   },
-  statsRow: {
+
+  // Header
+  header: {
     flexDirection: 'row',
-    gap: 16,
-    marginBottom: 32,
-    width: '100%',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
   },
-  statBox: {
+  headerLabel: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 10.5,
+    letterSpacing: 10.5 * 0.18,
+    textTransform: 'uppercase',
+    color: T.faintText,
+  },
+  headerTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 18,
+    letterSpacing: 18 * -0.01,
+    color: T.text,
+    marginTop: 2,
+  },
+  closeBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: T.ghostBg,
+    borderWidth: 1,
+    borderColor: T.hairline,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Phase center block
+  phaseBlock: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  iconBadge: {
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  statLabel: {
-    color: 'rgba(255,255,255,0.55)',
-    fontSize: 13,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  statValue: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: '700',
-    fontVariant: ['tabular-nums'],
-  },
-  circleArea: {
-    width: CIRCLE_SIZE,
-    height: CIRCLE_SIZE,
+    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  innerContent: {
+  phaseLabel: {
+    fontFamily: 'Inter_900Black',
+    fontSize: 36,
+    letterSpacing: 36 * 0.01,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 30,
+  },
+  countdown: {
+    fontFamily: 'ChakraPetch_700Bold',
+    fontSize: 86,
+    lineHeight: 86,
+    color: T.text,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 34,
+  },
+  intervalCounter: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 13.5,
+    letterSpacing: 13.5 * 0.08,
+    color: T.faintText,
+  },
+  progressTrack: {
+    width: '100%',
+    maxWidth: 240,
+    height: 22,
+    borderRadius: 6,
+    backgroundColor: T.hairline,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 6,
+    shadowOffset:  { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius:  6,
+  },
+
+  // Next up
+  nextUpRow: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 9,
+    paddingVertical: 8,
   },
-  phaseWord: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '700',
-    letterSpacing: 1.5,
-    marginBottom: 4,
+  nextLabel: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 11,
+    letterSpacing: 11 * 0.14,
+    color: T.faintText,
   },
-  count: {
-    color: '#fff',
-    fontSize: 80,
-    fontWeight: '900',
-    fontVariant: ['tabular-nums'],
-    lineHeight: 88,
+  nextPhase: {
+    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 14,
+    letterSpacing: 14 * 0.05,
   },
-  countWide: { fontSize: 52, lineHeight: 60 },
-  segLabel: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 16,
-    fontWeight: '500',
-    marginTop: 4,
+
+  // Timeline
+  timelineWrap: {
+    gap: 8,
+    marginBottom: 6,
   },
+  timelineBar: {
+    height: 22,
+    flexDirection: 'row',
+    gap: 2,
+    position: 'relative',
+  },
+  timelineSeg: {
+    height: '100%',
+    borderRadius: 5,
+    minWidth: 2,
+  },
+  playhead: {
+    position: 'absolute',
+    top: -4,
+    bottom: -4,
+    marginLeft: -1.5,
+    alignItems: 'center',
+  },
+  playheadCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: T.text,
+    position: 'absolute',
+    top: -2,
+    shadowColor: T.text,
+    shadowOffset:  { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius:  4,
+  },
+  playheadBar: {
+    width: 3,
+    flex: 1,
+    borderRadius: 3,
+    backgroundColor: T.text,
+    shadowColor: T.text,
+    shadowOffset:  { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius:  4,
+    marginTop: 6,
+  },
+  timelineLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  timelineLabelText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12.5,
+    letterSpacing: 12.5 * 0.04,
+    color: T.subText,
+  },
+
+  // Controls
   controls: {
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 16,
-    marginTop: 40,
-  },
-  btn: {
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    paddingVertical: 16,
-    paddingHorizontal: 28,
-    borderRadius: 12,
-    minWidth: 120,
     alignItems: 'center',
+    gap: 22,
+    marginTop: 6,
   },
-  btnText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
-    letterSpacing: 1,
+  ghostBtn: {
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    backgroundColor: T.ghostBg,
+    borderWidth: 1,
+    borderColor: T.hairline,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  playBtn: {
+    width: 74,
+    height: 74,
+    borderRadius: 37,
+    shadowColor: T.accent,
+    shadowOffset:  { width: 0, height: 12 },
+    shadowOpacity: 0.55,
+    shadowRadius:  15,
+    elevation: 8,
+  },
+  playBtnInner: {
+    flex: 1,
+    borderRadius: 37,
+    backgroundColor: T.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
