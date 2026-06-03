@@ -28,8 +28,8 @@ export interface WorkoutConfig {
 export const PHASE_META: Record<Phase, { color: string; word: string }> = {
   warmup:   { color: '#F5A623', word: 'WARM UP' },
   high:     { color: '#E0245E', word: 'GO HARD' },
-  low:      { color: '#1DA1F2', word: 'RECOVER' },
-  cooldown: { color: '#17BF63', word: 'COOL DOWN' },
+  low:      { color: '#17BF63', word: 'RECOVER' },
+  cooldown: { color: '#1DA1F2', word: 'COOL DOWN' },
 };
 
 export function expandWorkout(cfg: WorkoutConfig): Segment[] {
