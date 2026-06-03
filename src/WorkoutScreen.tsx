@@ -136,7 +136,6 @@ export default function WorkoutScreen() {
   useEffect(() => { configureAudioSession(); }, []);
 
   const progressAnim  = useRef(new Animated.Value(1)).current;
-  const playheadAnim  = useRef(new Animated.Value(0)).current;
 
   const effectiveIndex = state.currentIndex >= 0 ? state.currentIndex : 0;
   const seg            = SEGMENTS[effectiveIndex];
@@ -154,15 +153,6 @@ export default function WorkoutScreen() {
       useNativeDriver: false,
     }).start();
   }, [state.remainingInSegment, state.currentIndex, state.status]);
-
-  useEffect(() => {
-    const pct = TOTAL_DUR > 0 ? state.elapsed / TOTAL_DUR : 0;
-    Animated.timing(playheadAnim, {
-      toValue: Math.max(0, Math.min(1, pct)),
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  }, [state.elapsed]);
 
   const handlePlayPause = () => {
     if (state.status === 'idle' || state.status === 'finished') {
@@ -206,7 +196,7 @@ export default function WorkoutScreen() {
       {/* ── Phase center block ── */}
       <View style={styles.phaseBlock}>
         <View style={[styles.iconBadge, { backgroundColor: meta.color + '22', borderColor: meta.color + '55' }]}>
-          <PhaseIcon phase={seg.phase} color={meta.color} size={23} />
+          <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
         </View>
 
         <Text style={[styles.phaseLabel, { color: meta.color, textShadowColor: meta.color + '55' }]}>
@@ -279,41 +269,47 @@ export default function WorkoutScreen() {
             const isActive    = i === state.currentIndex;
             const isCompleted = state.currentIndex > 0 && i < state.currentIndex;
             const phColor     = PHASE_META[s.phase].color;
+
+            if (isActive) {
+              return (
+                <View
+                  key={i}
+                  style={[styles.timelineSeg, { width: `${widthPct}%`, overflow: 'hidden' }]}
+                >
+                  {/* Consumed (depleted) layer */}
+                  <View style={[StyleSheet.absoluteFill, { backgroundColor: phColor, opacity: 0.28 }]} />
+                  {/* Remaining bright layer anchored to right */}
+                  <Animated.View
+                    style={{
+                      position: 'absolute',
+                      right: 0, top: 0, bottom: 0,
+                      backgroundColor: phColor,
+                      shadowColor: phColor,
+                      shadowOpacity: 0.7,
+                      shadowRadius: 6,
+                      shadowOffset: { width: 0, height: 0 },
+                      elevation: 4,
+                      width: progressAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0%', '100%'],
+                      }),
+                    }}
+                  />
+                </View>
+              );
+            }
+
             return (
               <View
                 key={i}
-                style={[
-                  styles.timelineSeg,
-                  {
-                    width:           `${widthPct}%`,
-                    backgroundColor: phColor,
-                    opacity:         isCompleted ? 0.28 : isActive ? 1 : 0.5,
-                    shadowColor:     phColor,
-                    shadowOpacity:   isActive ? 0.7 : 0,
-                    shadowRadius:    isActive ? 6 : 0,
-                    shadowOffset:    { width: 0, height: 0 },
-                    elevation:       isActive ? 4 : 0,
-                  },
-                ]}
+                style={[styles.timelineSeg, {
+                  width:           `${widthPct}%`,
+                  backgroundColor: phColor,
+                  opacity:         isCompleted ? 0.28 : 1.0,
+                }]}
               />
             );
           })}
-
-          {/* Playhead */}
-          <Animated.View
-            style={[
-              styles.playhead,
-              {
-                left: playheadAnim.interpolate({
-                  inputRange:  [0, 1],
-                  outputRange: ['0%', '100%'],
-                }),
-              },
-            ]}
-          >
-            <View style={styles.playheadCircle} />
-            <View style={styles.playheadBar} />
-          </Animated.View>
         </View>
 
         <View style={styles.timelineLabels}>
@@ -407,17 +403,18 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   iconBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
+    width: 52,
+    height: 52,
+    borderRadius: 14,
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 10,
   },
   phaseLabel: {
     fontFamily: 'Inter_900Black',
-    fontSize: 36,
-    letterSpacing: 36 * 0.01,
+    fontSize: 44,
+    letterSpacing: 44 * 0.01,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 30,
   },
@@ -425,6 +422,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 18,
   },
   countdown: {
     fontFamily: 'ChakraPetch_700Bold',
@@ -437,8 +435,8 @@ const styles = StyleSheet.create({
   },
   intervalCounter: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 13.5,
-    letterSpacing: 13.5 * 0.08,
+    fontSize: 17,
+    letterSpacing: 17 * 0.08,
     color: T.faintText,
   },
   progressTrack: {
@@ -481,9 +479,10 @@ const styles = StyleSheet.create({
   timelineWrap: {
     gap: 8,
     marginBottom: 6,
+    marginHorizontal: 16,
   },
   timelineBar: {
-    height: 22,
+    height: 32,
     flexDirection: 'row',
     gap: 2,
     position: 'relative',
@@ -492,36 +491,6 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 5,
     minWidth: 2,
-  },
-  playhead: {
-    position: 'absolute',
-    top: -4,
-    bottom: -4,
-    marginLeft: -1.5,
-    alignItems: 'center',
-  },
-  playheadCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: T.text,
-    position: 'absolute',
-    top: -2,
-    shadowColor: T.text,
-    shadowOffset:  { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius:  4,
-  },
-  playheadBar: {
-    width: 3,
-    flex: 1,
-    borderRadius: 3,
-    backgroundColor: T.text,
-    shadowColor: T.text,
-    shadowOffset:  { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius:  4,
-    marginTop: 6,
   },
   timelineLabels: {
     flexDirection: 'row',
