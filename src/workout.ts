@@ -1,4 +1,4 @@
-export type Phase = 'warmup' | 'work' | 'blast' | 'rest' | 'cooldown';
+export type Phase = 'warmup' | 'work' | 'rest' | 'cooldown';
 
 export interface Segment {
   phase: Phase;
@@ -24,11 +24,10 @@ export interface WorkoutConfig {
 }
 
 export const PHASE_META: Record<Phase, { color: string; word: string; icon: string }> = {
-  warmup:   { color: '#5fd38a', word: 'WARM UP',   icon: 'sun'      },
-  work:     { color: '#ff8a3d', word: 'WORK',       icon: 'flame'    },
-  blast:    { color: '#ff5a5f', word: 'ALL OUT',    icon: 'bolt'     },
-  rest:     { color: '#46a6ff', word: 'RECOVER',    icon: 'pause'    },
-  cooldown: { color: '#5fd38a', word: 'COOL DOWN',  icon: 'snowflake'},
+  warmup:   { color: '#ff8a3d', word: 'WARM UP',    icon: 'sun'   },
+  work:     { color: '#ff5a5f', word: 'INTENSITY',  icon: 'flame' },
+  rest:     { color: '#5fd38a', word: 'RECOVER',    icon: 'pause' },
+  cooldown: { color: '#46a6ff', word: 'COOL DOWN',  icon: 'sun'   },
 };
 
 export function intervalsToSegments(intervals: Interval[]): Segment[] {

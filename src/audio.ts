@@ -60,7 +60,7 @@ export function useWorkoutAudio() {
   };
 
   const cueForPhase = (phase: Phase) => {
-    if (phase === 'work' || phase === 'blast') playCue('high');
+    if (phase === 'work') playCue('high');
     else if (phase === 'rest') playCue('low');
     // warmup and cooldown: no cue
   };

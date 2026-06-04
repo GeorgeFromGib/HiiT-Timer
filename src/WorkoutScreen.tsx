@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useKeepAwake } from 'expo-keep-awake';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -45,8 +45,6 @@ function PhaseIcon({ phase, color, size = 23 }: { phase: Phase; color: string; s
         </G>
       ) : phase === 'work' ? (
         <Path {...p} d="M12 2.5c3 4 6 5.5 6 10a6 6 0 0 1-12 0c0-2 1-3.4 2.4-4.6.2 1.6 1 2.4 2 2.6-1.2-3 .3-6.4 1.6-8z" />
-      ) : phase === 'blast' ? (
-        <Path {...p} d="M13 2 4 13h6l-1 9 9-12h-6l1-8z" />
       ) : (
         // rest — pause bars
         <G {...p}>
@@ -54,6 +52,21 @@ function PhaseIcon({ phase, color, size = 23 }: { phase: Phase; color: string; s
           <Rect x="14" y="5" width="4" height="14" rx="1.5" />
         </G>
       )}
+    </Svg>
+  );
+}
+
+// Stopwatch icon for the pre-start "GET READY" countdown
+function ReadyIcon({ color, size = 23 }: { color: string; size?: number }) {
+  const p = { fill: 'none', stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <G {...p}>
+        <Circle cx="12" cy="13.5" r="7" />
+        <Path d="M10 5h4" />
+        <Path d="M12 5v1.5" />
+        <Path d="M12 13.5V10" />
+      </G>
     </Svg>
   );
 }
@@ -109,6 +122,13 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   useEffect(() => { configureAudioSession(); }, []);
 
   const progressAnim   = useRef(new Animated.Value(1)).current;
+  const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
+  const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => () => {
+    if (preStartIntervalRef.current) clearInterval(preStartIntervalRef.current);
+  }, []);
+
 
   const effectiveIndex = state.currentIndex >= 0 ? state.currentIndex : 0;
   const seg            = SEGMENTS[effectiveIndex];
@@ -133,9 +153,29 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   }, [state.remainingInSegment, state.status]);
 
   const handlePlayPause = () => {
+    if (preStartCount !== null) {
+      clearInterval(preStartIntervalRef.current!);
+      preStartIntervalRef.current = null;
+      setPreStartCount(null);
+      return;
+    }
     if (state.status === 'idle' || state.status === 'finished') {
-      audio.startKeepAlive();
-      start();
+      setPreStartCount(3);
+      audio.playTick();
+      let count = 3;
+      preStartIntervalRef.current = setInterval(() => {
+        count -= 1;
+        if (count > 0) {
+          setPreStartCount(count as 2 | 1);
+          audio.playTick();
+        } else {
+          clearInterval(preStartIntervalRef.current!);
+          preStartIntervalRef.current = null;
+          setPreStartCount(null);
+          audio.startKeepAlive();
+          start();
+        }
+      }, 1000);
     } else if (state.status === 'running') {
       pause();
     } else {
@@ -147,10 +187,11 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const isPlaying        = state.status === 'running';
   const isIdle           = state.status === 'idle';
   const isDone           = state.status === 'finished';
+  const isPreStart       = preStartCount !== null;
   const displayRemaining      = isIdle ? tfmt(TOTAL_DUR) : tfmt(state.remainingTotal);
   const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? SEGMENTS[0].duration : state.remainingInSegment));
-  const displayCountdown      = tfmt(remainingForCountdown);
-  const countdownHasHours     = remainingForCountdown >= 3600;
+  const displayCountdown      = isPreStart ? String(preStartCount) : tfmt(remainingForCountdown);
+  const countdownHasHours     = !isPreStart && remainingForCountdown >= 3600;
   const countdownFontSize     = countdownHasHours ? 88 : 124;
   const intervalNum           = state.currentIndex >= 0 ? state.currentIndex + 1 : 1;
   const segStartPct           = `${(seg.startAt / TOTAL_DUR) * 100}%`;
@@ -177,12 +218,21 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
       {/* ── Phase center block ── */}
       <View style={styles.phaseBlock}>
-        <View style={[styles.iconBadge, { backgroundColor: meta.color + '22', borderColor: meta.color + '55' }]}>
-          <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
+        <View style={[styles.iconBadge, {
+          backgroundColor: (isPreStart ? T.accent : meta.color) + '22',
+          borderColor:     (isPreStart ? T.accent : meta.color) + '55',
+        }]}>
+          {isPreStart
+            ? <ReadyIcon color={T.accent} size={30} />
+            : <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
+          }
         </View>
 
-        <Text style={[styles.phaseLabel, { color: meta.color, textShadowColor: meta.color + '55' }]}>
-          {meta.word}
+        <Text style={[styles.phaseLabel, {
+          color:           isPreStart ? T.accent : meta.color,
+          textShadowColor: (isPreStart ? T.accent : meta.color) + '55',
+        }]}>
+          {isPreStart ? 'GET READY' : meta.word}
         </Text>
 
         <View style={styles.countdownRow}>
@@ -190,7 +240,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             <Text
               key={i}
               style={[styles.countdown, {
-                textShadowColor: meta.color + '3a',
+                textShadowColor: (isPreStart ? T.accent : meta.color) + '3a',
                 fontSize: countdownFontSize,
                 lineHeight: countdownFontSize,
                 width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
@@ -201,13 +251,13 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           ))}
         </View>
 
-        <Text style={styles.intervalCounter}>
+        <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
           {'INTERVAL '}
           <Text style={{ color: 'white' }}>{intervalNum}</Text>
           {` OF ${SEGMENTS.length}`}
         </Text>
 
-        <View style={styles.progressTrack}>
+        <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
           <Animated.View
             style={[
               styles.progressFill,
@@ -220,8 +270,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
                 }),
               },
             ]}
-          />
-        </View>
+            />
+          </View>
       </View>
 
       {/* ── Next up row ── */}
@@ -304,7 +354,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       {/* ── Controls row ── */}
       <View style={styles.controls}>
         {/* Reset — from design ResetIcon */}
-        <GhostBtn onPress={reset} disabled={isIdle}>
+        <GhostBtn onPress={reset} disabled={isIdle || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
             <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -314,7 +364,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         {/* Play/Pause — from design PlayBtnT */}
         <Pressable onPress={handlePlayPause} style={styles.playBtn}>
           <View style={styles.playBtnInner}>
-            {isPlaying ? (
+            {(isPlaying || isPreStart) ? (
               <Svg width={26} height={28} viewBox="0 0 28 30">
                 <Rect x="3" y="2" width="8" height="26" rx="2.6" fill={T.btnGlyph} />
                 <Rect x="17" y="2" width="8" height="26" rx="2.6" fill={T.btnGlyph} />
@@ -328,7 +378,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         </Pressable>
 
         {/* Skip — from design SkipIcon */}
-        <GhostBtn onPress={skip} disabled={isIdle || isDone}>
+        <GhostBtn onPress={skip} disabled={isIdle || isDone || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M4 4l9 6-9 6V4z" fill={T.subText} />
             <Rect x="15" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />
