@@ -1,31 +1,23 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useKeepAwake } from 'expo-keep-awake';
-import {
-  useFonts,
-  Inter_700Bold,
-  Inter_800ExtraBold,
-  Inter_900Black,
-} from '@expo-google-fonts/inter';
-import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   Pressable,
   StyleSheet,
   Text,
   View,
-  LayoutChangeEvent,
 } from 'react-native';
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
 import { configureAudioSession, useWorkoutAudio } from './audio';
 import { useTimerEngine } from './timerEngine';
 import {
-  type Interval,
   type Phase,
-  intervalsToSegments,
+  expandWorkout,
   PHASE_META,
   totalDuration,
 } from './workout';
+import type { Session } from './sessions';
 
 // ─── Tidal (dark) theme ───────────────────────────────────────────────────────
 const T = {
@@ -39,22 +31,6 @@ const T = {
   btnGlyph:  '#06131a',
 };
 
-// ─── Demo workout (Tabata Burnout — 285 s total) ──────────────────────────────
-const DEMO_INTERVALS: Interval[] = [
-  { type: 'warmup',   dur: 45 },
-  { type: 'work',     dur: 30 },
-  { type: 'rest',     dur: 15 },
-  { type: 'blast',    dur: 30 },
-  { type: 'rest',     dur: 15 },
-  { type: 'work',     dur: 30 },
-  { type: 'rest',     dur: 15 },
-  { type: 'blast',    dur: 30 },
-  { type: 'rest',     dur: 15 },
-  { type: 'cooldown', dur: 60 },
-];
-const DEMO_NAME = 'Tabata Burnout';
-const SEGMENTS  = intervalsToSegments(DEMO_INTERVALS);
-const TOTAL_DUR = totalDuration(SEGMENTS);
 
 // Phase icons — exact paths from design/themed-core.jsx (TIcon)
 // All stroke-based: fill none, strokeWidth 2.2, round caps/joins
@@ -90,6 +66,7 @@ const tfmt = (s: number) => {
     const sec = s % 60;
     return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
   }
+  if (s < 60) return `${s}`;
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 };
 
@@ -115,15 +92,11 @@ function GhostBtn({
 }
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
-export default function WorkoutScreen() {
+export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   useKeepAwake();
 
-  const [fontsLoaded] = useFonts({
-    Inter_700Bold,
-    Inter_800ExtraBold,
-    Inter_900Black,
-    ChakraPetch_700Bold,
-  });
+  const SEGMENTS  = useMemo(() => expandWorkout(session.config), []);
+  const TOTAL_DUR = useMemo(() => totalDuration(SEGMENTS), [SEGMENTS]);
 
   const audio = useWorkoutAudio();
 
@@ -187,17 +160,15 @@ export default function WorkoutScreen() {
     outputRange: [segEndPct, segStartPct],
   });
 
-  if (!fontsLoaded) return null;
-
   return (
     <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
       {/* ── Header ── */}
       <View style={styles.header}>
         <View>
           <Text style={styles.headerLabel}>INTERVAL SESSION</Text>
-          <Text style={styles.headerTitle}>{DEMO_NAME}</Text>
+          <Text style={styles.headerTitle}>{session.name}</Text>
         </View>
-        <Pressable style={styles.closeBtn}>
+        <Pressable style={styles.closeBtn} onPress={onBack}>
           <Svg width={14} height={14} viewBox="0 0 15 15">
             <Path d="M2 2l11 11M13 2L2 13" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
           </Svg>
@@ -232,7 +203,7 @@ export default function WorkoutScreen() {
 
         <Text style={styles.intervalCounter}>
           {'INTERVAL '}
-          <Text style={{ color: meta.color }}>{intervalNum}</Text>
+          <Text style={{ color: 'white' }}>{intervalNum}</Text>
           {` OF ${SEGMENTS.length}`}
         </Text>
 
@@ -320,17 +291,8 @@ export default function WorkoutScreen() {
             })}
           </View>
 
-          {/* Chevrons — outside clip so they're not hidden */}
-          <Animated.View style={[styles.chevron, { top: -10, left: chevronLeft }]}>
-            <Svg width={10} height={6} viewBox="0 0 10 6">
-              <Path d="M1 1L5 5L9 1" stroke="white" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            </Svg>
-          </Animated.View>
-          <Animated.View style={[styles.chevron, { bottom: -10, left: chevronLeft }]}>
-            <Svg width={10} height={6} viewBox="0 0 10 6">
-              <Path d="M1 5L5 1L9 5" stroke="white" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            </Svg>
-          </Animated.View>
+          {/* Progress marker — vertical line extending above and below the bar */}
+          <Animated.View style={[styles.markerLine, { left: chevronLeft }]} />
         </View>
 
         <View style={styles.timelineLabels}>
@@ -456,9 +418,9 @@ const styles = StyleSheet.create({
   },
   intervalCounter: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 17,
-    letterSpacing: 17 * 0.08,
-    color: T.faintText,
+    fontSize: 22,
+    letterSpacing: 22 * 0.08,
+    color: 'white',
   },
   progressTrack: {
     width: '100%',
@@ -489,7 +451,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold',
     fontSize: 15,
     letterSpacing: 15 * 0.14,
-    color: T.faintText,
+    color: 'white',
   },
   nextPhase: {
     fontFamily: 'Inter_800ExtraBold',
@@ -514,9 +476,14 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     overflow: 'hidden',
   },
-  chevron: {
+  markerLine: {
     position: 'absolute',
-    marginLeft: -5,
+    top: -6,
+    bottom: -6,
+    width: 2,
+    marginLeft: -1,
+    backgroundColor: 'white',
+    borderRadius: 1,
   },
   timelineSeg: {
     height: '100%',
@@ -525,11 +492,12 @@ const styles = StyleSheet.create({
   timelineLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 10,
   },
   timelineLabelText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 12.5,
-    letterSpacing: 12.5 * 0.04,
+    fontSize: 19,
+    letterSpacing: 19 * 0.04,
     color: T.subText,
   },
 
