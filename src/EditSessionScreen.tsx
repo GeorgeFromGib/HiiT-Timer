@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -24,6 +25,7 @@ const T = {
   ghostBg:   'rgba(255,255,255,0.05)',
   accent:    '#3ad6c6',
   btnGlyph:  '#06131a',
+  sheetBg:   '#0e2832',
 };
 
 const DIFFICULTY_COLORS: Record<Difficulty, string> = {
@@ -35,6 +37,12 @@ const DIFFICULTY_COLORS: Record<Difficulty, string> = {
 const CATEGORIES: Category[]    = ['HIIT', 'Express', 'Steady'];
 const DIFFICULTIES: Difficulty[] = ['Easy', 'Medium', 'Hard'];
 
+const ITEM_H = 48;
+const VISIBLE = 5;
+const WHEEL_H = ITEM_H * VISIBLE;
+
+type TimeField = 'warmup' | 'work' | 'rest' | 'cooldown';
+
 function fmtDuration(s: number): string {
   const m = Math.floor(s / 60);
   const sec = s % 60;
@@ -42,6 +50,83 @@ function fmtDuration(s: number): string {
   if (sec === 0) return `${m}m`;
   return `${m}m ${sec}s`;
 }
+
+interface WheelProps {
+  values: string[];
+  selected: number;
+  onChange: (i: number) => void;
+}
+
+function WheelColumn({ values, selected, onChange }: WheelProps) {
+  const ref = useRef<ScrollView>(null);
+
+  return (
+    <View style={wheel.wrap}>
+      {/* selection band */}
+      <View style={wheel.band} pointerEvents="none" />
+
+      <ScrollView
+        ref={ref}
+        showsVerticalScrollIndicator={false}
+        snapToInterval={ITEM_H}
+        decelerationRate="fast"
+        contentContainerStyle={{ paddingVertical: ITEM_H * 2 }}
+        contentOffset={{ x: 0, y: selected * ITEM_H }}
+        onMomentumScrollEnd={e => {
+          const i = Math.round(e.nativeEvent.contentOffset.y / ITEM_H);
+          onChange(Math.max(0, Math.min(values.length - 1, i)));
+        }}
+        onScrollEndDrag={e => {
+          const i = Math.round(e.nativeEvent.contentOffset.y / ITEM_H);
+          onChange(Math.max(0, Math.min(values.length - 1, i)));
+        }}
+      >
+        {values.map((v, i) => (
+          <View key={i} style={wheel.item}>
+            <Text style={[wheel.label, i === selected && wheel.labelSelected]}>{v}</Text>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
+  );
+}
+
+const wheel = StyleSheet.create({
+  wrap: {
+    flex: 1,
+    height: WHEEL_H,
+    overflow: 'hidden',
+  },
+  band: {
+    position: 'absolute',
+    top: ITEM_H * 2,
+    left: 8,
+    right: 8,
+    height: ITEM_H,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: T.accent,
+    borderRadius: 6,
+    zIndex: 1,
+  },
+  item: {
+    height: ITEM_H,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  label: {
+    fontFamily: 'ChakraPetch_700Bold',
+    fontSize: 22,
+    color: T.subText,
+  },
+  labelSelected: {
+    color: T.text,
+    fontSize: 26,
+  },
+});
+
+const MINUTE_LABELS = Array.from({ length: 60 }, (_, i) => String(i));
+const SECOND_LABELS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
 interface Props {
   session?: Session;
@@ -54,23 +139,48 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
   const [name,       setName]       = useState(existing?.name                   ?? '');
   const [category,   setCategory]   = useState<Category>(existing?.category     ?? 'HIIT');
   const [difficulty, setDifficulty] = useState<Difficulty>(existing?.difficulty ?? 'Medium');
-  const [warmup,     setWarmup]     = useState(String(existing?.config.warmup   ?? 30));
-  const [work,       setWork]       = useState(String(existing?.config.high     ?? 30));
-  const [rest,       setRest]       = useState(String(existing?.config.low      ?? 15));
+  const [warmup,     setWarmup]     = useState(existing?.config.warmup           ?? 30);
+  const [work,       setWork]       = useState(existing?.config.high             ?? 30);
+  const [rest,       setRest]       = useState(existing?.config.low              ?? 15);
   const [rounds,     setRounds]     = useState(String(existing?.config.rounds   ?? 4));
-  const [cooldown,   setCooldown]   = useState(String(existing?.config.cooldown ?? 30));
+  const [cooldown,   setCooldown]   = useState(existing?.config.cooldown         ?? 30);
+
+  const [activeField,   setActiveField]   = useState<TimeField | null>(null);
+  const [pickerMinutes, setPickerMinutes] = useState(0);
+  const [pickerSeconds, setPickerSeconds] = useState(0);
 
   const toNum = (s: string, min = 0) => Math.max(min, parseInt(s, 10) || 0);
 
   const previewConfig = {
-    warmup:   toNum(warmup),
-    high:     toNum(work, 1),
-    low:      toNum(rest),
+    warmup,
+    high:     Math.max(1, work),
+    low:      rest,
     rounds:   toNum(rounds, 1),
-    cooldown: toNum(cooldown),
+    cooldown,
   };
   const previewSegments = expandWorkout(previewConfig);
   const previewTotal    = totalDuration(previewSegments);
+
+  const fieldValues: Record<TimeField, number> = { warmup, work, rest, cooldown };
+  const fieldSetters: Record<TimeField, (v: number) => void> = {
+    warmup:   setWarmup,
+    work:     setWork,
+    rest:     setRest,
+    cooldown: setCooldown,
+  };
+
+  function openPicker(field: TimeField) {
+    const secs = fieldValues[field];
+    setPickerMinutes(Math.floor(secs / 60));
+    setPickerSeconds(secs % 60);
+    setActiveField(field);
+  }
+
+  function handlePickerDone() {
+    if (!activeField) return;
+    fieldSetters[activeField](pickerMinutes * 60 + pickerSeconds);
+    setActiveField(null);
+  }
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -108,13 +218,16 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     ]);
   };
 
-  const configFields = [
-    { label: 'Warmup (s)',   value: warmup,   set: setWarmup   },
-    { label: 'Work (s)',     value: work,     set: setWork     },
-    { label: 'Rest (s)',     value: rest,     set: setRest     },
-    { label: 'Rounds',       value: rounds,   set: setRounds   },
-    { label: 'Cooldown (s)', value: cooldown, set: setCooldown },
+  const timeFields: { label: string; field: TimeField }[] = [
+    { label: 'Warmup',   field: 'warmup'   },
+    { label: 'Work',     field: 'work'     },
+    { label: 'Rest',     field: 'rest'     },
+    { label: 'Cooldown', field: 'cooldown' },
   ];
+
+  const activeLabel = activeField
+    ? activeField.charAt(0).toUpperCase() + activeField.slice(1)
+    : '';
 
   return (
     <LinearGradient
@@ -215,19 +328,30 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           <View style={styles.fieldGroup}>
             <Text style={styles.fieldLabel}>TIMING</Text>
             <View style={styles.configGrid}>
-              {configFields.map(({ label, value, set }) => (
-                <View key={label} style={styles.configCell}>
+              {timeFields.map(({ label, field }) => (
+                <View key={field} style={styles.configCell}>
                   <Text style={styles.configCellLabel}>{label}</Text>
-                  <TextInput
+                  <Pressable
                     style={styles.configInput}
-                    value={value}
-                    onChangeText={set}
-                    keyboardType="numeric"
-                    returnKeyType="done"
-                    selectTextOnFocus
-                  />
+                    onPress={() => openPicker(field)}
+                  >
+                    <Text style={styles.configInputText}>
+                      {fmtDuration(fieldValues[field])}
+                    </Text>
+                  </Pressable>
                 </View>
               ))}
+              <View style={styles.configCell}>
+                <Text style={styles.configCellLabel}>Rounds</Text>
+                <TextInput
+                  style={[styles.configInput, styles.configInputText]}
+                  value={rounds}
+                  onChangeText={setRounds}
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  selectTextOnFocus
+                />
+              </View>
             </View>
           </View>
 
@@ -272,6 +396,51 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* Duration picker modal */}
+      <Modal
+        visible={activeField !== null}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setActiveField(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <Pressable style={styles.modalDismiss} onPress={() => setActiveField(null)} />
+          <View style={styles.modalSheet}>
+            <View style={styles.modalHeader}>
+              <Pressable onPress={() => setActiveField(null)} style={styles.modalCancelBtn}>
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </Pressable>
+              <Text style={styles.modalTitle}>{activeLabel}</Text>
+              <Pressable onPress={handlePickerDone} style={styles.modalDoneBtn}>
+                <Text style={styles.modalDoneText}>Done</Text>
+              </Pressable>
+            </View>
+
+            <View style={styles.pickerRow}>
+              <WheelColumn
+                values={MINUTE_LABELS}
+                selected={pickerMinutes}
+                onChange={setPickerMinutes}
+              />
+              <View style={styles.pickerSeparator}>
+                <Text style={styles.pickerSeparatorText}>:</Text>
+              </View>
+              <WheelColumn
+                values={SECOND_LABELS}
+                selected={pickerSeconds}
+                onChange={setPickerSeconds}
+              />
+            </View>
+
+            <View style={styles.pickerUnits}>
+              <Text style={styles.pickerUnitLabel}>min</Text>
+              <View style={{ flex: 0, width: 24 }} />
+              <Text style={styles.pickerUnitLabel}>sec</Text>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -378,6 +547,10 @@ const styles = StyleSheet.create({
     borderColor: T.hairline,
     borderRadius: 10,
     paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  configInputText: {
     fontFamily: 'ChakraPetch_700Bold',
     fontSize: 18,
     color: T.text,
@@ -437,5 +610,87 @@ const styles = StyleSheet.create({
     letterSpacing: 14 * 0.06,
     textTransform: 'uppercase',
     color: '#ff5a5f',
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modalDismiss: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalSheet: {
+    backgroundColor: T.sheetBg,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 34,
+    borderTopWidth: 1,
+    borderColor: T.hairline,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: T.hairline,
+  },
+  modalTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 16,
+    color: T.text,
+  },
+  modalCancelBtn: {
+    paddingVertical: 4,
+    minWidth: 60,
+  },
+  modalCancelText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    color: T.subText,
+  },
+  modalDoneBtn: {
+    paddingVertical: 4,
+    minWidth: 60,
+    alignItems: 'flex-end',
+  },
+  modalDoneText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 16,
+    color: T.accent,
+  },
+
+  pickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 8,
+  },
+  pickerSeparator: {
+    width: 24,
+    alignItems: 'center',
+  },
+  pickerSeparatorText: {
+    fontFamily: 'ChakraPetch_700Bold',
+    fontSize: 28,
+    color: T.subText,
+  },
+  pickerUnits: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+  },
+  pickerUnitLabel: {
+    flex: 1,
+    textAlign: 'center',
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 11,
+    color: T.faintText,
+    letterSpacing: 11 * 0.12,
+    textTransform: 'uppercase',
   },
 });
