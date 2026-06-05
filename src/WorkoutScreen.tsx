@@ -45,7 +45,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const audio = useWorkoutAudio();
 
   const { state, start, pause, resume, reset, skip } = useTimerEngine(SEGMENTS, {
-    onTransition: (_from, to) => { if (to) audio.cueForPhase(to.phase); },
+    onTransition: (_from, to) => { if (to) audio.playChime(); },
     onCountdown:  ()          => audio.playTick(),
     onFinish:     ()          => { audio.playFinish(); audio.stopKeepAlive(); },
   });
@@ -235,7 +235,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             {SEGMENTS.map((s, i) => {
               const widthPct    = (s.duration / TOTAL_DUR) * 100;
               const isActive    = !isDone && i === state.currentIndex;
-              const isCompleted = !isDone && state.currentIndex > 0 && i < state.currentIndex;
+              const isCompleted = isDone || (state.currentIndex > 0 && i < state.currentIndex);
               const phColor     = PHASE_META[s.phase].color;
 
               if (isActive) {
@@ -277,7 +277,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               );
             })}
           </View>
-          <Animated.View style={[styles.markerLine, { left: chevronLeft }]} />
+          {!isDone && <Animated.View style={[styles.markerLine, { left: chevronLeft }]} />}
         </View>
 
         <View style={styles.timelineLabels}>
