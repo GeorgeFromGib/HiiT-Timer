@@ -76,15 +76,49 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   useEffect(() => { configureAudioSession(); }, []);
 
   const progressAnim   = useRef(new Animated.Value(1)).current;
-  const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
+  const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(3);
   const [congratsMsg] = useState(
     () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
   );
   const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => () => {
-    if (preStartIntervalRef.current) clearInterval(preStartIntervalRef.current);
+  useEffect(() => {
+    audio.playTick();
+    let count = 3;
+    preStartIntervalRef.current = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        setPreStartCount(count as 2 | 1);
+        audio.playTick();
+      } else {
+        clearInterval(preStartIntervalRef.current!);
+        preStartIntervalRef.current = null;
+        setPreStartCount(null);
+        audio.startKeepAlive();
+        start();
+      }
+    }, 1000);
+    return () => { if (preStartIntervalRef.current) clearInterval(preStartIntervalRef.current); };
   }, []);
+
+  const beginPreStart = () => {
+    setPreStartCount(3);
+    audio.playTick();
+    let count = 3;
+    preStartIntervalRef.current = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        setPreStartCount(count as 2 | 1);
+        audio.playTick();
+      } else {
+        clearInterval(preStartIntervalRef.current!);
+        preStartIntervalRef.current = null;
+        setPreStartCount(null);
+        audio.startKeepAlive();
+        start();
+      }
+    }, 1000);
+  };
 
   const effectiveIndex = state.currentIndex >= 0 ? state.currentIndex : 0;
   const seg            = SEGMENTS[effectiveIndex];
@@ -114,22 +148,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       return;
     }
     if (state.status === 'idle' || state.status === 'finished') {
-      setPreStartCount(3);
-      audio.playTick();
-      let count = 3;
-      preStartIntervalRef.current = setInterval(() => {
-        count -= 1;
-        if (count > 0) {
-          setPreStartCount(count as 2 | 1);
-          audio.playTick();
-        } else {
-          clearInterval(preStartIntervalRef.current!);
-          preStartIntervalRef.current = null;
-          setPreStartCount(null);
-          audio.startKeepAlive();
-          start();
-        }
-      }, 1000);
+      beginPreStart();
     } else if (state.status === 'running') {
       pause();
     } else {
@@ -397,14 +416,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   phaseTop: {
-    flex: 0.5,
+    flex: 0.9,
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingBottom: 24,
     gap: 8,
   },
   phaseBottom: {
-    flex: 1.5,
+    flex: 1.1,
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 8,
@@ -433,7 +452,7 @@ const styles = StyleSheet.create({
     color: 'white',
     opacity: 0.7,
     position: 'absolute',
-    top: 0,
+    top: 48,
     left: 0,
     right: 0,
     textAlign: 'center',
@@ -460,8 +479,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   progressTrack: {
-    width: '100%',
-    maxWidth: 240,
+    alignSelf: 'stretch',
+    marginHorizontal: 16,
     height: 22,
     borderRadius: 6,
     backgroundColor: T.hairline,
