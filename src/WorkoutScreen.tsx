@@ -24,6 +24,29 @@ import ReadyIcon from './components/ReadyIcon';
 import FinishedIcon from './components/FinishedIcon';
 import GhostBtn  from './components/GhostBtn';
 
+const CONGRATS = [
+  "You crushed it.",
+  "That's what you're made of.",
+  "Every rep counted.",
+  "Nothing left in the tank. Perfect.",
+  "Earned.",
+  "That's the streak. Keep it.",
+  "One more session in the bank.",
+  "Progress doesn't lie.",
+  "You showed up. That's everything.",
+  "Tomorrow you'll be glad you did this.",
+  "Your future self says thanks.",
+  "Sweat well spent.",
+  "Rest. You've earned it.",
+  "Not bad at all.",
+  "The couch wasn't this good anyway.",
+  "Done. Well done.",
+  "Work complete.",
+  "That happened.",
+  "Check.",
+  "Session closed.",
+] as const;
+
 const tfmt = (s: number) => {
   s = Math.max(0, Math.ceil(s));
   if (s >= 3600) {
@@ -54,6 +77,9 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
   const progressAnim   = useRef(new Animated.Value(1)).current;
   const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
+  const [congratsMsg] = useState(
+    () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
+  );
   const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => () => {
@@ -164,6 +190,10 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         }]}>
           {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
         </Text>
+
+        {isDone && (
+          <Text style={styles.congratsMsg}>{congratsMsg}</Text>
+        )}
 
         {!isDone && (
           <View style={styles.countdownRow}>
@@ -380,6 +410,14 @@ const styles = StyleSheet.create({
     letterSpacing: 44 * 0.01,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 30,
+  },
+  congratsMsg: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 18,
+    letterSpacing: 18 * 0.05,
+    color: T.accent,
+    opacity: 0.7,
+    textAlign: 'center',
   },
   countdownRow: {
     flexDirection: 'row',
