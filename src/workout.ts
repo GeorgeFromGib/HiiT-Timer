@@ -23,11 +23,11 @@ export interface WorkoutConfig {
   dropLastRecovery?: boolean;
 }
 
-export const PHASE_META: Record<Phase, { color: string; word: string; icon: string }> = {
-  warmup:   { color: '#ff8a3d', word: 'WARM UP',    icon: 'sun'   },
-  work:     { color: '#ff5a5f', word: 'INTENSITY',  icon: 'flame' },
-  rest:     { color: '#5fd38a', word: 'RECOVER',    icon: 'pause' },
-  cooldown: { color: '#46a6ff', word: 'COOL DOWN',  icon: 'sun'   },
+export const PHASE_META: Record<Phase, { word: string; icon: string }> = {
+  warmup:   { word: 'WARM UP',   icon: 'sun'   },
+  work:     { word: 'WORK',      icon: 'flame' },
+  rest:     { word: 'RECOVER',   icon: 'pause' },
+  cooldown: { word: 'COOL DOWN', icon: 'sun'   },
 };
 
 export function intervalsToSegments(intervals: Interval[]): Segment[] {

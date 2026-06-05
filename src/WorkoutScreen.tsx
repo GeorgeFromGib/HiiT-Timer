@@ -13,16 +13,18 @@ import { configureAudioSession, useWorkoutAudio } from './audio';
 import { useTimerEngine } from './timerEngine';
 import {
   type Phase,
-  expandWorkout,
   PHASE_META,
   totalDuration,
 } from './workout';
+import { getSessionSegments } from './sessions';
 import type { Session } from './sessions';
-import { T } from './theme';
+import { useTheme, type ThemeTokens } from './theme';
 import PhaseIcon from './components/PhaseIcon';
 import ReadyIcon from './components/ReadyIcon';
 import FinishedIcon from './components/FinishedIcon';
 import GhostBtn  from './components/GhostBtn';
+
+const GOLD = '#C89B20';
 
 const CONGRATS = [
   "You crushed it.",
@@ -61,14 +63,16 @@ const tfmt = (s: number) => {
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   useKeepAwake();
+  const { T } = useTheme();
+  const styles = useMemo(() => makeStyles(T), [T]);
 
-  const SEGMENTS  = useMemo(() => expandWorkout(session.config), []);
+  const SEGMENTS  = useMemo(() => getSessionSegments(session), []);
   const TOTAL_DUR = useMemo(() => totalDuration(SEGMENTS), [SEGMENTS]);
 
   const audio = useWorkoutAudio();
 
   const { state, start, pause, resume, reset, skip } = useTimerEngine(SEGMENTS, {
-    onTransition: (_from, to) => { if (to) audio.playChime(); },
+    onTransition: (_from, to) => { if (to) audio.cueForPhase(to.phase); },
     onCountdown:  ()          => audio.playTick(),
     onFinish:     ()          => { audio.playFinish(); audio.stopKeepAlive(); },
   });
@@ -76,30 +80,12 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   useEffect(() => { configureAudioSession(); }, []);
 
   const progressAnim   = useRef(new Animated.Value(1)).current;
-  const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(3);
+  const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
   const [congratsMsg] = useState(
     () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
   );
   const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    audio.playTick();
-    let count = 3;
-    preStartIntervalRef.current = setInterval(() => {
-      count -= 1;
-      if (count > 0) {
-        setPreStartCount(count as 2 | 1);
-        audio.playTick();
-      } else {
-        clearInterval(preStartIntervalRef.current!);
-        preStartIntervalRef.current = null;
-        setPreStartCount(null);
-        audio.startKeepAlive();
-        start();
-      }
-    }, 1000);
-    return () => { if (preStartIntervalRef.current) clearInterval(preStartIntervalRef.current); };
-  }, []);
 
   const beginPreStart = () => {
     setPreStartCount(3);
@@ -125,6 +111,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const nextSeg        = SEGMENTS[effectiveIndex + 1];
   const meta           = PHASE_META[seg.phase];
   const nextMeta       = nextSeg ? PHASE_META[nextSeg.phase] : null;
+  const phaseColor     = T.phases[seg.phase];
+  const nextPhaseColor = nextSeg ? T.phases[nextSeg.phase] : null;
 
   useEffect(() => {
     progressAnim.setValue(1);
@@ -178,7 +166,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
       {/* ── Header ── */}
       <View style={styles.header}>
-        <View>
+        <View style={{ width: 36 }} />
+        <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.headerLabel}>INTERVAL SESSION</Text>
           <Text style={styles.headerTitle}>{session.name}</Text>
         </View>
@@ -194,20 +183,20 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         {/* icon + label: anchored to bottom of top half */}
         <View style={styles.phaseTop}>
           <View style={[styles.iconBadge, {
-            backgroundColor: (isPreStart || isDone ? T.accent : meta.color) + '22',
-            borderColor:     (isPreStart || isDone ? T.accent : meta.color) + '55',
+            backgroundColor: (isDone ? GOLD : isPreStart ? T.accent : phaseColor) + '22',
+            borderColor:     (isDone ? GOLD : isPreStart ? T.accent : phaseColor) + '55',
           }]}>
             {isDone
-              ? <FinishedIcon color={T.accent} size={30} />
+              ? <FinishedIcon color={GOLD} size={30} />
               : isPreStart
                 ? <ReadyIcon color={T.accent} size={30} />
-                : <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
+                : <PhaseIcon phase={seg.phase} color={phaseColor} size={30} />
             }
           </View>
 
           <Text style={[styles.phaseLabel, {
-            color:           (isPreStart || isDone) ? T.accent : meta.color,
-            textShadowColor: ((isPreStart || isDone) ? T.accent : meta.color) + '55',
+            color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
+            textShadowColor: (isDone ? GOLD : isPreStart ? T.accent : phaseColor) + '55',
           }]}>
             {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
           </Text>
@@ -221,7 +210,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               key={i}
               style={[styles.countdown, {
                 opacity: isDone ? 0 : 1,
-                textShadowColor: (isPreStart ? T.accent : meta.color) + '3a',
+                textShadowColor: (isPreStart ? T.accent : phaseColor) + '3a',
                 fontSize: countdownFontSize,
                 lineHeight: countdownFontSize,
                 width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
@@ -240,7 +229,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           {!isDone && (
             <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
               {'INTERVAL '}
-              <Text style={{ color: 'white' }}>{intervalNum}</Text>
+              <Text style={{ color: T.onBg }}>{intervalNum}</Text>
               {` OF ${SEGMENTS.length}`}
             </Text>
           )}
@@ -251,8 +240,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
                 style={[
                   styles.progressFill,
                   {
-                    backgroundColor: meta.color,
-                    shadowColor:     meta.color,
+                    backgroundColor: phaseColor,
+                    shadowColor:     phaseColor,
                     width: progressAnim.interpolate({
                       inputRange:  [0, 1],
                       outputRange: ['0%', '100%'],
@@ -271,13 +260,13 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           <>
             <Text style={styles.nextLabel}>NEXT</Text>
             <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
-            <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={20} />
-            <Text style={[styles.nextPhase, { color: nextMeta.color, marginLeft: 5 }]}>
+            <PhaseIcon phase={nextSeg!.phase} color={nextPhaseColor!} size={20} />
+            <Text style={[styles.nextPhase, { color: nextPhaseColor!, marginLeft: 5 }]}>
               {nextMeta.word}
             </Text>
           </>
         ) : (
-          <Text style={[styles.nextPhase, { color: meta.color }]}>FINISH</Text>
+          <Text style={[styles.nextPhase, { color: phaseColor }]}>FINISH</Text>
         )}
       </View>
 
@@ -289,7 +278,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               const widthPct    = (s.duration / TOTAL_DUR) * 100;
               const isActive    = !isDone && i === state.currentIndex;
               const isCompleted = isDone || (state.currentIndex > 0 && i < state.currentIndex);
-              const phColor     = PHASE_META[s.phase].color;
+              const phColor     = T.phases[s.phase];
 
               if (isActive) {
                 return (
@@ -374,7 +363,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   );
 }
 
-const styles = StyleSheet.create({
+function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   root: {
     flex: 1,
     paddingTop: 54,
@@ -426,8 +415,8 @@ const styles = StyleSheet.create({
     flex: 1.1,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 8,
-    gap: 8,
+    marginTop: -10,
+    gap: 24,
   },
   iconBadge: {
     width: 52,
@@ -449,7 +438,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold_Italic',
     fontSize: 24,
     letterSpacing: 24 * 0.05,
-    color: 'white',
+    color: T.onBg,
     opacity: 0.7,
     position: 'absolute',
     top: 48,
@@ -474,14 +463,14 @@ const styles = StyleSheet.create({
   },
   intervalCounter: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 22,
-    letterSpacing: 22 * 0.08,
-    color: 'white',
+    fontSize: 19,
+    letterSpacing: 19 * 0.08,
+    color: T.onBg,
   },
   progressTrack: {
     alignSelf: 'stretch',
     marginHorizontal: 16,
-    height: 22,
+    height: 26,
     borderRadius: 6,
     backgroundColor: T.hairline,
     overflow: 'hidden',
@@ -506,7 +495,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold',
     fontSize: 15,
     letterSpacing: 15 * 0.14,
-    color: 'white',
+    color: T.onBg,
   },
   nextPhase: {
     fontFamily: 'Inter_800ExtraBold',
@@ -520,7 +509,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   timelineBar: {
-    height: 32,
+    height: 26,
     position: 'relative',
   },
   segmentsClip: {
@@ -536,7 +525,7 @@ const styles = StyleSheet.create({
     bottom: -6,
     width: 2,
     marginLeft: -1,
-    backgroundColor: 'white',
+    backgroundColor: T.onBg,
     borderRadius: 1,
   },
   timelineSeg: {
@@ -579,4 +568,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+}); }

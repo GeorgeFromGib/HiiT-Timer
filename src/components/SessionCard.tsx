@@ -1,9 +1,10 @@
-import React from 'react';
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { expandWorkout, totalDuration } from '../workout';
+import { totalDuration } from '../workout';
+import { getSessionSegments } from '../sessions';
 import type { Session } from '../sessions';
-import { T } from '../theme';
+import { useTheme, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
 
 const DIFFICULTY_COLORS: Record<string, string> = {
@@ -30,7 +31,10 @@ interface Props {
 }
 
 export default function SessionCard({ session, selected, onPress, onLongPress, onEdit, onStart }: Props) {
-  const segments  = expandWorkout(session.config);
+  const { T } = useTheme();
+  const styles = useMemo(() => makeStyles(T), [T]);
+
+  const segments  = getSessionSegments(session);
   const total     = totalDuration(segments);
   const diffColor = DIFFICULTY_COLORS[session.difficulty] ?? T.accent;
 
@@ -44,9 +48,6 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
         <View style={styles.left}>
           <Text style={styles.title}>{session.name}</Text>
           <View style={styles.pillRow}>
-            <View style={[styles.pill, { backgroundColor: T.accent + '22', borderColor: T.accent + '44' }]}>
-              <Text style={[styles.pillText, { color: T.accent }]}>{session.category.toUpperCase()}</Text>
-            </View>
             <View style={[styles.pill, { backgroundColor: diffColor + '22', borderColor: diffColor + '44' }]}>
               <Text style={[styles.pillText, { color: diffColor }]}>{session.difficulty.toUpperCase()}</Text>
             </View>
@@ -69,11 +70,11 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
       <PhaseStrip session={session} />
 
       <View style={styles.statsRow}>
-        <View>
+        <View style={styles.statItem}>
           <Text style={styles.statValue}>{fmtDuration(total)}</Text>
           <Text style={styles.statLabel}>total</Text>
         </View>
-        <View>
+        <View style={styles.statItem}>
           <Text style={styles.statValue}>{segments.length}</Text>
           <Text style={styles.statLabel}>intervals</Text>
         </View>
@@ -81,105 +82,110 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
 
       {selected && (
         <Pressable onPress={onStart} style={styles.startBtn}>
-          <Text style={styles.startBtnText}>START SESSION</Text>
+          <Text style={styles.startBtnText}>SELECT</Text>
         </Pressable>
       )}
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 20,
-    padding: 16,
-    paddingBottom: 14,
-    backgroundColor: T.ghostBg,
-    borderWidth: 1.5,
-    borderColor: T.hairline,
-  },
-  cardSelected: {
-    backgroundColor: '#3ad6c614',
-    borderColor: '#3ad6c6',
-    shadowColor: '#3ad6c6',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 4,
-  },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-  },
-  left: {
-    flex: 1,
-    gap: 6,
-  },
-  title: {
-    fontFamily: 'Inter_800ExtraBold',
-    fontSize: 16,
-    letterSpacing: 16 * -0.01,
-    color: T.text,
-  },
-  pillRow: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  pill: {
-    paddingVertical: 3,
-    paddingHorizontal: 9,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-  pillText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10.5,
-    letterSpacing: 10.5 * 0.1,
-  },
-  editBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: T.ghostBg,
-    borderWidth: 1,
-    borderColor: T.hairline,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: 16,
-    marginTop: 10,
-  },
-  statValue: {
-    fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 14,
-    color: T.text,
-  },
-  statLabel: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 11,
-    color: T.faintText,
-    marginTop: 1,
-  },
-  startBtn: {
-    marginTop: 12,
-    backgroundColor: T.accent,
-    borderRadius: 14,
-    paddingVertical: 12,
-    alignItems: 'center',
-    shadowColor: '#3ad6c6',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.33,
-    shadowRadius: 14,
-    elevation: 6,
-  },
-  startBtnText: {
-    fontFamily: 'Inter_800ExtraBold',
-    fontSize: 14,
-    letterSpacing: 14 * 0.06,
-    textTransform: 'uppercase',
-    color: T.btnGlyph,
-  },
-});
+function makeStyles(T: ThemeTokens) {
+  return StyleSheet.create({
+    card: {
+      borderRadius: 20,
+      padding: 16,
+      paddingBottom: 14,
+      backgroundColor: T.ghostBg,
+      borderWidth: 1.5,
+      borderColor: T.hairline,
+    },
+    cardSelected: {
+      backgroundColor: T.accent + '14',
+      borderColor: T.accent,
+      shadowColor: T.accent,
+      shadowOpacity: 0.2,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 0 },
+      elevation: 4,
+    },
+    topRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+    },
+    left: {
+      flex: 1,
+      gap: 6,
+    },
+    title: {
+      fontFamily: 'Inter_800ExtraBold',
+      fontSize: 16,
+      letterSpacing: 16 * -0.01,
+      color: T.text,
+    },
+    pillRow: {
+      flexDirection: 'row',
+      gap: 6,
+    },
+    pill: {
+      paddingVertical: 3,
+      paddingHorizontal: 9,
+      borderRadius: 999,
+      borderWidth: 1,
+    },
+    pillText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 10.5,
+      letterSpacing: 10.5 * 0.1,
+    },
+    editBtn: {
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      backgroundColor: T.ghostBg,
+      borderWidth: 1,
+      borderColor: T.hairline,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 8,
+    },
+    statsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginTop: 10,
+    },
+    statItem: {
+      alignItems: 'center',
+    },
+    statValue: {
+      fontFamily: 'ChakraPetch_700Bold',
+      fontSize: 15,
+      color: T.text,
+    },
+    statLabel: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 12,
+      color: T.faintText,
+      marginTop: 1,
+    },
+    startBtn: {
+      marginTop: 12,
+      backgroundColor: T.accent,
+      borderRadius: 14,
+      paddingVertical: 12,
+      alignItems: 'center',
+      shadowColor: T.accent,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.33,
+      shadowRadius: 14,
+      elevation: 6,
+    },
+    startBtnText: {
+      fontFamily: 'Inter_800ExtraBold',
+      fontSize: 14,
+      letterSpacing: 14 * 0.06,
+      textTransform: 'uppercase',
+      color: T.btnGlyph,
+    },
+  });
+}

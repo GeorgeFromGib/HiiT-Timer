@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { loadSessions, saveSessions, newId, type Session, type Category, type Difficulty } from './sessions';
-import { expandWorkout, PHASE_META, totalDuration } from './workout';
-import { T } from './theme';
+import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
+import { loadSessions, saveSessions, newId, type Session, type Difficulty } from './sessions';
+import { expandWorkout, intervalsToSegments, totalDuration, type Interval, type Phase } from './workout';
+import { useTheme, type ThemeTokens } from './theme';
 import WheelColumn from './components/WheelColumn';
 
 const DIFFICULTY_COLORS: Record<Difficulty, string> = {
@@ -24,13 +25,25 @@ const DIFFICULTY_COLORS: Record<Difficulty, string> = {
   Hard:   '#ff5a5f',
 };
 
-const CATEGORIES: Category[]    = ['HIIT', 'Express', 'Steady'];
 const DIFFICULTIES: Difficulty[] = ['Easy', 'Medium', 'Hard'];
+const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
+const PHASE_LABELS: Record<Phase, string> = {
+  warmup:   'Warm Up',
+  work:     'Work',
+  rest:     'Rest',
+  cooldown: 'Cool Down',
+};
 
 const MINUTE_LABELS = Array.from({ length: 60 }, (_, i) => String(i));
 const SECOND_LABELS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
+type LocalInterval = Interval & { _key: string };
+const toLocal = (iv: Interval): LocalInterval => ({ ...iv, _key: Math.random().toString(36).slice(2) });
+
 type TimeField = 'warmup' | 'work' | 'rest' | 'cooldown';
+type ActivePicker =
+  | { type: 'field'; field: TimeField }
+  | { type: 'interval'; key: string };
 
 function fmtDuration(s: number): string {
   const m = Math.floor(s / 60);
@@ -46,34 +59,53 @@ interface Props {
 }
 
 export default function EditSessionScreen({ session: existing, onBack }: Props) {
+  const { T } = useTheme();
+  const styles = useMemo(() => makeStyles(T), [T]);
   const isEditing = !!existing;
 
-  const [name,       setName]       = useState(existing?.name                   ?? '');
-  const [category,   setCategory]   = useState<Category>(existing?.category     ?? 'HIIT');
+  // Shared fields
+  const [name,       setName]       = useState(existing?.name       ?? '');
   const [difficulty, setDifficulty] = useState<Difficulty>(existing?.difficulty ?? 'Medium');
-  const [warmup,     setWarmup]     = useState(existing?.config.warmup           ?? 30);
-  const [work,       setWork]       = useState(existing?.config.high             ?? 30);
-  const [rest,       setRest]       = useState(existing?.config.low              ?? 15);
-  const [rounds,     setRounds]     = useState(String(existing?.config.rounds   ?? 4));
-  const [cooldown,   setCooldown]   = useState(existing?.config.cooldown         ?? 30);
 
-  const [activeField,   setActiveField]   = useState<TimeField | null>(null);
-  const [pickerMinutes, setPickerMinutes] = useState(0);
-  const [pickerSeconds, setPickerSeconds] = useState(0);
+  // Mode — locked once a session exists, selectable for new sessions
+  const [mode, setMode] = useState<'easy' | 'advanced'>(existing?.mode ?? 'easy');
 
+  // ── Easy mode state ─────────────────────────────────────────────────────────
+  const [warmup,   setWarmup]   = useState(existing?.mode === 'easy' ? existing.config.warmup   : 30);
+  const [work,     setWork]     = useState(existing?.mode === 'easy' ? existing.config.high     : 30);
+  const [rest,     setRest]     = useState(existing?.mode === 'easy' ? existing.config.low      : 15);
+  const [rounds,   setRounds]   = useState(String(existing?.mode === 'easy' ? existing.config.rounds  : 4));
+  const [cooldown, setCooldown] = useState(existing?.mode === 'easy' ? existing.config.cooldown : 30);
+
+  // ── Advanced mode state ─────────────────────────────────────────────────────
+  const [intervals, setIntervals] = useState<LocalInterval[]>(
+    existing?.mode === 'advanced' ? existing.intervals.map(toLocal) : []
+  );
+
+  // ── Duration picker ─────────────────────────────────────────────────────────
+  const [activePicker,   setActivePicker]   = useState<ActivePicker | null>(null);
+  const [pickerMinutes,  setPickerMinutes]  = useState(0);
+  const [pickerSeconds,  setPickerSeconds]  = useState(0);
+
+  // ── Derived ─────────────────────────────────────────────────────────────────
   const toNum = (s: string, min = 0) => Math.max(min, parseInt(s, 10) || 0);
 
-  const previewConfig = {
+  const easyConfig = {
     warmup,
     high:     Math.max(1, work),
     low:      rest,
     rounds:   toNum(rounds, 1),
     cooldown,
   };
-  const previewSegments = expandWorkout(previewConfig);
-  const previewTotal    = totalDuration(previewSegments);
 
-  const fieldValues: Record<TimeField, number> = { warmup, work, rest, cooldown };
+  const previewSegments = useMemo(
+    () => mode === 'easy' ? expandWorkout(easyConfig) : intervalsToSegments(intervals),
+    [mode, warmup, work, rest, rounds, cooldown, intervals],
+  );
+  const previewTotal = totalDuration(previewSegments);
+
+  // ── Easy mode field helpers ─────────────────────────────────────────────────
+  const fieldValues: Record<TimeField, number>            = { warmup, work, rest, cooldown };
   const fieldSetters: Record<TimeField, (v: number) => void> = {
     warmup:   setWarmup,
     work:     setWork,
@@ -81,32 +113,70 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     cooldown: setCooldown,
   };
 
-  function openPicker(field: TimeField) {
+  function openFieldPicker(field: TimeField) {
     const secs = fieldValues[field];
     setPickerMinutes(Math.floor(secs / 60));
     setPickerSeconds(secs % 60);
-    setActiveField(field);
+    setActivePicker({ type: 'field', field });
   }
 
+  // ── Advanced mode helpers ───────────────────────────────────────────────────
+  function openIntervalPicker(key: string) {
+    const iv = intervals.find(i => i._key === key);
+    if (!iv) return;
+    setPickerMinutes(Math.floor(iv.dur / 60));
+    setPickerSeconds(iv.dur % 60);
+    setActivePicker({ type: 'interval', key });
+  }
+
+  function cyclePhase(key: string) {
+    setIntervals(ivs => ivs.map(iv =>
+      iv._key === key
+        ? { ...iv, type: PHASES[(PHASES.indexOf(iv.type) + 1) % PHASES.length] }
+        : iv
+    ));
+  }
+
+  function addInterval() {
+    setIntervals(ivs => [...ivs, toLocal({ type: 'work', dur: 30 })]);
+  }
+
+  function removeInterval(key: string) {
+    setIntervals(ivs => ivs.filter(iv => iv._key !== key));
+  }
+
+  // ── Picker done ─────────────────────────────────────────────────────────────
   function handlePickerDone() {
-    if (!activeField) return;
-    fieldSetters[activeField](pickerMinutes * 60 + pickerSeconds);
-    setActiveField(null);
+    if (!activePicker) return;
+    const secs = pickerMinutes * 60 + pickerSeconds;
+    if (activePicker.type === 'field') {
+      fieldSetters[activePicker.field](secs);
+    } else {
+      setIntervals(ivs =>
+        ivs.map(iv => iv._key === activePicker.key ? { ...iv, dur: secs } : iv)
+      );
+    }
+    setActivePicker(null);
   }
 
+  // ── Save / Delete ───────────────────────────────────────────────────────────
   const handleSave = async () => {
     if (!name.trim()) {
       Alert.alert('Name required', 'Please enter a session name.');
       return;
     }
+    if (mode === 'advanced' && intervals.length === 0) {
+      Alert.alert('No intervals', 'Add at least one interval.');
+      return;
+    }
+
+    const base = { id: existing?.id ?? newId(), name: name.trim(), difficulty };
+    const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+    const updated: Session = mode === 'easy'
+      ? { ...base, mode: 'easy', config: easyConfig }
+      : { ...base, mode: 'advanced', intervals: cleanIntervals };
+
     const sessions = await loadSessions();
-    const updated: Session = {
-      id: existing?.id ?? newId(),
-      name: name.trim(),
-      category,
-      difficulty,
-      config: previewConfig,
-    };
     const next = isEditing
       ? sessions.map(s => (s.id === updated.id ? updated : s))
       : [...sessions, updated];
@@ -130,6 +200,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     ]);
   };
 
+  // ── Render ─────────────────────────────────────────────────────────────────
   const timeFields: { label: string; field: TimeField }[] = [
     { label: 'Warmup',   field: 'warmup'   },
     { label: 'Work',     field: 'work'     },
@@ -137,9 +208,14 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     { label: 'Cooldown', field: 'cooldown' },
   ];
 
-  const activeLabel = activeField
-    ? activeField.charAt(0).toUpperCase() + activeField.slice(1)
-    : '';
+  const pickerTitle = (() => {
+    if (!activePicker) return '';
+    if (activePicker.type === 'field') {
+      return activePicker.field.charAt(0).toUpperCase() + activePicker.field.slice(1);
+    }
+    const idx = intervals.findIndex(iv => iv._key === activePicker.key);
+    return `Interval ${idx + 1}`;
+  })();
 
   return (
     <LinearGradient
@@ -183,32 +259,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             />
           </View>
 
-          {/* Category */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>CATEGORY</Text>
-            <View style={styles.toggleRow}>
-              {CATEGORIES.map(cat => {
-                const active = category === cat;
-                return (
-                  <Pressable
-                    key={cat}
-                    onPress={() => setCategory(cat)}
-                    style={[
-                      styles.toggleBtn,
-                      active
-                        ? { backgroundColor: T.accent + '22', borderColor: T.accent }
-                        : { backgroundColor: T.ghostBg, borderColor: T.hairline },
-                    ]}
-                  >
-                    <Text style={[styles.toggleBtnText, { color: active ? T.accent : T.subText }]}>
-                      {cat}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-
           {/* Difficulty */}
           <View style={styles.fieldGroup}>
             <Text style={styles.fieldLabel}>DIFFICULTY</Text>
@@ -236,36 +286,104 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </View>
           </View>
 
-          {/* Timing config */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>TIMING</Text>
-            <View style={styles.configGrid}>
-              {timeFields.map(({ label, field }) => (
-                <View key={field} style={styles.configCell}>
-                  <Text style={styles.configCellLabel}>{label}</Text>
-                  <Pressable
-                    style={styles.configInput}
-                    onPress={() => openPicker(field)}
-                  >
-                    <Text style={styles.configInputText}>
-                      {fmtDuration(fieldValues[field])}
-                    </Text>
-                  </Pressable>
-                </View>
-              ))}
-              <View style={styles.configCell}>
-                <Text style={styles.configCellLabel}>Rounds</Text>
-                <TextInput
-                  style={[styles.configInput, styles.configInputText]}
-                  value={rounds}
-                  onChangeText={setRounds}
-                  keyboardType="numeric"
-                  returnKeyType="done"
-                  selectTextOnFocus
-                />
+          {/* Mode toggle — only for new sessions */}
+          {!isEditing && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>SETUP MODE</Text>
+              <View style={styles.toggleRow}>
+                {(['easy', 'advanced'] as const).map(m => {
+                  const active = mode === m;
+                  return (
+                    <Pressable
+                      key={m}
+                      onPress={() => setMode(m)}
+                      style={[
+                        styles.toggleBtn,
+                        active
+                          ? { backgroundColor: T.accent + '22', borderColor: T.accent }
+                          : { backgroundColor: T.ghostBg, borderColor: T.hairline },
+                      ]}
+                    >
+                      <Text style={[styles.toggleBtnText, { color: active ? T.accent : T.subText }]}>
+                        {m === 'easy' ? 'Easy' : 'Advanced'}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
               </View>
             </View>
-          </View>
+          )}
+
+          {/* ── Easy mode timing ──────────────────────────────────────────── */}
+          {mode === 'easy' && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>TIMING</Text>
+              <View style={styles.configGrid}>
+                {timeFields.map(({ label, field }) => (
+                  <View key={field} style={styles.configCell}>
+                    <Text style={styles.configCellLabel}>{label}</Text>
+                    <Pressable
+                      style={styles.configInput}
+                      onPress={() => openFieldPicker(field)}
+                    >
+                      <Text style={styles.configInputText}>
+                        {fmtDuration(fieldValues[field])}
+                      </Text>
+                    </Pressable>
+                  </View>
+                ))}
+                <View style={styles.configCell}>
+                  <Text style={styles.configCellLabel}>Rounds</Text>
+                  <TextInput
+                    style={[styles.configInput, styles.configInputText]}
+                    value={rounds}
+                    onChangeText={setRounds}
+                    keyboardType="numeric"
+                    returnKeyType="done"
+                    selectTextOnFocus
+                  />
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* ── Advanced mode interval list ───────────────────────────────── */}
+          {mode === 'advanced' && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>INTERVALS</Text>
+              {intervals.length === 0 && (
+                <View style={styles.emptyState}>
+                  <Text style={styles.emptyStateText}>No intervals yet. Add one below.</Text>
+                </View>
+              )}
+              <DraggableFlatList
+                data={intervals}
+                keyExtractor={iv => iv._key}
+                scrollEnabled={false}
+                onDragEnd={({ data }) => setIntervals(data)}
+                renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
+                  <ScaleDecorator>
+                    <IntervalRow
+                      interval={iv}
+                      T={T}
+                      styles={styles}
+                      isActive={isActive}
+                      onCyclePhase={() => cyclePhase(iv._key)}
+                      onOpenPicker={() => openIntervalPicker(iv._key)}
+                      onDelete={() => removeInterval(iv._key)}
+                      onDrag={drag}
+                    />
+                  </ScaleDecorator>
+                )}
+              />
+              <Pressable onPress={addInterval} style={styles.addIntervalBtn}>
+                <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+                  <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
+                </Svg>
+                <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>Add Interval</Text>
+              </Pressable>
+            </View>
+          )}
 
           {/* Preview */}
           <View style={styles.fieldGroup}>
@@ -280,7 +398,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                         styles.previewStripSeg,
                         {
                           flex: seg.duration / previewTotal,
-                          backgroundColor: PHASE_META[seg.phase].color + 'd9',
+                          backgroundColor: T.phases[seg.phase] + 'd9',
                         },
                       ]}
                     />
@@ -311,19 +429,19 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
 
       {/* Duration picker modal */}
       <Modal
-        visible={activeField !== null}
+        visible={activePicker !== null}
         transparent
         animationType="slide"
-        onRequestClose={() => setActiveField(null)}
+        onRequestClose={() => setActivePicker(null)}
       >
         <View style={styles.modalOverlay}>
-          <Pressable style={styles.modalDismiss} onPress={() => setActiveField(null)} />
+          <Pressable style={styles.modalDismiss} onPress={() => setActivePicker(null)} />
           <View style={styles.modalSheet}>
             <View style={styles.modalHeader}>
-              <Pressable onPress={() => setActiveField(null)} style={styles.modalCancelBtn}>
+              <Pressable onPress={() => setActivePicker(null)} style={styles.modalCancelBtn}>
                 <Text style={styles.modalCancelText}>Cancel</Text>
               </Pressable>
-              <Text style={styles.modalTitle}>{activeLabel}</Text>
+              <Text style={styles.modalTitle}>{pickerTitle}</Text>
               <Pressable onPress={handlePickerDone} style={styles.modalDoneBtn}>
                 <Text style={styles.modalDoneText}>Done</Text>
               </Pressable>
@@ -357,7 +475,52 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
   );
 }
 
-const styles = StyleSheet.create({
+// ── Interval row component ───────────────────────────────────────────────────
+
+interface IntervalRowProps {
+  interval:     Interval;
+  T:            ThemeTokens;
+  styles:       ReturnType<typeof makeStyles>;
+  isActive:     boolean;
+  onCyclePhase: () => void;
+  onOpenPicker: () => void;
+  onDelete:     () => void;
+  onDrag:       () => void;
+}
+
+function IntervalRow({
+  interval, T, styles, isActive,
+  onCyclePhase, onOpenPicker, onDelete, onDrag,
+}: IntervalRowProps) {
+  const phaseColor = T.phases[interval.type];
+  return (
+    <View style={[styles.intervalRow, isActive && styles.intervalRowActive]}>
+      <Pressable onPressIn={onDrag} style={styles.dragHandle} hitSlop={8}>
+        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+          <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.faintText} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+      </Pressable>
+
+      <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: phaseColor + '22', borderColor: phaseColor }]}>
+        <Text style={[styles.phasePillText, { color: phaseColor }]}>{PHASE_LABELS[interval.type]}</Text>
+      </Pressable>
+
+      <Pressable onPress={onOpenPicker} style={styles.intervalDuration}>
+        <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
+      </Pressable>
+
+      <Pressable onPress={onDelete} style={styles.deleteIntervalBtn}>
+        <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+          <Path d="M18 6L6 18M6 6l12 12" stroke="#ff5a5f" strokeWidth={2.2} strokeLinecap="round" />
+        </Svg>
+      </Pressable>
+    </View>
+  );
+}
+
+// ── Styles ───────────────────────────────────────────────────────────────────
+
+function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   root: { flex: 1 },
   kav:  { flex: 1 },
 
@@ -469,6 +632,98 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  // ── Interval list ──────────────────────────────────────────────────────────
+  emptyState: {
+    backgroundColor: T.ghostBg,
+    borderWidth: 1.5,
+    borderColor: T.hairline,
+    borderRadius: 12,
+    paddingVertical: 18,
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 13,
+    color: T.faintText,
+  },
+
+  intervalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: T.ghostBg,
+    borderWidth: 1.5,
+    borderColor: T.hairline,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 6,
+  },
+  intervalRowActive: {
+    borderColor: T.accent,
+    backgroundColor: T.accent + '14',
+    shadowColor: T.accent,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 4,
+  },
+  dragHandle: {
+    paddingHorizontal: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  phasePill: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    borderWidth: 1.5,
+  },
+  phasePillText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 11,
+    letterSpacing: 11 * 0.06,
+  },
+  intervalDuration: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingRight: 4,
+  },
+  intervalDurationText: {
+    fontFamily: 'ChakraPetch_700Bold',
+    fontSize: 16,
+    color: T.text,
+  },
+  deleteIntervalBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: '#ff5a5f14',
+    borderWidth: 1,
+    borderColor: '#ff5a5f44',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  addIntervalBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderWidth: 1.5,
+    borderColor: T.accent + '55',
+    borderRadius: 12,
+    borderStyle: 'dashed',
+    paddingVertical: 12,
+    marginTop: 2,
+  },
+  addIntervalBtnText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 13,
+    letterSpacing: 13 * 0.04,
+  },
+
+  // ── Preview ────────────────────────────────────────────────────────────────
   previewCard: {
     backgroundColor: T.ghostBg,
     borderWidth: 1.5,
@@ -493,12 +748,13 @@ const styles = StyleSheet.create({
     color: T.subText,
   },
 
+  // ── Save / Delete ──────────────────────────────────────────────────────────
   saveBtn: {
     backgroundColor: T.accent,
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
-    shadowColor: '#3ad6c6',
+    shadowColor: T.accent,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.33,
     shadowRadius: 14,
@@ -524,7 +780,7 @@ const styles = StyleSheet.create({
     color: '#ff5a5f',
   },
 
-  // Modal
+  // ── Duration picker modal ─────────────────────────────────────────────────
   modalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
@@ -605,4 +861,4 @@ const styles = StyleSheet.create({
     letterSpacing: 11 * 0.12,
     textTransform: 'uppercase',
   },
-});
+}); }

@@ -1,39 +1,45 @@
 import { File, Paths } from 'expo-file-system';
-import type { WorkoutConfig } from './workout';
+import type { Interval, Segment, WorkoutConfig } from './workout';
+import { expandWorkout, intervalsToSegments } from './workout';
 
-export type Category = 'HIIT' | 'Express' | 'Steady';
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
-export interface Session {
+export type Session = {
   id: string;
   name: string;
-  category: Category;
   difficulty: Difficulty;
-  config: WorkoutConfig;
+} & (
+  | { mode: 'easy'; config: WorkoutConfig }
+  | { mode: 'advanced'; intervals: Interval[] }
+);
+
+export function getSessionSegments(session: Session): Segment[] {
+  if (session.mode === 'advanced') return intervalsToSegments(session.intervals);
+  return expandWorkout(session.config);
 }
 
-const sessionsFile = () => new File(Paths.document, 'sessions_v1.json');
+const sessionsFile = () => new File(Paths.document, 'sessions_v2.json');
 
 export const DEFAULT_SESSIONS: Session[] = [
   {
     id: 'default-1',
     name: 'Tabata Burnout',
-    category: 'HIIT',
     difficulty: 'Hard',
+    mode: 'easy',
     config: { warmup: 45, high: 30, low: 15, rounds: 4, cooldown: 60 },
   },
   {
     id: 'default-2',
     name: 'Quick Express',
-    category: 'Express',
     difficulty: 'Medium',
+    mode: 'easy',
     config: { warmup: 20, high: 20, low: 10, rounds: 3, cooldown: 30 },
   },
   {
     id: 'default-3',
     name: 'Steady Burn',
-    category: 'Steady',
     difficulty: 'Easy',
+    mode: 'easy',
     config: { warmup: 60, high: 45, low: 30, rounds: 3, cooldown: 60 },
   },
 ];

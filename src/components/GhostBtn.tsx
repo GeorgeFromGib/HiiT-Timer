@@ -1,6 +1,6 @@
 import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { T } from '../theme';
+import { Pressable } from 'react-native';
+import { useTheme } from '../theme';
 
 interface Props {
   onPress:   () => void;
@@ -9,26 +9,26 @@ interface Props {
 }
 
 export default function GhostBtn({ onPress, disabled, children }: Props) {
+  const { T } = useTheme();
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      style={[styles.btn, disabled && { opacity: 0.3 }]}
+      style={[
+        {
+          width: 54,
+          height: 54,
+          borderRadius: 27,
+          backgroundColor: T.ghostBg,
+          borderWidth: 1,
+          borderColor: T.hairline,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        disabled && { opacity: 0.3 },
+      ]}
     >
       {children}
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  btn: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: T.ghostBg,
-    borderWidth: 1,
-    borderColor: T.hairline,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

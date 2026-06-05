@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { T } from '../theme';
+import { useTheme } from '../theme';
 
 const ITEM_H  = 48;
 const VISIBLE = 5;
@@ -14,11 +14,18 @@ interface Props {
 }
 
 export default function WheelColumn({ values, selected, onChange }: Props) {
+  const { T } = useTheme();
   const ref = useRef<ScrollView>(null);
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.band} pointerEvents="none" />
+      <View
+        style={[
+          styles.band,
+          { borderColor: T.accent },
+        ]}
+        pointerEvents="none"
+      />
       <ScrollView
         ref={ref}
         showsVerticalScrollIndicator={false}
@@ -37,7 +44,15 @@ export default function WheelColumn({ values, selected, onChange }: Props) {
       >
         {values.map((v, i) => (
           <View key={i} style={styles.item}>
-            <Text style={[styles.label, i === selected && styles.labelSelected]}>{v}</Text>
+            <Text
+              style={[
+                styles.label,
+                { color: i === selected ? T.text : T.subText },
+                i === selected && styles.labelSelected,
+              ]}
+            >
+              {v}
+            </Text>
           </View>
         ))}
       </ScrollView>
@@ -59,7 +74,6 @@ const styles = StyleSheet.create({
     height: ITEM_H,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: T.accent,
     borderRadius: 6,
     zIndex: 1,
   },
@@ -71,10 +85,8 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: 'ChakraPetch_700Bold',
     fontSize: 22,
-    color: T.subText,
   },
   labelSelected: {
-    color: T.text,
     fontSize: 26,
   },
 });
