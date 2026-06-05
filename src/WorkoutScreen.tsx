@@ -21,6 +21,7 @@ import type { Session } from './sessions';
 import { T } from './theme';
 import PhaseIcon from './components/PhaseIcon';
 import ReadyIcon from './components/ReadyIcon';
+import FinishedIcon from './components/FinishedIcon';
 import GhostBtn  from './components/GhostBtn';
 
 const tfmt = (s: number) => {
@@ -146,76 +147,86 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       {/* ── Phase center block ── */}
       <View style={styles.phaseBlock}>
         <View style={[styles.iconBadge, {
-          backgroundColor: (isPreStart ? T.accent : meta.color) + '22',
-          borderColor:     (isPreStart ? T.accent : meta.color) + '55',
+          backgroundColor: (isPreStart || isDone ? T.accent : meta.color) + '22',
+          borderColor:     (isPreStart || isDone ? T.accent : meta.color) + '55',
         }]}>
-          {isPreStart
-            ? <ReadyIcon color={T.accent} size={30} />
-            : <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
+          {isDone
+            ? <FinishedIcon color={T.accent} size={30} />
+            : isPreStart
+              ? <ReadyIcon color={T.accent} size={30} />
+              : <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
           }
         </View>
 
         <Text style={[styles.phaseLabel, {
-          color:           isPreStart ? T.accent : meta.color,
-          textShadowColor: (isPreStart ? T.accent : meta.color) + '55',
+          color:           (isPreStart || isDone) ? T.accent : meta.color,
+          textShadowColor: ((isPreStart || isDone) ? T.accent : meta.color) + '55',
         }]}>
-          {isPreStart ? 'GET READY' : meta.word}
+          {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
         </Text>
 
-        <View style={styles.countdownRow}>
-          {displayCountdown.split('').map((ch, i) => (
-            <Text
-              key={i}
-              style={[styles.countdown, {
-                textShadowColor: (isPreStart ? T.accent : meta.color) + '3a',
-                fontSize: countdownFontSize,
-                lineHeight: countdownFontSize,
-                width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
-              }]}
-            >
-              {ch}
-            </Text>
-          ))}
-        </View>
+        {!isDone && (
+          <View style={styles.countdownRow}>
+            {displayCountdown.split('').map((ch, i) => (
+              <Text
+                key={i}
+                style={[styles.countdown, {
+                  textShadowColor: (isPreStart ? T.accent : meta.color) + '3a',
+                  fontSize: countdownFontSize,
+                  lineHeight: countdownFontSize,
+                  width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
+                }]}
+              >
+                {ch}
+              </Text>
+            ))}
+          </View>
+        )}
 
-        <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
-          {'INTERVAL '}
-          <Text style={{ color: 'white' }}>{intervalNum}</Text>
-          {` OF ${SEGMENTS.length}`}
-        </Text>
+        {!isDone && (
+          <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
+            {'INTERVAL '}
+            <Text style={{ color: 'white' }}>{intervalNum}</Text>
+            {` OF ${SEGMENTS.length}`}
+          </Text>
+        )}
 
-        <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
-          <Animated.View
-            style={[
-              styles.progressFill,
-              {
-                backgroundColor: meta.color,
-                shadowColor:     meta.color,
-                width: progressAnim.interpolate({
-                  inputRange:  [0, 1],
-                  outputRange: ['0%', '100%'],
-                }),
-              },
-            ]}
-          />
-        </View>
+        {!isDone && (
+          <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
+            <Animated.View
+              style={[
+                styles.progressFill,
+                {
+                  backgroundColor: meta.color,
+                  shadowColor:     meta.color,
+                  width: progressAnim.interpolate({
+                    inputRange:  [0, 1],
+                    outputRange: ['0%', '100%'],
+                  }),
+                },
+              ]}
+            />
+          </View>
+        )}
       </View>
 
       {/* ── Next up row ── */}
-      <View style={styles.nextUpRow}>
-        {nextMeta ? (
-          <>
-            <Text style={styles.nextLabel}>NEXT</Text>
-            <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
-            <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={20} />
-            <Text style={[styles.nextPhase, { color: nextMeta.color, marginLeft: 5 }]}>
-              {nextMeta.word}
-            </Text>
-          </>
-        ) : (
-          <Text style={[styles.nextPhase, { color: meta.color }]}>FINISH</Text>
-        )}
-      </View>
+      {!isDone && (
+        <View style={styles.nextUpRow}>
+          {nextMeta ? (
+            <>
+              <Text style={styles.nextLabel}>NEXT</Text>
+              <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
+              <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={20} />
+              <Text style={[styles.nextPhase, { color: nextMeta.color, marginLeft: 5 }]}>
+                {nextMeta.word}
+              </Text>
+            </>
+          ) : (
+            <Text style={[styles.nextPhase, { color: meta.color }]}>FINISH</Text>
+          )}
+        </View>
+      )}
 
       {/* ── Timeline strip ── */}
       <View style={styles.timelineWrap}>
@@ -223,8 +234,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           <View style={styles.segmentsClip}>
             {SEGMENTS.map((s, i) => {
               const widthPct    = (s.duration / TOTAL_DUR) * 100;
-              const isActive    = i === state.currentIndex;
-              const isCompleted = state.currentIndex > 0 && i < state.currentIndex;
+              const isActive    = !isDone && i === state.currentIndex;
+              const isCompleted = !isDone && state.currentIndex > 0 && i < state.currentIndex;
               const phColor     = PHASE_META[s.phase].color;
 
               if (isActive) {
