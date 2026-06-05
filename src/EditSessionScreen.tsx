@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -15,18 +15,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { loadSessions, saveSessions, newId, type Session, type Category, type Difficulty } from './sessions';
 import { expandWorkout, PHASE_META, totalDuration } from './workout';
-
-const T = {
-  bgGradient: ['#0b1d26', '#0e2832'] as const,
-  text:      '#eef6f7',
-  subText:   'rgba(255,255,255,0.72)',
-  faintText: 'rgba(255,255,255,0.44)',
-  hairline:  'rgba(255,255,255,0.10)',
-  ghostBg:   'rgba(255,255,255,0.05)',
-  accent:    '#3ad6c6',
-  btnGlyph:  '#06131a',
-  sheetBg:   '#0e2832',
-};
+import { T } from './theme';
+import WheelColumn from './components/WheelColumn';
 
 const DIFFICULTY_COLORS: Record<Difficulty, string> = {
   Easy:   '#5fd38a',
@@ -37,9 +27,8 @@ const DIFFICULTY_COLORS: Record<Difficulty, string> = {
 const CATEGORIES: Category[]    = ['HIIT', 'Express', 'Steady'];
 const DIFFICULTIES: Difficulty[] = ['Easy', 'Medium', 'Hard'];
 
-const ITEM_H = 48;
-const VISIBLE = 5;
-const WHEEL_H = ITEM_H * VISIBLE;
+const MINUTE_LABELS = Array.from({ length: 60 }, (_, i) => String(i));
+const SECOND_LABELS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
 type TimeField = 'warmup' | 'work' | 'rest' | 'cooldown';
 
@@ -50,83 +39,6 @@ function fmtDuration(s: number): string {
   if (sec === 0) return `${m}m`;
   return `${m}m ${sec}s`;
 }
-
-interface WheelProps {
-  values: string[];
-  selected: number;
-  onChange: (i: number) => void;
-}
-
-function WheelColumn({ values, selected, onChange }: WheelProps) {
-  const ref = useRef<ScrollView>(null);
-
-  return (
-    <View style={wheel.wrap}>
-      {/* selection band */}
-      <View style={wheel.band} pointerEvents="none" />
-
-      <ScrollView
-        ref={ref}
-        showsVerticalScrollIndicator={false}
-        snapToInterval={ITEM_H}
-        decelerationRate="fast"
-        contentContainerStyle={{ paddingVertical: ITEM_H * 2 }}
-        contentOffset={{ x: 0, y: selected * ITEM_H }}
-        onMomentumScrollEnd={e => {
-          const i = Math.round(e.nativeEvent.contentOffset.y / ITEM_H);
-          onChange(Math.max(0, Math.min(values.length - 1, i)));
-        }}
-        onScrollEndDrag={e => {
-          const i = Math.round(e.nativeEvent.contentOffset.y / ITEM_H);
-          onChange(Math.max(0, Math.min(values.length - 1, i)));
-        }}
-      >
-        {values.map((v, i) => (
-          <View key={i} style={wheel.item}>
-            <Text style={[wheel.label, i === selected && wheel.labelSelected]}>{v}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
-  );
-}
-
-const wheel = StyleSheet.create({
-  wrap: {
-    flex: 1,
-    height: WHEEL_H,
-    overflow: 'hidden',
-  },
-  band: {
-    position: 'absolute',
-    top: ITEM_H * 2,
-    left: 8,
-    right: 8,
-    height: ITEM_H,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: T.accent,
-    borderRadius: 6,
-    zIndex: 1,
-  },
-  item: {
-    height: ITEM_H,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  label: {
-    fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 22,
-    color: T.subText,
-  },
-  labelSelected: {
-    color: T.text,
-    fontSize: 26,
-  },
-});
-
-const MINUTE_LABELS = Array.from({ length: 60 }, (_, i) => String(i));
-const SECOND_LABELS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
 interface Props {
   session?: Session;

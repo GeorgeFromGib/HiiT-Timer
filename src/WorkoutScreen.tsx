@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
+import Svg, { Path, Rect } from 'react-native-svg';
 import { configureAudioSession, useWorkoutAudio } from './audio';
 import { useTimerEngine } from './timerEngine';
 import {
@@ -18,58 +18,10 @@ import {
   totalDuration,
 } from './workout';
 import type { Session } from './sessions';
-
-// ─── Tidal (dark) theme ───────────────────────────────────────────────────────
-const T = {
-  bgGradient: ['#0b1d26', '#0e2832'] as const,
-  text:      '#eef6f7',
-  subText:   'rgba(255,255,255,0.72)',
-  faintText: 'rgba(255,255,255,0.44)',
-  hairline:  'rgba(255,255,255,0.10)',
-  ghostBg:   'rgba(255,255,255,0.05)',
-  accent:    '#3ad6c6',
-  btnGlyph:  '#06131a',
-};
-
-
-// Phase icons — exact paths from design/themed-core.jsx (TIcon)
-// All stroke-based: fill none, strokeWidth 2.2, round caps/joins
-function PhaseIcon({ phase, color, size = 23 }: { phase: Phase; color: string; size?: number }) {
-  const p = { fill: 'none', stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24">
-      {phase === 'warmup' || phase === 'cooldown' ? (
-        <G {...p}>
-          <Circle cx="12" cy="12" r="4.2" />
-          <Path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8" />
-        </G>
-      ) : phase === 'work' ? (
-        <Path {...p} d="M12 2.5c3 4 6 5.5 6 10a6 6 0 0 1-12 0c0-2 1-3.4 2.4-4.6.2 1.6 1 2.4 2 2.6-1.2-3 .3-6.4 1.6-8z" />
-      ) : (
-        // rest — pause bars
-        <G {...p}>
-          <Rect x="6" y="5" width="4" height="14" rx="1.5" />
-          <Rect x="14" y="5" width="4" height="14" rx="1.5" />
-        </G>
-      )}
-    </Svg>
-  );
-}
-
-// Stopwatch icon for the pre-start "GET READY" countdown
-function ReadyIcon({ color, size = 23 }: { color: string; size?: number }) {
-  const p = { fill: 'none', stroke: color, strokeWidth: 2.2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24">
-      <G {...p}>
-        <Circle cx="12" cy="13.5" r="7" />
-        <Path d="M10 5h4" />
-        <Path d="M12 5v1.5" />
-        <Path d="M12 13.5V10" />
-      </G>
-    </Svg>
-  );
-}
+import { T } from './theme';
+import PhaseIcon from './components/PhaseIcon';
+import ReadyIcon from './components/ReadyIcon';
+import GhostBtn  from './components/GhostBtn';
 
 const tfmt = (s: number) => {
   s = Math.max(0, Math.ceil(s));
@@ -83,28 +35,6 @@ const tfmt = (s: number) => {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 };
 
-// ─── Ghost button (Reset / Skip) ─────────────────────────────────────────────
-function GhostBtn({
-  onPress,
-  disabled,
-  children,
-}: {
-  onPress: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      style={[styles.ghostBtn, disabled && { opacity: 0.3 }]}
-    >
-      {children}
-    </Pressable>
-  );
-}
-
-// ─── Main screen ─────────────────────────────────────────────────────────────
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   useKeepAwake();
 
@@ -129,19 +59,16 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     if (preStartIntervalRef.current) clearInterval(preStartIntervalRef.current);
   }, []);
 
-
   const effectiveIndex = state.currentIndex >= 0 ? state.currentIndex : 0;
   const seg            = SEGMENTS[effectiveIndex];
   const nextSeg        = SEGMENTS[effectiveIndex + 1];
   const meta           = PHASE_META[seg.phase];
   const nextMeta       = nextSeg ? PHASE_META[nextSeg.phase] : null;
 
-  // Snap to full instantly on segment change — no refill animation
   useEffect(() => {
     progressAnim.setValue(1);
   }, [state.currentIndex]);
 
-  // Animate depletion within the active segment
   useEffect(() => {
     if (state.status === 'idle') { progressAnim.setValue(1); return; }
     const fraction = seg.duration > 0 ? state.remainingInSegment / seg.duration : 0;
@@ -270,8 +197,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
                 }),
               },
             ]}
-            />
-          </View>
+          />
+        </View>
       </View>
 
       {/* ── Next up row ── */}
@@ -293,7 +220,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       {/* ── Timeline strip ── */}
       <View style={styles.timelineWrap}>
         <View style={styles.timelineBar}>
-          {/* Segments — clipped to rounded bar */}
           <View style={styles.segmentsClip}>
             {SEGMENTS.map((s, i) => {
               const widthPct    = (s.duration / TOTAL_DUR) * 100;
@@ -340,8 +266,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               );
             })}
           </View>
-
-          {/* Progress marker — vertical line extending above and below the bar */}
           <Animated.View style={[styles.markerLine, { left: chevronLeft }]} />
         </View>
 
@@ -353,7 +277,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
       {/* ── Controls row ── */}
       <View style={styles.controls}>
-        {/* Reset — from design ResetIcon */}
         <GhostBtn onPress={reset} disabled={isIdle || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
@@ -361,7 +284,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           </Svg>
         </GhostBtn>
 
-        {/* Play/Pause — from design PlayBtnT */}
         <Pressable onPress={handlePlayPause} style={styles.playBtn}>
           <View style={styles.playBtnInner}>
             {(isPlaying || isPreStart) ? (
@@ -377,7 +299,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           </View>
         </Pressable>
 
-        {/* Skip — from design SkipIcon */}
         <GhostBtn onPress={skip} disabled={isIdle || isDone || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M4 4l9 6-9 6V4z" fill={T.subText} />
@@ -397,7 +318,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
 
-  // Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -428,7 +348,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Phase center block
   phaseBlock: {
     flex: 1,
     alignItems: 'center',
@@ -488,7 +407,6 @@ const styles = StyleSheet.create({
     shadowRadius:  6,
   },
 
-  // Next up
   nextUpRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -509,7 +427,6 @@ const styles = StyleSheet.create({
     letterSpacing: 19 * 0.05,
   },
 
-  // Timeline
   timelineWrap: {
     gap: 8,
     marginBottom: 24,
@@ -551,23 +468,12 @@ const styles = StyleSheet.create({
     color: T.subText,
   },
 
-  // Controls
   controls: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 22,
     marginTop: 6,
-  },
-  ghostBtn: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: T.ghostBg,
-    borderWidth: 1,
-    borderColor: T.hairline,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   playBtn: {
     width: 74,
