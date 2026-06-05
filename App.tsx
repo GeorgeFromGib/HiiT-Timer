@@ -3,6 +3,7 @@ import {
   useFonts,
   Inter_600SemiBold,
   Inter_700Bold,
+  Inter_700Bold_Italic,
   Inter_800ExtraBold,
   Inter_900Black,
 } from '@expo-google-fonts/inter';
@@ -17,6 +18,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     Inter_600SemiBold,
     Inter_700Bold,
+    Inter_700Bold_Italic,
     Inter_800ExtraBold,
     Inter_900Black,
     ChakraPetch_700Bold,

@@ -172,91 +172,95 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
       {/* ── Phase center block ── */}
       <View style={styles.phaseBlock}>
-        <View style={[styles.iconBadge, {
-          backgroundColor: (isPreStart || isDone ? T.accent : meta.color) + '22',
-          borderColor:     (isPreStart || isDone ? T.accent : meta.color) + '55',
-        }]}>
-          {isDone
-            ? <FinishedIcon color={T.accent} size={30} />
-            : isPreStart
-              ? <ReadyIcon color={T.accent} size={30} />
-              : <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
-          }
+        {/* icon + label: anchored to bottom of top half */}
+        <View style={styles.phaseTop}>
+          <View style={[styles.iconBadge, {
+            backgroundColor: (isPreStart || isDone ? T.accent : meta.color) + '22',
+            borderColor:     (isPreStart || isDone ? T.accent : meta.color) + '55',
+          }]}>
+            {isDone
+              ? <FinishedIcon color={T.accent} size={30} />
+              : isPreStart
+                ? <ReadyIcon color={T.accent} size={30} />
+                : <PhaseIcon phase={seg.phase} color={meta.color} size={30} />
+            }
+          </View>
+
+          <Text style={[styles.phaseLabel, {
+            color:           (isPreStart || isDone) ? T.accent : meta.color,
+            textShadowColor: ((isPreStart || isDone) ? T.accent : meta.color) + '55',
+          }]}>
+            {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
+          </Text>
+
         </View>
 
-        <Text style={[styles.phaseLabel, {
-          color:           (isPreStart || isDone) ? T.accent : meta.color,
-          textShadowColor: ((isPreStart || isDone) ? T.accent : meta.color) + '55',
-        }]}>
-          {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
-        </Text>
+        {/* countdown: always rendered to keep layout stable; digits hidden when done */}
+        <View style={styles.countdownRow}>
+          {displayCountdown.split('').map((ch, i) => (
+            <Text
+              key={i}
+              style={[styles.countdown, {
+                opacity: isDone ? 0 : 1,
+                textShadowColor: (isPreStart ? T.accent : meta.color) + '3a',
+                fontSize: countdownFontSize,
+                lineHeight: countdownFontSize,
+                width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
+              }]}
+            >
+              {ch}
+            </Text>
+          ))}
+          {isDone && (
+            <Text style={styles.congratsMsg}>{congratsMsg}</Text>
+          )}
+        </View>
 
-        {isDone && (
-          <Text style={styles.congratsMsg}>{congratsMsg}</Text>
-        )}
+        {/* interval text + bar: anchored to top of bottom half */}
+        <View style={styles.phaseBottom}>
+          {!isDone && (
+            <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
+              {'INTERVAL '}
+              <Text style={{ color: 'white' }}>{intervalNum}</Text>
+              {` OF ${SEGMENTS.length}`}
+            </Text>
+          )}
 
-        {!isDone && (
-          <View style={styles.countdownRow}>
-            {displayCountdown.split('').map((ch, i) => (
-              <Text
-                key={i}
-                style={[styles.countdown, {
-                  textShadowColor: (isPreStart ? T.accent : meta.color) + '3a',
-                  fontSize: countdownFontSize,
-                  lineHeight: countdownFontSize,
-                  width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
-                }]}
-              >
-                {ch}
-              </Text>
-            ))}
-          </View>
-        )}
-
-        {!isDone && (
-          <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
-            {'INTERVAL '}
-            <Text style={{ color: 'white' }}>{intervalNum}</Text>
-            {` OF ${SEGMENTS.length}`}
-          </Text>
-        )}
-
-        {!isDone && (
-          <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
-            <Animated.View
-              style={[
-                styles.progressFill,
-                {
-                  backgroundColor: meta.color,
-                  shadowColor:     meta.color,
-                  width: progressAnim.interpolate({
-                    inputRange:  [0, 1],
-                    outputRange: ['0%', '100%'],
-                  }),
-                },
-              ]}
-            />
-          </View>
-        )}
+          {!isDone && (
+            <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
+              <Animated.View
+                style={[
+                  styles.progressFill,
+                  {
+                    backgroundColor: meta.color,
+                    shadowColor:     meta.color,
+                    width: progressAnim.interpolate({
+                      inputRange:  [0, 1],
+                      outputRange: ['0%', '100%'],
+                    }),
+                  },
+                ]}
+              />
+            </View>
+          )}
+        </View>
       </View>
 
       {/* ── Next up row ── */}
-      {!isDone && (
-        <View style={styles.nextUpRow}>
-          {nextMeta ? (
-            <>
-              <Text style={styles.nextLabel}>NEXT</Text>
-              <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
-              <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={20} />
-              <Text style={[styles.nextPhase, { color: nextMeta.color, marginLeft: 5 }]}>
-                {nextMeta.word}
-              </Text>
-            </>
-          ) : (
-            <Text style={[styles.nextPhase, { color: meta.color }]}>FINISH</Text>
-          )}
-        </View>
-      )}
+      <View style={[styles.nextUpRow, isDone && { opacity: 0 }]}>
+        {nextMeta ? (
+          <>
+            <Text style={styles.nextLabel}>NEXT</Text>
+            <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
+            <PhaseIcon phase={nextSeg!.phase} color={nextMeta.color} size={20} />
+            <Text style={[styles.nextPhase, { color: nextMeta.color, marginLeft: 5 }]}>
+              {nextMeta.word}
+            </Text>
+          </>
+        ) : (
+          <Text style={[styles.nextPhase, { color: meta.color }]}>FINISH</Text>
+        )}
+      </View>
 
       {/* ── Timeline strip ── */}
       <View style={styles.timelineWrap}>
@@ -391,8 +395,19 @@ const styles = StyleSheet.create({
 
   phaseBlock: {
     flex: 1,
+  },
+  phaseTop: {
+    flex: 0.5,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    paddingBottom: 24,
+    gap: 8,
+  },
+  phaseBottom: {
+    flex: 1.5,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 8,
     gap: 8,
   },
   iconBadge: {
@@ -412,18 +427,22 @@ const styles = StyleSheet.create({
     textShadowRadius: 30,
   },
   congratsMsg: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 18,
-    letterSpacing: 18 * 0.05,
-    color: T.accent,
+    fontFamily: 'Inter_700Bold_Italic',
+    fontSize: 24,
+    letterSpacing: 24 * 0.05,
+    color: 'white',
     opacity: 0.7,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     textAlign: 'center',
   },
   countdownRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 18,
+    alignItems: 'flex-start',
+    alignSelf: 'stretch',
   },
   countdown: {
     fontFamily: 'ChakraPetch_700Bold',
