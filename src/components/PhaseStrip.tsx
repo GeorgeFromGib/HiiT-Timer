@@ -1,14 +1,11 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { totalDuration } from '../lib/workout';
-import { getSessionSegments } from '../lib/sessions';
+import { totalDuration, type Segment } from '../lib/workout';
 import { useTheme } from '../theme';
-import type { Session } from '../lib/sessions';
 
-export default function PhaseStrip({ session }: { session: Session }) {
-  const { T }    = useTheme();
-  const segments = getSessionSegments(session);
-  const total    = totalDuration(segments);
+export default function PhaseStrip({ segments }: { segments: Segment[] }) {
+  const { T } = useTheme();
+  const total = totalDuration(segments);
   if (total === 0) return null;
   return (
     <View style={styles.strip}>

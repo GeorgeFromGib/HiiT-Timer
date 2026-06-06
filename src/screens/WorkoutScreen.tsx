@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useKeepAwake } from 'expo-keep-awake';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   Pressable,
@@ -9,10 +9,8 @@ import {
   View,
 } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
-import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
-import { useTimerEngine } from '../hooks/useTimerEngine';
+import { useWorkoutSession } from '../hooks/useWorkoutSession';
 import {
-  type Phase,
   PHASE_META,
   totalDuration,
 } from '../lib/workout';
@@ -25,29 +23,6 @@ import FinishedIcon from '../components/FinishedIcon';
 import GhostBtn  from '../components/GhostBtn';
 
 const GOLD = '#C89B20';
-
-const CONGRATS = [
-  "You crushed it.",
-  "That's what you're made of.",
-  "Every rep counted.",
-  "Nothing left in the tank. Perfect.",
-  "Earned.",
-  "That's the streak. Keep it.",
-  "One more session in the bank.",
-  "Progress doesn't lie.",
-  "You showed up. That's everything.",
-  "Tomorrow you'll be glad you did this.",
-  "Your future self says thanks.",
-  "Sweat well spent.",
-  "Rest. You've earned it.",
-  "Not bad at all.",
-  "The couch wasn't this good anyway.",
-  "Done. Well done.",
-  "Work complete.",
-  "That happened.",
-  "Check.",
-  "Session closed.",
-] as const;
 
 const tfmt = (s: number) => {
   s = Math.max(0, Math.ceil(s));
@@ -69,44 +44,22 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const SEGMENTS  = useMemo(() => getSessionSegments(session), []);
   const TOTAL_DUR = useMemo(() => totalDuration(SEGMENTS), [SEGMENTS]);
 
-  const audio = useWorkoutAudio();
+  const {
+    status,
+    preStartCount,
+    elapsed,
+    currentIndex,
+    remainingInSegment,
+    remainingTotal,
+    congratsMsg,
+    handlePlayPause,
+    reset,
+    skip,
+  } = useWorkoutSession(SEGMENTS);
 
-  const { state, start, pause, resume, reset, skip } = useTimerEngine(SEGMENTS, {
-    onTransition: (_from, to) => { if (to) audio.playChime(); },
-    onCountdown:  ()          => audio.playTick(),
-    onFinish:     ()          => { audio.playFinish(); audio.stopKeepAlive(); },
-  });
+  const progressAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => { configureAudioSession(); }, []);
-
-  const progressAnim   = useRef(new Animated.Value(1)).current;
-  const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
-  const [congratsMsg] = useState(
-    () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
-  );
-  const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-
-  const beginPreStart = () => {
-    setPreStartCount(3);
-    audio.playTick();
-    let count = 3;
-    preStartIntervalRef.current = setInterval(() => {
-      count -= 1;
-      if (count > 0) {
-        setPreStartCount(count as 2 | 1);
-        audio.playTick();
-      } else {
-        clearInterval(preStartIntervalRef.current!);
-        preStartIntervalRef.current = null;
-        setPreStartCount(null);
-        audio.startKeepAlive();
-        start();
-      }
-    }, 1000);
-  };
-
-  const effectiveIndex = state.currentIndex >= 0 ? state.currentIndex : 0;
+  const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
   const seg            = SEGMENTS[effectiveIndex];
   const nextSeg        = SEGMENTS[effectiveIndex + 1];
   const meta           = PHASE_META[seg.phase];
@@ -116,45 +69,29 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
   useEffect(() => {
     progressAnim.setValue(1);
-  }, [state.currentIndex]);
+  }, [currentIndex]);
 
   useEffect(() => {
-    if (state.status === 'idle') { progressAnim.setValue(1); return; }
-    const fraction = seg.duration > 0 ? state.remainingInSegment / seg.duration : 0;
+    if (status === 'idle') { progressAnim.setValue(1); return; }
+    const fraction = seg.duration > 0 ? remainingInSegment / seg.duration : 0;
     Animated.timing(progressAnim, {
       toValue: Math.max(0, Math.min(1, fraction)),
       duration: 200,
       useNativeDriver: false,
     }).start();
-  }, [state.remainingInSegment, state.status]);
+  }, [remainingInSegment, status]);
 
-  const handlePlayPause = () => {
-    if (preStartCount !== null) {
-      clearInterval(preStartIntervalRef.current!);
-      preStartIntervalRef.current = null;
-      setPreStartCount(null);
-      return;
-    }
-    if (state.status === 'idle' || state.status === 'finished') {
-      beginPreStart();
-    } else if (state.status === 'running') {
-      pause();
-    } else {
-      resume();
-    }
-  };
-
-  const pct              = TOTAL_DUR > 0 ? Math.round((state.elapsed / TOTAL_DUR) * 100) : 0;
-  const isPlaying        = state.status === 'running';
-  const isIdle           = state.status === 'idle';
-  const isDone           = state.status === 'finished';
-  const isPreStart       = preStartCount !== null;
-  const displayRemaining      = isIdle ? tfmt(TOTAL_DUR) : tfmt(state.remainingTotal);
-  const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? SEGMENTS[0].duration : state.remainingInSegment));
+  const isPlaying        = status === 'running';
+  const isIdle           = status === 'idle';
+  const isDone           = status === 'finished';
+  const isPreStart       = status === 'preStart';
+  const pct              = TOTAL_DUR > 0 ? Math.round((elapsed / TOTAL_DUR) * 100) : 0;
+  const displayRemaining      = isIdle ? tfmt(TOTAL_DUR) : tfmt(remainingTotal);
+  const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? SEGMENTS[0].duration : remainingInSegment));
   const displayCountdown      = isPreStart ? String(preStartCount) : tfmt(remainingForCountdown);
   const countdownHasHours     = !isPreStart && remainingForCountdown >= 3600;
   const countdownFontSize     = countdownHasHours ? 88 : 124;
-  const intervalNum           = state.currentIndex >= 0 ? state.currentIndex + 1 : 1;
+  const intervalNum           = currentIndex >= 0 ? currentIndex + 1 : 1;
   const segStartPct           = `${(seg.startAt / TOTAL_DUR) * 100}%`;
   const segEndPct             = `${(seg.endAt   / TOTAL_DUR) * 100}%`;
   const chevronLeft           = progressAnim.interpolate({
@@ -276,8 +213,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           <View style={styles.segmentsClip}>
             {SEGMENTS.map((s, i) => {
               const widthPct    = (s.duration / TOTAL_DUR) * 100;
-              const isActive    = !isDone && i === state.currentIndex;
-              const isCompleted = isDone || (state.currentIndex > 0 && i < state.currentIndex);
+              const isActive    = !isDone && i === currentIndex;
+              const isCompleted = isDone || (currentIndex > 0 && i < currentIndex);
               const phColor     = T.phases[s.phase];
 
               if (isActive) {

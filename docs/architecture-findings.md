@@ -1,95 +1,73 @@
 # Architecture Findings
 
-Deepening opportunities surfaced from a codebase review. Organised using the vocabulary of deep modules: **depth** (leverage at the interface), **locality** (change concentrated in one place), and **seam** (where behaviour can be altered without editing in place).
+Deepening opportunities surfaced via `/improve-codebase-architecture`. Vocabulary from [LANGUAGE.md](https://github.com/anthropics/claude-code) — **module**, **interface**, **depth**, **seam**, **adapter**, **leverage**, **locality**.
 
 ---
 
-## Summary
+## 1. WorkoutScreen: orchestration buried inside a render module
 
-The codebase is well-structured. The data layer (`workout.ts`, `sessions.ts`, `settings.ts`) is pure and portable. The realtime engine (`timerEngine.ts`, `audio.ts`) handles complexity correctly. No circular dependencies. The main friction concentrates in `EditSessionScreen.tsx`, which combines three complex concerns without sufficient abstraction, and in a handful of duplications and dead wires elsewhere.
+**Files:** `src/screens/WorkoutScreen.tsx`, `src/hooks/useTimerEngine.ts`, `src/lib/audio.ts`
 
----
+**Problem:** `WorkoutScreen` (365 lines) does two distinct jobs: orchestration (when to start the timer, when to play audio, when to show congrats) and rendering. The orchestration is untestable without a full screen render. A pre-start countdown (`setInterval` at line 94) runs *outside* `useTimerEngine` — a second implicit timer with no enforced relationship to the main engine. The audio keep-alive and timer engine are silently coupled: if audio dies, the timer continues but nobody knows.
 
-## Deepening Opportunities
-
-### 1. Deepen `EditSessionScreen` state into a `useEditSession` hook
-
-**Files:** `src/EditSessionScreen.tsx`
-
-**Problem:** The screen manages 13+ separate state variables (`name`, `difficulty`, `mode`, `warmup`, `work`, `rest`, `rounds`, `cooldown`, `intervals`, `activePicker`, `pickerMinutes`, `pickerSeconds`, `pickerRounds`). Opening a picker requires atomically setting three variables — miss one and the modal shows stale data. The `tryConvertToEasy` mode-conversion logic also lives inside the component, making it untestable without mounting a full screen. The interface of this module *is* its implementation.
-
-**Solution:** Extract a `useEditSession(session)` hook that owns all form state and exposes commands (`setName`, `toggleMode`, `openPicker`, `commitPicker`, `addInterval`, etc.) plus a single derived state object. `EditSessionScreen` becomes a thin renderer.
+**Solution:** Extract a `useWorkoutSession` hook that owns the full lifecycle — pre-start countdown, audio cue decisions, keep-alive lifecycle, phase-transition state. `WorkoutScreen` receives a narrow interface and only renders.
 
 **Benefits:**
-- *Locality* — all form state transitions and validation live in one place.
-- *Leverage* — callers get a clean command surface; the picker lifecycle invariant is enforced once, not spread across 3 call sites.
-- *Testability* — the hook's state machine is testable without the React Native renderer; every transition (mode switch, picker open/commit, conversion failure) can be a unit test.
+- **Locality:** when pre-start/audio/phase logic breaks, there is one place to look and fix.
+- **Leverage:** tests can exercise the state machine (pre-start → running → paused → finished) without rendering anything.
 
 ---
 
-### 2. Move `tryConvertToEasy` into `workout.ts`
+## 2. `useEditSession`: interface as wide as its implementation
 
-**Files:** `src/EditSessionScreen.tsx`, `src/workout.ts`
+**Files:** `src/hooks/useEditSession.ts`, `src/screens/EditSessionScreen.tsx`
 
-**Problem:** The mode-conversion logic — validating that an advanced interval list matches the easy warmup/work/rest/cooldown/rounds pattern — is a pure data transformation buried inside a UI file. It belongs with the data model that defines what a workout *is*. Deletion test: remove it from the screen → complexity doesn't disappear, it reappears anywhere else that needs to convert session modes.
+**Problem:** The hook returns 27 separate items — raw state setters, derived values, picker state, and save logic all poured into one flat object. The interface is as wide as the implementation; callers must learn everything the implementation knows. The seam between hook and screen is so blurry that `EditSessionScreen` takes a `session: Session` prop (line 41) but the hook also receives it as a parameter (line 63) — both ends share responsibility for initialization.
 
-**Solution:** Move `tryConvertToEasy(intervals): WorkoutConfig | null` to `workout.ts` as a pure function alongside `expandWorkout` and `intervalsToSegments`.
+**Solution:** Deepen `useEditSession` by replacing 27 loose items with a small set of cohesive intent operations: `openPicker(field)`, `commitPicker()`, `toggleMode()`, `saveSession()`, plus one read-only `draft` object for rendering.
 
 **Benefits:**
-- *Locality* — conversion logic lives next to the types it operates on.
-- *Leverage* — any future screen or tool that handles session mode switching gets it for free.
-- *Testability* — pure function with no React deps; every edge case (odd round count, wrong pattern) becomes a one-liner test.
+- **Leverage:** `EditSessionScreen` calls intent operations, not state mutations — changes to picker or save logic stay inside the hook.
+- **Locality:** validation, mode-switching, and save logic are in one place rather than split between hook and screen.
 
 ---
 
-### 3. Eliminate the `fmtDuration` triplication
+## 3. Segment expansion: the same logic in two modules
 
-**Files:** `src/EditSessionScreen.tsx`, `src/components/SessionCard.tsx`, `src/WorkoutScreen.tsx`
+**Files:** `src/lib/workout.ts`, `src/hooks/useEditSession.ts` (lines 116–136)
 
-**Problem:** A `fmtDuration(seconds)` utility is independently defined in three files. They appear identical today; they will silently diverge. This is a shallow seam — the function has no depth, but its absence from `workout.ts` creates coupling by duplication.
+**Problem:** `workout.ts` exports `expandWorkout` and `intervalsToSegments`, defining "how intervals become segments." But `useEditSession` reconstructs this logic during easy→advanced mode conversion (lines 131–136), manually building the interval array in a way that mirrors `expandWorkout`. Two places own the same invariant. If the segment structure changes, both must be updated.
 
-**Solution:** Add `fmtDuration` to `workout.ts` (it formats values of the `duration` field — it belongs with the type), delete the three local copies.
-
-**Benefits:** One place to fix edge cases (e.g. hours-long durations). Trivially testable as a pure function.
-
----
-
-### 4. Close the `soundCues` / `hapticFeedback` dead wire
-
-**Files:** `src/audio.ts`, `src/WorkoutScreen.tsx`, `src/settings.ts`
-
-**Problem:** `settings.ts` declares `soundCues` and `hapticFeedback` toggles; `SettingsScreen` renders them. But neither is checked before `playCue()` fires — audio always plays regardless of user preference. The seam exists (settings → behaviour) but the wire is cut. Users who toggle these off see no change.
-
-**Solution:** Pass the relevant settings into `useWorkoutAudio()` (or read them at the call site in `WorkoutScreen`), and guard cue playback behind the toggle. Add haptic calls (via `expo-haptics`) gated on the haptic toggle.
+**Solution:** Deepen `workout.ts` with a `buildAdvancedFromEasy(easyConfig)` function as the canonical conversion. `useEditSession` calls it; `workout.ts` owns the invariant.
 
 **Benefits:**
-- *Leverage* — the audio module's interface already implies controllability; making it real closes a behavioural lie.
-- *Locality* — the setting and its effect live in adjacent modules connected by a clear seam, not silently disconnected.
+- **Locality:** interval-structure changes are a one-file edit.
+- **Leverage:** the conversion logic can be tested directly through `workout.ts`'s interface without touching the hook or screen.
 
 ---
 
-### 5. Centralise `DIFFICULTY_COLORS` in `sessions.ts`
+## 4. Settings: module declared, seam never reached
 
-**Files:** `src/EditSessionScreen.tsx`, `src/components/SessionCard.tsx`, `src/sessions.ts`
+**Files:** `src/lib/settings.ts`, `src/screens/SettingsScreen.tsx`, `src/screens/WorkoutScreen.tsx`, `src/lib/audio.ts`
 
-**Problem:** A `DIFFICULTY_COLORS` mapping (`Easy → green`, `Medium → yellow`, `Hard → red`) is defined independently in two files. `Difficulty` is a type owned by `sessions.ts`; its visual representation is a theme concern, but the mapping itself (which difficulty = which semantic colour) is domain knowledge.
+**Problem:** `Settings` defines `finalCountdownBeep`, `hapticFeedback`, `soundCues`, and `keepScreenAwake`. `SettingsScreen` lets users toggle them. None are ever consumed — the audio module always plays ticks, `keepScreenAwake` is always on, haptics never fire. The settings module exists but the seam it should sit at has no adapters reading from it. Deletion test: deleting the settings-toggle UI would cause zero behavioral change.
 
-**Solution:** Export `DIFFICULTY_COLORS` from `sessions.ts` (or `theme.ts` if phase colours also live there). Delete the duplicates.
+**Solution:** Add a settings context (mirroring the existing `ThemeContext`) that `useWorkoutAudio` and `WorkoutScreen` consume. The depth comes from `settings.ts` actually governing behavior, not just persisting data.
 
-**Benefits:** Adding a new difficulty tier requires one change, not two.
+**Benefits:**
+- **Leverage:** users' choices have actual effect; adding a new setting means one place to declare it and one place to consume it.
+- **Locality:** all settings-driven behavior flows from one context.
 
 ---
 
-## Module Depth Reference
+## 5. `SessionCard` and `PhaseStrip`: segment expansion at render time
 
-| Module | Depth | Notes |
-|---|---|---|
-| `workout.ts` | High | Pure functions, clean contract. `expandWorkout` hides significant complexity behind a small interface. |
-| `timerEngine.ts` | Very high | Wall-clock drift compensation, deduplication, pause/resume — all behind a clean hook interface. |
-| `audio.ts` | Medium | Keep-alive trick is sophisticated; interface exposes more than callers need (`playCue` vs `cueForPhase`). Settings wire missing. |
-| `sessions.ts` | Medium | Handles two data models + I/O. `getSessionSegments` is a thin adapter (shallow). |
-| `settings.ts` | Shallow | Pure CRUD. Appropriate given its role. |
-| `theme.ts` | Shallow | Design tokens + React context. Appropriate. |
-| `EditSessionScreen.tsx` | Low | Interface is its implementation. Prime candidate for deepening via hook extraction. |
-| `WorkoutScreen.tsx` | High | Fat controller by design — correct for workout display. Wires 3 deep modules cleanly. |
-| `WheelColumn.tsx` | Shallow | Magic numbers, no prop-change response. Fragile scroll binding. |
+**Files:** `src/components/SessionCard.tsx`, `src/components/PhaseStrip.tsx`
+
+**Problem:** Both components call `getSessionSegments(session)` and `totalDuration(segments)` directly on every render. `SessionsListScreen` renders one `SessionCard` + one `PhaseStrip` per session — 10 sessions means 20 segment-expansion calls per render with no memoization.
+
+**Solution:** Add `useMemo` calls inside each component keyed to `session`, or accept pre-computed `segments` as a prop so `SessionsListScreen` controls when expansion runs.
+
+**Benefits:**
+- **Leverage:** `SessionsListScreen` computes once, passes down.
+- **Locality:** the "how do we display a session" decision is in one place.

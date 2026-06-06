@@ -89,6 +89,17 @@ export type ConvertToEasyResult =
   | { ok: true; warmup: number; work: number; rest: number; rounds: number; cooldown: number }
   | { ok: false; reason: string };
 
+export function buildIntervalsFromEasy(cfg: WorkoutConfig): Interval[] {
+  const intervals: Interval[] = [];
+  if (cfg.warmup > 0)   intervals.push({ type: 'warmup', dur: cfg.warmup });
+  for (let r = 0; r < cfg.rounds; r++) {
+    intervals.push({ type: 'work', dur: cfg.high });
+    if (cfg.low > 0) intervals.push({ type: 'rest', dur: cfg.low });
+  }
+  if (cfg.cooldown > 0) intervals.push({ type: 'cooldown', dur: cfg.cooldown });
+  return intervals;
+}
+
 export function tryConvertToEasy(ivs: Interval[]): ConvertToEasyResult {
   let list = [...ivs];
   let easyWarmup = 0;

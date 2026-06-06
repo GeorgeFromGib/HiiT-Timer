@@ -44,20 +44,16 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
   const isEditing = !!existing;
 
   const {
-    name, difficulty, isAdvanced,
-    warmup, work, rest, rounds, cooldown,
-    intervals, setIntervals,
-    activePicker, pickerMinutes, pickerSeconds, pickerRounds,
-    previewSegments, previewTotal,
-    fieldValues, pickerTitle,
+    draft, picker,
     setName, setDifficulty,
-    handleModeToggle,
+    toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker,
-    cyclePhase, addInterval, removeInterval,
-    setPickerMinutes, setPickerSeconds, setPickerRounds,
-    handlePickerDone, dismissPicker,
-    handleSave, handleDelete,
+    cyclePhase, addInterval, removeInterval, reorderIntervals,
+    updatePicker, commitPicker, dismissPicker,
+    save, deleteSession,
   } = useEditSession(existing, onBack);
+
+  const { name, difficulty, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal } = draft;
 
   const timeFields: { label: string; field: TimeField }[] = [
     { label: 'Warmup',   field: 'warmup'   },
@@ -141,7 +137,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 <Text style={[styles.modeToggleLabel, { color: !isAdvanced ? T.accent : T.subText }]}>Easy</Text>
                 <Switch
                   value={isAdvanced}
-                  onValueChange={handleModeToggle}
+                  onValueChange={toggleMode}
                   trackColor={{ false: T.accent + '55', true: T.accent + '55' }}
                   thumbColor={T.accent}
                 />
@@ -165,7 +161,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               <NestableDraggableFlatList
                 data={intervals}
                 keyExtractor={iv => iv._key}
-                onDragEnd={({ data }) => setIntervals(data)}
+                onDragEnd={({ data }) => reorderIntervals(data)}
                 renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
                   <ScaleDecorator>
                     <ReanimatedSwipeable
@@ -255,7 +251,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           </View>
 
           {/* Save */}
-          <Pressable onPress={handleSave} style={styles.saveBtn}>
+          <Pressable onPress={save} style={styles.saveBtn}>
             <Text style={styles.saveBtnText}>
               {isEditing ? 'SAVE CHANGES' : 'SAVE'}
             </Text>
@@ -263,7 +259,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
 
           {/* Delete (edit mode only) */}
           {isEditing && (
-            <Pressable onPress={handleDelete} style={styles.deleteBtn}>
+            <Pressable onPress={deleteSession} style={styles.deleteBtn}>
               <Text style={styles.deleteBtnText}>DELETE SESSION</Text>
             </Pressable>
           )}
@@ -272,7 +268,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
 
       {/* Duration picker modal */}
       <Modal
-        visible={activePicker !== null}
+        visible={picker !== null}
         transparent
         animationType="slide"
         onRequestClose={dismissPicker}
@@ -284,19 +280,19 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               <Pressable onPress={dismissPicker} style={styles.modalCancelBtn}>
                 <Text style={styles.modalCancelText}>Cancel</Text>
               </Pressable>
-              <Text style={styles.modalTitle}>{pickerTitle}</Text>
-              <Pressable onPress={handlePickerDone} style={styles.modalDoneBtn}>
+              <Text style={styles.modalTitle}>{picker?.title}</Text>
+              <Pressable onPress={commitPicker} style={styles.modalDoneBtn}>
                 <Text style={styles.modalDoneText}>Done</Text>
               </Pressable>
             </View>
 
-            {activePicker?.type === 'rounds' ? (
+            {picker?.isRounds ? (
               <>
                 <View style={styles.pickerRow}>
                   <WheelColumn
                     values={ROUND_LABELS}
-                    selected={pickerRounds}
-                    onChange={setPickerRounds}
+                    selected={picker.rounds}
+                    onChange={v => updatePicker({ rounds: v })}
                   />
                 </View>
                 <View style={styles.pickerUnits}>
@@ -308,16 +304,16 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 <View style={styles.pickerRow}>
                   <WheelColumn
                     values={MINUTE_LABELS}
-                    selected={pickerMinutes}
-                    onChange={setPickerMinutes}
+                    selected={picker?.minutes ?? 0}
+                    onChange={v => updatePicker({ minutes: v })}
                   />
                   <View style={styles.pickerSeparator}>
                     <Text style={styles.pickerSeparatorText}>:</Text>
                   </View>
                   <WheelColumn
                     values={SECOND_LABELS}
-                    selected={pickerSeconds}
-                    onChange={setPickerSeconds}
+                    selected={picker?.seconds ?? 0}
+                    onChange={v => updatePicker({ seconds: v })}
                   />
                 </View>
                 <View style={styles.pickerUnits}>

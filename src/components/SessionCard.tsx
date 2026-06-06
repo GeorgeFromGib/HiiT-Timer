@@ -24,7 +24,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
-  const segments  = getSessionSegments(session);
+  const segments  = useMemo(() => getSessionSegments(session), [session]);
   const total     = totalDuration(segments);
   const diffColor = DIFFICULTY_COLORS[session.difficulty] ?? T.accent;
 
@@ -66,7 +66,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
           </Pressable>
         </View>
 
-        <PhaseStrip session={session} />
+        <PhaseStrip segments={segments} />
 
         <View style={styles.statsRow}>
           <Text style={styles.statValue}>{fmtDuration(total)}</Text>

@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import { loadSessions, saveSessions, newId, type Session, type Difficulty } from '../lib/sessions';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
-  expandWorkout, intervalsToSegments, totalDuration, tryConvertToEasy,
+  expandWorkout, intervalsToSegments, totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
 
@@ -12,57 +12,64 @@ export const toLocal = (iv: Interval): LocalInterval =>
   ({ ...iv, _key: Math.random().toString(36).slice(2) });
 
 export type TimeField = 'warmup' | 'work' | 'rest' | 'cooldown';
-export type ActivePicker =
+
+type ActivePicker =
   | { type: 'field'; field: TimeField }
   | { type: 'interval'; key: string }
   | { type: 'rounds' };
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 
-export interface EditSessionState {
-  name:             string;
-  difficulty:       Difficulty;
-  isAdvanced:       boolean;
-  warmup:           number;
-  work:             number;
-  rest:             number;
-  rounds:           number;
-  cooldown:         number;
-  intervals:        LocalInterval[];
-  activePicker:     ActivePicker | null;
-  pickerMinutes:    number;
-  pickerSeconds:    number;
-  pickerRounds:     number;
-  previewSegments:  Segment[];
-  previewTotal:     number;
-  fieldValues:      Record<TimeField, number>;
-  pickerTitle:      string;
+// All state the screen needs to render — no setters.
+export interface EditSessionDraft {
+  name:            string;
+  difficulty:      Difficulty;
+  isAdvanced:      boolean;
+  fieldValues:     Record<TimeField, number>;
+  rounds:          number;
+  intervals:       LocalInterval[];
+  previewSegments: Segment[];
+  previewTotal:    number;
 }
 
-export interface EditSessionCommands {
-  setName:             (name: string) => void;
-  setDifficulty:       (d: Difficulty) => void;
-  handleModeToggle:    (advanced: boolean) => void;
-  openFieldPicker:     (field: TimeField) => void;
-  openRoundsPicker:    () => void;
-  openIntervalPicker:  (key: string) => void;
-  cyclePhase:          (key: string) => void;
-  addInterval:         () => void;
-  removeInterval:      (key: string) => void;
-  setIntervals:        (data: LocalInterval[]) => void;
-  setPickerMinutes:    (v: number) => void;
-  setPickerSeconds:    (v: number) => void;
-  setPickerRounds:     (v: number) => void;
-  handlePickerDone:    () => void;
-  dismissPicker:       () => void;
-  handleSave:          () => Promise<void>;
-  handleDelete:        () => void;
+// Picker modal state: null when closed.
+export interface EditSessionPicker {
+  title:    string;
+  isRounds: boolean;
+  minutes:  number;
+  seconds:  number;
+  rounds:   number;
+}
+
+export interface EditSessionInterface {
+  draft:   EditSessionDraft;
+  picker:  EditSessionPicker | null;
+  // Field edits
+  setName:          (name: string) => void;
+  setDifficulty:    (d: Difficulty) => void;
+  // Mode
+  toggleMode:       (advanced: boolean) => void;
+  // Interval list
+  cyclePhase:       (key: string) => void;
+  addInterval:      () => void;
+  removeInterval:   (key: string) => void;
+  reorderIntervals: (data: LocalInterval[]) => void;
+  // Picker
+  openFieldPicker:    (field: TimeField) => void;
+  openRoundsPicker:   () => void;
+  openIntervalPicker: (key: string) => void;
+  updatePicker:       (partial: { minutes?: number; seconds?: number; rounds?: number }) => void;
+  commitPicker:       () => void;
+  dismissPicker:      () => void;
+  // Persistence
+  save:          () => Promise<void>;
+  deleteSession: () => void;
 }
 
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
-): EditSessionState & EditSessionCommands {
+): EditSessionInterface {
   const [name,       setName]       = useState(existing?.name       ?? '');
   const [difficulty, setDifficulty] = useState<Difficulty>(existing?.difficulty ?? 'Medium');
   const [mode,       setMode]       = useState<'easy' | 'advanced'>(existing?.mode ?? 'easy');
@@ -94,14 +101,11 @@ export function useEditSession(
     () => mode === 'easy' ? expandWorkout(easyConfig) : intervalsToSegments(intervals),
     [mode, warmup, work, rest, rounds, cooldown, intervals],
   );
-  const previewTotal = totalDuration(previewSegments);
 
   const fieldValues: Record<TimeField, number> = { warmup, work, rest, cooldown };
   const fieldSetters: Record<TimeField, (v: number) => void> = {
     warmup: setWarmup, work: setWork, rest: setRest, cooldown: setCooldown,
   };
-
-  const isAdvanced = mode === 'advanced';
 
   const pickerTitle = (() => {
     if (!activePicker) return '';
@@ -124,17 +128,18 @@ export function useEditSession(
     setActivePicker({ type: 'rounds' });
   }
 
-  function handleModeToggle(advanced: boolean) {
+  function openIntervalPicker(key: string) {
+    const iv = intervals.find(i => i._key === key);
+    if (!iv) return;
+    setPickerMinutes(Math.floor(iv.dur / 60));
+    setPickerSeconds(iv.dur % 60);
+    setActivePicker({ type: 'interval', key });
+  }
+
+  function toggleMode(advanced: boolean) {
     if (advanced) {
       if (intervals.length === 0) {
-        const built: LocalInterval[] = [];
-        if (warmup > 0)   built.push(toLocal({ type: 'warmup', dur: warmup }));
-        for (let i = 0; i < rounds; i++) {
-          built.push(toLocal({ type: 'work', dur: Math.max(1, work) }));
-          if (rest > 0)   built.push(toLocal({ type: 'rest', dur: rest }));
-        }
-        if (cooldown > 0) built.push(toLocal({ type: 'cooldown', dur: cooldown }));
-        setIntervals(built);
+        setIntervals(buildIntervalsFromEasy(easyConfig).map(toLocal));
       }
       setMode('advanced');
     } else {
@@ -150,14 +155,6 @@ export function useEditSession(
       setCooldown(result.cooldown);
       setMode('easy');
     }
-  }
-
-  function openIntervalPicker(key: string) {
-    const iv = intervals.find(i => i._key === key);
-    if (!iv) return;
-    setPickerMinutes(Math.floor(iv.dur / 60));
-    setPickerSeconds(iv.dur % 60);
-    setActivePicker({ type: 'interval', key });
   }
 
   function cyclePhase(key: string) {
@@ -176,7 +173,7 @@ export function useEditSession(
     setIntervals(ivs => ivs.filter(iv => iv._key !== key));
   }
 
-  function handlePickerDone() {
+  function commitPicker() {
     if (!activePicker) return;
     if (activePicker.type === 'rounds') {
       setRounds(pickerRounds + 1);
@@ -193,7 +190,7 @@ export function useEditSession(
     setActivePicker(null);
   }
 
-  const handleSave = async () => {
+  const save = async () => {
     if (!name.trim()) {
       Alert.alert('Name required', 'Please enter a session name.');
       return;
@@ -215,7 +212,7 @@ export function useEditSession(
     onBack();
   };
 
-  function handleDelete() {
+  function deleteSession() {
     if (!existing) return;
     confirmDeleteSession(existing.name, async () => {
       const sessions = await loadSessions();
@@ -224,19 +221,40 @@ export function useEditSession(
     });
   }
 
+  const picker: EditSessionPicker | null = activePicker ? {
+    title:    pickerTitle,
+    isRounds: activePicker.type === 'rounds',
+    minutes:  pickerMinutes,
+    seconds:  pickerSeconds,
+    rounds:   pickerRounds,
+  } : null;
+
+  const draft: EditSessionDraft = {
+    name, difficulty,
+    isAdvanced: mode === 'advanced',
+    fieldValues,
+    rounds,
+    intervals,
+    previewSegments,
+    previewTotal: totalDuration(previewSegments),
+  };
+
   return {
-    name, difficulty, isAdvanced,
-    warmup, work, rest, rounds, cooldown,
-    intervals, setIntervals,
-    activePicker, pickerMinutes, pickerSeconds, pickerRounds,
-    previewSegments, previewTotal,
-    fieldValues, pickerTitle,
+    draft,
+    picker,
     setName, setDifficulty,
-    handleModeToggle,
-    openFieldPicker, openRoundsPicker, openIntervalPicker,
+    toggleMode,
     cyclePhase, addInterval, removeInterval,
-    setPickerMinutes, setPickerSeconds, setPickerRounds,
-    handlePickerDone, dismissPicker: () => setActivePicker(null),
-    handleSave, handleDelete,
+    reorderIntervals: setIntervals,
+    openFieldPicker, openRoundsPicker, openIntervalPicker,
+    updatePicker: (partial) => {
+      if (partial.minutes !== undefined) setPickerMinutes(partial.minutes);
+      if (partial.seconds !== undefined) setPickerSeconds(partial.seconds);
+      if (partial.rounds  !== undefined) setPickerRounds(partial.rounds);
+    },
+    commitPicker,
+    dismissPicker: () => setActivePicker(null),
+    save,
+    deleteSession,
   };
 }
