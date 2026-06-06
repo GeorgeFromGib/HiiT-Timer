@@ -14,6 +14,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { loadSessions, saveSessions, newId, type Session, type Difficulty } from './sessions';
 import { expandWorkout, intervalsToSegments, totalDuration, type Interval, type Phase } from './workout';
 import { useTheme, type ThemeTokens } from './theme';
@@ -363,16 +364,27 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 onDragEnd={({ data }) => setIntervals(data)}
                 renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
                   <ScaleDecorator>
-                    <IntervalRow
-                      interval={iv}
-                      T={T}
-                      styles={styles}
-                      isActive={isActive}
-                      onCyclePhase={() => cyclePhase(iv._key)}
-                      onOpenPicker={() => openIntervalPicker(iv._key)}
-                      onDelete={() => removeInterval(iv._key)}
-                      onDrag={drag}
-                    />
+                    <ReanimatedSwipeable
+                      containerStyle={{ marginBottom: 6 }}
+                      renderRightActions={() => (
+                        <Pressable
+                          onPress={() => removeInterval(iv._key)}
+                          style={styles.swipeDeleteAction}
+                        >
+                          <Text style={styles.swipeDeleteText}>Delete</Text>
+                        </Pressable>
+                      )}
+                    >
+                      <IntervalRow
+                        interval={iv}
+                        T={T}
+                        styles={styles}
+                        isActive={isActive}
+                        onCyclePhase={() => cyclePhase(iv._key)}
+                        onOpenPicker={() => openIntervalPicker(iv._key)}
+                        onDrag={drag}
+                      />
+                    </ReanimatedSwipeable>
                   </ScaleDecorator>
                 )}
               />
@@ -484,13 +496,12 @@ interface IntervalRowProps {
   isActive:     boolean;
   onCyclePhase: () => void;
   onOpenPicker: () => void;
-  onDelete:     () => void;
   onDrag:       () => void;
 }
 
 function IntervalRow({
   interval, T, styles, isActive,
-  onCyclePhase, onOpenPicker, onDelete, onDrag,
+  onCyclePhase, onOpenPicker, onDrag,
 }: IntervalRowProps) {
   const phaseColor = T.phases[interval.type];
   return (
@@ -507,12 +518,6 @@ function IntervalRow({
 
       <Pressable onPress={onOpenPicker} style={styles.intervalDuration}>
         <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
-      </Pressable>
-
-      <Pressable onPress={onDelete} style={styles.deleteIntervalBtn}>
-        <Svg width={12} height={12} viewBox="0 0 24 24" fill="none">
-          <Path d="M18 6L6 18M6 6l12 12" stroke="#ff5a5f" strokeWidth={2.2} strokeLinecap="round" />
-        </Svg>
       </Pressable>
     </View>
   );
@@ -657,7 +662,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    marginBottom: 6,
   },
   intervalRowActive: {
     borderColor: T.accent,
@@ -694,15 +698,18 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     fontSize: 16,
     color: T.text,
   },
-  deleteIntervalBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    backgroundColor: '#ff5a5f14',
-    borderWidth: 1,
-    borderColor: '#ff5a5f44',
-    alignItems: 'center',
+  swipeDeleteAction: {
+    backgroundColor: '#ff5a5f',
     justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
+    borderRadius: 12,
+  },
+  swipeDeleteText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 13,
+    color: '#fff',
+    letterSpacing: 13 * 0.04,
   },
 
   addIntervalBtn: {
