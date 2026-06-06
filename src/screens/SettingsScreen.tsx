@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { useTheme, type ThemeTokens } from '../theme';
+import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
+import { typography } from '../typography';
 import {
   DEFAULT_SETTINGS,
   loadSettings,
@@ -349,10 +350,7 @@ function makeStyles(T: ThemeTokens) {
       alignItems: 'center',
     },
     headerLabel: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 11,
-      letterSpacing: 11 * 0.18,
-      textTransform: 'uppercase',
+      ...typography.sectionLabel,
       color: T.faintText,
     },
     headerTitle: {
@@ -362,16 +360,7 @@ function makeStyles(T: ThemeTokens) {
       color: T.text,
       marginTop: 1,
     },
-    ghostBtn: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: T.ghostBg,
-      borderWidth: 1,
-      borderColor: T.hairline,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+    ghostBtn: ghostBtnStyle(T),
 
     // Section
     section: { marginBottom: 24 },

@@ -18,7 +18,7 @@ import {
 } from '../lib/workout';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
-import { useTheme, type ThemeTokens } from '../theme';
+import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
 import PhaseIcon from '../components/PhaseIcon';
 import ReadyIcon from '../components/ReadyIcon';
 import FinishedIcon from '../components/FinishedIcon';
@@ -166,16 +166,16 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
       {/* ── Header ── */}
       <View style={styles.header}>
-        <View style={{ width: 36 }} />
+        <Pressable style={styles.closeBtn} onPress={onBack}>
+          <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+            <Path d="M10 13L5 8l5-5" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
+        </Pressable>
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.headerLabel}>INTERVAL SESSION</Text>
           <Text style={styles.headerTitle}>{session.name}</Text>
         </View>
-        <Pressable style={styles.closeBtn} onPress={onBack}>
-          <Svg width={14} height={14} viewBox="0 0 15 15">
-            <Path d="M2 2l11 11M13 2L2 13" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
-          </Svg>
-        </Pressable>
+        <View style={{ width: 36 }} />
       </View>
 
       {/* ── Phase center block ── */}
@@ -390,16 +390,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.text,
     marginTop: 2,
   },
-  closeBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: T.ghostBg,
-    borderWidth: 1,
-    borderColor: T.hairline,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  closeBtn: ghostBtnStyle(T),
 
   phaseBlock: {
     flex: 1,

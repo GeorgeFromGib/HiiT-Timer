@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 import { loadSessions, saveSessions, newId, type Session, type Difficulty } from '../lib/sessions';
+import { confirmDeleteSession } from '../lib/alerts';
 import {
   expandWorkout, intervalsToSegments, totalDuration, tryConvertToEasy,
   type Interval, type Phase, type Segment,
@@ -216,18 +217,11 @@ export function useEditSession(
 
   function handleDelete() {
     if (!existing) return;
-    Alert.alert('Delete Session', `Remove "${existing.name}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          const sessions = await loadSessions();
-          await saveSessions(sessions.filter(s => s.id !== existing.id));
-          onBack();
-        },
-      },
-    ]);
+    confirmDeleteSession(existing.name, async () => {
+      const sessions = await loadSessions();
+      await saveSessions(sessions.filter(s => s.id !== existing.id));
+      onBack();
+    });
   }
 
   return {

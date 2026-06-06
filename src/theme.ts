@@ -1,4 +1,5 @@
 import React from 'react';
+import type { ViewStyle } from 'react-native';
 import type { ThemeKey } from './lib/settings';
 import type { Phase } from './lib/workout';
 
@@ -74,4 +75,17 @@ export const ThemeContext = React.createContext<ThemeContextValue>({
 
 export function useTheme() {
   return React.useContext(ThemeContext);
+}
+
+export function ghostBtnStyle(T: ThemeTokens): ViewStyle {
+  return {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: T.ghostBg,
+    borderWidth: 1,
+    borderColor: T.hairline,
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
 }

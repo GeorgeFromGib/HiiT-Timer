@@ -16,9 +16,11 @@ interface Props {
   onLongPress: () => void;
   onEdit:      () => void;
   onStart:     () => void;
+  onDrag?:     () => void;
+  isActive?:   boolean;
 }
 
-export default function SessionCard({ session, selected, onPress, onLongPress, onEdit, onStart }: Props) {
+export default function SessionCard({ session, selected, onPress, onLongPress, onEdit, onStart, onDrag, isActive }: Props) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
@@ -30,49 +32,56 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
     <Pressable
       onPress={onPress}
       onLongPress={onLongPress}
-      style={[styles.card, selected && styles.cardSelected]}
+      style={[styles.card, selected && styles.cardSelected, isActive && styles.cardActive]}
     >
-      <View style={styles.topRow}>
-        <View style={styles.left}>
-          <Text style={styles.title}>{session.name}</Text>
-          <View style={styles.pillRow}>
-            <View style={[styles.pill, { backgroundColor: diffColor + '22', borderColor: diffColor + '44' }]}>
-              <Text style={[styles.pillText, { color: diffColor }]}>{session.difficulty.toUpperCase()}</Text>
-            </View>
-          </View>
-        </View>
-        <Pressable onPress={onEdit} style={styles.editBtn} hitSlop={8}>
-          <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
-            <Path
-              d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-              stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-            />
-            <Path
-              d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-              stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-            />
+      {onDrag && (
+        <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
+          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+            <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.faintText} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
         </Pressable>
-      </View>
-
-      <PhaseStrip session={session} />
-
-      <View style={styles.statsRow}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{fmtDuration(total)}</Text>
-          <Text style={styles.statLabel}>total</Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{segments.length}</Text>
-          <Text style={styles.statLabel}>intervals</Text>
-        </View>
-      </View>
-
-      {selected && (
-        <Pressable onPress={onStart} style={styles.startBtn}>
-          <Text style={styles.startBtnText}>SELECT</Text>
-        </Pressable>
       )}
+
+      <View style={styles.cardBody}>
+        <View style={styles.topRow}>
+          <View style={styles.left}>
+            <Text style={styles.title}>{session.name}</Text>
+            <View style={styles.pillRow}>
+              <View style={[styles.pill, { backgroundColor: diffColor + '22', borderColor: diffColor + '44' }]}>
+                <Text style={[styles.pillText, { color: diffColor }]}>{session.difficulty.toUpperCase()}</Text>
+              </View>
+            </View>
+          </View>
+          <Pressable onPress={onEdit} style={styles.editBtn} hitSlop={8}>
+            <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+              />
+              <Path
+                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+              />
+            </Svg>
+          </Pressable>
+        </View>
+
+        <PhaseStrip session={session} />
+
+        <View style={styles.statsRow}>
+          <Text style={styles.statValue}>{fmtDuration(total)}</Text>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{segments.length}</Text>
+            <Text style={styles.statLabel}> intervals</Text>
+          </View>
+        </View>
+
+        {selected && (
+          <Pressable onPress={onStart} style={styles.startBtn}>
+            <Text style={styles.startBtnText}>SELECT</Text>
+          </Pressable>
+        )}
+      </View>
     </Pressable>
   );
 }
@@ -80,8 +89,11 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
 function makeStyles(T: ThemeTokens) {
   return StyleSheet.create({
     card: {
+      flexDirection: 'row',
       borderRadius: 20,
-      padding: 16,
+      paddingVertical: 16,
+      paddingLeft: 12,
+      paddingRight: 16,
       paddingBottom: 14,
       backgroundColor: T.ghostBg,
       borderWidth: 1.5,
@@ -95,6 +107,24 @@ function makeStyles(T: ThemeTokens) {
       shadowRadius: 10,
       shadowOffset: { width: 0, height: 0 },
       elevation: 4,
+    },
+    cardActive: {
+      borderColor: T.accent,
+      backgroundColor: T.accent + '14',
+      shadowColor: T.accent,
+      shadowOpacity: 0.25,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 0 },
+      elevation: 6,
+    },
+    dragHandle: {
+      alignSelf: 'stretch',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingRight: 10,
+    },
+    cardBody: {
+      flex: 1,
     },
     topRow: {
       flexDirection: 'row',
@@ -139,10 +169,13 @@ function makeStyles(T: ThemeTokens) {
     },
     statsRow: {
       flexDirection: 'row',
-      justifyContent: 'space-evenly',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      gap: 28,
       marginTop: 10,
     },
     statItem: {
+      flexDirection: 'row',
       alignItems: 'center',
     },
     statValue: {
@@ -152,9 +185,8 @@ function makeStyles(T: ThemeTokens) {
     },
     statLabel: {
       fontFamily: 'Inter_600SemiBold',
-      fontSize: 12,
+      fontSize: 15,
       color: T.faintText,
-      marginTop: 1,
     },
     startBtn: {
       marginTop: 12,

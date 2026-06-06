@@ -1,6 +1,7 @@
 import React from 'react';
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
 import type { Phase } from '../lib/workout';
+import { BASE_SVG_STROKE } from './svgStroke';
 
 interface Props {
   phase: Phase;
@@ -9,10 +10,7 @@ interface Props {
 }
 
 export default function PhaseIcon({ phase, color, size = 23 }: Props) {
-  const p = {
-    fill: 'none', stroke: color, strokeWidth: 2.2,
-    strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const,
-  };
+  const p = { ...BASE_SVG_STROKE, stroke: color };
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
       {phase === 'warmup' || phase === 'cooldown' ? (

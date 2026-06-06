@@ -4,7 +4,6 @@ import {
   Modal,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Switch,
   Text,
@@ -13,11 +12,12 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
+import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { DIFFICULTY_COLORS, type Session, type Difficulty } from '../lib/sessions';
 import { fmtDuration, type Interval, type Phase } from '../lib/workout';
-import { useTheme, type ThemeTokens } from '../theme';
+import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
+import { typography } from '../typography';
 import WheelColumn from '../components/WheelColumn';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
 
@@ -83,13 +83,11 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               />
             </Svg>
           </Pressable>
-          <View>
-            <Text style={styles.headerLabel}>{isEditing ? 'EDIT' : 'NEW'}</Text>
-            <Text style={styles.headerTitle}>{isEditing ? 'Edit Session' : 'New Session'}</Text>
-          </View>
+          <Text style={styles.headerTitle}>{isEditing ? 'Edit Session' : 'New Session'}</Text>
+          <View style={styles.headerSpacer} />
         </View>
 
-        <ScrollView
+        <NestableScrollContainer
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
@@ -164,8 +162,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 )}
               </View>
 
-              <DraggableFlatList
-                scrollEnabled={false}
+              <NestableDraggableFlatList
                 data={intervals}
                 keyExtractor={iv => iv._key}
                 onDragEnd={({ data }) => setIntervals(data)}
@@ -270,7 +267,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               <Text style={styles.deleteBtnText}>DELETE SESSION</Text>
             </Pressable>
           )}
-        </ScrollView>
+        </NestableScrollContainer>
       </KeyboardAvoidingView>
 
       {/* Duration picker modal */}
@@ -356,7 +353,7 @@ function IntervalRow({
   const phaseColor = T.phases[interval.type];
   return (
     <View style={[styles.intervalRow, isActive && styles.intervalRowActive]}>
-      <Pressable onPressIn={onDrag} style={styles.dragHandle} hitSlop={8}>
+      <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
         <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
           <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.faintText} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
         </Svg>
@@ -382,34 +379,18 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
     paddingTop: 54,
     paddingHorizontal: 20,
     paddingBottom: 18,
   },
-  backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: T.ghostBg,
-    borderWidth: 1,
-    borderColor: T.hairline,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerLabel: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 11,
-    letterSpacing: 11 * 0.18,
-    textTransform: 'uppercase',
-    color: T.faintText,
-  },
+  backBtn: ghostBtnStyle(T),
   headerTitle: {
-    fontFamily: 'Inter_800ExtraBold',
-    fontSize: 22,
+    flex: 1,
+    ...typography.screenTitle,
     color: T.text,
-    marginTop: 2,
+    textAlign: 'center',
   },
+  headerSpacer: { width: 36 },
 
   scroll: { flex: 1 },
   scrollContent: {
@@ -420,10 +401,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
 
   fieldGroup: { gap: 8 },
   fieldLabel: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 11,
-    letterSpacing: 11 * 0.18,
-    textTransform: 'uppercase',
+    ...typography.sectionLabel,
     color: T.faintText,
   },
 
@@ -451,9 +429,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     alignItems: 'center',
   },
   toggleBtnText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 13,
-    letterSpacing: 13 * 0.04,
+    ...typography.controlLabel,
   },
   modeToggleRow: {
     flexDirection: 'row',
@@ -461,9 +437,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     gap: 10,
   },
   modeToggleLabel: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 13,
-    letterSpacing: 13 * 0.04,
+    ...typography.controlLabel,
   },
 
   configGrid: {
@@ -536,7 +510,8 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     elevation: 4,
   },
   dragHandle: {
-    paddingHorizontal: 2,
+    alignSelf: 'stretch',
+    paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -569,10 +544,8 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     borderRadius: 12,
   },
   swipeDeleteText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 13,
+    ...typography.controlLabel,
     color: '#fff',
-    letterSpacing: 13 * 0.04,
   },
 
   addIntervalBtn: {
@@ -588,9 +561,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     marginTop: 2,
   },
   addIntervalBtnText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 13,
-    letterSpacing: 13 * 0.04,
+    ...typography.controlLabel,
   },
 
   // ── Preview ────────────────────────────────────────────────────────────────

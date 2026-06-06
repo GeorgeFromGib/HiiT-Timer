@@ -1,17 +1,18 @@
 import React, { useMemo, useState } from 'react';
 import {
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
+import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import { loadSessions, saveSessions, type Session } from '../lib/sessions';
-import { Alert } from 'react-native';
+import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
-import { useTheme, type ThemeTokens } from '../theme';
+import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
+import { typography } from '../typography';
 import SessionCard from '../components/SessionCard';
 
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
@@ -26,19 +27,12 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   }, []);
 
   const handleDelete = (session: Session) => {
-    Alert.alert('Delete Session', `Remove "${session.name}"?`, [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => {
-          const next = sessions.filter(s => s.id !== session.id);
-          setSessions(next);
-          saveSessions(next);
-          if (selectedId === session.id) setSelectedId(null);
-        },
-      },
-    ]);
+    confirmDeleteSession(session.name, () => {
+      const next = sessions.filter(s => s.id !== session.id);
+      setSessions(next);
+      saveSessions(next);
+      if (selectedId === session.id) setSelectedId(null);
+    });
   };
 
   return (
@@ -59,7 +53,6 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           </Svg>
         </Pressable>
         <View style={styles.headerCenter}>
-          <Text style={styles.headerLabel}>CHOOSE</Text>
           <Text style={styles.headerTitle}>My Sessions</Text>
         </View>
         <Pressable
@@ -72,26 +65,32 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         </Pressable>
       </View>
 
-      <ScrollView
-        style={styles.list}
+      <DraggableFlatList
+        data={sessions}
+        keyExtractor={s => s.id}
+        containerStyle={styles.list}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-      >
-        {sessions.map(session => (
-          <SessionCard
-            key={session.id}
-            session={session}
-            selected={selectedId === session.id}
-            onPress={() => setSelectedId(prev => prev === session.id ? null : session.id)}
-            onLongPress={() => handleDelete(session)}
-            onEdit={() => onNavigate({ name: 'EditSession', session })}
-            onStart={() => onNavigate({ name: 'Workout', session })}
-          />
-        ))}
-        {sessions.length === 0 && (
-          <Text style={styles.emptyText}>No sessions yet. Tap + to add one.</Text>
+        onDragEnd={({ data }) => {
+          setSessions(data);
+          saveSessions(data);
+        }}
+        ListEmptyComponent={<Text style={styles.emptyText}>No sessions yet. Tap + to add one.</Text>}
+        renderItem={({ item: session, drag, isActive }: RenderItemParams<Session>) => (
+          <ScaleDecorator>
+            <SessionCard
+              session={session}
+              selected={selectedId === session.id}
+              isActive={isActive}
+              onDrag={drag}
+              onPress={() => setSelectedId(prev => prev === session.id ? null : session.id)}
+              onLongPress={() => handleDelete(session)}
+              onEdit={() => onNavigate({ name: 'EditSession', session })}
+              onStart={() => onNavigate({ name: 'Workout', session })}
+            />
+          </ScaleDecorator>
         )}
-      </ScrollView>
+      />
     </LinearGradient>
   );
 }
@@ -114,28 +113,13 @@ function makeStyles(T: ThemeTokens) {
       flex: 1,
       alignItems: 'center',
     },
-    ghostBtn: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: T.ghostBg,
-      borderWidth: 1,
-      borderColor: T.hairline,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    headerLabel: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 11,
-      letterSpacing: 11 * 0.18,
-      textTransform: 'uppercase',
-      color: T.faintText,
-    },
+    ghostBtn: ghostBtnStyle(T),
     headerTitle: {
       fontFamily: 'Inter_800ExtraBold',
-      fontSize: 22,
+      fontSize: 20,
+      letterSpacing: -0.2,
       color: T.text,
-      marginTop: 2,
+      marginTop: 1,
     },
     addBtn: {
       width: 36,
