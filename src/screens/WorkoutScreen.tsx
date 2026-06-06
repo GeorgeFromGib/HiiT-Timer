@@ -9,20 +9,20 @@ import {
   View,
 } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
-import { configureAudioSession, useWorkoutAudio } from './audio';
-import { useTimerEngine } from './timerEngine';
+import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
+import { useTimerEngine } from '../hooks/useTimerEngine';
 import {
   type Phase,
   PHASE_META,
   totalDuration,
-} from './workout';
-import { getSessionSegments } from './sessions';
-import type { Session } from './sessions';
-import { useTheme, type ThemeTokens } from './theme';
-import PhaseIcon from './components/PhaseIcon';
-import ReadyIcon from './components/ReadyIcon';
-import FinishedIcon from './components/FinishedIcon';
-import GhostBtn  from './components/GhostBtn';
+} from '../lib/workout';
+import { getSessionSegments } from '../lib/sessions';
+import type { Session } from '../lib/sessions';
+import { useTheme, type ThemeTokens } from '../theme';
+import PhaseIcon from '../components/PhaseIcon';
+import ReadyIcon from '../components/ReadyIcon';
+import FinishedIcon from '../components/FinishedIcon';
+import GhostBtn  from '../components/GhostBtn';
 
 const GOLD = '#C89B20';
 
@@ -72,7 +72,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const audio = useWorkoutAudio();
 
   const { state, start, pause, resume, reset, skip } = useTimerEngine(SEGMENTS, {
-    onTransition: (_from, to) => { if (to) audio.cueForPhase(to.phase); },
+    onTransition: (_from, to) => { if (to) audio.playChime(); },
     onCountdown:  ()          => audio.playTick(),
     onFinish:     ()          => { audio.playFinish(); audio.stopKeepAlive(); },
   });

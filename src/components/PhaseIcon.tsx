@@ -1,6 +1,6 @@
 import React from 'react';
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
-import type { Phase } from '../workout';
+import type { Phase } from '../lib/workout';
 
 interface Props {
   phase: Phase;

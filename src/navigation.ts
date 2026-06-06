@@ -1,4 +1,4 @@
-import type { Session } from './sessions';
+import type { Session } from './lib/sessions';
 
 export type Route =
   | { name: 'Sessions' }

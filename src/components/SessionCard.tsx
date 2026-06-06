@@ -1,25 +1,13 @@
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
-import { totalDuration } from '../workout';
-import { getSessionSegments } from '../sessions';
-import type { Session } from '../sessions';
+import { totalDuration, fmtDuration } from '../lib/workout';
+import { getSessionSegments, DIFFICULTY_COLORS } from '../lib/sessions';
+import type { Session } from '../lib/sessions';
 import { useTheme, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
 
-const DIFFICULTY_COLORS: Record<string, string> = {
-  Easy:   '#5fd38a',
-  Medium: '#ff8a3d',
-  Hard:   '#ff5a5f',
-};
 
-function fmtDuration(s: number): string {
-  const m = Math.floor(s / 60);
-  const sec = s % 60;
-  if (m === 0) return `${sec}s`;
-  if (sec === 0) return `${m}m`;
-  return `${m}m ${sec}s`;
-}
 
 interface Props {
   session:     Session;

@@ -9,14 +9,14 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { useTheme, type ThemeTokens } from './theme';
+import { useTheme, type ThemeTokens } from '../theme';
 import {
   DEFAULT_SETTINGS,
   loadSettings,
   saveSettings,
   type Settings,
   type ThemeKey,
-} from './settings';
+} from '../lib/settings';
 
 // ── Theme preview data ──────────────────────────────────────────
 const THEMES: Array<{

@@ -16,7 +16,7 @@
 // iOS lets this interval keep firing with the screen locked.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Segment, segmentIndexAt, totalDuration } from './workout';
+import { Segment, segmentIndexAt, totalDuration } from '../lib/workout';
 
 export interface TimerState {
   status: 'idle' | 'running' | 'paused' | 'finished';

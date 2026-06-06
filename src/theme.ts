@@ -1,6 +1,6 @@
 import React from 'react';
-import type { ThemeKey } from './settings';
-import type { Phase } from './workout';
+import type { ThemeKey } from './lib/settings';
+import type { Phase } from './lib/workout';
 
 export interface ThemeTokens {
   bgGradient: readonly [string, string];

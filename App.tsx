@@ -10,13 +10,13 @@ import {
 } from '@expo-google-fonts/inter';
 import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
 import React, { useEffect, useState } from 'react';
-import SessionsListScreen from './src/SessionsListScreen';
-import WorkoutScreen from './src/WorkoutScreen';
-import EditSessionScreen from './src/EditSessionScreen';
-import SettingsScreen from './src/SettingsScreen';
+import SessionsListScreen from './src/screens/SessionsListScreen';
+import WorkoutScreen from './src/screens/WorkoutScreen';
+import EditSessionScreen from './src/screens/EditSessionScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS } from './src/theme';
-import { loadSettings, type ThemeKey } from './src/settings';
+import { loadSettings, type ThemeKey } from './src/lib/settings';
 
 export default function App() {
   const [fontsLoaded] = useFonts({

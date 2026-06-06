@@ -8,11 +8,11 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { loadSessions, saveSessions, type Session } from './sessions';
+import { loadSessions, saveSessions, type Session } from '../lib/sessions';
 import { Alert } from 'react-native';
-import type { Route } from './navigation';
-import { useTheme, type ThemeTokens } from './theme';
-import SessionCard from './components/SessionCard';
+import type { Route } from '../navigation';
+import { useTheme, type ThemeTokens } from '../theme';
+import SessionCard from '../components/SessionCard';
 
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
   const { T } = useTheme();

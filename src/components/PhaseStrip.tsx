@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { totalDuration } from '../workout';
-import { getSessionSegments } from '../sessions';
+import { totalDuration } from '../lib/workout';
+import { getSessionSegments } from '../lib/sessions';
 import { useTheme } from '../theme';
-import type { Session } from '../sessions';
+import type { Session } from '../lib/sessions';
 
 export default function PhaseStrip({ session }: { session: Session }) {
   const { T }    = useTheme();

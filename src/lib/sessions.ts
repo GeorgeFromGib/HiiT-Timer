@@ -4,6 +4,12 @@ import { expandWorkout, intervalsToSegments } from './workout';
 
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
+export const DIFFICULTY_COLORS: Record<Difficulty, string> = {
+  Easy:   '#5fd38a',
+  Medium: '#ff8a3d',
+  Hard:   '#ff5a5f',
+};
+
 export type Session = {
   id: string;
   name: string;
