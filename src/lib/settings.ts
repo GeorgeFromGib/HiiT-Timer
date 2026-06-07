@@ -9,6 +9,7 @@ export interface Settings {
   keepScreenAwake: boolean;
   soundCues: boolean;
   soundOff: boolean;
+  countdownFlash: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS: Settings = {
   keepScreenAwake: true,
   soundCues: true,
   soundOff: false,
+  countdownFlash: true,
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');
