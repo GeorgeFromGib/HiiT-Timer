@@ -18,6 +18,11 @@ type ActivePicker =
   | { type: 'interval'; key: string }
   | { type: 'rounds' };
 
+type CommitResult =
+  | { type: 'field';    field: TimeField; secs: number }
+  | { type: 'interval'; key: string;      secs: number }
+  | { type: 'rounds';   value: number };
+
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 
 // All state the screen needs to render — no setters.
@@ -53,6 +58,7 @@ export interface EditSessionInterface {
   cyclePhase:       (key: string) => void;
   addInterval:      () => void;
   removeInterval:   (key: string) => void;
+  clearIntervals:   () => void;
   reorderIntervals: (data: LocalInterval[]) => void;
   // Picker
   openFieldPicker:    (field: TimeField) => void;
@@ -64,6 +70,83 @@ export interface EditSessionInterface {
   // Persistence
   save:          () => Promise<void>;
   deleteSession: () => void;
+}
+
+function usePickerState(
+  intervals:   LocalInterval[],
+  fieldValues: Record<TimeField, number>,
+  onCommit:    (result: CommitResult) => void,
+) {
+  const [activePicker,  setActivePicker]  = useState<ActivePicker | null>(null);
+  const [pickerMinutes, setPickerMinutes] = useState(0);
+  const [pickerSeconds, setPickerSeconds] = useState(0);
+  const [pickerRounds,  setPickerRounds]  = useState(0);
+
+  const pickerTitle = (() => {
+    if (!activePicker) return '';
+    if (activePicker.type === 'rounds') return 'Rounds';
+    if (activePicker.type === 'field')
+      return activePicker.field.charAt(0).toUpperCase() + activePicker.field.slice(1);
+    const idx = intervals.findIndex(iv => iv._key === activePicker.key);
+    return `Interval ${idx + 1}`;
+  })();
+
+  function openFieldPicker(field: TimeField) {
+    const secs = fieldValues[field];
+    setPickerMinutes(Math.floor(secs / 60));
+    setPickerSeconds(secs % 60);
+    setActivePicker({ type: 'field', field });
+  }
+
+  function openRoundsPicker(currentRounds: number) {
+    setPickerRounds(currentRounds - 1);
+    setActivePicker({ type: 'rounds' });
+  }
+
+  function openIntervalPicker(key: string) {
+    const iv = intervals.find(i => i._key === key);
+    if (!iv) return;
+    setPickerMinutes(Math.floor(iv.dur / 60));
+    setPickerSeconds(iv.dur % 60);
+    setActivePicker({ type: 'interval', key });
+  }
+
+  function commitPicker() {
+    if (!activePicker) return;
+    if (activePicker.type === 'rounds') {
+      onCommit({ type: 'rounds', value: pickerRounds + 1 });
+    } else {
+      const secs = pickerMinutes * 60 + pickerSeconds;
+      if (activePicker.type === 'field') {
+        onCommit({ type: 'field', field: activePicker.field, secs });
+      } else {
+        onCommit({ type: 'interval', key: activePicker.key, secs });
+      }
+    }
+    setActivePicker(null);
+  }
+
+  const picker: EditSessionPicker | null = activePicker ? {
+    title:    pickerTitle,
+    isRounds: activePicker.type === 'rounds',
+    minutes:  pickerMinutes,
+    seconds:  pickerSeconds,
+    rounds:   pickerRounds,
+  } : null;
+
+  return {
+    picker,
+    openFieldPicker,
+    openRoundsPicker,
+    openIntervalPicker,
+    updatePicker: (partial: { minutes?: number; seconds?: number; rounds?: number }) => {
+      if (partial.minutes !== undefined) setPickerMinutes(partial.minutes);
+      if (partial.seconds !== undefined) setPickerSeconds(partial.seconds);
+      if (partial.rounds  !== undefined) setPickerRounds(partial.rounds);
+    },
+    commitPicker,
+    dismissPicker: () => setActivePicker(null),
+  };
 }
 
 export function useEditSession(
@@ -84,11 +167,6 @@ export function useEditSession(
     existing?.mode === 'advanced' ? existing.intervals.map(toLocal) : []
   );
 
-  const [activePicker,  setActivePicker]  = useState<ActivePicker | null>(null);
-  const [pickerMinutes, setPickerMinutes] = useState(0);
-  const [pickerSeconds, setPickerSeconds] = useState(0);
-  const [pickerRounds,  setPickerRounds]  = useState(0);
-
   const easyConfig = {
     warmup,
     high:    Math.max(1, work),
@@ -107,34 +185,25 @@ export function useEditSession(
     warmup: setWarmup, work: setWork, rest: setRest, cooldown: setCooldown,
   };
 
-  const pickerTitle = (() => {
-    if (!activePicker) return '';
-    if (activePicker.type === 'rounds') return 'Rounds';
-    if (activePicker.type === 'field')
-      return activePicker.field.charAt(0).toUpperCase() + activePicker.field.slice(1);
-    const idx = intervals.findIndex(iv => iv._key === activePicker.key);
-    return `Interval ${idx + 1}`;
-  })();
-
-  function openFieldPicker(field: TimeField) {
-    const secs = fieldValues[field];
-    setPickerMinutes(Math.floor(secs / 60));
-    setPickerSeconds(secs % 60);
-    setActivePicker({ type: 'field', field });
-  }
-
-  function openRoundsPicker() {
-    setPickerRounds(rounds - 1);
-    setActivePicker({ type: 'rounds' });
-  }
-
-  function openIntervalPicker(key: string) {
-    const iv = intervals.find(i => i._key === key);
-    if (!iv) return;
-    setPickerMinutes(Math.floor(iv.dur / 60));
-    setPickerSeconds(iv.dur % 60);
-    setActivePicker({ type: 'interval', key });
-  }
+  const {
+    picker,
+    openFieldPicker,
+    openRoundsPicker: openRoundsPickerInner,
+    openIntervalPicker,
+    updatePicker,
+    commitPicker,
+    dismissPicker,
+  } = usePickerState(intervals, fieldValues, (result) => {
+    if (result.type === 'rounds') {
+      setRounds(result.value);
+    } else if (result.type === 'field') {
+      fieldSetters[result.field](result.secs);
+    } else {
+      setIntervals(ivs =>
+        ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
+      );
+    }
+  });
 
   function toggleMode(advanced: boolean) {
     if (advanced) {
@@ -173,23 +242,6 @@ export function useEditSession(
     setIntervals(ivs => ivs.filter(iv => iv._key !== key));
   }
 
-  function commitPicker() {
-    if (!activePicker) return;
-    if (activePicker.type === 'rounds') {
-      setRounds(pickerRounds + 1);
-    } else {
-      const secs = pickerMinutes * 60 + pickerSeconds;
-      if (activePicker.type === 'field') {
-        fieldSetters[activePicker.field](secs);
-      } else {
-        setIntervals(ivs =>
-          ivs.map(iv => iv._key === activePicker.key ? { ...iv, dur: secs } : iv)
-        );
-      }
-    }
-    setActivePicker(null);
-  }
-
   const save = async () => {
     if (!name.trim()) {
       Alert.alert('Name required', 'Please enter a session name.');
@@ -221,14 +273,6 @@ export function useEditSession(
     });
   }
 
-  const picker: EditSessionPicker | null = activePicker ? {
-    title:    pickerTitle,
-    isRounds: activePicker.type === 'rounds',
-    minutes:  pickerMinutes,
-    seconds:  pickerSeconds,
-    rounds:   pickerRounds,
-  } : null;
-
   const draft: EditSessionDraft = {
     name, difficulty,
     isAdvanced: mode === 'advanced',
@@ -245,15 +289,14 @@ export function useEditSession(
     setName, setDifficulty,
     toggleMode,
     cyclePhase, addInterval, removeInterval,
+    clearIntervals: () => setIntervals([]),
     reorderIntervals: setIntervals,
-    openFieldPicker, openRoundsPicker, openIntervalPicker,
-    updatePicker: (partial) => {
-      if (partial.minutes !== undefined) setPickerMinutes(partial.minutes);
-      if (partial.seconds !== undefined) setPickerSeconds(partial.seconds);
-      if (partial.rounds  !== undefined) setPickerRounds(partial.rounds);
-    },
+    openFieldPicker,
+    openRoundsPicker: () => openRoundsPickerInner(rounds),
+    openIntervalPicker,
+    updatePicker,
     commitPicker,
-    dismissPicker: () => setActivePicker(null),
+    dismissPicker,
     save,
     deleteSession,
   };

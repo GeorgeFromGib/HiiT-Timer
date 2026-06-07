@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { totalDuration, type Segment } from '../lib/workout';
-import { useTheme } from '../theme';
+import { useTheme, withOpacity } from '../theme';
 
 export default function PhaseStrip({ segments }: { segments: Segment[] }) {
   const { T } = useTheme();
@@ -16,7 +16,7 @@ export default function PhaseStrip({ segments }: { segments: Segment[] }) {
             styles.seg,
             {
               flex:            seg.duration / total,
-              backgroundColor: T.phases[seg.phase] + 'd9',
+              backgroundColor: withOpacity(T.phases[seg.phase], 0xd9),
             },
           ]}
         />

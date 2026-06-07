@@ -16,7 +16,8 @@ import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, typ
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { DIFFICULTY_COLORS, type Session, type Difficulty } from '../lib/sessions';
 import { fmtDuration, type Interval, type Phase } from '../lib/workout';
-import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
+import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
+import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import WheelColumn from '../components/WheelColumn';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
@@ -48,7 +49,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     setName, setDifficulty,
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker,
-    cyclePhase, addInterval, removeInterval, reorderIntervals,
+    cyclePhase, addInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     save, deleteSession,
   } = useEditSession(existing, onBack);
@@ -70,18 +71,11 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
       style={styles.root}
     >
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kav}>
-        <View style={styles.header}>
-          <Pressable onPress={onBack} style={styles.backBtn}>
-            <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-              <Path
-                d="M15 18l-6-6 6-6"
-                stroke={T.subText} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"
-              />
-            </Svg>
-          </Pressable>
-          <Text style={styles.headerTitle}>{isEditing ? 'Edit Session' : 'New Session'}</Text>
-          <View style={styles.headerSpacer} />
-        </View>
+        <ScreenHeader
+          onBack={onBack}
+          title={isEditing ? 'Edit Session' : 'New Session'}
+          style={styles.header}
+        />
 
         <NestableScrollContainer
           style={styles.scroll}
@@ -116,7 +110,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                     style={[
                       styles.toggleBtn,
                       active
-                        ? { backgroundColor: color + '22', borderColor: color }
+                        ? { backgroundColor: withOpacity(color, 0x22), borderColor: color }
                         : { backgroundColor: T.ghostBg, borderColor: T.hairline },
                     ]}
                   >
@@ -129,8 +123,8 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </View>
           </View>
 
-          {/* Mode toggle — new sessions, or editing an easy session (upgrade to advanced) */}
-          {(!isEditing || existing?.mode === 'easy') && (
+          {/* Mode toggle — always visible; back-conversion to easy is validated by tryConvertToEasy */}
+          {(
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>SETUP MODE</Text>
               <View style={styles.modeToggleRow}>
@@ -138,7 +132,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 <Switch
                   value={isAdvanced}
                   onValueChange={toggleMode}
-                  trackColor={{ false: T.accent + '55', true: T.accent + '55' }}
+                  trackColor={{ false: withOpacity(T.accent, 0x55), true: withOpacity(T.accent, 0x55) }}
                   thumbColor={T.accent}
                 />
                 <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>Advanced</Text>
@@ -189,12 +183,19 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 )}
               />
 
-              <Pressable onPress={addInterval} style={styles.addIntervalBtn}>
-                <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-                  <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
-                </Svg>
-                <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>Add Interval</Text>
-              </Pressable>
+              <View style={styles.intervalActions}>
+                <Pressable onPress={addInterval} style={styles.addIntervalBtn}>
+                  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+                    <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
+                  </Svg>
+                  <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>Add Interval</Text>
+                </Pressable>
+                {intervals.length > 0 && (
+                  <Pressable onPress={clearIntervals} style={styles.clearIntervalsBtn}>
+                    <Text style={[styles.addIntervalBtnText, { color: T.subText }]}>Clear All</Text>
+                  </Pressable>
+                )}
+              </View>
             </>
           ) : (
             /* Easy mode timing */
@@ -237,7 +238,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                         styles.previewStripSeg,
                         {
                           flex: seg.duration / previewTotal,
-                          backgroundColor: T.phases[seg.phase] + 'd9',
+                          backgroundColor: withOpacity(T.phases[seg.phase], 0xd9),
                         },
                       ]}
                     />
@@ -350,12 +351,12 @@ function IntervalRow({
   return (
     <View style={[styles.intervalRow, isActive && styles.intervalRowActive]}>
       <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
-        <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-          <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.faintText} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+        <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+          <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.subText} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
         </Svg>
       </Pressable>
 
-      <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: phaseColor + '22', borderColor: phaseColor }]}>
+      <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor }]}>
         <Text style={[styles.phasePillText, { color: phaseColor }]}>{PHASE_LABELS[interval.type]}</Text>
       </Pressable>
 
@@ -373,20 +374,10 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   kav:  { flex: 1 },
 
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingTop: 54,
     paddingHorizontal: 20,
     paddingBottom: 18,
   },
-  backBtn: ghostBtnStyle(T),
-  headerTitle: {
-    flex: 1,
-    ...typography.screenTitle,
-    color: T.text,
-    textAlign: 'center',
-  },
-  headerSpacer: { width: 36 },
 
   scroll: { flex: 1 },
   scrollContent: {
@@ -498,12 +489,9 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   intervalRowActive: {
     borderColor: T.accent,
-    backgroundColor: T.accent + '14',
-    shadowColor: T.accent,
-    shadowOpacity: 0.2,
+    backgroundColor: withOpacity(T.accent, 0x14),
+    ...glowShadow(T),
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 0 },
-    elevation: 4,
   },
   dragHandle: {
     alignSelf: 'stretch',
@@ -544,17 +532,33 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: '#fff',
   },
 
+  intervalActions: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 2,
+  },
   addIntervalBtn: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1.5,
-    borderColor: T.accent + '55',
+    borderColor: withOpacity(T.accent, 0x55),
     borderRadius: 12,
     borderStyle: 'dashed',
     paddingVertical: 12,
-    marginTop: 2,
+  },
+  clearIntervalsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    borderWidth: 1.5,
+    borderColor: withOpacity(T.subText, 0x44),
+    borderRadius: 12,
+    borderStyle: 'dashed',
+    paddingVertical: 12,
   },
   addIntervalBtnText: {
     ...typography.controlLabel,
@@ -591,11 +595,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     borderRadius: 14,
     paddingVertical: 14,
     alignItems: 'center',
-    shadowColor: T.accent,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.33,
-    shadowRadius: 14,
-    elevation: 6,
+    ...buttonShadow(T),
   },
   saveBtnText: {
     fontFamily: 'Inter_800ExtraBold',

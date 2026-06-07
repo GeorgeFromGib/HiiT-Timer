@@ -42,7 +42,11 @@ export interface WorkoutSession {
   skip: () => void;
 }
 
-export function useWorkoutSession(segments: Segment[], settings: Settings = DEFAULT_SETTINGS): WorkoutSession {
+export function useWorkoutSession(
+  segments: Segment[],
+  settings: Settings = DEFAULT_SETTINGS,
+  onCountdownBeat?: () => void,
+): WorkoutSession {
   const audio = useWorkoutAudio();
   // Stable ref so interval callbacks always reach the latest audio methods
   // without appearing in useCallback dep arrays.
@@ -51,6 +55,9 @@ export function useWorkoutSession(segments: Segment[], settings: Settings = DEFA
 
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
+
+  const onCountdownBeatRef = useRef(onCountdownBeat);
+  onCountdownBeatRef.current = onCountdownBeat;
 
   const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
   const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -67,6 +74,7 @@ export function useWorkoutSession(segments: Segment[], settings: Settings = DEFA
     onCountdown: () => {
       const { soundOff, finalCountdownBeep } = settingsRef.current;
       if (!soundOff && finalCountdownBeep) audioRef.current.playTick();
+      onCountdownBeatRef.current?.();
     },
     onFinish: () => {
       const { soundOff, soundCues } = settingsRef.current;

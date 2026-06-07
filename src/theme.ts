@@ -115,6 +115,10 @@ export function useTheme() {
   return React.useContext(ThemeContext);
 }
 
+export function withOpacity(color: string, alpha: number): string {
+  return color + Math.round(alpha).toString(16).padStart(2, '0');
+}
+
 export function ghostBtnStyle(T: ThemeTokens): ViewStyle {
   return {
     width: 36,
@@ -125,5 +129,27 @@ export function ghostBtnStyle(T: ThemeTokens): ViewStyle {
     borderColor: T.hairline,
     alignItems: 'center',
     justifyContent: 'center',
+  };
+}
+
+/** Accent-coloured drop shadow for action buttons (CTA, FAB, play button). */
+export function buttonShadow(T: ThemeTokens): ViewStyle {
+  return {
+    shadowColor:   T.accent,
+    shadowOffset:  { width: 0, height: 8 },
+    shadowOpacity: 0.33,
+    shadowRadius:  14,
+    elevation:     6,
+  };
+}
+
+/** Accent-coloured glow shadow for selected/active cards and rows (no offset). */
+export function glowShadow(T: ThemeTokens): ViewStyle {
+  return {
+    shadowColor:   T.accent,
+    shadowOffset:  { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius:  10,
+    elevation:     4,
   };
 }

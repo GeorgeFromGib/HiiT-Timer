@@ -23,28 +23,49 @@ There are no tests or a linter configured yet.
 
 ## Architecture
 
-This is an Expo (SDK 56) React Native HIIT timer app. The core logic lives in `src/` as four files; `App.tsx` is currently a placeholder — the real entry point for the workout UI is `src/WorkoutScreen.tsx`.
+This is an Expo (SDK 56) React Native HIIT timer app. `App.tsx` is the real entry point — it owns font loading, theme context, and custom stack navigation. `src/` is organised into four subdirectories:
+
+```
+src/
+  screens/    WorkoutScreen, SessionsListScreen, EditSessionScreen, SettingsScreen
+  hooks/      useTimerEngine, useEditSession
+  lib/        workout, sessions, audio, settings, alerts
+  components/ SessionCard, PhaseStrip, PhaseIcon, ReadyIcon, FinishedIcon, GhostBtn, WheelColumn
+```
+
+### Navigation
+
+No React Navigation library — `App.tsx` holds a `Route` state and switches between screens manually. Routes are typed in `src/navigation.ts`:
+
+```
+Sessions → Workout (session) → back
+Sessions → EditSession (session?) → back
+Sessions → Settings → back
+```
 
 ### Data flow
 
 ```
-WorkoutConfig → expandWorkout() → Segment[]
-                                       ↓
-                              useTimerEngine (wall-clock tick loop)
-                                       ↓
-                    onTransition / onCountdown / onFinish callbacks
-                                       ↓
-                              useWorkoutAudio (cue playback)
+Session (easy | advanced)
+  ↓ getSessionSegments()
+Segment[]
+  ↓ useTimerEngine (wall-clock tick loop)
+  ↓ onTransition / onCountdown / onFinish callbacks
+  ↓ useWorkoutAudio (cue playback)
 ```
 
 ### Key files
 
 | File | Role |
 |---|---|
-| `src/workout.ts` | Pure data model. `expandWorkout(cfg)` converts a `WorkoutConfig` into a flat `Segment[]` with pre-computed `startAt`/`endAt`. All timing logic downstream reads from this list. |
-| `src/timerEngine.ts` | `useTimerEngine` hook. Ticks at 200ms but reads `Date.now()` every tick so elapsed time is wall-clock–accurate, never counter-drift. Fires `onTransition`, `onCountdown` (3-2-1), and `onFinish` callbacks. Exposes `start`, `pause`, `resume`, `reset`, `skip`. |
-| `src/audio.ts` | Two responsibilities: (1) configure the iOS audio session (`playsInSilentMode`, `shouldPlayInBackground`, `interruptionMode`) so cues play over the lock screen and mix with music; (2) loop a silent `keepalive.wav` to keep the audio session—and therefore the JS timer—alive while backgrounded/locked. Uses `expo-audio` (not the deprecated `expo-av`). |
-| `src/WorkoutScreen.tsx` | Wires engine + audio, renders phase word, countdown, proportional segment timeline with sweeping marker, and next-up label. `DEMO` constant at the top of this file is the only workout config currently in use. |
+| `src/lib/workout.ts` | Pure data model. `expandWorkout(cfg)` and `intervalsToSegments(ivs)` both produce a flat `Segment[]` with pre-computed `startAt`/`endAt`. Also exports `tryConvertToEasy`, `fmtDuration`, `PHASE_META`. |
+| `src/lib/sessions.ts` | `Session` type (easy/advanced modes), `DEFAULT_SESSIONS`, `loadSessions`/`saveSessions` (persisted as JSON via `expo-file-system` to `sessions_v2.json`), `getSessionSegments`. |
+| `src/lib/settings.ts` | `Settings` type (theme, soundCues, hapticFeedback, keepScreenAwake, etc.), `loadSettings`/`saveSettings` (persisted as `settings_v1.json`). |
+| `src/lib/audio.ts` | Configures the iOS audio session and loops a silent keepalive track. Uses `expo-audio` (not deprecated `expo-av`). |
+| `src/hooks/useTimerEngine.ts` | Ticks at 200ms but reads `Date.now()` for wall-clock accuracy. Fires `onTransition`, `onCountdown` (3-2-1), and `onFinish`. Exposes `start`, `pause`, `resume`, `reset`, `skip`. |
+| `src/hooks/useEditSession.ts` | All state and logic for the EditSession form (easy ↔ advanced mode, interval list, wheel picker). |
+| `src/theme.ts` | `ThemeContext`, `useTheme()`, `THEME_TOKENS` for tidal/daybreak. `ThemeTokens` interface with `bgGradient`, `accent`, `phases`, etc. |
+| `src/typography.ts` | Shared font/text-style helpers. |
 
 ### iOS background reliability
 

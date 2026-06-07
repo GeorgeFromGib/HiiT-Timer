@@ -8,10 +8,12 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { loadSessions, saveSessions, type Session } from '../lib/sessions';
 import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
-import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
+import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../theme';
+import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import SessionCard from '../components/SessionCard';
 
@@ -42,28 +44,25 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
       end={{ x: 1, y: 0 }}
       style={styles.root}
     >
-      <View style={styles.header}>
-        <Pressable
-          style={styles.ghostBtn}
-          onPress={() => onNavigate({ name: 'Settings' })}
-        >
-          <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
-            <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </Pressable>
-        <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>My Sessions</Text>
-        </View>
-        <Pressable
-          style={styles.addBtn}
-          onPress={() => onNavigate({ name: 'EditSession' })}
-        >
-          <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-            <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
-          </Svg>
-        </Pressable>
-      </View>
+      <ScreenHeader
+        title="My Sessions"
+        style={styles.header}
+        left={
+          <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })}>
+            <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
+              <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+          </Pressable>
+        }
+        right={
+          <Pressable style={styles.addBtn} onPress={() => onNavigate({ name: 'EditSession' })}>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+              <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
+            </Svg>
+          </Pressable>
+        }
+      />
 
       <DraggableFlatList
         data={sessions}
@@ -78,16 +77,28 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         ListEmptyComponent={<Text style={styles.emptyText}>No sessions yet. Tap + to add one.</Text>}
         renderItem={({ item: session, drag, isActive }: RenderItemParams<Session>) => (
           <ScaleDecorator>
-            <SessionCard
-              session={session}
-              selected={selectedId === session.id}
-              isActive={isActive}
-              onDrag={drag}
-              onPress={() => setSelectedId(prev => prev === session.id ? null : session.id)}
-              onLongPress={() => handleDelete(session)}
-              onEdit={() => onNavigate({ name: 'EditSession', session })}
-              onStart={() => onNavigate({ name: 'Workout', session })}
-            />
+            <ReanimatedSwipeable
+              containerStyle={styles.swipeContainer}
+              renderRightActions={(_progress, _drag, swipeable) => (
+                <Pressable
+                  onPress={() => { swipeable.close(); handleDelete(session); }}
+                  style={styles.swipeDeleteAction}
+                >
+                  <Text style={styles.swipeDeleteText}>Delete</Text>
+                </Pressable>
+              )}
+            >
+              <SessionCard
+                session={session}
+                selected={selectedId === session.id}
+                isActive={isActive}
+                onDrag={drag}
+                onPress={() => setSelectedId(prev => prev === session.id ? null : session.id)}
+                onLongPress={() => handleDelete(session)}
+                onEdit={() => onNavigate({ name: 'EditSession', session })}
+                onStart={() => onNavigate({ name: 'Workout', session })}
+              />
+            </ReanimatedSwipeable>
           </ScaleDecorator>
         )}
       />
@@ -103,24 +114,7 @@ function makeStyles(T: ThemeTokens) {
       paddingHorizontal: 20,
     },
 
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: 20,
-    },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    ghostBtn: ghostBtnStyle(T),
-    headerTitle: {
-      fontFamily: 'Inter_800ExtraBold',
-      fontSize: 20,
-      letterSpacing: -0.2,
-      color: T.text,
-      marginTop: 1,
-    },
+    header: { marginBottom: 20 },
     addBtn: {
       width: 36,
       height: 36,
@@ -128,11 +122,9 @@ function makeStyles(T: ThemeTokens) {
       backgroundColor: T.accent,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: T.accent,
+      ...buttonShadow(T),
       shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.33,
       shadowRadius: 11,
-      elevation: 6,
     },
 
     list: { flex: 1 },
@@ -147,6 +139,24 @@ function makeStyles(T: ThemeTokens) {
       color: T.faintText,
       textAlign: 'center',
       marginTop: 48,
+    },
+
+    swipeContainer: {
+      borderRadius: 20,
+    },
+    swipeDeleteAction: {
+      backgroundColor: '#ff5a5f',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 88,
+      borderRadius: 20,
+      marginLeft: 8,
+    },
+    swipeDeleteText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 13,
+      letterSpacing: 0.5,
+      color: '#fff',
     },
   });
 }

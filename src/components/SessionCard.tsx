@@ -4,7 +4,7 @@ import Svg, { Path } from 'react-native-svg';
 import { totalDuration, fmtDuration } from '../lib/workout';
 import { getSessionSegments, DIFFICULTY_COLORS } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
-import { useTheme, type ThemeTokens } from '../theme';
+import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
 
 
@@ -36,8 +36,8 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
     >
       {onDrag && (
         <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
-          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-            <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.faintText} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+          <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+            <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.subText} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
           </Svg>
         </Pressable>
       )}
@@ -47,7 +47,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
           <View style={styles.left}>
             <Text style={styles.title}>{session.name}</Text>
             <View style={styles.pillRow}>
-              <View style={[styles.pill, { backgroundColor: diffColor + '22', borderColor: diffColor + '44' }]}>
+              <View style={[styles.pill, { backgroundColor: withOpacity(diffColor, 0x22), borderColor: withOpacity(diffColor, 0x44) }]}>
                 <Text style={[styles.pillText, { color: diffColor }]}>{session.difficulty.toUpperCase()}</Text>
               </View>
             </View>
@@ -100,21 +100,16 @@ function makeStyles(T: ThemeTokens) {
       borderColor: T.hairline,
     },
     cardSelected: {
-      backgroundColor: T.accent + '14',
+      backgroundColor: withOpacity(T.accent, 0x14),
       borderColor: T.accent,
-      shadowColor: T.accent,
-      shadowOpacity: 0.2,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 0 },
-      elevation: 4,
+      ...glowShadow(T),
     },
     cardActive: {
       borderColor: T.accent,
-      backgroundColor: T.accent + '14',
-      shadowColor: T.accent,
+      backgroundColor: withOpacity(T.accent, 0x14),
+      ...glowShadow(T),
       shadowOpacity: 0.25,
       shadowRadius: 12,
-      shadowOffset: { width: 0, height: 0 },
       elevation: 6,
     },
     dragHandle: {
@@ -194,11 +189,7 @@ function makeStyles(T: ThemeTokens) {
       borderRadius: 14,
       paddingVertical: 12,
       alignItems: 'center',
-      shadowColor: T.accent,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.33,
-      shadowRadius: 14,
-      elevation: 6,
+      ...buttonShadow(T),
     },
     startBtnText: {
       fontFamily: 'Inter_800ExtraBold',
