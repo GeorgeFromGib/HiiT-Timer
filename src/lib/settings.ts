@@ -8,7 +8,6 @@ export interface Settings {
   finalCountdownBeep: boolean;
   keepScreenAwake: boolean;
   soundCues: boolean;
-  hapticFeedback: boolean;
   soundOff: boolean;
 }
 
@@ -18,7 +17,6 @@ export const DEFAULT_SETTINGS: Settings = {
   finalCountdownBeep: true,
   keepScreenAwake: true,
   soundCues: true,
-  hapticFeedback: true,
   soundOff: false,
 };
 

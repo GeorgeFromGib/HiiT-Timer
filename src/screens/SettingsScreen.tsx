@@ -260,8 +260,8 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
           />
         </SSection>
 
-        {/* ── Audio & Haptics ── */}
-        <SSection title="Audio & Haptics">
+        {/* ── Audio ── */}
+        <SSection title="Audio">
           <SRow
             label="Sound off"
             sub="Mute all audio"
@@ -278,12 +278,6 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             sub="Audio cue in last 3 seconds"
             disabled={settings.soundOff}
             right={<Toggle value={settings.finalCountdownBeep} onChange={v => update('finalCountdownBeep', v)} disabled={settings.soundOff} />}
-          />
-          <SRow
-            label="Haptic feedback"
-            sub="Vibrate on interval transitions"
-            disabled={settings.soundOff}
-            right={<Toggle value={settings.hapticFeedback} onChange={v => update('hapticFeedback', v)} disabled={settings.soundOff} />}
             last
           />
         </SSection>
