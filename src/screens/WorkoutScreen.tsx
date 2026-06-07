@@ -72,7 +72,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   }, [currentIndex]);
 
   useEffect(() => {
-    if (status === 'idle') { progressAnim.setValue(1); return; }
+    if (status === 'idle' || status === 'preStart') { progressAnim.setValue(1); return; }
     const fraction = seg.duration > 0 ? remainingInSegment / seg.duration : 0;
     Animated.timing(progressAnim, {
       toValue: Math.max(0, Math.min(1, fraction)),
