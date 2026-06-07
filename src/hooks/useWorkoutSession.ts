@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import type { Segment } from '../lib/workout';
+import type { Settings } from '../lib/settings';
+import { DEFAULT_SETTINGS } from '../lib/settings';
 
 const CONGRATS = [
   "You crushed it.",
@@ -41,12 +43,15 @@ export interface WorkoutSession {
   skip: () => void;
 }
 
-export function useWorkoutSession(segments: Segment[]): WorkoutSession {
+export function useWorkoutSession(segments: Segment[], settings: Settings = DEFAULT_SETTINGS): WorkoutSession {
   const audio = useWorkoutAudio();
   // Stable ref so interval callbacks always reach the latest audio methods
   // without appearing in useCallback dep arrays.
   const audioRef = useRef(audio);
   audioRef.current = audio;
+
+  const settingsRef = useRef(settings);
+  settingsRef.current = settings;
 
   const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
   const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -56,9 +61,19 @@ export function useWorkoutSession(segments: Segment[]): WorkoutSession {
   );
 
   const { state, start, pause, resume, reset: engineReset, skip } = useTimerEngine(segments, {
-    onTransition: (_from, to) => { if (to) audioRef.current.playChime(); },
-    onCountdown:  ()          => audioRef.current.playTick(),
-    onFinish:     ()          => { audioRef.current.playFinish(); audioRef.current.stopKeepAlive(); },
+    onTransition: (_from, to) => {
+      const { soundOff, soundCues } = settingsRef.current;
+      if (to && !soundOff && soundCues) audioRef.current.playChime();
+    },
+    onCountdown: () => {
+      const { soundOff, finalCountdownBeep } = settingsRef.current;
+      if (!soundOff && finalCountdownBeep) audioRef.current.playTick();
+    },
+    onFinish: () => {
+      const { soundOff, soundCues } = settingsRef.current;
+      if (!soundOff && soundCues) audioRef.current.playFinish();
+      audioRef.current.stopKeepAlive();
+    },
   });
 
   useEffect(() => { configureAudioSession(); }, []);
@@ -69,13 +84,15 @@ export function useWorkoutSession(segments: Segment[]): WorkoutSession {
 
   const beginPreStart = useCallback(() => {
     setPreStartCount(3);
-    audioRef.current.playTick();
+    const { soundOff, soundCues } = settingsRef.current;
+    if (!soundOff && soundCues) audioRef.current.playTick();
     let count = 3;
     preStartIntervalRef.current = setInterval(() => {
       count -= 1;
       if (count > 0) {
         setPreStartCount(count as 2 | 1);
-        audioRef.current.playTick();
+        const { soundOff: sOff, soundCues: sCues } = settingsRef.current;
+        if (!sOff && sCues) audioRef.current.playTick();
       } else {
         clearInterval(preStartIntervalRef.current!);
         preStartIntervalRef.current = null;
