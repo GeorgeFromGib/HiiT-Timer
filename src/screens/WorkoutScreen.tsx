@@ -23,6 +23,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import PhaseIcon from '../components/PhaseIcon';
 import ReadyIcon from '../components/ReadyIcon';
 import FinishedIcon from '../components/FinishedIcon';
+import DoneLetters from '../components/DoneLetters';
 import GhostBtn  from '../components/GhostBtn';
 
 const GOLD = '#C89B20';
@@ -134,12 +135,19 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             }
           </View>
 
-          <Text style={[styles.phaseLabel, {
-            color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
-            textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
-          }]}>
-            {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
-          </Text>
+          {isDone ? (
+            <DoneLetters style={[styles.phaseLabel, {
+              color: GOLD,
+              textShadowColor: withOpacity(GOLD, 0x55),
+            }]} />
+          ) : (
+            <Text style={[styles.phaseLabel, {
+              color:           isPreStart ? T.accent : phaseColor,
+              textShadowColor: withOpacity(isPreStart ? T.accent : phaseColor, 0x55),
+            }]}>
+              {isPreStart ? 'GET READY' : meta.word}
+            </Text>
+          )}
 
         </View>
 
