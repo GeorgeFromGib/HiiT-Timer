@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
@@ -96,6 +97,37 @@ function SSection({ title, children }: { title: string; children: React.ReactNod
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
       <View style={styles.sectionCard}>{children}</View>
+    </View>
+  );
+}
+
+// ── Volume row ──────────────────────────────────────────────────
+function VolumeRow({ value, onChange, disabled = false }: {
+  value: number; // 0–100
+  onChange: (v: number) => void;
+  disabled?: boolean;
+}) {
+  const { T } = useTheme();
+  const styles = useMemo(() => makeStyles(T), [T]);
+
+  return (
+    <View style={[styles.row, styles.rowBorder, disabled && { opacity: 0.4 }, { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 8 }]}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={styles.rowLabel}>Volume</Text>
+        <Text style={[styles.rowSub, { marginTop: 0 }]}>{value}%</Text>
+      </View>
+      <Slider
+        value={value}
+        minimumValue={0}
+        maximumValue={100}
+        step={1}
+        disabled={disabled}
+        onValueChange={onChange}
+        minimumTrackTintColor={T.accent}
+        maximumTrackTintColor={T.hairline}
+        thumbTintColor={T.accent}
+        style={styles.slider}
+      />
     </View>
   );
 }
@@ -237,6 +269,11 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             label="Sound off"
             sub="Mute all audio"
             right={<Toggle value={settings.soundOff} onChange={v => updateSettings('soundOff', v)} />}
+          />
+          <VolumeRow
+            value={settings.soundVolume}
+            onChange={v => updateSettings('soundVolume', v)}
+            disabled={settings.soundOff}
           />
           <SRow
             label="Sound cues"
@@ -418,6 +455,11 @@ function makeStyles(T: ThemeTokens) {
       shadowOpacity: 0.25,
       shadowRadius: 2,
       elevation: 2,
+    },
+
+    // Slider
+    slider: {
+      marginHorizontal: -8,
     },
 
     // About

@@ -10,6 +10,7 @@ export interface Settings {
   soundCues: boolean;
   soundOff: boolean;
   countdownFlash: boolean;
+  soundVolume: number; // 0–100
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -20,6 +21,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundCues: true,
   soundOff: false,
   countdownFlash: true,
+  soundVolume: 100,
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');

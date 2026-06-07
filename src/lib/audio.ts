@@ -39,9 +39,10 @@ export function useWorkoutAudio() {
     (['chime', 'tick', 'finish'] as const).forEach(getPlayer);
   }, []);
 
-  const playCue = async (key: CueKey) => {
+  const playCue = async (key: CueKey, volume = 1) => {
     try {
       const p = getPlayer(key);
+      p.volume = volume;
       await p.seekTo(0);
       p.play();
     } catch (e) {
@@ -72,9 +73,9 @@ export function useWorkoutAudio() {
 
   return {
     playCue,
-    playChime:  () => playCue('chime'),
-    playTick:   () => playCue('tick'),
-    playFinish: () => playCue('finish'),
+    playChime:  (volume = 1) => playCue('chime', volume),
+    playTick:   (volume = 1) => playCue('tick', volume),
+    playFinish: (volume = 1) => playCue('finish', volume),
     startKeepAlive,
     stopKeepAlive,
   };

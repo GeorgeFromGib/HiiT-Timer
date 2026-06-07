@@ -68,17 +68,17 @@ export function useWorkoutSession(
 
   const { state, start, pause, resume, reset: engineReset, skip } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
-      const { soundOff, soundCues } = settingsRef.current;
-      if (to && !soundOff && soundCues) audioRef.current.playChime();
+      const { soundOff, soundCues, soundVolume } = settingsRef.current;
+      if (to && !soundOff && soundCues) audioRef.current.playChime(soundVolume / 100);
     },
     onCountdown: () => {
-      const { soundOff, finalCountdownBeep } = settingsRef.current;
-      if (!soundOff && finalCountdownBeep) audioRef.current.playTick();
+      const { soundOff, finalCountdownBeep, soundVolume } = settingsRef.current;
+      if (!soundOff && finalCountdownBeep) audioRef.current.playTick(soundVolume / 100);
       onCountdownBeatRef.current?.();
     },
     onFinish: () => {
-      const { soundOff, soundCues } = settingsRef.current;
-      if (!soundOff && soundCues) audioRef.current.playFinish();
+      const { soundOff, soundCues, soundVolume } = settingsRef.current;
+      if (!soundOff && soundCues) audioRef.current.playFinish(soundVolume / 100);
       audioRef.current.stopKeepAlive();
     },
   });
@@ -91,15 +91,15 @@ export function useWorkoutSession(
 
   const beginPreStart = useCallback(() => {
     setPreStartCount(3);
-    const { soundOff, soundCues } = settingsRef.current;
-    if (!soundOff && soundCues) audioRef.current.playTick();
+    const { soundOff, soundCues, soundVolume } = settingsRef.current;
+    if (!soundOff && soundCues) audioRef.current.playTick(soundVolume / 100);
     let count = 3;
     preStartIntervalRef.current = setInterval(() => {
       count -= 1;
       if (count > 0) {
         setPreStartCount(count as 2 | 1);
-        const { soundOff, soundCues } = settingsRef.current;
-        if (!soundOff && soundCues) audioRef.current.playTick();
+        const { soundOff, soundCues, soundVolume } = settingsRef.current;
+        if (!soundOff && soundCues) audioRef.current.playTick(soundVolume / 100);
       } else {
         clearInterval(preStartIntervalRef.current!);
         preStartIntervalRef.current = null;
