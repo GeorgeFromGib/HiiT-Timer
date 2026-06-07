@@ -34,12 +34,16 @@ export function useWorkoutAudio() {
     return playersRef.current[key]!;
   };
 
-  const playCue = (key: CueKey) => {
+  // Pre-load cue players so they're ready before the first sound fires.
+  useEffect(() => {
+    (['chime', 'tick', 'finish'] as const).forEach(getPlayer);
+  }, []);
+
+  const playCue = async (key: CueKey) => {
     try {
       const p = getPlayer(key);
-      // seekTo is async on iOS AVPlayer; play inside .then so it starts
-      // from position 0, not from end-of-file (which silences short sounds).
-      void p.seekTo(0).then(() => p.play());
+      await p.seekTo(0);
+      p.play();
     } catch (e) {
       console.warn('cue failed', key, e);
     }
