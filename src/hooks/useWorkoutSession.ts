@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import type { Segment } from '../lib/workout';
-import type { Settings } from '../lib/settings';
-import { DEFAULT_SETTINGS } from '../lib/settings';
+import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
 
 const CONGRATS = [
   "You crushed it.",
@@ -91,8 +90,8 @@ export function useWorkoutSession(segments: Segment[], settings: Settings = DEFA
       count -= 1;
       if (count > 0) {
         setPreStartCount(count as 2 | 1);
-        const { soundOff: sOff, soundCues: sCues } = settingsRef.current;
-        if (!sOff && sCues) audioRef.current.playTick();
+        const { soundOff, soundCues } = settingsRef.current;
+        if (!soundOff && soundCues) audioRef.current.playTick();
       } else {
         clearInterval(preStartIntervalRef.current!);
         preStartIntervalRef.current = null;
