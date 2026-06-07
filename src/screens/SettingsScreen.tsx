@@ -45,10 +45,10 @@ function Toggle({ value, onChange, disabled = false }: {
       style={[
         styles.toggleTrack,
         {
-          backgroundColor: value ? T.accent : T.ghostBg,
-          borderColor: value ? T.accent : T.hairline,
-          shadowColor: value ? T.accent : 'transparent',
-          shadowOpacity: value ? 0.33 : 0,
+          backgroundColor: (value && !disabled) ? T.accent : T.ghostBg,
+          borderColor: (value && !disabled) ? T.accent : T.hairline,
+          shadowColor: (value && !disabled) ? T.accent : 'transparent',
+          shadowOpacity: (value && !disabled) ? 0.33 : 0,
           shadowOffset: { width: 0, height: 3 },
           shadowRadius: 5,
         },
@@ -59,7 +59,7 @@ function Toggle({ value, onChange, disabled = false }: {
           styles.toggleThumb,
           {
             left,
-            backgroundColor: value ? T.btnGlyph : T.subText,
+            backgroundColor: (value && !disabled) ? T.btnGlyph : T.subText,
           },
         ]}
       />
