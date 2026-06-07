@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useKeepAwake } from 'expo-keep-awake';
-import React, { useEffect, useMemo, useRef } from 'react';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
+import { loadSettings, DEFAULT_SETTINGS, type Settings } from '../lib/settings';
 import {
   PHASE_META,
   totalDuration,
@@ -26,7 +27,21 @@ import GhostBtn  from '../components/GhostBtn';
 const GOLD = '#C89B20';
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
-  useKeepAwake();
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    loadSettings().then(setSettings);
+  }, []);
+
+  useEffect(() => {
+    if (settings.keepScreenAwake) {
+      activateKeepAwakeAsync();
+    } else {
+      deactivateKeepAwake();
+    }
+    return () => { deactivateKeepAwake(); };
+  }, [settings.keepScreenAwake]);
+
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
@@ -44,7 +59,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     handlePlayPause,
     reset,
     skip,
-  } = useWorkoutSession(SEGMENTS);
+  } = useWorkoutSession(SEGMENTS, settings);
 
   const progressAnim = useRef(new Animated.Value(1)).current;
 
