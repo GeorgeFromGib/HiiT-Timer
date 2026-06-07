@@ -152,3 +152,16 @@ export function fmtDuration(s: number): string {
   if (sec === 0) return `${m}m`;
   return `${m}m ${sec}s`;
 }
+
+/** Clock-style format for the live timer display: "45", "1:30", "2:05:30". */
+export function fmtTimer(s: number): string {
+  s = Math.max(0, Math.ceil(s));
+  if (s >= 3600) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+  }
+  if (s < 60) return `${s}`;
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}

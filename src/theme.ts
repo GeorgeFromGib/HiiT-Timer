@@ -61,6 +61,44 @@ const daybreak: ThemeTokens = {
 
 export const THEME_TOKENS: Record<ThemeKey, ThemeTokens> = { tidal, daybreak };
 
+export interface ThemePreview {
+  key:    ThemeKey;
+  name:   string;
+  note:   string;
+  bg:     readonly [string, string];
+  accent: string;
+  phases: string[];
+}
+
+export const THEME_PREVIEWS: ThemePreview[] = [
+  {
+    key:    'tidal',
+    name:   'Tidal',
+    note:   'Deep teal · calm',
+    bg:     THEME_TOKENS.tidal.bgGradient,
+    accent: THEME_TOKENS.tidal.accent,
+    phases: [
+      THEME_TOKENS.tidal.phases.rest,
+      THEME_TOKENS.tidal.phases.warmup,
+      THEME_TOKENS.tidal.phases.work,
+      THEME_TOKENS.tidal.phases.cooldown,
+    ],
+  },
+  {
+    key:    'daybreak',
+    name:   'Daybreak',
+    note:   'Light · warm paper',
+    bg:     THEME_TOKENS.daybreak.bgGradient,
+    accent: THEME_TOKENS.daybreak.accent,
+    phases: [
+      THEME_TOKENS.daybreak.phases.rest,
+      THEME_TOKENS.daybreak.phases.warmup,
+      THEME_TOKENS.daybreak.phases.work,
+      THEME_TOKENS.daybreak.phases.cooldown,
+    ],
+  },
+];
+
 interface ThemeContextValue {
   T:        ThemeTokens;
   themeKey: ThemeKey;

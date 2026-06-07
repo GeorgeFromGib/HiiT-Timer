@@ -13,6 +13,7 @@ import { useWorkoutSession } from '../hooks/useWorkoutSession';
 import {
   PHASE_META,
   totalDuration,
+  fmtTimer,
 } from '../lib/workout';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
@@ -23,18 +24,6 @@ import FinishedIcon from '../components/FinishedIcon';
 import GhostBtn  from '../components/GhostBtn';
 
 const GOLD = '#C89B20';
-
-const tfmt = (s: number) => {
-  s = Math.max(0, Math.ceil(s));
-  if (s >= 3600) {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-  }
-  if (s < 60) return `${s}`;
-  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-};
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   useKeepAwake();
@@ -86,9 +75,9 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const isDone           = status === 'finished';
   const isPreStart       = status === 'preStart';
   const pct              = TOTAL_DUR > 0 ? Math.round((elapsed / TOTAL_DUR) * 100) : 0;
-  const displayRemaining      = isIdle ? tfmt(TOTAL_DUR) : tfmt(remainingTotal);
+  const displayRemaining      = isIdle ? fmtTimer(TOTAL_DUR) : fmtTimer(remainingTotal);
   const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? SEGMENTS[0].duration : remainingInSegment));
-  const displayCountdown      = isPreStart ? String(preStartCount) : tfmt(remainingForCountdown);
+  const displayCountdown      = isPreStart ? String(preStartCount) : fmtTimer(remainingForCountdown);
   const countdownHasHours     = !isPreStart && remainingForCountdown >= 3600;
   const countdownFontSize     = countdownHasHours ? 88 : 124;
   const intervalNum           = currentIndex >= 0 ? currentIndex + 1 : 1;

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
+import { useTheme, ghostBtnStyle, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
 import { typography } from '../typography';
 import {
   DEFAULT_SETTINGS,
@@ -18,33 +18,6 @@ import {
   type Settings,
   type ThemeKey,
 } from '../lib/settings';
-
-// ── Theme preview data ──────────────────────────────────────────
-const THEMES: Array<{
-  key: ThemeKey;
-  name: string;
-  note: string;
-  bg: [string, string];
-  accent: string;
-  phases: string[];
-}> = [
-  {
-    key: 'tidal',
-    name: 'Tidal',
-    note: 'Deep teal · calm',
-    bg: ['#0b1d26', '#0e2832'],
-    accent: '#3ad6c6',
-    phases: ['#5fd38a', '#ff8a3d', '#ff5a5f', '#46a6ff'],
-  },
-  {
-    key: 'daybreak',
-    name: 'Daybreak',
-    note: 'Light · warm paper',
-    bg: ['#f3efe6', '#e7e1d4'],
-    accent: '#ff5a3d',
-    phases: ['#1f9d57', '#e0631a', '#e23b40', '#1f7fd6'],
-  },
-];
 
 // ── Toggle ──────────────────────────────────────────────────────
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
@@ -133,7 +106,7 @@ function ThemeCard({
   selected,
   onSelect,
 }: {
-  theme: (typeof THEMES)[number];
+  theme: ThemePreview;
   selected: boolean;
   onSelect: () => void;
 }) {
@@ -255,7 +228,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Appearance</Text>
           <View style={styles.themeRow}>
-            {THEMES.map(th => (
+            {THEME_PREVIEWS.map(th => (
               <ThemeCard
                 key={th.key}
                 theme={th}
