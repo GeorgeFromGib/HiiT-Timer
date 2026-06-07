@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   Pressable,
@@ -9,15 +9,9 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { useTheme, ghostBtnStyle, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
-import { typography } from '../typography';
-import {
-  DEFAULT_SETTINGS,
-  loadSettings,
-  saveSettings,
-  type Settings,
-  type ThemeKey,
-} from '../lib/settings';
+import { useTheme, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
+import ScreenHeader from '../components/ScreenHeader';
+import { useSettings } from '../lib/settingsContext';
 
 // ── Toggle ──────────────────────────────────────────────────────
 function Toggle({ value, onChange, disabled = false }: {
@@ -182,21 +176,10 @@ function ThemeCard({
 // SETTINGS SCREEN
 // ══════════════════════════════════════════════════════════════
 export default function SettingsScreen({ onBack }: { onBack: () => void }) {
-  const { T, themeKey, setTheme } = useTheme();
+  const { T, themeKey } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-
-  useEffect(() => {
-    loadSettings().then(setSettings);
-  }, []);
-
-  function update<K extends keyof Settings>(key: K, value: Settings[K]) {
-    const next = { ...settings, [key]: value };
-    setSettings(next);
-    saveSettings(next);
-    if (key === 'theme') setTheme(value as ThemeKey);
-  }
+  const { settings, updateSettings } = useSettings();
 
   return (
     <LinearGradient
@@ -211,24 +194,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         showsVerticalScrollIndicator={false}
       >
         {/* ── Header ── */}
-        <View style={styles.header}>
-          <Pressable onPress={onBack} style={styles.ghostBtn}>
-            <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
-              <Path
-                d="M10 13L5 8l5-5"
-                stroke={T.subText}
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </Svg>
-          </Pressable>
-          <View style={styles.headerCenter}>
-            <Text style={styles.headerLabel}>Preferences</Text>
-            <Text style={styles.headerTitle}>Settings</Text>
-          </View>
-          <View style={{ width: 36 }} />
-        </View>
+        <ScreenHeader onBack={onBack} subtitle="Preferences" title="Settings" style={styles.header} />
 
         {/* ── Appearance ── */}
         <View style={styles.section}>
@@ -239,7 +205,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
                 key={th.key}
                 theme={th}
                 selected={themeKey === th.key}
-                onSelect={() => update('theme', th.key)}
+                onSelect={() => updateSettings('theme', th.key)}
               />
             ))}
           </View>
@@ -250,12 +216,17 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
           <SRow
             label="Congratulatory message"
             sub="Full-screen celebration at workout end"
-            right={<Toggle value={settings.congratsMessage} onChange={v => update('congratsMessage', v)} />}
+            right={<Toggle value={settings.congratsMessage} onChange={v => updateSettings('congratsMessage', v)} />}
+          />
+          <SRow
+            label="Countdown flash"
+            sub="Screen flash on last 3 seconds of each interval"
+            right={<Toggle value={settings.countdownFlash} onChange={v => updateSettings('countdownFlash', v)} />}
           />
           <SRow
             label="Keep screen awake"
             sub="Prevent display sleep during workout"
-            right={<Toggle value={settings.keepScreenAwake} onChange={v => update('keepScreenAwake', v)} />}
+            right={<Toggle value={settings.keepScreenAwake} onChange={v => updateSettings('keepScreenAwake', v)} />}
             last
           />
         </SSection>
@@ -265,19 +236,19 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
           <SRow
             label="Sound off"
             sub="Mute all audio"
-            right={<Toggle value={settings.soundOff} onChange={v => update('soundOff', v)} />}
+            right={<Toggle value={settings.soundOff} onChange={v => updateSettings('soundOff', v)} />}
           />
           <SRow
             label="Sound cues"
             sub="Play tones on phase changes"
             disabled={settings.soundOff}
-            right={<Toggle value={settings.soundCues} onChange={v => update('soundCues', v)} disabled={settings.soundOff} />}
+            right={<Toggle value={settings.soundCues} onChange={v => updateSettings('soundCues', v)} disabled={settings.soundOff} />}
           />
           <SRow
             label="Final countdown beep"
             sub="Audio cue in last 3 seconds"
             disabled={settings.soundOff}
-            right={<Toggle value={settings.finalCountdownBeep} onChange={v => update('finalCountdownBeep', v)} disabled={settings.soundOff} />}
+            right={<Toggle value={settings.finalCountdownBeep} onChange={v => updateSettings('finalCountdownBeep', v)} disabled={settings.soundOff} />}
             last
           />
         </SSection>
@@ -320,28 +291,7 @@ function makeStyles(T: ThemeTokens) {
     },
 
     // Header
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 28,
-    },
-    headerCenter: {
-      flex: 1,
-      alignItems: 'center',
-    },
-    headerLabel: {
-      ...typography.sectionLabel,
-      color: T.faintText,
-    },
-    headerTitle: {
-      fontFamily: 'Inter_800ExtraBold',
-      fontSize: 20,
-      letterSpacing: -0.2,
-      color: T.text,
-      marginTop: 1,
-    },
-    ghostBtn: ghostBtnStyle(T),
+    header: { marginBottom: 28 },
 
     // Section
     section: { marginBottom: 24 },
