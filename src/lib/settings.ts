@@ -9,6 +9,7 @@ export interface Settings {
   keepScreenAwake: boolean;
   soundCues: boolean;
   hapticFeedback: boolean;
+  soundOff: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -18,6 +19,7 @@ export const DEFAULT_SETTINGS: Settings = {
   keepScreenAwake: true,
   soundCues: true,
   hapticFeedback: true,
+  soundOff: false,
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');
