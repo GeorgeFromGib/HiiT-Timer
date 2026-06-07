@@ -35,9 +35,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
   useEffect(() => {
     if (settings.keepScreenAwake) {
-      activateKeepAwakeAsync();
-    } else {
-      deactivateKeepAwake();
+      activateKeepAwakeAsync().catch(() => {});
     }
     return () => { deactivateKeepAwake(); };
   }, [settings.keepScreenAwake]);
