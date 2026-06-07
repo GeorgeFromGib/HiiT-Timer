@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
-import { loadSettings, DEFAULT_SETTINGS, type Settings } from '../lib/settings';
+import { useSettings } from '../lib/settingsContext';
 import {
   PHASE_META,
   totalDuration,
@@ -18,7 +18,8 @@ import {
 } from '../lib/workout';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
-import { useTheme, ghostBtnStyle, type ThemeTokens } from '../theme';
+import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
+import ScreenHeader from '../components/ScreenHeader';
 import PhaseIcon from '../components/PhaseIcon';
 import ReadyIcon from '../components/ReadyIcon';
 import FinishedIcon from '../components/FinishedIcon';
@@ -27,11 +28,7 @@ import GhostBtn  from '../components/GhostBtn';
 const GOLD = '#C89B20';
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-
-  useEffect(() => {
-    loadSettings().then(setSettings);
-  }, []);
+  const { settings } = useSettings();
 
   useEffect(() => {
     if (settings.keepScreenAwake) {
@@ -40,7 +37,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     return () => { deactivateKeepAwake(); };
   }, [settings.keepScreenAwake]);
 
-  const { T } = useTheme();
+  const { T, themeKey } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
   const SEGMENTS  = useMemo(() => getSessionSegments(session), []);
@@ -57,9 +54,17 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     handlePlayPause,
     reset,
     skip,
-  } = useWorkoutSession(SEGMENTS, settings);
+  } = useWorkoutSession(SEGMENTS, settings, () => {
+    if (!settings.countdownFlash) return;
+    if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
+    setFlashing(true);
+    flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
+  });
 
   const progressAnim = useRef(new Animated.Value(1)).current;
+  const [flashing, setFlashing] = useState(false);
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
 
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
   const seg            = SEGMENTS[effectiveIndex];
@@ -101,29 +106,25 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     outputRange: [segEndPct, segStartPct],
   });
 
+  const flashGradient = THEME_TOKENS[themeKey === 'tidal' ? 'daybreak' : 'tidal'].bgGradient;
+
   return (
-    <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
+    <LinearGradient colors={flashing ? flashGradient : T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
       {/* ── Header ── */}
-      <View style={styles.header}>
-        <Pressable style={styles.closeBtn} onPress={onBack}>
-          <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
-            <Path d="M10 13L5 8l5-5" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </Pressable>
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.headerLabel}>INTERVAL SESSION</Text>
-          <Text style={styles.headerTitle}>{session.name}</Text>
-        </View>
-        <View style={{ width: 36 }} />
-      </View>
+      <ScreenHeader
+        onBack={onBack}
+        subtitle="INTERVAL SESSION"
+        title={session.name}
+        titleStyle={styles.headerTitle}
+      />
 
       {/* ── Phase center block ── */}
       <View style={styles.phaseBlock}>
         {/* icon + label: anchored to bottom of top half */}
         <View style={styles.phaseTop}>
           <View style={[styles.iconBadge, {
-            backgroundColor: (isDone ? GOLD : isPreStart ? T.accent : phaseColor) + '22',
-            borderColor:     (isDone ? GOLD : isPreStart ? T.accent : phaseColor) + '55',
+            backgroundColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x22),
+            borderColor:     withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
           }]}>
             {isDone
               ? <FinishedIcon color={GOLD} size={30} />
@@ -135,7 +136,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
           <Text style={[styles.phaseLabel, {
             color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
-            textShadowColor: (isDone ? GOLD : isPreStart ? T.accent : phaseColor) + '55',
+            textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
           }]}>
             {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
           </Text>
@@ -149,7 +150,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               key={i}
               style={[styles.countdown, {
                 opacity: isDone ? 0 : 1,
-                textShadowColor: (isPreStart ? T.accent : phaseColor) + '3a',
+                textShadowColor: withOpacity(isPreStart ? T.accent : phaseColor, 0x3a),
                 fontSize: countdownFontSize,
                 lineHeight: countdownFontSize,
                 width: ch === ':' ? countdownFontSize * 0.28 : countdownFontSize * 0.62,
@@ -310,26 +311,12 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     paddingBottom: 24,
   },
 
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  headerLabel: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 10.5,
-    letterSpacing: 10.5 * 0.18,
-    textTransform: 'uppercase',
-    color: T.faintText,
-  },
   headerTitle: {
     fontFamily: 'Inter_700Bold',
     fontSize: 18,
     letterSpacing: 18 * -0.01,
     color: T.text,
-    marginTop: 2,
   },
-  closeBtn: ghostBtnStyle(T),
 
   phaseBlock: {
     flex: 1,
@@ -485,7 +472,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     width: 74,
     height: 74,
     borderRadius: 37,
-    shadowColor: T.accent,
+    ...buttonShadow(T),
     shadowOffset:  { width: 0, height: 12 },
     shadowOpacity: 0.55,
     shadowRadius:  15,
