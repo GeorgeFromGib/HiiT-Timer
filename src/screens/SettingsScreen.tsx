@@ -20,7 +20,11 @@ import {
 } from '../lib/settings';
 
 // ── Toggle ──────────────────────────────────────────────────────
-function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+function Toggle({ value, onChange, disabled = false }: {
+  value: boolean;
+  onChange: (v: boolean) => void;
+  disabled?: boolean;
+}) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
   const anim = useRef(new Animated.Value(value ? 1 : 0)).current;
@@ -37,7 +41,7 @@ function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) =>
 
   return (
     <Pressable
-      onPress={() => onChange(!value)}
+      onPress={() => { if (!disabled) onChange(!value); }}
       style={[
         styles.toggleTrack,
         {
@@ -69,16 +73,18 @@ function SRow({
   sub,
   right,
   last,
+  disabled,
 }: {
   label: string;
   sub?: string;
   right: React.ReactNode;
   last?: boolean;
+  disabled?: boolean;
 }) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
   return (
-    <View style={[styles.row, !last && styles.rowBorder]}>
+    <View style={[styles.row, !last && styles.rowBorder, disabled && { opacity: 0.4 }]}>
       <View style={styles.rowLabels}>
         <Text style={styles.rowLabel}>{label}</Text>
         {sub ? <Text style={styles.rowSub}>{sub}</Text> : null}
@@ -247,11 +253,6 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             right={<Toggle value={settings.congratsMessage} onChange={v => update('congratsMessage', v)} />}
           />
           <SRow
-            label="Final countdown beep"
-            sub="Audio cue in last 3 seconds"
-            right={<Toggle value={settings.finalCountdownBeep} onChange={v => update('finalCountdownBeep', v)} />}
-          />
-          <SRow
             label="Keep screen awake"
             sub="Prevent display sleep during workout"
             right={<Toggle value={settings.keepScreenAwake} onChange={v => update('keepScreenAwake', v)} />}
@@ -262,14 +263,27 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         {/* ── Audio & Haptics ── */}
         <SSection title="Audio & Haptics">
           <SRow
+            label="Sound off"
+            sub="Mute all audio"
+            right={<Toggle value={settings.soundOff} onChange={v => update('soundOff', v)} />}
+          />
+          <SRow
             label="Sound cues"
             sub="Play tones on phase changes"
-            right={<Toggle value={settings.soundCues} onChange={v => update('soundCues', v)} />}
+            disabled={settings.soundOff}
+            right={<Toggle value={settings.soundCues} onChange={v => update('soundCues', v)} disabled={settings.soundOff} />}
+          />
+          <SRow
+            label="Final countdown beep"
+            sub="Audio cue in last 3 seconds"
+            disabled={settings.soundOff}
+            right={<Toggle value={settings.finalCountdownBeep} onChange={v => update('finalCountdownBeep', v)} disabled={settings.soundOff} />}
           />
           <SRow
             label="Haptic feedback"
             sub="Vibrate on interval transitions"
-            right={<Toggle value={settings.hapticFeedback} onChange={v => update('hapticFeedback', v)} />}
+            disabled={settings.soundOff}
+            right={<Toggle value={settings.hapticFeedback} onChange={v => update('hapticFeedback', v)} disabled={settings.soundOff} />}
             last
           />
         </SSection>
