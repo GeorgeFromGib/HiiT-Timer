@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useRef, useImperativeHandle, useMemo } from 'react';
 import {
+  Animated,
   KeyboardAvoidingView,
-  Modal,
   Platform,
   Pressable,
   StyleSheet,
@@ -14,15 +14,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { DIFFICULTY_COLORS, type Session, type Difficulty } from '../lib/sessions';
+import { type Session } from '../lib/sessions';
 import { fmtDuration, type Interval, type Phase } from '../lib/workout';
 import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
-import WheelColumn from '../components/WheelColumn';
+import PickerModal from '../components/PickerModal';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
 
-const DIFFICULTIES: Difficulty[] = ['Easy', 'Medium', 'Hard'];
 const PHASE_LABELS: Record<Phase, string> = {
   warmup:   'Warm Up',
   work:     'Work',
@@ -30,9 +29,6 @@ const PHASE_LABELS: Record<Phase, string> = {
   cooldown: 'Cool Down',
 };
 
-const MINUTE_LABELS = Array.from({ length: 60 }, (_, i) => String(i));
-const SECOND_LABELS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
-const ROUND_LABELS  = Array.from({ length: 99 }, (_, i) => String(i + 1));
 
 interface Props {
   session?: Session;
@@ -46,15 +42,15 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
 
   const {
     draft, picker,
-    setName, setDifficulty,
+    setName,
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker,
-    cyclePhase, addInterval, removeInterval, clearIntervals, reorderIntervals,
+    cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     save, deleteSession,
   } = useEditSession(existing, onBack);
 
-  const { name, difficulty, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal } = draft;
+  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal } = draft;
 
   const timeFields: { label: string; field: TimeField }[] = [
     { label: 'Warmup',   field: 'warmup'   },
@@ -96,33 +92,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             />
           </View>
 
-          {/* Difficulty */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>DIFFICULTY</Text>
-            <View style={styles.toggleRow}>
-              {DIFFICULTIES.map(diff => {
-                const active = difficulty === diff;
-                const color  = DIFFICULTY_COLORS[diff];
-                return (
-                  <Pressable
-                    key={diff}
-                    onPress={() => setDifficulty(diff)}
-                    style={[
-                      styles.toggleBtn,
-                      active
-                        ? { backgroundColor: withOpacity(color, 0x22), borderColor: color }
-                        : { backgroundColor: T.ghostBg, borderColor: T.hairline },
-                    ]}
-                  >
-                    <Text style={[styles.toggleBtnText, { color: active ? color : T.subText }]}>
-                      {diff}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
-
           {/* Mode toggle — always visible; back-conversion to easy is validated by tryConvertToEasy */}
           {(
             <View style={styles.fieldGroup}>
@@ -157,29 +126,17 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 keyExtractor={iv => iv._key}
                 onDragEnd={({ data }) => reorderIntervals(data)}
                 renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
-                  <ScaleDecorator>
-                    <ReanimatedSwipeable
-                      containerStyle={styles.intervalSwipeContainer}
-                      renderRightActions={() => (
-                        <Pressable
-                          onPress={() => removeInterval(iv._key)}
-                          style={styles.swipeDeleteAction}
-                        >
-                          <Text style={styles.swipeDeleteText}>Delete</Text>
-                        </Pressable>
-                      )}
-                    >
-                      <IntervalRow
-                        interval={iv}
-                        T={T}
-                        styles={styles}
-                        isActive={isActive}
-                        onCyclePhase={() => cyclePhase(iv._key)}
-                        onOpenPicker={() => openIntervalPicker(iv._key)}
-                        onDrag={drag}
-                      />
-                    </ReanimatedSwipeable>
-                  </ScaleDecorator>
+                  <IntervalSwipeRow
+                    interval={iv}
+                    T={T}
+                    styles={styles}
+                    isActive={isActive}
+                    drag={drag}
+                    onDuplicate={() => duplicateInterval(iv._key)}
+                    onRemove={() => removeInterval(iv._key)}
+                    onCyclePhase={() => cyclePhase(iv._key)}
+                    onOpenPicker={() => openIntervalPicker(iv._key)}
+                  />
                 )}
               />
 
@@ -258,75 +215,16 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </Text>
           </Pressable>
 
-          {/* Delete (edit mode only) */}
-          {isEditing && (
-            <Pressable onPress={deleteSession} style={styles.deleteBtn}>
-              <Text style={styles.deleteBtnText}>DELETE SESSION</Text>
-            </Pressable>
-          )}
+
         </NestableScrollContainer>
       </KeyboardAvoidingView>
 
-      {/* Duration picker modal */}
-      <Modal
-        visible={picker !== null}
-        transparent
-        animationType="slide"
-        onRequestClose={dismissPicker}
-      >
-        <View style={styles.modalOverlay}>
-          <Pressable style={styles.modalDismiss} onPress={dismissPicker} />
-          <View style={styles.modalSheet}>
-            <View style={styles.modalHeader}>
-              <Pressable onPress={dismissPicker} style={styles.modalCancelBtn}>
-                <Text style={styles.modalCancelText}>Cancel</Text>
-              </Pressable>
-              <Text style={styles.modalTitle}>{picker?.title}</Text>
-              <Pressable onPress={commitPicker} style={styles.modalDoneBtn}>
-                <Text style={styles.modalDoneText}>Done</Text>
-              </Pressable>
-            </View>
-
-            {picker?.isRounds ? (
-              <>
-                <View style={styles.pickerRow}>
-                  <WheelColumn
-                    values={ROUND_LABELS}
-                    selected={picker.rounds}
-                    onChange={v => updatePicker({ rounds: v })}
-                  />
-                </View>
-                <View style={styles.pickerUnits}>
-                  <Text style={styles.pickerUnitLabel}>rounds</Text>
-                </View>
-              </>
-            ) : (
-              <>
-                <View style={styles.pickerRow}>
-                  <WheelColumn
-                    values={MINUTE_LABELS}
-                    selected={picker?.minutes ?? 0}
-                    onChange={v => updatePicker({ minutes: v })}
-                  />
-                  <View style={styles.pickerSeparator}>
-                    <Text style={styles.pickerSeparatorText}>:</Text>
-                  </View>
-                  <WheelColumn
-                    values={SECOND_LABELS}
-                    selected={picker?.seconds ?? 0}
-                    onChange={v => updatePicker({ seconds: v })}
-                  />
-                </View>
-                <View style={styles.pickerUnits}>
-                  <Text style={styles.pickerUnitLabel}>min</Text>
-                  <View style={{ flex: 0, width: 24 }} />
-                  <Text style={styles.pickerUnitLabel}>sec</Text>
-                </View>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
+      <PickerModal
+        picker={picker}
+        onDismiss={dismissPicker}
+        onCommit={commitPicker}
+        onUpdate={updatePicker}
+      />
     </LinearGradient>
   );
 }
@@ -404,20 +302,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.text,
   },
 
-  toggleRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  toggleBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    alignItems: 'center',
-  },
-  toggleBtnText: {
-    ...typography.controlLabel,
-  },
   modeToggleRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -517,13 +401,27 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   intervalDurationText: {
     fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 16,
+    fontSize: 18,
     color: T.text,
+  },
+  swipeDuplicateAction: {
+    backgroundColor: '#3b82f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 4,
+    width: 80,
+    borderRadius: 12,
+    marginRight: 6,
+  },
+  swipeDuplicateText: {
+    ...typography.controlLabel,
+    color: '#fff',
   },
   swipeDeleteAction: {
     backgroundColor: '#ff5a5f',
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 4,
     width: 80,
     borderRadius: 12,
   },
@@ -616,86 +514,88 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     textTransform: 'uppercase',
     color: '#ff5a5f',
   },
-
-  // ── Duration picker modal ─────────────────────────────────────────────────
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  modalDismiss: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalSheet: {
-    backgroundColor: T.sheetBg,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 34,
-    borderTopWidth: 1,
-    borderColor: T.hairline,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: T.hairline,
-  },
-  modalTitle: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 16,
-    color: T.text,
-  },
-  modalCancelBtn: {
-    paddingVertical: 4,
-    minWidth: 60,
-  },
-  modalCancelText: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 16,
-    color: T.subText,
-  },
-  modalDoneBtn: {
-    paddingVertical: 4,
-    minWidth: 60,
-    alignItems: 'flex-end',
-  },
-  modalDoneText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 16,
-    color: T.accent,
-  },
-
-  pickerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 8,
-  },
-  pickerSeparator: {
-    width: 24,
-    alignItems: 'center',
-  },
-  pickerSeparatorText: {
-    fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 28,
-    color: T.subText,
-  },
-  pickerUnits: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingBottom: 8,
-  },
-  pickerUnitLabel: {
-    flex: 1,
-    textAlign: 'center',
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 11,
-    color: T.faintText,
-    letterSpacing: 11 * 0.12,
-    textTransform: 'uppercase',
-  },
 }); }
+
+const IntervalSwipeDuplicateAction = React.forwardRef<
+  { reset: () => void },
+  { styles: ReturnType<typeof makeStyles>; onDuplicate: () => void; swipeable: { close: () => void } }
+>(function IntervalSwipeDuplicateAction({ styles, onDuplicate, swipeable }, ref) {
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useImperativeHandle(ref, () => ({ reset: () => opacity.setValue(1) }));
+
+  const handlePress = () => {
+    onDuplicate();
+    Animated.timing(opacity, { toValue: 0, duration: 150, useNativeDriver: true }).start(
+      () => swipeable.close(),
+    );
+  };
+
+  return (
+    <Animated.View style={{ opacity, alignSelf: 'stretch' }}>
+      <Pressable onPress={handlePress} style={[styles.swipeDuplicateAction, { flex: 1 }]}>
+        <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+          <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+        <Text style={styles.swipeDuplicateText}>Duplicate</Text>
+      </Pressable>
+    </Animated.View>
+  );
+});
+
+function IntervalSwipeRow({
+  interval, T, styles, isActive, drag,
+  onDuplicate, onRemove, onCyclePhase, onOpenPicker,
+}: {
+  interval:     LocalInterval;
+  T:            ThemeTokens;
+  styles:       ReturnType<typeof makeStyles>;
+  isActive:     boolean;
+  drag:         () => void;
+  onDuplicate:  () => void;
+  onRemove:     () => void;
+  onCyclePhase: () => void;
+  onOpenPicker: () => void;
+}) {
+  const duplicateRef = useRef<{ reset: () => void } | null>(null);
+
+  return (
+    <ScaleDecorator>
+      <ReanimatedSwipeable
+        containerStyle={styles.intervalSwipeContainer}
+        onSwipeableClose={() => duplicateRef.current?.reset()}
+        renderLeftActions={(_p, _d, swipeable) => (
+          <IntervalSwipeDuplicateAction
+            ref={duplicateRef}
+            styles={styles}
+            onDuplicate={onDuplicate}
+            swipeable={swipeable}
+          />
+        )}
+        renderRightActions={(_p, _d, swipeable) => (
+          <Pressable
+            onPress={() => { swipeable.close(); onRemove(); }}
+            style={styles.swipeDeleteAction}
+          >
+            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+              <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
+            </Svg>
+            <Text style={styles.swipeDeleteText}>Delete</Text>
+          </Pressable>
+        )}
+      >
+        <IntervalRow
+          interval={interval}
+          T={T}
+          styles={styles}
+          isActive={isActive}
+          onCyclePhase={onCyclePhase}
+          onOpenPicker={onOpenPicker}
+          onDrag={drag}
+        />
+      </ReanimatedSwipeable>
+    </ScaleDecorator>
+  );
+}

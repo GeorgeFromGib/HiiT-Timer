@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Alert } from 'react-native';
-import { loadSessions, saveSessions, newId, type Session, type Difficulty } from '../lib/sessions';
+import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
   expandWorkout, intervalsToSegments, totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
@@ -28,7 +28,6 @@ const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 // All state the screen needs to render — no setters.
 export interface EditSessionDraft {
   name:            string;
-  difficulty:      Difficulty;
   isAdvanced:      boolean;
   fieldValues:     Record<TimeField, number>;
   rounds:          number;
@@ -51,15 +50,15 @@ export interface EditSessionInterface {
   picker:  EditSessionPicker | null;
   // Field edits
   setName:          (name: string) => void;
-  setDifficulty:    (d: Difficulty) => void;
   // Mode
   toggleMode:       (advanced: boolean) => void;
   // Interval list
-  cyclePhase:       (key: string) => void;
-  addInterval:      () => void;
-  removeInterval:   (key: string) => void;
-  clearIntervals:   () => void;
-  reorderIntervals: (data: LocalInterval[]) => void;
+  cyclePhase:         (key: string) => void;
+  addInterval:        () => void;
+  duplicateInterval:  (key: string) => void;
+  removeInterval:     (key: string) => void;
+  clearIntervals:     () => void;
+  reorderIntervals:   (data: LocalInterval[]) => void;
   // Picker
   openFieldPicker:    (field: TimeField) => void;
   openRoundsPicker:   () => void;
@@ -153,9 +152,8 @@ export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
 ): EditSessionInterface {
-  const [name,       setName]       = useState(existing?.name       ?? '');
-  const [difficulty, setDifficulty] = useState<Difficulty>(existing?.difficulty ?? 'Medium');
-  const [mode,       setMode]       = useState<'easy' | 'advanced'>(existing?.mode ?? 'easy');
+  const [name, setName] = useState(existing?.name ?? '');
+  const [mode, setMode] = useState<'easy' | 'advanced'>(existing?.mode ?? 'easy');
 
   const [warmup,   setWarmup]   = useState(existing?.mode === 'easy' ? existing.config.warmup   : 30);
   const [work,     setWork]     = useState(existing?.mode === 'easy' ? existing.config.high     : 30);
@@ -238,6 +236,15 @@ export function useEditSession(
     setIntervals(ivs => [...ivs, toLocal({ type: 'work', dur: 30 })]);
   }
 
+  function duplicateInterval(key: string) {
+    setIntervals(ivs => {
+      const idx = ivs.findIndex(iv => iv._key === key);
+      if (idx === -1) return ivs;
+      const copy = toLocal(ivs[idx]);
+      return [...ivs.slice(0, idx + 1), copy, ...ivs.slice(idx + 1)];
+    });
+  }
+
   function removeInterval(key: string) {
     setIntervals(ivs => ivs.filter(iv => iv._key !== key));
   }
@@ -251,7 +258,7 @@ export function useEditSession(
       Alert.alert('No intervals', 'Add at least one interval.');
       return;
     }
-    const base = { id: existing?.id ?? newId(), name: name.trim(), difficulty };
+    const base = { id: existing?.id ?? newId(), name: name.trim() };
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     const updated: Session = mode === 'easy'
       ? { ...base, mode: 'easy', config: easyConfig }
@@ -267,14 +274,13 @@ export function useEditSession(
   function deleteSession() {
     if (!existing) return;
     confirmDeleteSession(existing.name, async () => {
-      const sessions = await loadSessions();
-      await saveSessions(sessions.filter(s => s.id !== existing.id));
+      await deleteSessionById(existing.id);
       onBack();
     });
   }
 
   const draft: EditSessionDraft = {
-    name, difficulty,
+    name,
     isAdvanced: mode === 'advanced',
     fieldValues,
     rounds,
@@ -286,9 +292,9 @@ export function useEditSession(
   return {
     draft,
     picker,
-    setName, setDifficulty,
+    setName,
     toggleMode,
-    cyclePhase, addInterval, removeInterval,
+    cyclePhase, addInterval, duplicateInterval, removeInterval,
     clearIntervals: () => setIntervals([]),
     reorderIntervals: setIntervals,
     openFieldPicker,

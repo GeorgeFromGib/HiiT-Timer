@@ -2,18 +2,9 @@ import { File, Paths } from 'expo-file-system';
 import type { Interval, Segment, WorkoutConfig } from './workout';
 import { expandWorkout, intervalsToSegments } from './workout';
 
-export type Difficulty = 'Easy' | 'Medium' | 'Hard';
-
-export const DIFFICULTY_COLORS: Record<Difficulty, string> = {
-  Easy:   '#5fd38a',
-  Medium: '#ff8a3d',
-  Hard:   '#ff5a5f',
-};
-
 export type Session = {
   id: string;
   name: string;
-  difficulty: Difficulty;
 } & (
   | { mode: 'easy'; config: WorkoutConfig }
   | { mode: 'advanced'; intervals: Interval[] }
@@ -30,21 +21,18 @@ export const DEFAULT_SESSIONS: Session[] = [
   {
     id: 'default-1',
     name: 'Tabata Burnout',
-    difficulty: 'Hard',
     mode: 'easy',
     config: { warmup: 45, high: 30, low: 15, rounds: 4, cooldown: 60 },
   },
   {
     id: 'default-2',
     name: 'Quick Express',
-    difficulty: 'Medium',
     mode: 'easy',
     config: { warmup: 20, high: 20, low: 10, rounds: 3, cooldown: 30 },
   },
   {
     id: 'default-3',
     name: 'Steady Burn',
-    difficulty: 'Easy',
     mode: 'easy',
     config: { warmup: 60, high: 45, low: 30, rounds: 3, cooldown: 60 },
   },
@@ -69,4 +57,11 @@ export async function saveSessions(sessions: Session[]): Promise<void> {
 
 export function newId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+export async function deleteSessionById(id: string): Promise<Session[]> {
+  const sessions = await loadSessions();
+  const next = sessions.filter(s => s.id !== id);
+  await saveSessions(next);
+  return next;
 }

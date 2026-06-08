@@ -391,6 +391,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     borderRadius: 6,
     backgroundColor: T.hairline,
     overflow: 'hidden',
+    flexDirection: 'row-reverse',
   },
   progressFill: {
     height: '100%',

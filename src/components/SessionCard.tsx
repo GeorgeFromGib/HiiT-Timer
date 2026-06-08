@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { totalDuration, fmtDuration } from '../lib/workout';
-import { getSessionSegments, DIFFICULTY_COLORS } from '../lib/sessions';
+import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
@@ -24,9 +24,8 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
-  const segments  = useMemo(() => getSessionSegments(session), [session]);
-  const total     = totalDuration(segments);
-  const diffColor = DIFFICULTY_COLORS[session.difficulty] ?? T.accent;
+  const segments = useMemo(() => getSessionSegments(session), [session]);
+  const total    = totalDuration(segments);
 
   return (
     <Pressable
@@ -46,11 +45,6 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
         <View style={styles.topRow}>
           <View style={styles.left}>
             <Text style={styles.title}>{session.name}</Text>
-            <View style={styles.pillRow}>
-              <View style={[styles.pill, { backgroundColor: withOpacity(diffColor, 0x22), borderColor: withOpacity(diffColor, 0x44) }]}>
-                <Text style={[styles.pillText, { color: diffColor }]}>{session.difficulty.toUpperCase()}</Text>
-              </View>
-            </View>
           </View>
           <Pressable onPress={onEdit} style={styles.editBtn} hitSlop={8}>
             <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
@@ -132,24 +126,9 @@ function makeStyles(T: ThemeTokens) {
     },
     title: {
       fontFamily: 'Inter_800ExtraBold',
-      fontSize: 16,
-      letterSpacing: 16 * -0.01,
+      fontSize: 18,
+      letterSpacing: 18 * -0.01,
       color: T.text,
-    },
-    pillRow: {
-      flexDirection: 'row',
-      gap: 6,
-    },
-    pill: {
-      paddingVertical: 3,
-      paddingHorizontal: 9,
-      borderRadius: 999,
-      borderWidth: 1,
-    },
-    pillText: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 10.5,
-      letterSpacing: 10.5 * 0.1,
     },
     editBtn: {
       width: 34,
