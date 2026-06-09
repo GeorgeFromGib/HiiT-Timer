@@ -5,10 +5,12 @@ import { useTheme } from '../theme';
 interface Props {
   onPress:   () => void;
   disabled?: boolean;
+  color?:    string;
+  size?:     number;
   children:  React.ReactNode;
 }
 
-export default function GhostBtn({ onPress, disabled, children }: Props) {
+export default function GhostBtn({ onPress, disabled, color, size = 54, children }: Props) {
   const { T } = useTheme();
   return (
     <Pressable
@@ -16,12 +18,12 @@ export default function GhostBtn({ onPress, disabled, children }: Props) {
       disabled={disabled}
       style={[
         {
-          width: 54,
-          height: 54,
-          borderRadius: 27,
+          width: size,
+          height: size,
+          borderRadius: size / 2,
           backgroundColor: T.ghostBg,
           borderWidth: 1,
-          borderColor: T.hairline,
+          borderColor: color ?? T.hairline,
           alignItems: 'center',
           justifyContent: 'center',
         },

@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "hiit-timer",
-    "slug": "hiit-timer",
+    "name": "Clear HiiT",
+    "slug": "clear-hiit",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash-icon.png",

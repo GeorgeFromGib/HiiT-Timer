@@ -26,6 +26,7 @@ import FinishedIcon from '../components/FinishedIcon';
 import GhostBtn  from '../components/GhostBtn';
 
 const GOLD = '#C89B20';
+const EXTEND_OPTIONS = [5, 10, 15] as const;
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   const { settings } = useSettings();
@@ -40,8 +41,9 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const { T, themeKey } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
-  const SEGMENTS  = useMemo(() => getSessionSegments(session), []);
-  const TOTAL_DUR = useMemo(() => totalDuration(SEGMENTS), [SEGMENTS]);
+  const initialSegments = useMemo(() => getSessionSegments(session), []);
+  const [segments, setSegments] = useState(initialSegments);
+  const TOTAL_DUR = useMemo(() => totalDuration(segments), [segments]);
 
   const {
     status,
@@ -52,14 +54,17 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     remainingTotal,
     congratsMsg,
     handlePlayPause,
-    reset,
+    reset: resetEngine,
     skip,
-  } = useWorkoutSession(SEGMENTS, settings, () => {
+    extend,
+  } = useWorkoutSession(segments, settings, () => {
     if (!settings.countdownFlash) return;
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
     setFlashing(true);
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
   });
+
+  const reset = () => { resetEngine(); setSegments(initialSegments); };
 
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);
@@ -67,8 +72,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
 
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
-  const seg            = SEGMENTS[effectiveIndex];
-  const nextSeg        = SEGMENTS[effectiveIndex + 1];
+  const seg            = segments[effectiveIndex];
+  const nextSeg        = segments[effectiveIndex + 1];
   const meta           = PHASE_META[seg.phase];
   const nextMeta       = nextSeg ? PHASE_META[nextSeg.phase] : null;
   const phaseColor     = T.phases[seg.phase];
@@ -94,7 +99,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const isPreStart       = status === 'preStart';
   const pct              = TOTAL_DUR > 0 ? Math.round((elapsed / TOTAL_DUR) * 100) : 0;
   const displayRemaining      = isIdle ? fmtTimer(TOTAL_DUR) : fmtTimer(remainingTotal);
-  const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? SEGMENTS[0].duration : remainingInSegment));
+  const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? segments[0].duration : remainingInSegment));
   const displayCountdown      = isPreStart ? String(preStartCount) : fmtTimer(remainingForCountdown);
   const countdownHasHours     = !isPreStart && remainingForCountdown >= 3600;
   const countdownFontSize     = countdownHasHours ? 88 : 124;
@@ -170,7 +175,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
               {'INTERVAL '}
               <Text style={{ color: T.onBg }}>{intervalNum}</Text>
-              {` OF ${SEGMENTS.length}`}
+              {` OF ${segments.length}`}
             </Text>
           )}
 
@@ -189,6 +194,16 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
                   },
                 ]}
               />
+            </View>
+          )}
+
+          {!isDone && !isPreStart && (
+            <View style={styles.extendRow}>
+              {EXTEND_OPTIONS.map((secs) => (
+                <GhostBtn key={secs} onPress={() => setSegments(extend(secs))} disabled={isIdle} color={phaseColor} size={68}>
+                  <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
+                </GhostBtn>
+              ))}
             </View>
           )}
         </View>
@@ -214,7 +229,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       <View style={styles.timelineWrap}>
         <View style={styles.timelineBar}>
           <View style={styles.segmentsClip}>
-            {SEGMENTS.map((s, i) => {
+            {segments.map((s, i) => {
               const widthPct    = (s.duration / TOTAL_DUR) * 100;
               const isActive    = !isDone && i === currentIndex;
               const isCompleted = isDone || (currentIndex > 0 && i < currentIndex);
@@ -383,6 +398,10 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     fontSize: 19,
     letterSpacing: 19 * 0.08,
     color: T.onBg,
+  },
+  extendRow: {
+    flexDirection: 'row',
+    gap: 12,
   },
   progressTrack: {
     alignSelf: 'stretch',

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
-import type { Segment } from '../lib/workout';
+import { Segment } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
 
 const CONGRATS = [
@@ -40,6 +40,7 @@ export interface WorkoutSession {
   handlePlayPause: () => void;
   reset: () => void;
   skip: () => void;
+  extend: (seconds: number) => Segment[];
 }
 
 export function useWorkoutSession(
@@ -66,7 +67,7 @@ export function useWorkoutSession(
     () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
   );
 
-  const { state, start, pause, resume, reset: engineReset, skip } = useTimerEngine(segments, {
+  const { state, start, pause, resume, reset: engineReset, skip, extend } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
       const { soundOff, soundCues, soundVolume } = settingsRef.current;
       if (to && !soundOff && soundCues) audioRef.current.playChime(soundVolume / 100);
@@ -148,5 +149,6 @@ export function useWorkoutSession(
     handlePlayPause,
     reset,
     skip,
+    extend,
   };
 }

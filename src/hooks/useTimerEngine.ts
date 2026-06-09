@@ -40,6 +40,11 @@ const TICK_MS = 200; // 5x/sec: smooth display, cheap battery
 export function useTimerEngine(segments: Segment[], cb: Callbacks) {
   const total = totalDuration(segments);
 
+  // Mutable ref so tick always reads current segment data without needing
+  // to be recreated mid-run (supports extend() updating boundaries live).
+  const segmentsRef = useRef(segments);
+  segmentsRef.current = segments;
+
   const [state, setState] = useState<TimerState>({
     status: 'idle',
     elapsed: 0,
@@ -70,11 +75,13 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
   };
 
   const tick = useCallback(() => {
-    const elapsed = Math.min(computeElapsed(), total);
+    const segs = segmentsRef.current;
+    const tot = totalDuration(segs);
+    const elapsed = Math.min(computeElapsed(), tot);
 
     // Finish?
-    if (elapsed >= total) {
-      const prev = lastIndexRef.current >= 0 ? segments[lastIndexRef.current] : null;
+    if (elapsed >= tot) {
+      const prev = lastIndexRef.current >= 0 ? segs[lastIndexRef.current] : null;
       if (statusRef.current !== 'finished') {
         statusRef.current = 'finished';
         if (intervalRef.current) clearInterval(intervalRef.current);
@@ -84,7 +91,7 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
       }
       setState({
         status: 'finished',
-        elapsed: total,
+        elapsed: tot,
         currentIndex: -1,
         remainingInSegment: 0,
         remainingTotal: 0,
@@ -93,13 +100,13 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
       return;
     }
 
-    const idx = segmentIndexAt(segments, elapsed);
-    const seg = segments[idx];
+    const idx = segmentIndexAt(segs, elapsed);
+    const seg = segs[idx];
 
     // Transition crossing (covers normal advance AND a catch-up after the JS
     // thread was suspended, where idx may jump by more than one).
     if (idx !== lastIndexRef.current) {
-      const from = lastIndexRef.current >= 0 ? segments[lastIndexRef.current] : null;
+      const from = lastIndexRef.current >= 0 ? segs[lastIndexRef.current] : null;
       cbRef.current.onTransition?.(from, seg ?? null);
       lastIndexRef.current = idx;
     }
@@ -123,9 +130,9 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
       elapsed,
       currentIndex: idx,
       remainingInSegment,
-      remainingTotal: total - elapsed,
+      remainingTotal: tot - elapsed,
     });
-  }, [segments, total]);
+  }, []);
 
   const startLoop = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -170,21 +177,35 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
       elapsed: 0,
       currentIndex: -1,
       remainingInSegment: 0,
-      remainingTotal: total,
+      remainingTotal: totalDuration(segmentsRef.current),
     });
-  }, [total]);
+  }, []);
 
   // Jump to the start of the next segment.
   const skip = useCallback(() => {
     if (statusRef.current === 'idle' || statusRef.current === 'finished') return;
     const elapsed = computeElapsed();
-    const idx = segmentIndexAt(segments, elapsed);
-    const seg = segments[idx];
+    const idx = segmentIndexAt(segmentsRef.current, elapsed);
+    const seg = segmentsRef.current[idx];
     if (!seg) return;
     accumulatedRef.current = seg.endAt; // land exactly on the boundary
     resumeEpochRef.current = Date.now();
     tick();
-  }, [segments, tick]);
+  }, [tick]);
+
+  // Extend the current segment by the given number of seconds.
+  const extend = useCallback((seconds: number): Segment[] => {
+    const elapsed = computeElapsed();
+    const idx = segmentIndexAt(segmentsRef.current, elapsed);
+    if (idx < 0) return segmentsRef.current;
+    const newSegments = segmentsRef.current.map((s, i) => {
+      if (i < idx) return s;
+      if (i === idx) return { ...s, duration: s.duration + seconds, endAt: s.endAt + seconds };
+      return { ...s, startAt: s.startAt + seconds, endAt: s.endAt + seconds };
+    });
+    segmentsRef.current = newSegments;
+    return newSegments;
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -192,5 +213,5 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     };
   }, []);
 
-  return { state, start, pause, resume, reset, skip, sync: tick };
+  return { state, start, pause, resume, reset, skip, extend, sync: tick };
 }
