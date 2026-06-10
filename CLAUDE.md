@@ -100,3 +100,11 @@ Key files:
 
 Implement pixel-close to the designs. Colors, spacing, and interactions are final.
 
+### Versioning
+
+- 0 represnets digit location
+
+- MAJOR (0._._) — breaking change or significant new product (rare, usually signals a full rewrite or incompatible data migration)
+- MINOR (_.0._) — new features, backwards compatible
+- PATCH (_._.0) — bug fixes, no new features
+

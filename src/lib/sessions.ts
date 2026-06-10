@@ -39,12 +39,6 @@ export const DEFAULT_SESSIONS: Session[] = [
       { type: 'cooldown', dur: 30 },
     ],
   },
-  {
-    id: 'default-3',
-    name: 'Steady Burn',
-    mode: 'easy',
-    config: { warmup: 60, high: 45, low: 30, rounds: 3, cooldown: 60 },
-  },
 ];
 
 export async function loadSessions(): Promise<Session[]> {
