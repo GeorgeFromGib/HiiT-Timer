@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { type Session } from '../lib/sessions';
+import { type Session, type RunSpeeds } from '../lib/sessions';
 import { fmtDuration, type Interval, type Phase } from '../lib/workout';
 import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -60,6 +60,13 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     { label: 'Work',     field: 'work'     },
     { label: 'Rest',     field: 'rest'     },
     { label: 'Cooldown', field: 'cooldown' },
+  ];
+
+  const speedFields: { label: string; field: keyof RunSpeeds }[] = [
+    { label: 'Warmup',   field: 'warmupSpeed'   },
+    { label: 'Work',     field: 'workSpeed'     },
+    { label: 'Rest',     field: 'restSpeed'     },
+    { label: 'Cooldown', field: 'cooldownSpeed' },
   ];
 
   return (
@@ -177,31 +184,61 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               </View>
             </>
           ) : (
-            /* Easy mode timing */
-            <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>TIMING</Text>
-              <View style={styles.configGrid}>
-                {timeFields.map(({ label, field }) => (
-                  <View key={field} style={styles.configCell}>
-                    <Text style={styles.configCellLabel}>{label}</Text>
-                    <Pressable
-                      style={styles.configInput}
-                      onPress={() => openFieldPicker(field)}
-                    >
-                      <Text style={styles.configInputText}>
-                        {fmtDuration(fieldValues[field])}
-                      </Text>
+            <>
+              {/* Easy mode timing */}
+              <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>TIMING</Text>
+                <View style={styles.configGrid}>
+                  {timeFields.map(({ label, field }) => (
+                    <View key={field} style={styles.configCell}>
+                      <Text style={styles.configCellLabel}>{label}</Text>
+                      <Pressable
+                        style={styles.configInput}
+                        onPress={() => openFieldPicker(field)}
+                      >
+                        <Text style={styles.configInputText}>
+                          {fmtDuration(fieldValues[field])}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  ))}
+                  <View style={styles.configCell}>
+                    <Text style={styles.configCellLabel}>Rounds</Text>
+                    <Pressable style={styles.configInput} onPress={openRoundsPicker}>
+                      <Text style={styles.configInputText}>{rounds}</Text>
                     </Pressable>
                   </View>
-                ))}
-                <View style={styles.configCell}>
-                  <Text style={styles.configCellLabel}>Rounds</Text>
-                  <Pressable style={styles.configInput} onPress={openRoundsPicker}>
-                    <Text style={styles.configInputText}>{rounds}</Text>
-                  </Pressable>
                 </View>
               </View>
-            </View>
+
+              {/* Speeds — only visible when activity type is Run */}
+              {isRun && (
+                <View style={styles.fieldGroup}>
+                  <Text style={styles.fieldLabel}>SPEEDS</Text>
+                  <View style={styles.configGrid}>
+                    {speedFields.map(({ label, field }) => (
+                      <View key={field} style={styles.configCell}>
+                        <Text style={styles.configCellLabel}>{label}</Text>
+                        <View style={[styles.configInput, styles.speedInputWrapper]}>
+                          <TextInput
+                            style={styles.speedInputText}
+                            value={String(runSpeeds[field])}
+                            onChangeText={v => {
+                              const n = parseFloat(v);
+                              if (!isNaN(n) && n > 0) setRunSpeed(field, n);
+                            }}
+                            keyboardType="decimal-pad"
+                            returnKeyType="done"
+                            selectTextOnFocus
+                          />
+                          <Text style={styles.speedUnitLabel}>km/h</Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </>
           )}
 
           {/* Preview */}
@@ -381,6 +418,24 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     fontSize: 18,
     color: T.text,
     textAlign: 'center',
+  },
+  speedInputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+  speedInputText: {
+    flex: 1,
+    fontFamily: 'ChakraPetch_700Bold',
+    fontSize: 18,
+    color: T.text,
+    textAlign: 'center',
+    paddingVertical: 0,
+  },
+  speedUnitLabel: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 11,
+    color: T.faintText,
   },
 
   // ── Interval list ──────────────────────────────────────────────────────────
