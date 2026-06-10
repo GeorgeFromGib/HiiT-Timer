@@ -71,12 +71,12 @@ export const DEFAULT_SESSIONS: Session[] = [
     ],
   },
   {
-    id: 'default-run-1',
-    name: 'Easy Run',
+    id: 'default-run-2',
+    name: 'Interval Run',
     mode: 'easy',
     activityType: 'run',
-    config: { warmup: 180, high: 20, low: 40, rounds: 14, cooldown: 180 },
-    runSpeeds: DEFAULT_RUN_SPEEDS,
+    config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
+    runSpeeds: { warmupSpeed: 7, workSpeed: 11, restSpeed: 6, cooldownSpeed: 5.5 },
   },
 ];
 

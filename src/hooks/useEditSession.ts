@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Alert } from 'react-native';
-import { loadSessions, saveSessions, deleteSessionById, newId, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
+import { loadSessions, saveSessions, deleteSessionById, newId, getSessionSegments, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
-  expandWorkout, intervalsToSegments, totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
+  totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
 
@@ -188,10 +188,13 @@ export function useEditSession(
     cooldown,
   };
 
-  const previewSegments = useMemo(
-    () => mode === 'easy' ? expandWorkout(easyConfig) : intervalsToSegments(intervals),
-    [mode, warmup, work, rest, rounds, cooldown, intervals],
-  );
+  const previewSegments = useMemo(() => {
+    const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+    const draft: Session = mode === 'easy'
+      ? { id: '', name: '', mode: 'easy', config: easyConfig, activityType, runSpeeds }
+      : { id: '', name: '', mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds };
+    return getSessionSegments(draft);
+  }, [mode, warmup, work, rest, rounds, cooldown, intervals, activityType, runSpeeds]);
 
   const fieldValues: Record<TimeField, number> = { warmup, work, rest, cooldown };
   const fieldSetters: Record<TimeField, (v: number) => void> = {

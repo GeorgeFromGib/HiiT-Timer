@@ -17,6 +17,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Segment, segmentIndexAt, totalDuration } from '../lib/workout';
+import { computeTimerSnapshot, detectCountdownBeat } from '../lib/timerComputation';
 
 export interface TimerState {
   status: 'idle' | 'running' | 'paused' | 'finished';
@@ -76,11 +77,10 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
 
   const tick = useCallback(() => {
     const segs = segmentsRef.current;
-    const tot = totalDuration(segs);
-    const elapsed = Math.min(computeElapsed(), tot);
+    const elapsed = Math.min(computeElapsed(), totalDuration(segs));
+    const { isFinished, index, remainingInSegment, remainingTotal } = computeTimerSnapshot(elapsed, segs);
 
-    // Finish?
-    if (elapsed >= tot) {
+    if (isFinished) {
       const prev = lastIndexRef.current >= 0 ? segs[lastIndexRef.current] : null;
       if (statusRef.current !== 'finished') {
         statusRef.current = 'finished';
@@ -89,49 +89,26 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
         cbRef.current.onTransition?.(prev, null);
         cbRef.current.onFinish?.();
       }
-      setState({
-        status: 'finished',
-        elapsed: tot,
-        currentIndex: -1,
-        remainingInSegment: 0,
-        remainingTotal: 0,
-      });
+      setState({ status: 'finished', elapsed, currentIndex: -1, remainingInSegment: 0, remainingTotal: 0 });
       lastIndexRef.current = -1;
       return;
     }
 
-    const idx = segmentIndexAt(segs, elapsed);
-    const seg = segs[idx];
-
     // Transition crossing (covers normal advance AND a catch-up after the JS
-    // thread was suspended, where idx may jump by more than one).
-    if (idx !== lastIndexRef.current) {
+    // thread was suspended, where index may jump by more than one).
+    if (index !== lastIndexRef.current) {
       const from = lastIndexRef.current >= 0 ? segs[lastIndexRef.current] : null;
-      cbRef.current.onTransition?.(from, seg ?? null);
-      lastIndexRef.current = idx;
+      cbRef.current.onTransition?.(from, segs[index] ?? null);
+      lastIndexRef.current = index;
     }
 
-    const remainingInSegment = seg ? seg.endAt - elapsed : 0;
-
-    // 3-2-1 countdown cue for the last whole seconds of the segment.
-    if (seg) {
-      const secsLeft = Math.ceil(remainingInSegment);
-      if (secsLeft <= 3 && secsLeft >= 1) {
-        const key = `${idx}:${secsLeft}`;
-        if (key !== lastCountdownKeyRef.current) {
-          lastCountdownKeyRef.current = key;
-          cbRef.current.onCountdown?.(secsLeft, seg);
-        }
-      }
+    const { beat, nextKey } = detectCountdownBeat(remainingInSegment, index, lastCountdownKeyRef.current);
+    if (beat !== null) {
+      lastCountdownKeyRef.current = nextKey;
+      cbRef.current.onCountdown?.(beat, segs[index]);
     }
 
-    setState({
-      status: statusRef.current,
-      elapsed,
-      currentIndex: idx,
-      remainingInSegment,
-      remainingTotal: tot - elapsed,
-    });
+    setState({ status: statusRef.current, elapsed, currentIndex: index, remainingInSegment, remainingTotal });
   }, []);
 
   const startLoop = useCallback(() => {
