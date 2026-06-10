@@ -11,11 +11,9 @@ import {
 } from '@expo-google-fonts/inter';
 import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
 import { useEffect, useState, type ReactNode } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
 import SessionsListScreen from './src/screens/SessionsListScreen';
 
-// react-native-draggable-flatlist v4 calls measureLayout on Animated.View refs,
-// which are not native handles in RN 0.85 new architecture. Drag reorder still
-// works via the compatibility shim; suppress until the library is patched.
 LogBox.ignoreLogs(['ref.measureLayout must be called with a ref to a native component']);
 import WorkoutScreen from './src/screens/WorkoutScreen';
 import EditSessionScreen from './src/screens/EditSessionScreen';
@@ -24,6 +22,7 @@ import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
 import { SettingsContext } from './src/lib/settingsContext';
+import { configureAudioSession } from './src/lib/audio';
 
 function RouteScreen({ children }: { children: ReactNode }) {
   const { themeKey } = useTheme();
@@ -45,9 +44,14 @@ export default function App() {
     ChakraPetch_700Bold,
   });
 
+  const [audioReady, setAudioReady] = useState(false);
   const [route, setRoute] = useState<Route>({ name: 'Sessions' });
   const [themeKey, setThemeKey] = useState<ThemeKey>('tidal');
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));
+  }, []);
 
   useEffect(() => {
     loadSettings().then(s => {
@@ -55,6 +59,12 @@ export default function App() {
       setThemeKey(s.theme);
     });
   }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && audioReady) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, audioReady]);
 
   function updateSettings<K extends keyof Settings>(key: K, value: Settings[K]) {
     const next = { ...settings, [key]: value };
@@ -65,7 +75,7 @@ export default function App() {
 
   const setTheme = (key: ThemeKey) => setThemeKey(key);
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || !audioReady) return null;
 
   const goBack = () => setRoute({ name: 'Sessions' });
   const T = THEME_TOKENS[themeKey];
