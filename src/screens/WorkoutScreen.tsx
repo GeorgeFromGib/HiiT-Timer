@@ -117,7 +117,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       {/* ── Header ── */}
       <ScreenHeader
         onBack={onBack}
-        subtitle="INTERVAL SESSION"
         title={session.name}
         titleStyle={styles.headerTitle}
       />
@@ -351,7 +350,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingBottom: 24,
-    gap: 8,
+    gap: 4,
   },
   phaseBottom: {
     flex: 1.1,
@@ -367,7 +366,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 4,
   },
   phaseLabel: {
     fontFamily: 'Inter_900Black',
@@ -384,8 +383,8 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   speedPillText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 15,
-    letterSpacing: 15 * 0.02,
+    fontSize: 20,
+    letterSpacing: 20 * 0.02,
   },
   congratsMsg: {
     fontFamily: 'Inter_700Bold_Italic',
