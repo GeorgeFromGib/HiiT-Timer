@@ -6,58 +6,11 @@
 
 **Architecture:** `Session` gains optional `activityType?: 'run'` and `runSpeeds?: RunSpeeds` fields orthogonal to the existing Easy/Advanced mode. `Segment` gains an optional `speed?: number` field that `getSessionSegments` stamps when the session is a Run type. The workout screen reads `seg.speed` and renders a phase-coloured pill.
 
-**Tech Stack:** Expo SDK 56, React Native 0.85, TypeScript 6, jest-expo for tests.
+**Tech Stack:** Expo SDK 56, React Native 0.85, TypeScript 6.
 
 ---
 
-### Task 1: Configure Jest
-
-**Files:**
-- Modify: `package.json`
-
-- [ ] **Step 1: Install dependencies**
-
-```bash
-npx expo install jest-expo --save-dev
-npm install --save-dev @types/jest
-```
-
-- [ ] **Step 2: Add jest config and test script to package.json**
-
-In `package.json`, add `"test": "jest"` to `scripts` and add the `jest` block:
-
-```json
-"scripts": {
-  "start": "expo start",
-  "android": "expo run:android",
-  "ios": "expo run:ios",
-  "web": "expo start --web",
-  "test": "jest"
-},
-"jest": {
-  "preset": "jest-expo",
-  "testMatch": ["**/__tests__/**/*.test.ts"]
-}
-```
-
-- [ ] **Step 3: Verify Jest runs**
-
-```bash
-npx jest --listTests
-```
-
-Expected: no error (empty list is fine — no tests yet).
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add package.json package-lock.json
-git commit -m "chore: add jest-expo test setup"
-```
-
----
-
-### Task 2: Add RunSpeeds type and update Session + Segment
+### Task 1: Add RunSpeeds type and update Session + Segment
 
 **Files:**
 - Modify: `src/lib/sessions.ts`
@@ -132,45 +85,12 @@ git commit -m "feat: add RunSpeeds type and optional speed field to Segment"
 
 ---
 
-### Task 3: Add fmtSpeed helper and tests
+### Task 2: Add fmtSpeed helper
 
 **Files:**
 - Modify: `src/lib/workout.ts`
-- Create: `src/__tests__/fmtSpeed.test.ts`
 
-- [ ] **Step 1: Write the failing test first**
-
-Create `src/__tests__/fmtSpeed.test.ts`:
-
-```ts
-import { fmtSpeed } from '../lib/workout';
-
-describe('fmtSpeed', () => {
-  it('formats km/h values as-is', () => {
-    expect(fmtSpeed(8, 'km')).toBe('8 km/h');
-    expect(fmtSpeed(4.5, 'km')).toBe('4.5 km/h');
-    expect(fmtSpeed(5, 'km')).toBe('5 km/h');
-  });
-
-  it('converts to nearest 0.5 mph', () => {
-    expect(fmtSpeed(8, 'miles')).toBe('5.0 mph');    // 8 × 0.621371 = 4.971 → 5.0
-    expect(fmtSpeed(5, 'miles')).toBe('3.0 mph');    // 5 × 0.621371 = 3.107 → 3.0
-    expect(fmtSpeed(4.5, 'miles')).toBe('3.0 mph');  // 4.5 × 0.621371 = 2.796 → 3.0
-    expect(fmtSpeed(11, 'miles')).toBe('7.0 mph');   // 11 × 0.621371 = 6.835 → 7.0
-    expect(fmtSpeed(14, 'miles')).toBe('8.5 mph');   // 14 × 0.621371 = 8.699 → 8.5
-  });
-});
-```
-
-- [ ] **Step 2: Run the test — expect it to fail**
-
-```bash
-npx jest fmtSpeed --no-coverage
-```
-
-Expected: FAIL — `fmtSpeed is not a function`
-
-- [ ] **Step 3: Implement fmtSpeed in workout.ts**
+- [ ] **Step 1: Implement fmtSpeed in workout.ts**
 
 Add at the end of `src/lib/workout.ts`:
 
@@ -184,93 +104,29 @@ export function fmtSpeed(kmh: number, unit: 'km' | 'miles'): string {
 }
 ```
 
-- [ ] **Step 4: Run tests — expect them to pass**
+- [ ] **Step 2: Verify TypeScript compiles**
 
 ```bash
-npx jest fmtSpeed --no-coverage
+npx tsc --noEmit
 ```
 
-Expected: PASS (5 assertions)
+Expected: no errors.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
-git add src/lib/workout.ts src/__tests__/fmtSpeed.test.ts
+git add src/lib/workout.ts
 git commit -m "feat: add fmtSpeed helper with km/miles conversion"
 ```
 
 ---
 
-### Task 4: Update getSessionSegments to stamp speed, write tests
+### Task 3: Update getSessionSegments to stamp speed
 
 **Files:**
 - Modify: `src/lib/sessions.ts`
-- Create: `src/__tests__/runSegments.test.ts`
 
-- [ ] **Step 1: Write the failing test**
-
-Create `src/__tests__/runSegments.test.ts`:
-
-```ts
-jest.mock('expo-file-system', () => ({
-  File: jest.fn().mockImplementation(() => ({ exists: false })),
-  Paths: { document: '/tmp' },
-}));
-
-import { getSessionSegments } from '../lib/sessions';
-import type { Session } from '../lib/sessions';
-
-const easyRunSession: Session = {
-  id: 'r1',
-  name: 'Test Run',
-  mode: 'easy',
-  activityType: 'run',
-  config: { warmup: 60, high: 20, low: 40, rounds: 2, cooldown: 60 },
-  runSpeeds: { warmupSpeed: 5, workSpeed: 8, restSpeed: 5, cooldownSpeed: 4.5 },
-};
-
-const plainEasySession: Session = {
-  id: 'e1',
-  name: 'Plain Easy',
-  mode: 'easy',
-  config: { warmup: 60, high: 20, low: 40, rounds: 2, cooldown: 60 },
-};
-
-describe('getSessionSegments — run type', () => {
-  it('stamps correct speed on each phase', () => {
-    const segs = getSessionSegments(easyRunSession);
-    expect(segs.find(s => s.phase === 'warmup')?.speed).toBe(5);
-    expect(segs.find(s => s.phase === 'work')?.speed).toBe(8);
-    expect(segs.find(s => s.phase === 'rest')?.speed).toBe(5);
-    expect(segs.find(s => s.phase === 'cooldown')?.speed).toBe(4.5);
-  });
-
-  it('stamps all work and rest segments, not just the first', () => {
-    const segs = getSessionSegments(easyRunSession);
-    const workSegs = segs.filter(s => s.phase === 'work');
-    const restSegs = segs.filter(s => s.phase === 'rest');
-    expect(workSegs).toHaveLength(2);
-    expect(restSegs).toHaveLength(2);
-    workSegs.forEach(s => expect(s.speed).toBe(8));
-    restSegs.forEach(s => expect(s.speed).toBe(5));
-  });
-
-  it('does not stamp speed on non-run sessions', () => {
-    const segs = getSessionSegments(plainEasySession);
-    segs.forEach(s => expect(s.speed).toBeUndefined());
-  });
-});
-```
-
-- [ ] **Step 2: Run the test — expect it to fail**
-
-```bash
-npx jest runSegments --no-coverage
-```
-
-Expected: FAIL — speed fields are undefined
-
-- [ ] **Step 3: Update getSessionSegments in sessions.ts**
+- [ ] **Step 1: Update getSessionSegments in sessions.ts**
 
 Replace the existing `getSessionSegments` function in `src/lib/sessions.ts`:
 
@@ -302,23 +158,7 @@ Also add `Phase` to the imports from `'./workout'` in sessions.ts (it's needed b
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 ```
 
-- [ ] **Step 4: Run tests — expect them to pass**
-
-```bash
-npx jest runSegments --no-coverage
-```
-
-Expected: PASS (4 assertions)
-
-- [ ] **Step 5: Verify full test suite passes**
-
-```bash
-npx jest --no-coverage
-```
-
-Expected: all tests pass.
-
-- [ ] **Step 6: TypeScript check**
+- [ ] **Step 2: TypeScript check**
 
 ```bash
 npx tsc --noEmit
@@ -326,16 +166,16 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
-git add src/lib/sessions.ts src/__tests__/runSegments.test.ts
+git add src/lib/sessions.ts
 git commit -m "feat: stamp speed on run session segments in getSessionSegments"
 ```
 
 ---
 
-### Task 5: Add speedUnit to Settings
+### Task 4: Add speedUnit to Settings
 
 **Files:**
 - Modify: `src/lib/settings.ts`
@@ -387,14 +227,14 @@ git commit -m "feat: add speedUnit setting (km/miles, default km)"
 
 ---
 
-### Task 6: Update useEditSession with activityType and runSpeeds
+### Task 5: Update useEditSession with activityType and runSpeeds
 
 **Files:**
 - Modify: `src/hooks/useEditSession.ts`
 
 - [ ] **Step 1: Add imports and new state**
 
-At the top of `src/hooks/useEditSession.ts`, add to the existing sessions import:
+At the top of `src/hooks/useEditSession.ts`, update the sessions import:
 
 ```ts
 import { loadSessions, saveSessions, deleteSessionById, newId, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
@@ -479,7 +319,7 @@ const save = async () => {
 };
 ```
 
-- [ ] **Step 6: Update the draft object and return value at the end of useEditSession**
+- [ ] **Step 6: Update the draft object and return value**
 
 Update the `draft` object:
 
@@ -538,7 +378,7 @@ git commit -m "feat: add activityType and runSpeeds state to useEditSession"
 
 ---
 
-### Task 7: Edit Session Screen — Activity Type selector
+### Task 6: Edit Session Screen — Activity Type selector
 
 **Files:**
 - Modify: `src/screens/EditSessionScreen.tsx`
@@ -589,7 +429,7 @@ Insert the following block between the Session Name `fieldGroup` and the SETUP M
 </View>
 ```
 
-- [ ] **Step 3: Add activityTypeRow and activityTypeBtn styles to makeStyles**
+- [ ] **Step 3: Add styles to makeStyles**
 
 Inside `makeStyles`, add after the `modeToggleLabel` style:
 
@@ -631,12 +471,18 @@ git commit -m "feat: add Activity Type selector (General/Run) to Edit Session sc
 
 ---
 
-### Task 8: Edit Session Screen — Speeds section
+### Task 7: Edit Session Screen — Speeds section
 
 **Files:**
 - Modify: `src/screens/EditSessionScreen.tsx`
 
-- [ ] **Step 1: Add speedFields constant near the top of the component**
+- [ ] **Step 1: Add imports and speedFields constant**
+
+Add `RunSpeeds` to the sessions import at the top of the file:
+
+```ts
+import { type Session, type RunSpeeds } from '../lib/sessions';
+```
 
 Add after the `timeFields` constant inside `EditSessionScreen`:
 
@@ -649,22 +495,14 @@ const speedFields: { label: string; field: keyof RunSpeeds }[] = [
 ];
 ```
 
-- [ ] **Step 2: Import RunSpeeds**
+- [ ] **Step 2: Replace the isAdvanced ternary with a fragment-wrapped version**
 
-Add `RunSpeeds` to the sessions import at the top of the file:
-
-```ts
-import { type Session, type RunSpeeds } from '../lib/sessions';
-```
-
-- [ ] **Step 3: Add the SPEEDS section to the JSX**
-
-The current else branch of `isAdvanced ? ... :` returns a single `<View>`. Wrap it in a fragment and add the SPEEDS block as a sibling. Replace the entire `isAdvanced ? (...) : (...)` expression with:
+The current else branch of `isAdvanced ? ... :` returns a single `<View>`. Replace the entire `isAdvanced ? (...) : (...)` expression with a version that wraps both branches in fragments and adds the SPEEDS block as a sibling to the timing View:
 
 ```tsx
 {isAdvanced ? (
   <>
-    {/* Intervals — existing JSX unchanged */}
+    {/* Intervals */}
     <View style={styles.fieldGroup}>
       <Text style={styles.fieldLabel}>INTERVALS</Text>
       {intervals.length === 0 && (
@@ -766,7 +604,7 @@ The current else branch of `isAdvanced ? ... :` returns a single `<View>`. Wrap 
 )}
 ```
 
-- [ ] **Step 4: Add speed input styles to makeStyles**
+- [ ] **Step 3: Add speed input styles to makeStyles**
 
 Inside `makeStyles`, add after the `configInputText` style:
 
@@ -791,7 +629,7 @@ speedUnitLabel: {
 },
 ```
 
-- [ ] **Step 5: TypeScript check**
+- [ ] **Step 4: TypeScript check**
 
 ```bash
 npx tsc --noEmit
@@ -799,7 +637,7 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add src/screens/EditSessionScreen.tsx
@@ -808,7 +646,7 @@ git commit -m "feat: add Speeds section to Edit Session screen for Run sessions"
 
 ---
 
-### Task 9: Workout Screen — Speed pill
+### Task 8: Workout Screen — Speed pill
 
 **Files:**
 - Modify: `src/screens/WorkoutScreen.tsx`
@@ -826,9 +664,9 @@ import {
 } from '../lib/workout';
 ```
 
-- [ ] **Step 2: Add the speed pill JSX between the phase label and the countdown row**
+- [ ] **Step 2: Add the speed pill JSX**
 
-Find the `<Text style={[styles.phaseLabel, ...]}` element inside `phaseTop`. After the closing `</Text>` of `phaseLabel`, add the speed pill:
+Find the `<Text style={[styles.phaseLabel, ...]}` element inside `phaseTop`. After its closing `</Text>`, add:
 
 ```tsx
 {seg.speed !== undefined && !isDone && !isPreStart && (
@@ -878,14 +716,14 @@ git commit -m "feat: show speed pill on workout screen for Run sessions"
 
 ---
 
-### Task 10: Settings Screen — Speed unit toggle
+### Task 9: Settings Screen — Speed unit toggle
 
 **Files:**
 - Modify: `src/screens/SettingsScreen.tsx`
 
-- [ ] **Step 1: Add a new Units section with a speed unit selector**
+- [ ] **Step 1: Add a Units section with a speed unit selector**
 
-Inside `SettingsScreen`, after the `{/* ── Workout ── */}` `SSection` block and before the `{/* ── Audio ── */}` block, add:
+Inside `SettingsScreen`, after the `{/* ── Workout ── */}` `SSection` block and before `{/* ── Audio ── */}`, add:
 
 ```tsx
 {/* ── Units ── */}
@@ -919,9 +757,9 @@ Inside `SettingsScreen`, after the `{/* ── Workout ── */}` `SSection` bl
 </SSection>
 ```
 
-- [ ] **Step 2: Add segControl styles to makeStyles**
+- [ ] **Step 2: Add styles to makeStyles**
 
-Inside the `makeStyles` function in `SettingsScreen.tsx`, add at the end before the closing `})`:
+Inside `makeStyles` in `SettingsScreen.tsx`, add before the closing `})`:
 
 ```ts
 segControl: {
@@ -959,7 +797,7 @@ git commit -m "feat: add speed unit toggle (km/h / mph) to Settings screen"
 
 ---
 
-### Task 11: Add default Run session
+### Task 10: Add default Run session
 
 **Files:**
 - Modify: `src/lib/sessions.ts`
@@ -1002,15 +840,7 @@ export const DEFAULT_SESSIONS: Session[] = [
 ];
 ```
 
-- [ ] **Step 2: Run all tests**
-
-```bash
-npx jest --no-coverage
-```
-
-Expected: all tests pass.
-
-- [ ] **Step 3: TypeScript check**
+- [ ] **Step 2: TypeScript check**
 
 ```bash
 npx tsc --noEmit
@@ -1018,7 +848,7 @@ npx tsc --noEmit
 
 Expected: no errors.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add src/lib/sessions.ts
