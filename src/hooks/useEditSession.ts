@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Alert } from 'react-native';
-import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
+import { loadSessions, saveSessions, deleteSessionById, newId, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
   expandWorkout, intervalsToSegments, totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
@@ -34,6 +34,8 @@ export interface EditSessionDraft {
   intervals:       LocalInterval[];
   previewSegments: Segment[];
   previewTotal:    number;
+  activityType:    'run' | undefined;
+  runSpeeds:       RunSpeeds;
 }
 
 // Picker modal state: null when closed.
@@ -50,6 +52,8 @@ export interface EditSessionInterface {
   picker:  EditSessionPicker | null;
   // Field edits
   setName:          (name: string) => void;
+  setActivityType:  (type: 'run' | undefined) => void;
+  setRunSpeed:      (field: keyof RunSpeeds, value: number) => void;
   // Mode
   toggleMode:       (advanced: boolean) => void;
   // Interval list
@@ -165,6 +169,17 @@ export function useEditSession(
     existing?.mode === 'advanced' ? existing.intervals.map(toLocal) : []
   );
 
+  const [activityType, setActivityType] = useState<'run' | undefined>(
+    existing?.activityType
+  );
+  const [runSpeeds, setRunSpeeds] = useState<RunSpeeds>(
+    existing?.runSpeeds ?? DEFAULT_RUN_SPEEDS
+  );
+
+  function setRunSpeed(field: keyof RunSpeeds, value: number) {
+    setRunSpeeds(prev => ({ ...prev, [field]: value }));
+  }
+
   const easyConfig = {
     warmup,
     high:    Math.max(1, work),
@@ -259,10 +274,13 @@ export function useEditSession(
       return;
     }
     const base = { id: existing?.id ?? newId(), name: name.trim() };
+    const speedProps = activityType === 'run'
+      ? { activityType: 'run' as const, runSpeeds }
+      : {};
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     const updated: Session = mode === 'easy'
-      ? { ...base, mode: 'easy', config: easyConfig }
-      : { ...base, mode: 'advanced', intervals: cleanIntervals };
+      ? { ...base, ...speedProps, mode: 'easy', config: easyConfig }
+      : { ...base, ...speedProps, mode: 'advanced', intervals: cleanIntervals };
     const sessions = await loadSessions();
     const next = existing
       ? sessions.map(s => (s.id === updated.id ? updated : s))
@@ -287,12 +305,16 @@ export function useEditSession(
     intervals,
     previewSegments,
     previewTotal: totalDuration(previewSegments),
+    activityType,
+    runSpeeds,
   };
 
   return {
     draft,
     picker,
     setName,
+    setActivityType,
+    setRunSpeed,
     toggleMode,
     cyclePhase, addInterval, duplicateInterval, removeInterval,
     clearIntervals: () => setIntervals([]),
