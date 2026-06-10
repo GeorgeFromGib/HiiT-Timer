@@ -11,6 +11,7 @@ export interface Settings {
   soundOff: boolean;
   countdownFlash: boolean;
   soundVolume: number; // 0–100
+  speedUnit: 'km' | 'miles';
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundOff: false,
   countdownFlash: true,
   soundVolume: 100,
+  speedUnit: 'km',
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');
