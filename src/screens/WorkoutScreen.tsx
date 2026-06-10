@@ -15,6 +15,7 @@ import {
   PHASE_META,
   totalDuration,
   fmtTimer,
+  fmtSpeed,
 } from '../lib/workout';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
@@ -143,6 +144,17 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           }]}>
             {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
           </Text>
+
+          {seg.speed !== undefined && !isDone && !isPreStart && (
+            <View style={[styles.speedPill, {
+              backgroundColor: withOpacity(phaseColor, 0x21),
+              borderColor:     withOpacity(phaseColor, 0x59),
+            }]}>
+              <Text style={[styles.speedPillText, { color: phaseColor }]}>
+                {fmtSpeed(seg.speed, settings.speedUnit)}
+              </Text>
+            </View>
+          )}
 
         </View>
 
@@ -363,6 +375,17 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     letterSpacing: 44 * 0.01,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 30,
+  },
+  speedPill: {
+    borderRadius: 20,
+    borderWidth: 1.5,
+    paddingHorizontal: 16,
+    paddingVertical: 5,
+  },
+  speedPillText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 15,
+    letterSpacing: 15 * 0.02,
   },
   congratsMsg: {
     fontFamily: 'Inter_700Bold_Italic',
