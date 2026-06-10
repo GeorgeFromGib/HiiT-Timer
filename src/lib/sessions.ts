@@ -1,5 +1,5 @@
 import { File, Paths } from 'expo-file-system';
-import type { Interval, Segment, WorkoutConfig } from './workout';
+import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments } from './workout';
 
 export interface RunSpeeds {
@@ -26,9 +26,24 @@ export type Session = {
   | { mode: 'advanced'; intervals: Interval[] }
 );
 
+function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
+  const map: Record<Phase, number> = {
+    warmup:   speeds.warmupSpeed,
+    work:     speeds.workSpeed,
+    rest:     speeds.restSpeed,
+    cooldown: speeds.cooldownSpeed,
+  };
+  return map[phase];
+}
+
 export function getSessionSegments(session: Session): Segment[] {
-  if (session.mode === 'advanced') return intervalsToSegments(session.intervals);
-  return expandWorkout(session.config);
+  const base = session.mode === 'advanced'
+    ? intervalsToSegments(session.intervals)
+    : expandWorkout(session.config);
+  if (session.activityType === 'run' && session.runSpeeds) {
+    return base.map(seg => ({ ...seg, speed: speedForPhase(seg.phase, session.runSpeeds!) }));
+  }
+  return base;
 }
 
 const sessionsFile = () => new File(Paths.document, 'sessions_v2.json');
