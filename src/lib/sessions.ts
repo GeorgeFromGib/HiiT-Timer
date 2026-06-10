@@ -2,9 +2,25 @@ import { File, Paths } from 'expo-file-system';
 import type { Interval, Segment, WorkoutConfig } from './workout';
 import { expandWorkout, intervalsToSegments } from './workout';
 
+export interface RunSpeeds {
+  warmupSpeed: number;
+  workSpeed: number;
+  restSpeed: number;
+  cooldownSpeed: number;
+}
+
+export const DEFAULT_RUN_SPEEDS: RunSpeeds = {
+  warmupSpeed: 5,
+  workSpeed: 8,
+  restSpeed: 5,
+  cooldownSpeed: 4.5,
+};
+
 export type Session = {
   id: string;
   name: string;
+  activityType?: 'run';
+  runSpeeds?: RunSpeeds;
 } & (
   | { mode: 'easy'; config: WorkoutConfig }
   | { mode: 'advanced'; intervals: Interval[] }

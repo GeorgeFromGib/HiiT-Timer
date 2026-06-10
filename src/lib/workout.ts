@@ -7,6 +7,7 @@ export interface Segment {
   startAt: number;
   endAt: number;
   index: number;
+  speed?: number; // km/h — only present for run sessions
 }
 
 export interface Interval {
