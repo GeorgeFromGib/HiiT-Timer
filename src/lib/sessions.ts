@@ -70,6 +70,14 @@ export const DEFAULT_SESSIONS: Session[] = [
       { type: 'cooldown', dur: 30 },
     ],
   },
+  {
+    id: 'default-run-1',
+    name: 'Easy Run',
+    mode: 'easy',
+    activityType: 'run',
+    config: { warmup: 180, high: 20, low: 40, rounds: 14, cooldown: 180 },
+    runSpeeds: { warmupSpeed: 5, workSpeed: 8, restSpeed: 5, cooldownSpeed: 4.5 },
+  },
 ];
 
 export async function loadSessions(): Promise<Session[]> {
