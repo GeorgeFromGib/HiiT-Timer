@@ -6,7 +6,7 @@
 
 **Architecture:** A single SDK-boundary module (`src/lib/purchases.ts`) wraps `react-native-purchases`. Pure logic (`src/lib/sessionLimit.ts`) decides whether creation is allowed. A React context (`premiumContext.tsx` + `usePremiumState.ts`) exposes premium status app-wide, mirroring the existing `SettingsContext` pattern in `App.tsx`. The gate is enforced at the two session-creation entry points in `SessionsListScreen.tsx`, which open a `PaywallModal` when blocked.
 
-**Tech Stack:** Expo SDK 56, React Native 0.85, TypeScript, `react-native-purchases` (RevenueCat), `expo-constants`, `jest-expo` for tests.
+**Tech Stack:** Expo SDK 56, React Native 0.85, TypeScript, `react-native-purchases` (RevenueCat), `expo-constants`.
 
 **Reference spec:** `docs/superpowers/specs/2026-06-10-iap-premium-unlock-plan.md`
 
@@ -14,7 +14,7 @@
 
 ## Prerequisites (manual, performed by the developer — not code tasks)
 
-These must exist before Phase 4 manual verification, but do NOT block writing/landing the code in Phases 0–3:
+These must exist before Phase 4 manual verification, but do NOT block writing/landing the code in Phases 1–3:
 
 1. **App Store Connect** → create a non-consumable IAP with product ID `com.georgefromgib.hiittimer.premium_unlock`, set a price tier, add a localized display name + description.
 2. **RevenueCat** → create a project, add the App Store app, paste the App Store shared secret, create an **entitlement with identifier `premium`**, create an **offering** (the default `current` offering) and attach the product as a package.
@@ -28,9 +28,7 @@ These must exist before Phase 4 manual verification, but do NOT block writing/la
 | File | Created/Modified | Responsibility |
 |---|---|---|
 | `src/lib/sessionLimit.ts` | Create | Pure: `FREE_SESSION_LIMIT`, `canCreateSession()`. |
-| `src/lib/sessionLimit.test.ts` | Create | Unit tests for the above. |
 | `src/lib/purchases.ts` | Create | **Only** importer of `react-native-purchases`. Init, premium check, purchase, restore, price string. |
-| `src/lib/purchases.test.ts` | Create | Unit tests with the SDK mocked. |
 | `src/lib/premiumContext.tsx` | Create | `PremiumContext` + `usePremium()`. |
 | `src/hooks/usePremiumState.ts` | Create | Owns premium state; inits SDK on mount. |
 | `src/components/PaywallModal.tsx` | Create | Themed paywall: Unlock / Restore / Close. |
@@ -38,112 +36,18 @@ These must exist before Phase 4 manual verification, but do NOT block writing/la
 | `src/screens/SessionsListScreen.tsx` | Modify | Enforce gate at + button and duplicate. |
 | `src/screens/SettingsScreen.tsx` | Modify | Add "Restore Purchases" row. |
 | `app.json` | Modify | Add `extra.revenueCatIosKey`. |
-| `package.json` | Modify | Add `test` script + `jest` preset + dev deps. |
+| `package.json` | Modify | Add `react-native-purchases` and `expo-constants`. |
 
 ---
 
-## Phase 0 — Test harness
-
-### Task 1: Install and configure jest-expo
-
-**Files:**
-- Modify: `package.json`
-
-- [ ] **Step 1: Install the test runner**
-
-Run:
-```bash
-npx expo install -- --save-dev jest-expo jest @types/jest
-```
-Expected: `jest-expo`, `jest`, `@types/jest` added under `devDependencies`.
-
-- [ ] **Step 2: Add test script and jest preset to `package.json`**
-
-In the `"scripts"` block add a `test` entry, and add a top-level `"jest"` key. Resulting fragments:
-
-```json
-  "scripts": {
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web",
-    "test": "jest"
-  },
-  "jest": {
-    "preset": "jest-expo"
-  }
-```
-
-- [ ] **Step 3: Add a sanity test**
-
-Create `src/lib/__sanity__.test.ts`:
-```ts
-test('jest runs', () => {
-  expect(1 + 1).toBe(2);
-});
-```
-
-- [ ] **Step 4: Run it**
-
-Run: `npx jest src/lib/__sanity__.test.ts`
-Expected: PASS, 1 test.
-
-- [ ] **Step 5: Remove the sanity test and commit**
-
-```bash
-rm src/lib/__sanity__.test.ts
-git add package.json package-lock.json
-git commit -m "chore: add jest-expo test harness
-
-Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
-```
-
----
-
-## Phase 1 — Pure session-limit logic (TDD)
+## Phase 1 — Pure session-limit logic
 
 ### Task 2: `canCreateSession`
 
 **Files:**
 - Create: `src/lib/sessionLimit.ts`
-- Test: `src/lib/sessionLimit.test.ts`
 
-- [ ] **Step 1: Write the failing test**
-
-Create `src/lib/sessionLimit.test.ts`:
-```ts
-import { canCreateSession, FREE_SESSION_LIMIT } from './sessionLimit';
-
-describe('canCreateSession', () => {
-  test('FREE_SESSION_LIMIT is 5', () => {
-    expect(FREE_SESSION_LIMIT).toBe(5);
-  });
-
-  test('free user under the limit can create', () => {
-    expect(canCreateSession(4, false)).toBe(true);
-  });
-
-  test('free user at the limit cannot create', () => {
-    expect(canCreateSession(5, false)).toBe(false);
-  });
-
-  test('free user over the limit cannot create', () => {
-    expect(canCreateSession(9, false)).toBe(false);
-  });
-
-  test('premium user is never blocked', () => {
-    expect(canCreateSession(5, true)).toBe(true);
-    expect(canCreateSession(999, true)).toBe(true);
-  });
-});
-```
-
-- [ ] **Step 2: Run to verify it fails**
-
-Run: `npx jest src/lib/sessionLimit.test.ts`
-Expected: FAIL — cannot find module `./sessionLimit`.
-
-- [ ] **Step 3: Implement**
+- [ ] **Step 1: Implement**
 
 Create `src/lib/sessionLimit.ts`:
 ```ts
@@ -155,15 +59,10 @@ export function canCreateSession(count: number, isPremium: boolean): boolean {
 }
 ```
 
-- [ ] **Step 4: Run to verify it passes**
-
-Run: `npx jest src/lib/sessionLimit.test.ts`
-Expected: PASS, 5 tests.
-
-- [ ] **Step 5: Commit**
+- [ ] **Step 2: Commit**
 
 ```bash
-git add src/lib/sessionLimit.ts src/lib/sessionLimit.test.ts
+git add src/lib/sessionLimit.ts
 git commit -m "feat: add pure session-limit gate logic
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
@@ -171,7 +70,7 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 
 ---
 
-## Phase 2 — Purchases module (TDD with SDK mocked)
+## Phase 2 — Purchases module
 
 ### Task 3: Install the SDK
 
@@ -199,108 +98,8 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 
 **Files:**
 - Create: `src/lib/purchases.ts`
-- Test: `src/lib/purchases.test.ts`
 
-- [ ] **Step 1: Write the failing test**
-
-Create `src/lib/purchases.test.ts`:
-```ts
-jest.mock('react-native-purchases', () => ({
-  __esModule: true,
-  default: {
-    configure: jest.fn(),
-    getCustomerInfo: jest.fn(),
-    getOfferings: jest.fn(),
-    purchasePackage: jest.fn(),
-    restorePurchases: jest.fn(),
-  },
-}));
-
-import Purchases from 'react-native-purchases';
-import {
-  initPurchases,
-  getIsPremium,
-  purchasePremium,
-  restorePurchases,
-  getPremiumPriceString,
-} from './purchases';
-
-const mockP = Purchases as unknown as {
-  configure: jest.Mock;
-  getCustomerInfo: jest.Mock;
-  getOfferings: jest.Mock;
-  purchasePackage: jest.Mock;
-  restorePurchases: jest.Mock;
-};
-
-const entitled = { entitlements: { active: { premium: { isActive: true } } } };
-const notEntitled = { entitlements: { active: {} } };
-const offering = {
-  current: { availablePackages: [{ product: { priceString: '$4.99' } }] },
-};
-
-beforeEach(() => jest.clearAllMocks());
-
-test('initPurchases configures the SDK with the key', () => {
-  initPurchases('appl_test');
-  expect(mockP.configure).toHaveBeenCalledWith({ apiKey: 'appl_test' });
-});
-
-test('getIsPremium true when entitlement active', async () => {
-  mockP.getCustomerInfo.mockResolvedValue(entitled);
-  expect(await getIsPremium()).toBe(true);
-});
-
-test('getIsPremium false when not entitled', async () => {
-  mockP.getCustomerInfo.mockResolvedValue(notEntitled);
-  expect(await getIsPremium()).toBe(false);
-});
-
-test('getPremiumPriceString returns the package price', async () => {
-  mockP.getOfferings.mockResolvedValue(offering);
-  expect(await getPremiumPriceString()).toBe('$4.99');
-});
-
-test('getPremiumPriceString null when no offering', async () => {
-  mockP.getOfferings.mockResolvedValue({ current: null });
-  expect(await getPremiumPriceString()).toBeNull();
-});
-
-test('purchasePremium true on successful purchase', async () => {
-  mockP.getOfferings.mockResolvedValue(offering);
-  mockP.purchasePackage.mockResolvedValue({ customerInfo: entitled });
-  expect(await purchasePremium()).toBe(true);
-});
-
-test('purchasePremium false when user cancels', async () => {
-  mockP.getOfferings.mockResolvedValue(offering);
-  mockP.purchasePackage.mockRejectedValue({ userCancelled: true });
-  expect(await purchasePremium()).toBe(false);
-});
-
-test('purchasePremium rethrows non-cancel errors', async () => {
-  mockP.getOfferings.mockResolvedValue(offering);
-  mockP.purchasePackage.mockRejectedValue({ userCancelled: false, message: 'boom' });
-  await expect(purchasePremium()).rejects.toMatchObject({ message: 'boom' });
-});
-
-test('restorePurchases true when entitlement restored', async () => {
-  mockP.restorePurchases.mockResolvedValue(entitled);
-  expect(await restorePurchases()).toBe(true);
-});
-
-test('restorePurchases false when nothing to restore', async () => {
-  mockP.restorePurchases.mockResolvedValue(notEntitled);
-  expect(await restorePurchases()).toBe(false);
-});
-```
-
-- [ ] **Step 2: Run to verify it fails**
-
-Run: `npx jest src/lib/purchases.test.ts`
-Expected: FAIL — cannot find module `./purchases`.
-
-- [ ] **Step 3: Implement**
+- [ ] **Step 1: Implement**
 
 Create `src/lib/purchases.ts`:
 ```ts
@@ -345,15 +144,10 @@ export async function restorePurchases(): Promise<boolean> {
 }
 ```
 
-- [ ] **Step 4: Run to verify it passes**
-
-Run: `npx jest src/lib/purchases.test.ts`
-Expected: PASS, 10 tests.
-
-- [ ] **Step 5: Commit**
+- [ ] **Step 2: Commit**
 
 ```bash
-git add src/lib/purchases.ts src/lib/purchases.test.ts
+git add src/lib/purchases.ts
 git commit -m "feat: add RevenueCat purchases wrapper
 
 Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
@@ -890,11 +684,6 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
 ---
 
 ## Final verification
-
-- [ ] **Run the full test suite**
-
-Run: `npx jest`
-Expected: all tests pass (sessionLimit + purchases = 15 tests).
 
 - [ ] **Type-check the whole project**
 

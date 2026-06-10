@@ -7,11 +7,16 @@
     "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/hiit-splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#222222"
+      "backgroundColor": "#ffffff"
     },
     "ios": {
+      "icon": {
+        "any": "./assets/hiit-icon.png",
+        "dark": "./assets/hiit-icon-dark.png",
+        "tinted": "./assets/hiit-icon-tinted.png"
+      },
       "supportsTablet": true,
       "bundleIdentifier": "com.georgefromgib.hiittimer",
       "infoPlist": {
@@ -44,7 +49,8 @@
       "assets/**"
     ],
     "plugins": [
-      "expo-audio"
+      "expo-audio",
+      "expo-splash-screen"
     ],
     "extra": {
       "eas": {
