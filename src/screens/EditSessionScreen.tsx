@@ -43,6 +43,8 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
   const {
     draft, picker,
     setName,
+    setActivityType,
+    setRunSpeed,
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
@@ -50,7 +52,8 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     save, deleteSession,
   } = useEditSession(existing, onBack);
 
-  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal } = draft;
+  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds } = draft;
+  const isRun = activityType === 'run';
 
   const timeFields: { label: string; field: TimeField }[] = [
     { label: 'Warmup',   field: 'warmup'   },
@@ -90,6 +93,25 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               placeholderTextColor={T.faintText}
               returnKeyType="done"
             />
+          </View>
+
+          {/* Activity Type */}
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>ACTIVITY TYPE</Text>
+            <View style={styles.activityTypeRow}>
+              <Pressable
+                style={[styles.activityTypeBtn, !isRun && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) }]}
+                onPress={() => setActivityType(undefined)}
+              >
+                <Text style={[styles.activityTypeBtnText, { color: !isRun ? T.accent : T.subText }]}>General</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.activityTypeBtn, isRun && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) }]}
+                onPress={() => setActivityType('run')}
+              >
+                <Text style={[styles.activityTypeBtnText, { color: isRun ? T.accent : T.subText }]}>Run</Text>
+              </Pressable>
+            </View>
           </View>
 
           {/* Mode toggle — always visible; back-conversion to easy is validated by tryConvertToEasy */}
@@ -309,6 +331,25 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   modeToggleLabel: {
     ...typography.controlLabel,
+  },
+
+  activityTypeRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  activityTypeBtn: {
+    flex: 1,
+    paddingVertical: 11,
+    alignItems: 'center',
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: T.hairline,
+    backgroundColor: T.ghostBg,
+  },
+  activityTypeBtnText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 13,
+    letterSpacing: 13 * 0.04,
   },
 
   configGrid: {
