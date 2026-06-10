@@ -166,3 +166,11 @@ export function fmtTimer(s: number): string {
   if (s < 60) return `${s}`;
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 }
+
+export function fmtSpeed(kmh: number, unit: 'km' | 'miles'): string {
+  if (unit === 'miles') {
+    const mph = Math.round(kmh * 0.621371 * 2) / 2;
+    return `${mph.toFixed(1)} mph`;
+  }
+  return `${kmh} km/h`;
+}
