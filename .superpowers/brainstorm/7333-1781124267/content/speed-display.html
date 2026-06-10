@@ -1,0 +1,59 @@
+<h2>Where should the speed appear during a workout?</h2>
+<p class="subtitle">Each option shows the workout screen layout for an active Work interval at 8 km/h</p>
+
+<div class="cards">
+
+  <!-- Option A: Below phase label -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0d1f24;border-radius:12px;padding:20px;font-family:sans-serif;color:#e8f4f2;text-align:center;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+        <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,90,50,0.15);border:1.5px solid rgba(255,90,50,0.4);display:flex;align-items:center;justify-content:center;font-size:22px">🔥</div>
+        <div style="color:#ff5a32;font-size:28px;font-weight:900;letter-spacing:2px">WORK</div>
+        <div style="color:#ff5a32;font-size:16px;font-weight:700;opacity:0.85;background:rgba(255,90,50,0.12);border-radius:8px;padding:4px 14px">8 km/h</div>
+        <div style="font-size:72px;font-weight:700;color:#e8f4f2;margin:4px 0;font-family:monospace">20</div>
+        <div style="color:#7a9da0;font-size:13px;font-weight:700;letter-spacing:2px">INTERVAL 3 OF 16</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Below phase label</h3>
+      <p>Speed sits as a pill/badge directly under the "WORK" label, before the countdown. Clear and always visible.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Alongside the interval counter -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0d1f24;border-radius:12px;padding:20px;font-family:sans-serif;color:#e8f4f2;text-align:center;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+        <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,90,50,0.15);border:1.5px solid rgba(255,90,50,0.4);display:flex;align-items:center;justify-content:center;font-size:22px">🔥</div>
+        <div style="color:#ff5a32;font-size:28px;font-weight:900;letter-spacing:2px">WORK</div>
+        <div style="font-size:72px;font-weight:700;color:#e8f4f2;margin:4px 0;font-family:monospace">20</div>
+        <div style="display:flex;align-items:center;gap:16px;color:#7a9da0;font-size:13px;font-weight:700;letter-spacing:2px">
+          <span>INTERVAL 3 OF 16</span>
+          <span style="color:#ff5a32;opacity:0.9">· 8 km/h</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Alongside interval counter</h3>
+      <p>Speed appears inline with the "INTERVAL X OF Y" row below the countdown. Subtle, doesn't interrupt the timer hierarchy.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Large secondary display above countdown -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0d1f24;border-radius:12px;padding:20px;font-family:sans-serif;color:#e8f4f2;text-align:center;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">
+        <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,90,50,0.15);border:1.5px solid rgba(255,90,50,0.4);display:flex;align-items:center;justify-content:center;font-size:22px">🔥</div>
+        <div style="color:#ff5a32;font-size:28px;font-weight:900;letter-spacing:2px">WORK</div>
+        <div style="font-size:72px;font-weight:700;color:#e8f4f2;margin:2px 0;font-family:monospace">20</div>
+        <div style="font-size:36px;font-weight:700;color:#ff5a32;opacity:0.7;font-family:monospace">8 km/h</div>
+        <div style="color:#7a9da0;font-size:13px;font-weight:700;letter-spacing:2px">INTERVAL 3 OF 16</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Large speed below countdown</h3>
+      <p>Speed rendered large below the countdown number — dominant second figure. Makes speed feel as important as the timer.</p>
+    </div>
+  </div>
+
+</div>

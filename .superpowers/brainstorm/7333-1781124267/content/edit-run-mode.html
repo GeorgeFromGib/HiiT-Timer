@@ -1,0 +1,76 @@
+<h2>Edit Session — Run mode</h2>
+<p class="subtitle">Mode selector becomes a 3-segment control. Run mode shows timing + speeds sections.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Edit Session screen (Run mode selected)</div>
+  <div class="mockup-body" style="background:#0d1f24;border-radius:12px;padding:20px;font-family:sans-serif;color:#e8f4f2;display:flex;flex-direction:column;gap:20px">
+
+    <!-- Session name -->
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#4a7a80">SESSION NAME</div>
+      <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:12px;padding:12px 16px;font-size:16px;font-weight:700;color:#e8f4f2">Morning Run</div>
+    </div>
+
+    <!-- Mode selector — segmented control -->
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#4a7a80">SETUP MODE</div>
+      <div style="display:flex;background:#162c32;border-radius:12px;border:1.5px solid #1e3d44;overflow:hidden">
+        <div style="flex:1;padding:11px 0;text-align:center;font-size:13px;font-weight:700;color:#4a7a80">Easy</div>
+        <div style="flex:1;padding:11px 0;text-align:center;font-size:13px;font-weight:700;color:#4a7a80;border-left:1px solid #1e3d44">Advanced</div>
+        <div style="flex:1;padding:11px 0;text-align:center;font-size:13px;font-weight:800;color:#0d1f24;background:#3ad6c6;border-left:1px solid #1e3d44">Run</div>
+      </div>
+    </div>
+
+    <!-- Timing (same as easy) -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#4a7a80">TIMING</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Warmup</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-family:monospace;font-size:18px;font-weight:700;color:#e8f4f2">3m</div>
+        </div>
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Work</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-family:monospace;font-size:18px;font-weight:700;color:#e8f4f2">20s</div>
+        </div>
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Rest</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-family:monospace;font-size:18px;font-weight:700;color:#e8f4f2">40s</div>
+        </div>
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Cooldown</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-family:monospace;font-size:18px;font-weight:700;color:#e8f4f2">3m</div>
+        </div>
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Rounds</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-family:monospace;font-size:18px;font-weight:700;color:#e8f4f2">14</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Speeds (new for Run) -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#4a7a80">SPEEDS</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Warmup</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-size:16px;font-weight:700;color:#e8f4f2">5 <span style="font-size:11px;color:#4a7a80">km/h</span></div>
+        </div>
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Work</div>
+          <div style="background:#162c32;border:1.5px solid #3ad6c6;border-radius:10px;padding:10px;text-align:center;font-size:16px;font-weight:700;color:#e8f4f2">8 <span style="font-size:11px;color:#3ad6c6">km/h</span></div>
+        </div>
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Rest</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-size:16px;font-weight:700;color:#e8f4f2">5 <span style="font-size:11px;color:#4a7a80">km/h</span></div>
+        </div>
+        <div style="flex:1;min-width:28%;display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:#4a7a80;font-weight:600">Cooldown</div>
+          <div style="background:#162c32;border:1.5px solid #1e3d44;border-radius:10px;padding:10px;text-align:center;font-size:16px;font-weight:700;color:#e8f4f2">4.5 <span style="font-size:11px;color:#4a7a80">km/h</span></div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#4a7a80;margin-top:2px">Tap a speed to edit. Stored in km/h — displayed in your chosen unit from Settings.</div>
+    </div>
+
+  </div>
+</div>
