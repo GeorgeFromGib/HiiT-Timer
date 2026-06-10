@@ -265,6 +265,36 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
           />
         </SSection>
 
+        {/* ── Units ── */}
+        <SSection title="Units">
+          <SRow
+            label="Speed unit"
+            sub="Display unit for Run session speeds"
+            last
+            right={
+              <View style={styles.segControl}>
+                {(['km', 'miles'] as const).map(unit => (
+                  <Pressable
+                    key={unit}
+                    onPress={() => updateSettings('speedUnit', unit)}
+                    style={[
+                      styles.segBtn,
+                      settings.speedUnit === unit && { backgroundColor: T.accent },
+                    ]}
+                  >
+                    <Text style={[
+                      styles.segBtnText,
+                      { color: settings.speedUnit === unit ? T.btnGlyph : T.subText },
+                    ]}>
+                      {unit === 'km' ? 'km/h' : 'mph'}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            }
+          />
+        </SSection>
+
         {/* ── Audio ── */}
         <SSection title="Audio">
           <SRow
@@ -481,6 +511,24 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'ChakraPetch_700Bold',
       fontSize: 13,
       color: T.faintText,
+    },
+
+    // Segmented control
+    segControl: {
+      flexDirection: 'row',
+      borderRadius: 8,
+      overflow: 'hidden',
+      borderWidth: 1.5,
+      borderColor: T.hairline,
+    },
+    segBtn: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+    },
+    segBtnText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 12,
+      letterSpacing: 12 * 0.04,
     },
   });
 }
