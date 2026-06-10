@@ -4,7 +4,6 @@
     "slug": "clear-hiit",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/hiit-splash.png",

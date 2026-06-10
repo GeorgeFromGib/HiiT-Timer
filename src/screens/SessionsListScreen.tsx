@@ -1,5 +1,6 @@
 import React, { useRef, useImperativeHandle, useMemo, useState } from 'react';
 import {
+  Alert,
   Animated,
   Pressable,
   StyleSheet,
@@ -11,6 +12,8 @@ import Svg, { Path } from 'react-native-svg';
 import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
+import { canCreateSession } from '../lib/sessionLimit';
+import { usePremium } from '../lib/premiumContext';
 import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
 import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../theme';
@@ -20,6 +23,7 @@ import SessionCard from '../components/SessionCard';
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
+  const { isPremium } = usePremium();
 
   const [sessions, setSessions]     = useState<Session[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -29,6 +33,10 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   }, []);
 
   const handleDuplicate = (session: Session) => {
+    if (!canCreateSession(sessions.length, isPremium)) {
+      Alert.alert('Premium Required', 'Toggle Mock Premium in Settings (dev mode) to test this.');
+      return;
+    }
     const idx = sessions.findIndex(s => s.id === session.id);
     const copy: Session = { ...session, id: newId(), name: `Copy of ${session.name}` };
     const next = [...sessions.slice(0, idx + 1), copy, ...sessions.slice(idx + 1)];
@@ -68,7 +76,13 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           </Pressable>
         }
         right={
-          <Pressable style={styles.addBtn} onPress={() => onNavigate({ name: 'EditSession' })}>
+          <Pressable style={styles.addBtn} onPress={() => {
+              if (!canCreateSession(sessions.length, isPremium)) {
+                Alert.alert('Premium Required', 'Toggle Mock Premium in Settings (dev mode) to test this.');
+                return;
+              }
+              onNavigate({ name: 'EditSession' });
+            }}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
             </Svg>

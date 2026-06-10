@@ -111,10 +111,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     outputRange: [segEndPct, segStartPct],
   });
 
-  const flashGradient = THEME_TOKENS[themeKey === 'tidal' ? 'daybreak' : 'tidal'].bgGradient;
-
   return (
-    <LinearGradient colors={flashing ? flashGradient : T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
+    <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
       {/* ── Header ── */}
       <ScreenHeader
         onBack={onBack}
@@ -154,7 +152,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             <Text
               key={i}
               style={[styles.countdown, {
-                opacity: isDone ? 0 : 1,
+                opacity: isDone ? 0 : flashing ? 0 : 1,
                 textShadowColor: withOpacity(isPreStart ? T.accent : phaseColor, 0x3a),
                 fontSize: countdownFontSize,
                 lineHeight: countdownFontSize,

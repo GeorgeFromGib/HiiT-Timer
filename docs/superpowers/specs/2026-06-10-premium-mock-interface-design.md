@@ -102,20 +102,6 @@ User taps + or duplicates
         └─ false → Alert (paywall placeholder)
 ```
 
-## Testing
-
-| Layer | How |
-|---|---|
-| `sessionLimit.ts` | Jest unit tests (pure function — no mocks needed) |
-| `purchases.ts` + `usePremiumState` | Jest with module-level state reset between tests |
-| Gate + toggle | Manual on dev build: flip toggle, verify + button and duplicate are blocked/unblocked |
-
-Test cases for `sessionLimit.ts`:
-- `canCreateSession(4, false) === true`
-- `canCreateSession(5, false) === false`
-- `canCreateSession(5, true) === true`
-- `canCreateSession(999, true) === true`
-
 ## Out of scope
 
 - PaywallModal UI (Phase 4 of IAP plan)

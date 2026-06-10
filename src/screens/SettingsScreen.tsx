@@ -13,6 +13,7 @@ import Svg, { Path } from 'react-native-svg';
 import { useTheme, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { useSettings } from '../lib/settingsContext';
+import { usePremium } from '../lib/premiumContext';
 
 // ── Toggle ──────────────────────────────────────────────────────
 function Toggle({ value, onChange, disabled = false }: {
@@ -212,6 +213,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
   const styles = useMemo(() => makeStyles(T), [T]);
 
   const { settings, updateSettings } = useSettings();
+  const { isPremium, setMockPremium } = usePremium();
 
   return (
     <LinearGradient
@@ -252,7 +254,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
           />
           <SRow
             label="Countdown flash"
-            sub="Screen flash on last 3 seconds of each interval"
+            sub="Digits flash on last 3 seconds of each interval"
             right={<Toggle value={settings.countdownFlash} onChange={v => updateSettings('countdownFlash', v)} />}
           />
           <SRow
@@ -289,6 +291,18 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             last
           />
         </SSection>
+
+        {/* ── Developer (dev builds only) ── */}
+        {__DEV__ && (
+          <SSection title="Developer">
+            <SRow
+              label="Mock Premium"
+              sub="Simulate premium unlock"
+              right={<Toggle value={isPremium} onChange={setMockPremium} />}
+              last
+            />
+          </SSection>
+        )}
 
         {/* ── About ── */}
         <SSection title="About">

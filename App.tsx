@@ -22,6 +22,8 @@ import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
 import { SettingsContext } from './src/lib/settingsContext';
+import { PremiumContext } from './src/lib/premiumContext';
+import { usePremiumState } from './src/hooks/usePremiumState';
 import { configureAudioSession } from './src/lib/audio';
 
 function RouteScreen({ children }: { children: ReactNode }) {
@@ -48,6 +50,7 @@ export default function App() {
   const [route, setRoute] = useState<Route>({ name: 'Sessions' });
   const [themeKey, setThemeKey] = useState<ThemeKey>('tidal');
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const premiumState = usePremiumState();
 
   useEffect(() => {
     configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));
@@ -82,6 +85,7 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+    <PremiumContext.Provider value={premiumState}>
     <SettingsContext.Provider value={{ settings, updateSettings }}>
     <ThemeContext.Provider value={{ T, themeKey, setTheme }}>
       {route.name === 'Workout' && (
@@ -98,6 +102,7 @@ export default function App() {
       )}
     </ThemeContext.Provider>
     </SettingsContext.Provider>
+    </PremiumContext.Provider>
     </GestureHandlerRootView>
   );
 }
