@@ -211,34 +211,35 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 </View>
               </View>
 
-              {/* Speeds — only visible when activity type is Run */}
-              {isRun && (
-                <View style={styles.fieldGroup}>
-                  <Text style={styles.fieldLabel}>SPEEDS</Text>
-                  <View style={styles.configGrid}>
-                    {speedFields.map(({ label, field }) => (
-                      <View key={field} style={styles.configCell}>
-                        <Text style={styles.configCellLabel}>{label}</Text>
-                        <View style={[styles.configInput, styles.speedInputWrapper]}>
-                          <TextInput
-                            style={styles.speedInputText}
-                            value={String(runSpeeds[field])}
-                            onChangeText={v => {
-                              const n = parseFloat(v);
-                              if (!isNaN(n) && n > 0) setRunSpeed(field, n);
-                            }}
-                            keyboardType="decimal-pad"
-                            returnKeyType="done"
-                            selectTextOnFocus
-                          />
-                          <Text style={styles.speedUnitLabel}>km/h</Text>
-                        </View>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-              )}
             </>
+          )}
+
+          {/* Speeds — visible whenever activity type is Run, regardless of mode */}
+          {isRun && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>SPEEDS</Text>
+              <View style={styles.configGrid}>
+                {speedFields.map(({ label, field }) => (
+                  <View key={field} style={styles.configCell}>
+                    <Text style={styles.configCellLabel}>{label}</Text>
+                    <View style={[styles.configInput, styles.speedInputWrapper]}>
+                      <TextInput
+                        style={styles.speedInputText}
+                        value={String(runSpeeds[field])}
+                        onChangeText={v => {
+                          const n = parseFloat(v);
+                          if (!isNaN(n) && n > 0) setRunSpeed(field, n);
+                        }}
+                        keyboardType="decimal-pad"
+                        returnKeyType="done"
+                        selectTextOnFocus
+                      />
+                      <Text style={styles.speedUnitLabel}>km/h</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
           )}
 
           {/* Preview */}

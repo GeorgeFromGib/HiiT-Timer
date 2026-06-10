@@ -76,7 +76,7 @@ export const DEFAULT_SESSIONS: Session[] = [
     mode: 'easy',
     activityType: 'run',
     config: { warmup: 180, high: 20, low: 40, rounds: 14, cooldown: 180 },
-    runSpeeds: { warmupSpeed: 5, workSpeed: 8, restSpeed: 5, cooldownSpeed: 4.5 },
+    runSpeeds: DEFAULT_RUN_SPEEDS,
   },
 ];
 
