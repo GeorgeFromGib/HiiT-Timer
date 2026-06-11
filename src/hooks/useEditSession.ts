@@ -16,12 +16,14 @@ export type TimeField = 'warmup' | 'work' | 'rest' | 'cooldown';
 type ActivePicker =
   | { type: 'field'; field: TimeField }
   | { type: 'interval'; key: string }
-  | { type: 'rounds' };
+  | { type: 'rounds' }
+  | { type: 'speed'; field: keyof RunSpeeds; isMiles: boolean };
 
 type CommitResult =
   | { type: 'field';    field: TimeField; secs: number }
   | { type: 'interval'; key: string;      secs: number }
-  | { type: 'rounds';   value: number };
+  | { type: 'rounds';   value: number }
+  | { type: 'speed';    field: keyof RunSpeeds; kmh: number };
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 
@@ -40,11 +42,15 @@ export interface EditSessionDraft {
 
 // Picker modal state: null when closed.
 export interface EditSessionPicker {
-  title:    string;
-  isRounds: boolean;
-  minutes:  number;
-  seconds:  number;
-  rounds:   number;
+  title:        string;
+  isRounds:     boolean;
+  isSpeed:      boolean;
+  speedUnit:    'km' | 'miles';
+  minutes:      number;
+  seconds:      number;
+  rounds:       number;
+  speedWhole:   number;
+  speedDecimal: number;
 }
 
 export interface EditSessionInterface {
@@ -67,7 +73,8 @@ export interface EditSessionInterface {
   openFieldPicker:    (field: TimeField) => void;
   openRoundsPicker:   () => void;
   openIntervalPicker: (key: string) => void;
-  updatePicker:       (partial: { minutes?: number; seconds?: number; rounds?: number }) => void;
+  openSpeedPicker:    (field: keyof RunSpeeds, displayValue: number, isMiles: boolean) => void;
+  updatePicker:       (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => void;
   commitPicker:       () => void;
   dismissPicker:      () => void;
   // Persistence
@@ -84,12 +91,18 @@ function usePickerState(
   const [pickerMinutes, setPickerMinutes] = useState(0);
   const [pickerSeconds, setPickerSeconds] = useState(0);
   const [pickerRounds,  setPickerRounds]  = useState(0);
+  const [speedWhole,    setSpeedWhole]    = useState(0);
+  const [speedDecimal,  setSpeedDecimal]  = useState(0);
 
   const pickerTitle = (() => {
     if (!activePicker) return '';
     if (activePicker.type === 'rounds') return 'Rounds';
     if (activePicker.type === 'field')
       return activePicker.field.charAt(0).toUpperCase() + activePicker.field.slice(1);
+    if (activePicker.type === 'speed') {
+      const phase = activePicker.field.replace('Speed', '');
+      return phase.charAt(0).toUpperCase() + phase.slice(1) + ' Speed';
+    }
     const idx = intervals.findIndex(iv => iv._key === activePicker.key);
     return `Interval ${idx + 1}`;
   })();
@@ -114,10 +127,22 @@ function usePickerState(
     setActivePicker({ type: 'interval', key });
   }
 
+  function openSpeedPicker(field: keyof RunSpeeds, displayValue: number, isMiles: boolean) {
+    const whole = Math.floor(displayValue);
+    const decimal = Math.min(9, Math.round((displayValue - whole) * 10));
+    setSpeedWhole(whole);
+    setSpeedDecimal(decimal);
+    setActivePicker({ type: 'speed', field, isMiles });
+  }
+
   function commitPicker() {
     if (!activePicker) return;
     if (activePicker.type === 'rounds') {
       onCommit({ type: 'rounds', value: pickerRounds + 1 });
+    } else if (activePicker.type === 'speed') {
+      const displayVal = speedWhole + speedDecimal / 10;
+      const kmh = activePicker.isMiles ? displayVal / 0.621371 : displayVal;
+      onCommit({ type: 'speed', field: activePicker.field, kmh });
     } else {
       const secs = pickerMinutes * 60 + pickerSeconds;
       if (activePicker.type === 'field') {
@@ -130,11 +155,15 @@ function usePickerState(
   }
 
   const picker: EditSessionPicker | null = activePicker ? {
-    title:    pickerTitle,
-    isRounds: activePicker.type === 'rounds',
-    minutes:  pickerMinutes,
-    seconds:  pickerSeconds,
-    rounds:   pickerRounds,
+    title:        pickerTitle,
+    isRounds:     activePicker.type === 'rounds',
+    isSpeed:      activePicker.type === 'speed',
+    speedUnit:    activePicker.type === 'speed' && activePicker.isMiles ? 'miles' : 'km',
+    minutes:      pickerMinutes,
+    seconds:      pickerSeconds,
+    rounds:       pickerRounds,
+    speedWhole,
+    speedDecimal,
   } : null;
 
   return {
@@ -142,10 +171,13 @@ function usePickerState(
     openFieldPicker,
     openRoundsPicker,
     openIntervalPicker,
-    updatePicker: (partial: { minutes?: number; seconds?: number; rounds?: number }) => {
-      if (partial.minutes !== undefined) setPickerMinutes(partial.minutes);
-      if (partial.seconds !== undefined) setPickerSeconds(partial.seconds);
-      if (partial.rounds  !== undefined) setPickerRounds(partial.rounds);
+    openSpeedPicker,
+    updatePicker: (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => {
+      if (partial.minutes      !== undefined) setPickerMinutes(partial.minutes);
+      if (partial.seconds      !== undefined) setPickerSeconds(partial.seconds);
+      if (partial.rounds       !== undefined) setPickerRounds(partial.rounds);
+      if (partial.speedWhole   !== undefined) setSpeedWhole(partial.speedWhole);
+      if (partial.speedDecimal !== undefined) setSpeedDecimal(partial.speedDecimal);
     },
     commitPicker,
     dismissPicker: () => setActivePicker(null),
@@ -206,6 +238,7 @@ export function useEditSession(
     openFieldPicker,
     openRoundsPicker: openRoundsPickerInner,
     openIntervalPicker,
+    openSpeedPicker,
     updatePicker,
     commitPicker,
     dismissPicker,
@@ -214,6 +247,8 @@ export function useEditSession(
       setRounds(result.value);
     } else if (result.type === 'field') {
       fieldSetters[result.field](result.secs);
+    } else if (result.type === 'speed') {
+      setRunSpeed(result.field, result.kmh);
     } else {
       setIntervals(ivs =>
         ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
@@ -325,6 +360,7 @@ export function useEditSession(
     openFieldPicker,
     openRoundsPicker: () => openRoundsPickerInner(rounds),
     openIntervalPicker,
+    openSpeedPicker,
     updatePicker,
     commitPicker,
     dismissPicker,

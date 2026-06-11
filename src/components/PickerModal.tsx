@@ -4,15 +4,18 @@ import { useTheme, type ThemeTokens } from '../theme';
 import WheelColumn from './WheelColumn';
 import type { EditSessionPicker } from '../hooks/useEditSession';
 
-const MINUTE_LABELS = Array.from({ length: 60 }, (_, i) => String(i));
-const SECOND_LABELS = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
-const ROUND_LABELS  = Array.from({ length: 99 }, (_, i) => String(i + 1));
+const MINUTE_LABELS   = Array.from({ length: 60 }, (_, i) => String(i));
+const SECOND_LABELS   = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const ROUND_LABELS    = Array.from({ length: 99 }, (_, i) => String(i + 1));
+const KMH_WHOLE       = Array.from({ length: 51 }, (_, i) => String(i));
+const MPH_WHOLE       = Array.from({ length: 32 }, (_, i) => String(i));
+const DECIMAL_LABELS  = Array.from({ length: 10 }, (_, i) => String(i));
 
 interface Props {
   picker:    EditSessionPicker | null;
   onDismiss: () => void;
   onCommit:  () => void;
-  onUpdate:  (partial: { minutes?: number; seconds?: number; rounds?: number }) => void;
+  onUpdate:  (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => void;
 }
 
 export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: Props) {
@@ -50,6 +53,29 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
               </View>
               <View style={styles.pickerUnits}>
                 <Text style={styles.pickerUnitLabel}>rounds</Text>
+              </View>
+            </>
+          ) : picker?.isSpeed ? (
+            <>
+              <View style={styles.pickerRow}>
+                <WheelColumn
+                  values={picker.speedUnit === 'miles' ? MPH_WHOLE : KMH_WHOLE}
+                  selected={picker.speedWhole}
+                  onChange={v => onUpdate({ speedWhole: v })}
+                />
+                <View style={styles.pickerSeparator}>
+                  <Text style={styles.pickerSeparatorText}>.</Text>
+                </View>
+                <WheelColumn
+                  values={DECIMAL_LABELS}
+                  selected={picker.speedDecimal}
+                  onChange={v => onUpdate({ speedDecimal: v })}
+                />
+              </View>
+              <View style={styles.pickerUnits}>
+                <Text style={styles.pickerUnitLabel}>{picker.speedUnit === 'miles' ? 'mph' : 'km/h'}</Text>
+                <View style={{ flex: 0, width: 24 }} />
+                <Text style={styles.pickerUnitLabel}>dec</Text>
               </View>
             </>
           ) : (

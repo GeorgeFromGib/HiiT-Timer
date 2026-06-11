@@ -21,6 +21,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import PickerModal from '../components/PickerModal';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
+import { useSettings } from '../lib/settingsContext';
 
 const PHASE_LABELS: Record<Phase, string> = {
   warmup:   'Warm Up',
@@ -37,6 +38,8 @@ interface Props {
 
 export default function EditSessionScreen({ session: existing, onBack }: Props) {
   const { T } = useTheme();
+  const { settings } = useSettings();
+  const isMiles = settings.speedUnit === 'miles';
   const styles = useMemo(() => makeStyles(T), [T]);
   const isEditing = !!existing;
 
@@ -44,9 +47,8 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     draft, picker,
     setName,
     setActivityType,
-    setRunSpeed,
     toggleMode,
-    openFieldPicker, openRoundsPicker, openIntervalPicker,
+    openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     save, deleteSession,
@@ -222,20 +224,21 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 {speedFields.map(({ label, field }) => (
                   <View key={field} style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{label}</Text>
-                    <View style={[styles.configInput, styles.speedInputWrapper]}>
-                      <TextInput
-                        style={styles.speedInputText}
-                        value={String(runSpeeds[field])}
-                        onChangeText={v => {
-                          const n = parseFloat(v);
-                          if (!isNaN(n) && n > 0) setRunSpeed(field, n);
-                        }}
-                        keyboardType="decimal-pad"
-                        returnKeyType="done"
-                        selectTextOnFocus
-                      />
-                      <Text style={styles.speedUnitLabel}>km/h</Text>
-                    </View>
+                    <Pressable
+                      style={styles.configInput}
+                      onPress={() => {
+                        const displayVal = isMiles
+                          ? runSpeeds[field] * 0.621371
+                          : runSpeeds[field];
+                        openSpeedPicker(field, displayVal, isMiles);
+                      }}
+                    >
+                      <Text style={styles.configInputText}>
+                        {isMiles
+                          ? (runSpeeds[field] * 0.621371).toFixed(1)
+                          : runSpeeds[field].toFixed(1)}
+                      </Text>
+                    </Pressable>
                   </View>
                 ))}
               </View>
@@ -402,7 +405,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   configCellLabel: {
     fontFamily: 'Inter_600SemiBold',
-    fontSize: 11,
+    fontSize: 13,
     color: T.faintText,
   },
   configInput: {
@@ -420,25 +423,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.text,
     textAlign: 'center',
   },
-  speedInputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-  },
-  speedInputText: {
-    flex: 1,
-    fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 18,
-    color: T.text,
-    textAlign: 'center',
-    paddingVertical: 0,
-  },
-  speedUnitLabel: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 11,
-    color: T.faintText,
-  },
-
   // ── Interval list ──────────────────────────────────────────────────────────
   emptyState: {
     backgroundColor: T.ghostBg,
