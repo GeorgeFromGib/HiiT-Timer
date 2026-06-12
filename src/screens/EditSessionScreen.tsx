@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { type Session, type RunSpeeds } from '../lib/sessions';
+import { type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
 import { fmtDuration, type Interval, type Phase } from '../lib/workout';
 import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -30,6 +30,11 @@ const PHASE_LABELS: Record<Phase, string> = {
   cooldown: 'Cool Down',
 };
 
+
+function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): string {
+  const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
+  return isMiles ? (kmh * 0.621371).toFixed(1) : kmh.toFixed(1);
+}
 
 interface Props {
   session?: Session;
@@ -49,6 +54,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     setActivityType,
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
+    openIntervalSpeedPicker, clearIntervalSpeed,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     save, deleteSession,
@@ -167,6 +173,9 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                     onRemove={() => removeInterval(iv._key)}
                     onCyclePhase={() => cyclePhase(iv._key)}
                     onOpenPicker={() => openIntervalPicker(iv._key)}
+                    displaySpeed={isRun ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
+                    onOpenSpeedPicker={isRun ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
+                    onClearSpeed={isRun ? () => clearIntervalSpeed(iv._key) : undefined}
                   />
                 )}
               />
@@ -295,18 +304,22 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
 // ── Interval row component ───────────────────────────────────────────────────
 
 interface IntervalRowProps {
-  interval:     Interval;
-  T:            ThemeTokens;
-  styles:       ReturnType<typeof makeStyles>;
-  isActive:     boolean;
-  onCyclePhase: () => void;
-  onOpenPicker: () => void;
-  onDrag:       () => void;
+  interval:           Interval;
+  T:                  ThemeTokens;
+  styles:             ReturnType<typeof makeStyles>;
+  isActive:           boolean;
+  onCyclePhase:       () => void;
+  onOpenPicker:       () => void;
+  onDrag:             () => void;
+  displaySpeed?:      string;
+  onOpenSpeedPicker?: () => void;
+  onClearSpeed?:      () => void;
 }
 
 function IntervalRow({
   interval, T, styles, isActive,
   onCyclePhase, onOpenPicker, onDrag,
+  displaySpeed, onOpenSpeedPicker, onClearSpeed,
 }: IntervalRowProps) {
   const phaseColor = T.phases[interval.type];
   return (
@@ -320,6 +333,14 @@ function IntervalRow({
       <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor }]}>
         <Text style={[styles.phasePillText, { color: phaseColor }]}>{PHASE_LABELS[interval.type]}</Text>
       </Pressable>
+
+      {displaySpeed !== undefined && onOpenSpeedPicker && (
+        <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8}>
+          <Text style={[styles.intervalDurationText, { color: interval.speed != null ? T.text : T.subText }]}>
+            {displaySpeed}
+          </Text>
+        </Pressable>
+      )}
 
       <Pressable onPress={onOpenPicker} style={styles.intervalDuration}>
         <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
@@ -628,16 +649,20 @@ const IntervalSwipeDuplicateAction = React.forwardRef<
 function IntervalSwipeRow({
   interval, T, styles, isActive, drag,
   onDuplicate, onRemove, onCyclePhase, onOpenPicker,
+  displaySpeed, onOpenSpeedPicker, onClearSpeed,
 }: {
-  interval:     LocalInterval;
-  T:            ThemeTokens;
-  styles:       ReturnType<typeof makeStyles>;
-  isActive:     boolean;
-  drag:         () => void;
-  onDuplicate:  () => void;
-  onRemove:     () => void;
-  onCyclePhase: () => void;
-  onOpenPicker: () => void;
+  interval:           LocalInterval;
+  T:                  ThemeTokens;
+  styles:             ReturnType<typeof makeStyles>;
+  isActive:           boolean;
+  drag:               () => void;
+  onDuplicate:        () => void;
+  onRemove:           () => void;
+  onCyclePhase:       () => void;
+  onOpenPicker:       () => void;
+  displaySpeed?:      string;
+  onOpenSpeedPicker?: () => void;
+  onClearSpeed?:      () => void;
 }) {
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
 
@@ -675,6 +700,9 @@ function IntervalSwipeRow({
           onCyclePhase={onCyclePhase}
           onOpenPicker={onOpenPicker}
           onDrag={drag}
+          displaySpeed={displaySpeed}
+          onOpenSpeedPicker={onOpenSpeedPicker}
+          onClearSpeed={onClearSpeed}
         />
       </ReanimatedSwipeable>
     </ScaleDecorator>
