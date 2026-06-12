@@ -225,8 +225,8 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </>
           )}
 
-          {/* Speeds — visible whenever activity type is Run, regardless of mode */}
-          {isRun && (
+          {/* Speeds — visible for Run sessions in easy mode only; advanced mode shows per-interval speeds */}
+          {isRun && !isAdvanced && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>SPEEDS</Text>
               <View style={styles.configGrid}>
