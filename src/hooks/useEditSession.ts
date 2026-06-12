@@ -229,8 +229,12 @@ export function useEditSession(
     existing?.runSpeeds ?? DEFAULT_RUN_SPEEDS
   );
 
+  const [timingDirty, setTimingDirty] = useState(false);
+  const [speedsDirty, setSpeedsDirty] = useState(false);
+
   function setRunSpeed(field: keyof RunSpeeds, value: number) {
     setRunSpeeds(prev => ({ ...prev, [field]: value }));
+    setSpeedsDirty(true);
   }
 
   const easyConfig = {
@@ -267,10 +271,13 @@ export function useEditSession(
   } = usePickerState(intervals, fieldValues, (result) => {
     if (result.type === 'rounds') {
       setRounds(result.value);
+      setTimingDirty(true);
     } else if (result.type === 'field') {
       fieldSetters[result.field](result.secs);
+      setTimingDirty(true);
     } else if (result.type === 'speed') {
       setRunSpeed(result.field, result.kmh);
+      setSpeedsDirty(true);
     } else if (result.type === 'intervalSpeed') {
       setIntervals(ivs =>
         ivs.map(iv => iv._key === result.key ? { ...iv, speed: result.kmh } : iv)
@@ -279,6 +286,7 @@ export function useEditSession(
       setIntervals(ivs =>
         ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
       );
+      setTimingDirty(true);
     }
   });
 
@@ -304,6 +312,7 @@ export function useEditSession(
   }
 
   function cyclePhase(key: string) {
+    setTimingDirty(true);
     setIntervals(ivs => ivs.map(iv =>
       iv._key === key
         ? { ...iv, type: PHASES[(PHASES.indexOf(iv.type) + 1) % PHASES.length] }
@@ -312,10 +321,12 @@ export function useEditSession(
   }
 
   function addInterval() {
+    setTimingDirty(true);
     setIntervals(ivs => [...ivs, toLocal({ type: 'work', dur: 30 })]);
   }
 
   function duplicateInterval(key: string) {
+    setTimingDirty(true);
     setIntervals(ivs => {
       const idx = ivs.findIndex(iv => iv._key === key);
       if (idx === -1) return ivs;
@@ -325,6 +336,7 @@ export function useEditSession(
   }
 
   function removeInterval(key: string) {
+    setTimingDirty(true);
     setIntervals(ivs => ivs.filter(iv => iv._key !== key));
   }
 
@@ -395,8 +407,8 @@ export function useEditSession(
     setRunSpeed,
     toggleMode,
     cyclePhase, addInterval, duplicateInterval, removeInterval,
-    clearIntervals: () => setIntervals([]),
-    reorderIntervals: setIntervals,
+    clearIntervals: () => { setTimingDirty(true); setIntervals([]); },
+    reorderIntervals: (data: LocalInterval[]) => { setTimingDirty(true); setIntervals(data); },
     openFieldPicker,
     openRoundsPicker: () => openRoundsPickerInner(rounds),
     openIntervalPicker,
