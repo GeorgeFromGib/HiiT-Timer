@@ -30,17 +30,36 @@ type CommitResult =
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 
+function findMatchingDurationPreset(warmup: number, work: number, rest: number, rounds: number, cooldown: number): PresetLevel | null {
+  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
+  return levels.find(level => {
+    const p = DURATION_PRESETS[level];
+    return p.warmup === warmup && p.work === work && p.rest === rest && p.rounds === rounds && p.cooldown === cooldown;
+  }) ?? null;
+}
+
+function findMatchingSpeedPreset(speeds: RunSpeeds): PresetLevel | null {
+  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
+  return levels.find(level => {
+    const p = SPEED_PRESETS[level];
+    return p.warmupSpeed === speeds.warmupSpeed && p.workSpeed === speeds.workSpeed &&
+           p.restSpeed === speeds.restSpeed && p.cooldownSpeed === speeds.cooldownSpeed;
+  }) ?? null;
+}
+
 // All state the screen needs to render — no setters.
 export interface EditSessionDraft {
-  name:            string;
-  isAdvanced:      boolean;
-  fieldValues:     Record<TimeField, number>;
-  rounds:          number;
-  intervals:       LocalInterval[];
-  previewSegments: Segment[];
-  previewTotal:    number;
-  activityType:    'run' | undefined;
-  runSpeeds:       RunSpeeds;
+  name:                string;
+  isAdvanced:          boolean;
+  fieldValues:         Record<TimeField, number>;
+  rounds:              number;
+  intervals:           LocalInterval[];
+  previewSegments:     Segment[];
+  previewTotal:        number;
+  activityType:        'run' | undefined;
+  runSpeeds:           RunSpeeds;
+  activeTimingPreset:  PresetLevel | null;
+  activeSpeedPreset:   PresetLevel | null;
 }
 
 // Picker modal state: null when closed.
@@ -236,9 +255,22 @@ export function useEditSession(
   const [timingDirty, setTimingDirty] = useState(false);
   const [speedsDirty, setSpeedsDirty] = useState(false);
 
+  const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() =>
+    existing?.mode === 'easy'
+      ? findMatchingDurationPreset(
+          existing.config.warmup, existing.config.high, existing.config.low,
+          existing.config.rounds, existing.config.cooldown,
+        )
+      : null
+  );
+  const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
+    existing?.runSpeeds ? findMatchingSpeedPreset(existing.runSpeeds) : null
+  );
+
   function setRunSpeed(field: keyof RunSpeeds, value: number) {
     setRunSpeeds(prev => ({ ...prev, [field]: value }));
     setSpeedsDirty(true);
+    setActiveSpeedPreset(null);
   }
 
   const easyConfig = {
@@ -276,9 +308,11 @@ export function useEditSession(
     if (result.type === 'rounds') {
       setRounds(result.value);
       setTimingDirty(true);
+      setActiveTimingPreset(null);
     } else if (result.type === 'field') {
       fieldSetters[result.field](result.secs);
       setTimingDirty(true);
+      setActiveTimingPreset(null);
     } else if (result.type === 'speed') {
       setRunSpeed(result.field, result.kmh);
       setSpeedsDirty(true);
@@ -291,6 +325,7 @@ export function useEditSession(
         ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
       );
       setTimingDirty(true);
+      setActiveTimingPreset(null);
     }
   });
 
@@ -317,6 +352,7 @@ export function useEditSession(
 
   function cyclePhase(key: string) {
     setTimingDirty(true);
+    setActiveTimingPreset(null);
     setIntervals(ivs => ivs.map(iv =>
       iv._key === key
         ? { ...iv, type: PHASES[(PHASES.indexOf(iv.type) + 1) % PHASES.length] }
@@ -326,11 +362,13 @@ export function useEditSession(
 
   function addInterval() {
     setTimingDirty(true);
+    setActiveTimingPreset(null);
     setIntervals(ivs => [...ivs, toLocal({ type: 'work', dur: 30 })]);
   }
 
   function duplicateInterval(key: string) {
     setTimingDirty(true);
+    setActiveTimingPreset(null);
     setIntervals(ivs => {
       const idx = ivs.findIndex(iv => iv._key === key);
       if (idx === -1) return ivs;
@@ -341,6 +379,7 @@ export function useEditSession(
 
   function removeInterval(key: string) {
     setTimingDirty(true);
+    setActiveTimingPreset(null);
     setIntervals(ivs => ivs.filter(iv => iv._key !== key));
   }
 
@@ -361,6 +400,7 @@ export function useEditSession(
         );
       }
       setTimingDirty(false);
+      setActiveTimingPreset(level);
     };
     if (timingDirty) {
       Alert.alert(
@@ -377,6 +417,7 @@ export function useEditSession(
     const doApply = () => {
       setRunSpeeds(SPEED_PRESETS[level]);
       setSpeedsDirty(false);
+      setActiveSpeedPreset(level);
     };
     if (speedsDirty) {
       Alert.alert(
@@ -446,6 +487,8 @@ export function useEditSession(
     previewTotal: totalDuration(previewSegments),
     activityType,
     runSpeeds,
+    activeTimingPreset,
+    activeSpeedPreset,
   };
 
   return {
@@ -456,8 +499,8 @@ export function useEditSession(
     setRunSpeed,
     toggleMode,
     cyclePhase, addInterval, duplicateInterval, removeInterval,
-    clearIntervals: () => { setTimingDirty(true); setIntervals([]); },
-    reorderIntervals: (data: LocalInterval[]) => { setTimingDirty(true); setIntervals(data); },
+    clearIntervals: () => { setTimingDirty(true); setActiveTimingPreset(null); setIntervals([]); },
+    reorderIntervals: (data: LocalInterval[]) => { setTimingDirty(true); setActiveTimingPreset(null); setIntervals(data); },
     openFieldPicker,
     openRoundsPicker: () => openRoundsPickerInner(rounds),
     openIntervalPicker,

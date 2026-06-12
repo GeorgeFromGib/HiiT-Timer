@@ -64,7 +64,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     save, deleteSession,
   } = useEditSession(existing, onBack);
 
-  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds } = draft;
+  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds, activeTimingPreset, activeSpeedPreset } = draft;
   const isRun = activityType === 'run';
 
   const timeFields: { label: string; field: TimeField }[] = [
@@ -154,8 +154,14 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             <>
               {/* Intervals */}
               <View style={styles.fieldGroup}>
-                <Text style={styles.fieldLabel}>INTERVALS</Text>
-                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} />
+                <Text style={styles.fieldLabel}>INTERVAL PRESETS</Text>
+                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} activePreset={activeTimingPreset} />
+                {isRun && (
+                  <>
+                    <Text style={styles.fieldLabel}>SPEED PRESETS</Text>
+                    <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} activePreset={activeSpeedPreset} />
+                  </>
+                )}
                 {intervals.length === 0 && (
                   <View style={styles.emptyState}>
                     <Text style={styles.emptyStateText}>No intervals yet. Add one below.</Text>
@@ -203,8 +209,8 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             <>
               {/* Easy mode timing */}
               <View style={styles.fieldGroup}>
-                <Text style={styles.fieldLabel}>TIMING</Text>
-                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} />
+                <Text style={styles.fieldLabel}>INTERVAL PRESETS</Text>
+                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} activePreset={activeTimingPreset} />
                 <View style={styles.configGrid}>
                   {timeFields.map(({ label, field }) => (
                     <View key={field} style={styles.configCell}>
@@ -231,11 +237,11 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </>
           )}
 
-          {/* Speeds — visible for Run sessions in easy mode only; advanced mode shows per-interval speeds */}
+          {/* Speeds — only shown in Easy mode (Advanced mode has speed presets inline above intervals) */}
           {isRun && !isAdvanced && (
             <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>SPEEDS</Text>
-              <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} />
+              <Text style={styles.fieldLabel}>SPEED PRESETS</Text>
+              <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} activePreset={activeSpeedPreset} />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => (
                   <View key={field} style={styles.configCell}>
@@ -320,25 +326,30 @@ function PresetStrip({
   onApply,
   T,
   styles,
+  activePreset,
 }: {
   onApply: (level: PresetLevel) => void;
   T: ThemeTokens;
   styles: ReturnType<typeof makeStyles>;
+  activePreset?: PresetLevel | null;
 }) {
   return (
     <View style={styles.presetStrip}>
-      {PRESET_LEVELS.map(({ label, level }) => (
-        <Pressable
-          key={level}
-          style={({ pressed }) => [
-            styles.presetPill,
-            pressed && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) },
-          ]}
-          onPress={() => onApply(level)}
-        >
-          <Text style={[styles.presetPillText, { color: T.subText }]}>{label}</Text>
-        </Pressable>
-      ))}
+      {PRESET_LEVELS.map(({ label, level }) => {
+        const isActive = level === activePreset;
+        return (
+          <Pressable
+            key={level}
+            style={({ pressed }) => [
+              styles.presetPill,
+              (pressed || isActive) && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) },
+            ]}
+            onPress={() => onApply(level)}
+          >
+            <Text style={[styles.presetPillText, { color: isActive ? T.accent : T.subText }]}>{label}</Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
