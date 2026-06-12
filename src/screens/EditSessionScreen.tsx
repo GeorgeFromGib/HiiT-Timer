@@ -21,6 +21,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import PickerModal from '../components/PickerModal';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
+import { type PresetLevel } from '../lib/presets';
 import { useSettings } from '../lib/settingsContext';
 
 const PHASE_LABELS: Record<Phase, string> = {
@@ -59,6 +60,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     openIntervalSpeedPicker, clearIntervalSpeed,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
+    applyDurationPreset, applySpeedPreset,
     save, deleteSession,
   } = useEditSession(existing, onBack);
 
@@ -153,6 +155,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               {/* Intervals */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>INTERVALS</Text>
+                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} />
                 {intervals.length === 0 && (
                   <View style={styles.emptyState}>
                     <Text style={styles.emptyStateText}>No intervals yet. Add one below.</Text>
@@ -201,6 +204,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               {/* Easy mode timing */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>TIMING</Text>
+                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} />
                 <View style={styles.configGrid}>
                   {timeFields.map(({ label, field }) => (
                     <View key={field} style={styles.configCell}>
@@ -231,6 +235,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           {isRun && !isAdvanced && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>SPEEDS</Text>
+              <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => (
                   <View key={field} style={styles.configCell}>
@@ -300,6 +305,41 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
         onUpdate={updatePicker}
       />
     </LinearGradient>
+  );
+}
+
+// ── Preset strip ─────────────────────────────────────────────────────────────
+
+const PRESET_LEVELS: { label: string; level: PresetLevel }[] = [
+  { label: 'Easy',   level: 'easy'   },
+  { label: 'Medium', level: 'medium' },
+  { label: 'Hard',   level: 'hard'   },
+];
+
+function PresetStrip({
+  onApply,
+  T,
+  styles,
+}: {
+  onApply: (level: PresetLevel) => void;
+  T: ThemeTokens;
+  styles: ReturnType<typeof makeStyles>;
+}) {
+  return (
+    <View style={styles.presetStrip}>
+      {PRESET_LEVELS.map(({ label, level }) => (
+        <Pressable
+          key={level}
+          style={({ pressed }) => [
+            styles.presetPill,
+            pressed && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) },
+          ]}
+          onPress={() => onApply(level)}
+        >
+          <Text style={[styles.presetPillText, { color: T.subText }]}>{label}</Text>
+        </Pressable>
+      ))}
+    </View>
   );
 }
 
@@ -421,6 +461,25 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
+  },
+
+  presetStrip: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  presetPill: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: T.hairline,
+    backgroundColor: T.ghostBg,
+  },
+  presetPillText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    letterSpacing: 12 * 0.04,
   },
   configCell: {
     minWidth: '28%',
