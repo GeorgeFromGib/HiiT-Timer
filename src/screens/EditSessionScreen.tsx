@@ -490,6 +490,8 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 999,
     borderWidth: 1.5,
+    minWidth: 84,
+    alignItems: 'center',
   },
   phasePillText: {
     fontFamily: 'Inter_700Bold',
