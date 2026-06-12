@@ -175,3 +175,6 @@ export function fmtSpeed(kmh: number, unit: 'km' | 'miles'): string {
   }
   return `${kmh} km/h`;
 }
+
+export const convertKmhToMph = (kmh: number): number => kmh * 0.621371;
+export const convertMphToKmh = (mph: number): number => mph / 0.621371;

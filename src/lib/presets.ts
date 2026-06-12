@@ -1,3 +1,6 @@
+import { type Interval, buildIntervalsFromEasy } from './workout';
+import { type RunSpeeds } from './sessions';
+
 export type PresetLevel = 'easy' | 'medium' | 'hard';
 
 export interface DurationPreset {
@@ -26,3 +29,30 @@ export const SPEED_PRESETS: Record<PresetLevel, SpeedPreset> = {
   medium: { warmupSpeed:  6, workSpeed: 11, restSpeed:  6, cooldownSpeed: 5.5 },
   hard:   { warmupSpeed:  7, workSpeed: 14, restSpeed:  7, cooldownSpeed: 6   },
 };
+
+export function findMatchingDurationPreset(warmup: number, work: number, rest: number, rounds: number, cooldown: number): PresetLevel | null {
+  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
+  return levels.find(level => {
+    const p = DURATION_PRESETS[level];
+    return p.warmup === warmup && p.work === work && p.rest === rest && p.rounds === rounds && p.cooldown === cooldown;
+  }) ?? null;
+}
+
+export function findMatchingDurationPresetForIntervals(intervals: Interval[]): PresetLevel | null {
+  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
+  return levels.find(level => {
+    const p = DURATION_PRESETS[level];
+    const expected = buildIntervalsFromEasy({ warmup: p.warmup, high: p.work, low: p.rest, rounds: p.rounds, cooldown: p.cooldown });
+    return expected.length === intervals.length &&
+      expected.every((e, i) => e.type === intervals[i].type && e.dur === intervals[i].dur);
+  }) ?? null;
+}
+
+export function findMatchingSpeedPreset(speeds: RunSpeeds): PresetLevel | null {
+  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
+  return levels.find(level => {
+    const p = SPEED_PRESETS[level];
+    return p.warmupSpeed === speeds.warmupSpeed && p.workSpeed === speeds.workSpeed &&
+           p.restSpeed === speeds.restSpeed && p.cooldownSpeed === speeds.cooldownSpeed;
+  }) ?? null;
+}

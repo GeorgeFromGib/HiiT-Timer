@@ -21,9 +21,7 @@ import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
-import PhaseIcon from '../components/PhaseIcon';
-import ReadyIcon from '../components/ReadyIcon';
-import FinishedIcon from '../components/FinishedIcon';
+import WorkoutIcon from '../components/WorkoutIcon';
 import GhostBtn  from '../components/GhostBtn';
 
 const GOLD = '#C89B20';
@@ -130,10 +128,10 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             borderColor:     withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
           }]}>
             {isDone
-              ? <FinishedIcon color={GOLD} size={30} />
+              ? <WorkoutIcon variant="finished" color={GOLD} size={30} />
               : isPreStart
-                ? <ReadyIcon color={T.accent} size={30} />
-                : <PhaseIcon phase={seg.phase} color={phaseColor} size={30} />
+                ? <WorkoutIcon variant="ready" color={T.accent} size={30} />
+                : <WorkoutIcon variant="phase" phase={seg.phase} color={phaseColor} size={30} />
             }
           </View>
 
@@ -224,7 +222,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           <>
             <Text style={styles.nextLabel}>NEXT</Text>
             <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
-            <PhaseIcon phase={nextSeg!.phase} color={nextPhaseColor!} size={20} />
+            <WorkoutIcon variant="phase" phase={nextSeg!.phase} color={nextPhaseColor!} size={20} />
             <Text style={[styles.nextPhase, { color: nextPhaseColor!, marginLeft: 5 }]}>
               {nextMeta.word}
             </Text>

@@ -1,209 +1,22 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import {
-  Animated,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import Slider from '@react-native-community/slider';
-import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { useTheme, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme, THEME_PREVIEWS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { useSettings } from '../lib/settingsContext';
 import { usePremium } from '../lib/premiumContext';
-
-// ── Toggle ──────────────────────────────────────────────────────
-function Toggle({ value, onChange, disabled = false }: {
-  value: boolean;
-  onChange: (v: boolean) => void;
-  disabled?: boolean;
-}) {
-  const { T } = useTheme();
-  const styles = useMemo(() => makeStyles(T), [T]);
-  const anim = useRef(new Animated.Value(value ? 1 : 0)).current;
-
-  useEffect(() => {
-    Animated.timing(anim, {
-      toValue: value ? 1 : 0,
-      duration: 180,
-      useNativeDriver: false,
-    }).start();
-  }, [value, anim]);
-
-  const left = anim.interpolate({ inputRange: [0, 1], outputRange: [2, 21] });
-
-  return (
-    <Pressable
-      onPress={() => { if (!disabled) onChange(!value); }}
-      style={[
-        styles.toggleTrack,
-        {
-          backgroundColor: (value && !disabled) ? T.accent : T.ghostBg,
-          borderColor: (value && !disabled) ? T.accent : T.hairline,
-          shadowColor: (value && !disabled) ? T.accent : 'transparent',
-          shadowOpacity: (value && !disabled) ? 0.33 : 0,
-          shadowOffset: { width: 0, height: 3 },
-          shadowRadius: 5,
-        },
-      ]}
-    >
-      <Animated.View
-        style={[
-          styles.toggleThumb,
-          {
-            left,
-            backgroundColor: (value && !disabled) ? T.btnGlyph : T.subText,
-          },
-        ]}
-      />
-    </Pressable>
-  );
-}
-
-// ── Settings row ────────────────────────────────────────────────
-function SRow({
-  label,
-  sub,
-  right,
-  last,
-  disabled,
-}: {
-  label: string;
-  sub?: string;
-  right: React.ReactNode;
-  last?: boolean;
-  disabled?: boolean;
-}) {
-  const { T } = useTheme();
-  const styles = useMemo(() => makeStyles(T), [T]);
-  return (
-    <View style={[styles.row, !last && styles.rowBorder, disabled && { opacity: 0.4 }]}>
-      <View style={styles.rowLabels}>
-        <Text style={styles.rowLabel}>{label}</Text>
-        {sub ? <Text style={styles.rowSub}>{sub}</Text> : null}
-      </View>
-      {right}
-    </View>
-  );
-}
-
-// ── Section ─────────────────────────────────────────────────────
-function SSection({ title, children }: { title: string; children: React.ReactNode }) {
-  const { T } = useTheme();
-  const styles = useMemo(() => makeStyles(T), [T]);
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.sectionCard}>{children}</View>
-    </View>
-  );
-}
-
-// ── Volume row ──────────────────────────────────────────────────
-function VolumeRow({ value, onChange, disabled = false }: {
-  value: number; // 0–100
-  onChange: (v: number) => void;
-  disabled?: boolean;
-}) {
-  const { T } = useTheme();
-  const styles = useMemo(() => makeStyles(T), [T]);
-
-  return (
-    <View style={[styles.row, styles.rowBorder, disabled && { opacity: 0.4 }, { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 8 }]}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={styles.rowLabel}>Volume</Text>
-        <Text style={[styles.rowSub, { marginTop: 0 }]}>{value}%</Text>
-      </View>
-      <Slider
-        value={value}
-        minimumValue={0}
-        maximumValue={100}
-        step={1}
-        disabled={disabled}
-        onValueChange={onChange}
-        minimumTrackTintColor={T.accent}
-        maximumTrackTintColor={T.hairline}
-        thumbTintColor={T.accent}
-        style={styles.slider}
-      />
-    </View>
-  );
-}
-
-// ── Theme card ──────────────────────────────────────────────────
-function ThemeCard({
-  theme,
-  selected,
-  onSelect,
-}: {
-  theme: ThemePreview;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  const { T } = useTheme();
-  const styles = useMemo(() => makeStyles(T), [T]);
-  return (
-    <Pressable
-      onPress={onSelect}
-      style={[
-        styles.themeCard,
-        {
-          borderColor: selected ? T.accent : T.hairline,
-          shadowColor: selected ? T.accent : 'transparent',
-          shadowOpacity: selected ? 0.2 : 0,
-          shadowOffset: { width: 0, height: 6 },
-          shadowRadius: 9,
-        },
-      ]}
-    >
-      {/* gradient preview */}
-      <LinearGradient
-        colors={[theme.bg[1], theme.bg[0]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.themePreview}
-      >
-        <View style={[styles.themeAccentDot, { backgroundColor: theme.accent, shadowColor: theme.accent }]} />
-        {theme.phases.map((c, i) => (
-          <View key={i} style={[styles.themePhaseDot, { backgroundColor: c }]} />
-        ))}
-      </LinearGradient>
-
-      {/* label row */}
-      <View style={[styles.themeLabel, { borderTopColor: T.hairline, backgroundColor: T.card }]}>
-        <View>
-          <Text style={styles.themeName}>{theme.name}</Text>
-          <Text style={styles.themeNote}>{theme.note}</Text>
-        </View>
-        <View
-          style={[
-            styles.themeCheck,
-            {
-              backgroundColor: selected ? T.accent : 'transparent',
-              borderColor: selected ? T.accent : T.hairline,
-            },
-          ]}
-        >
-          {selected && (
-            <Svg width={10} height={10} viewBox="0 0 10 10">
-              <Path
-                d="M2 5.5l2.2 2.2L8 3"
-                stroke={T.btnGlyph}
-                strokeWidth={1.7}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </Svg>
-          )}
-        </View>
-      </View>
-    </Pressable>
-  );
-}
+import { SettingsToggle } from '../components/SettingsToggle';
+import { SettingsRow } from '../components/SettingsRow';
+import { SettingsSection } from '../components/SettingsSection';
+import { ThemeCard } from '../components/ThemeCard';
+import { VolumeRow } from '../components/VolumeRow';
 
 // ══════════════════════════════════════════════════════════════
 // SETTINGS SCREEN
@@ -246,28 +59,28 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         </View>
 
         {/* ── Workout ── */}
-        <SSection title="Workout">
-          <SRow
+        <SettingsSection title="Workout">
+          <SettingsRow
             label="Congratulatory message"
             sub="Full-screen celebration at workout end"
-            right={<Toggle value={settings.congratsMessage} onChange={v => updateSettings('congratsMessage', v)} />}
+            right={<SettingsToggle value={settings.congratsMessage} onChange={v => updateSettings('congratsMessage', v)} />}
           />
-          <SRow
+          <SettingsRow
             label="Countdown flash"
             sub="Digits flash on last 3 seconds of each interval"
-            right={<Toggle value={settings.countdownFlash} onChange={v => updateSettings('countdownFlash', v)} />}
+            right={<SettingsToggle value={settings.countdownFlash} onChange={v => updateSettings('countdownFlash', v)} />}
           />
-          <SRow
+          <SettingsRow
             label="Keep screen awake"
             sub="Prevent display sleep during workout"
-            right={<Toggle value={settings.keepScreenAwake} onChange={v => updateSettings('keepScreenAwake', v)} />}
+            right={<SettingsToggle value={settings.keepScreenAwake} onChange={v => updateSettings('keepScreenAwake', v)} />}
             last
           />
-        </SSection>
+        </SettingsSection>
 
         {/* ── Units ── */}
-        <SSection title="Units">
-          <SRow
+        <SettingsSection title="Units">
+          <SettingsRow
             label="Speed unit"
             sub="Display unit for Run session speeds"
             last
@@ -293,54 +106,54 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
               </View>
             }
           />
-        </SSection>
+        </SettingsSection>
 
         {/* ── Audio ── */}
-        <SSection title="Audio">
-          <SRow
+        <SettingsSection title="Audio">
+          <SettingsRow
             label="Sound off"
             sub="Mute all audio"
-            right={<Toggle value={settings.soundOff} onChange={v => updateSettings('soundOff', v)} />}
+            right={<SettingsToggle value={settings.soundOff} onChange={v => updateSettings('soundOff', v)} />}
           />
           <VolumeRow
             value={settings.soundVolume}
             onChange={v => updateSettings('soundVolume', v)}
             disabled={settings.soundOff}
           />
-          <SRow
+          <SettingsRow
             label="Sound cues"
             sub="Play tones on phase changes"
             disabled={settings.soundOff}
-            right={<Toggle value={settings.soundCues} onChange={v => updateSettings('soundCues', v)} disabled={settings.soundOff} />}
+            right={<SettingsToggle value={settings.soundCues} onChange={v => updateSettings('soundCues', v)} disabled={settings.soundOff} />}
           />
-          <SRow
+          <SettingsRow
             label="Final countdown beep"
             sub="Audio cue in last 3 seconds"
             disabled={settings.soundOff}
-            right={<Toggle value={settings.finalCountdownBeep} onChange={v => updateSettings('finalCountdownBeep', v)} disabled={settings.soundOff} />}
+            right={<SettingsToggle value={settings.finalCountdownBeep} onChange={v => updateSettings('finalCountdownBeep', v)} disabled={settings.soundOff} />}
             last
           />
-        </SSection>
+        </SettingsSection>
 
         {/* ── Developer (dev builds only) ── */}
         {__DEV__ && (
-          <SSection title="Developer">
-            <SRow
+          <SettingsSection title="Developer">
+            <SettingsRow
               label="Mock Premium"
               sub="Simulate premium unlock"
-              right={<Toggle value={isPremium} onChange={setMockPremium} />}
+              right={<SettingsToggle value={isPremium} onChange={setMockPremium} />}
               last
             />
-          </SSection>
+          </SettingsSection>
         )}
 
         {/* ── About ── */}
-        <SSection title="About">
-          <SRow
+        <SettingsSection title="About">
+          <SettingsRow
             label="Version"
             right={<Text style={styles.versionText}>1.0.0</Text>}
           />
-          <SRow
+          <SettingsRow
             label="Rate the app"
             right={
               <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
@@ -355,7 +168,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             }
             last
           />
-        </SSection>
+        </SettingsSection>
       </ScrollView>
     </LinearGradient>
   );
@@ -374,7 +187,7 @@ function makeStyles(T: ThemeTokens) {
     // Header
     header: { marginBottom: 28 },
 
-    // Section
+    // Appearance section (uses local themeRow layout, not SettingsSection)
     section: { marginBottom: 24 },
     sectionTitle: {
       fontFamily: 'Inter_700Bold',
@@ -385,125 +198,9 @@ function makeStyles(T: ThemeTokens) {
       marginBottom: 8,
       paddingLeft: 4,
     },
-    sectionCard: {
-      backgroundColor: T.card,
-      borderWidth: 1,
-      borderColor: T.hairline,
-      borderRadius: 18,
-      overflow: 'hidden',
-    },
-
-    // Theme cards
     themeRow: {
       flexDirection: 'row',
       gap: 10,
-    },
-    themeCard: {
-      flex: 1,
-      borderRadius: 16,
-      overflow: 'hidden',
-      borderWidth: 2,
-    },
-    themePreview: {
-      height: 64,
-      flexDirection: 'row',
-      alignItems: 'flex-end',
-      paddingHorizontal: 12,
-      paddingBottom: 10,
-      gap: 5,
-    },
-    themeAccentDot: {
-      width: 12,
-      height: 12,
-      borderRadius: 6,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.6,
-      shadowRadius: 4,
-    },
-    themePhaseDot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      opacity: 0.7,
-    },
-    themeLabel: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      borderTopWidth: 1,
-    },
-    themeName: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 13,
-      color: T.text,
-    },
-    themeNote: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 11,
-      color: T.faintText,
-      marginTop: 1,
-    },
-    themeCheck: {
-      width: 20,
-      height: 20,
-      borderRadius: 10,
-      borderWidth: 1.5,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-
-    // Row
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingVertical: 13,
-      paddingHorizontal: 16,
-    },
-    rowBorder: {
-      borderBottomWidth: 1,
-      borderBottomColor: T.hairline,
-    },
-    rowLabels: { flex: 1, marginRight: 12 },
-    rowLabel: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 15,
-      color: T.text,
-      lineHeight: 20,
-    },
-    rowSub: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 12,
-      color: T.faintText,
-      marginTop: 2,
-    },
-
-    // Toggle
-    toggleTrack: {
-      width: 46,
-      height: 27,
-      borderRadius: 999,
-      borderWidth: 1.5,
-      justifyContent: 'center',
-    },
-    toggleThumb: {
-      position: 'absolute',
-      top: 2,
-      width: 19,
-      height: 19,
-      borderRadius: 9.5,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.25,
-      shadowRadius: 2,
-      elevation: 2,
-    },
-
-    // Slider
-    slider: {
-      marginHorizontal: -8,
     },
 
     // About

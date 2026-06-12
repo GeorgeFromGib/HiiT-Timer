@@ -15,27 +15,20 @@ import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
-import { fmtDuration, type Interval, type Phase } from '../lib/workout';
-import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
+import { fmtDuration, convertKmhToMph } from '../lib/workout';
+import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import PickerModal from '../components/PickerModal';
+import IntervalRow from '../components/IntervalRow';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
 import { type PresetLevel } from '../lib/presets';
 import { useSettings } from '../lib/settingsContext';
 
-const PHASE_LABELS: Record<Phase, string> = {
-  warmup:   'Warm Up',
-  work:     'Work',
-  rest:     'Rest',
-  cooldown: 'Cool Down',
-};
-
-
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
   return isMiles
-    ? { value: (kmh * 0.621371).toFixed(1), unit: 'mph' }
+    ? { value: convertKmhToMph(kmh).toFixed(1), unit: 'mph' }
     : { value: kmh.toFixed(1), unit: 'km/h' };
 }
 
@@ -61,10 +54,10 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     applyDurationPreset, applySpeedPreset,
-    save, deleteSession,
+    save, cancel, deleteSession,
   } = useEditSession(existing, onBack);
 
-  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds, activeTimingPreset, activeSpeedPreset } = draft;
+  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges } = draft;
   const isRun = activityType === 'run';
 
   const timeFields: { label: string; field: TimeField }[] = [
@@ -90,7 +83,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     >
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kav}>
         <ScreenHeader
-          onBack={onBack}
+          onBack={cancel}
           title={isEditing ? 'Edit Session' : 'New Session'}
           style={styles.header}
         />
@@ -119,13 +112,13 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             <Text style={styles.fieldLabel}>ACTIVITY TYPE</Text>
             <View style={styles.activityTypeRow}>
               <Pressable
-                style={[styles.activityTypeBtn, !isRun && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) }]}
+                style={[styles.activityTypeBtn, !isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
                 onPress={() => setActivityType(undefined)}
               >
                 <Text style={[styles.activityTypeBtnText, { color: !isRun ? T.accent : T.subText }]}>General</Text>
               </Pressable>
               <Pressable
-                style={[styles.activityTypeBtn, isRun && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) }]}
+                style={[styles.activityTypeBtn, isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
                 onPress={() => setActivityType('run')}
               >
                 <Text style={[styles.activityTypeBtnText, { color: isRun ? T.accent : T.subText }]}>Run</Text>
@@ -142,7 +135,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 <Switch
                   value={isAdvanced}
                   onValueChange={toggleMode}
-                  trackColor={{ false: withOpacity(T.accent, 0x55), true: withOpacity(T.accent, 0x55) }}
+                  trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
                   thumbColor={T.accent}
                 />
                 <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>Advanced</Text>
@@ -250,15 +243,16 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                       style={styles.configInput}
                       onPress={() => {
                         const displayVal = isMiles
-                          ? runSpeeds[field] * 0.621371
+                          ? convertKmhToMph(runSpeeds[field])
                           : runSpeeds[field];
                         openSpeedPicker(field, displayVal, isMiles);
                       }}
                     >
                       <Text style={styles.configInputText}>
                         {isMiles
-                          ? (runSpeeds[field] * 0.621371).toFixed(1)
+                          ? convertKmhToMph(runSpeeds[field]).toFixed(1)
                           : runSpeeds[field].toFixed(1)}
+                        <Text style={styles.speedUnitText}>{' '}{isMiles ? 'mph' : 'km/h'}</Text>
                       </Text>
                     </Pressable>
                   </View>
@@ -293,11 +287,14 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </View>
           </View>
 
-          {/* Save */}
-          <Pressable onPress={save} style={styles.saveBtn}>
+          {/* Save / Cancel */}
+          <Pressable onPress={save} style={[styles.saveBtn, !hasChanges && styles.saveBtnDisabled]} disabled={!hasChanges}>
             <Text style={styles.saveBtnText}>
               {isEditing ? 'SAVE CHANGES' : 'SAVE'}
             </Text>
+          </Pressable>
+          <Pressable onPress={cancel} style={styles.cancelBtn}>
+            <Text style={styles.cancelBtnText}>Cancel</Text>
           </Pressable>
 
 
@@ -342,7 +339,7 @@ function PresetStrip({
             key={level}
             style={({ pressed }) => [
               styles.presetPill,
-              (pressed || isActive) && { borderColor: T.accent, backgroundColor: withOpacity(T.accent, 0x14) },
+              (pressed || isActive) && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) },
             ]}
             onPress={() => onApply(level)}
           >
@@ -350,55 +347,6 @@ function PresetStrip({
           </Pressable>
         );
       })}
-    </View>
-  );
-}
-
-// ── Interval row component ───────────────────────────────────────────────────
-
-interface IntervalRowProps {
-  interval:           Interval;
-  T:                  ThemeTokens;
-  styles:             ReturnType<typeof makeStyles>;
-  isActive:           boolean;
-  onCyclePhase:       () => void;
-  onOpenPicker:       () => void;
-  onDrag:             () => void;
-  displaySpeed?:      { value: string; unit: string };
-  onOpenSpeedPicker?: () => void;
-  onClearSpeed?:      () => void;
-}
-
-function IntervalRow({
-  interval, T, styles, isActive,
-  onCyclePhase, onOpenPicker, onDrag,
-  displaySpeed, onOpenSpeedPicker, onClearSpeed,
-}: IntervalRowProps) {
-  const phaseColor = T.phases[interval.type];
-  return (
-    <View style={[styles.intervalRow, isActive && styles.intervalRowActive]}>
-      <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
-        <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-          <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.subText} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
-        </Svg>
-      </Pressable>
-
-      <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor }]}>
-        <Text style={[styles.phasePillText, { color: phaseColor }]}>{PHASE_LABELS[interval.type]}</Text>
-      </Pressable>
-
-      {displaySpeed !== undefined && onOpenSpeedPicker && (
-        <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8} style={styles.intervalSpeed}>
-          <Text style={styles.intervalDurationText}>
-            {displaySpeed.value}
-            <Text style={styles.intervalSpeedUnit}>{' '}{displaySpeed.unit}</Text>
-          </Text>
-        </Pressable>
-      )}
-
-      <Pressable onPress={onOpenPicker} style={[styles.intervalDuration, displaySpeed !== undefined && { flex: 0 }]}>
-        <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
-      </Pressable>
     </View>
   );
 }
@@ -517,6 +465,11 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.text,
     textAlign: 'center',
   },
+  speedUnitText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 11,
+    color: T.subText,
+  },
   // ── Interval list ──────────────────────────────────────────────────────────
   emptyState: {
     backgroundColor: T.ghostBg,
@@ -548,7 +501,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   intervalRowActive: {
     borderColor: T.accent,
-    backgroundColor: withOpacity(T.accent, 0x14),
+    backgroundColor: selectedBg(T.accent),
     ...glowShadow(T),
     shadowRadius: 8,
   },
@@ -627,7 +580,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1.5,
-    borderColor: withOpacity(T.accent, 0x55),
+    borderColor: selectedBorder(T.accent),
     borderRadius: 12,
     borderStyle: 'dashed',
     paddingVertical: 12,
@@ -680,12 +633,26 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     alignItems: 'center',
     ...buttonShadow(T),
   },
+  saveBtnDisabled: {
+    opacity: 0.35,
+  },
   saveBtnText: {
     fontFamily: 'Inter_800ExtraBold',
     fontSize: 15,
     letterSpacing: 15 * 0.06,
     textTransform: 'uppercase',
     color: T.btnGlyph,
+  },
+  cancelBtn: {
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  cancelBtnText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 14,
+    letterSpacing: 14 * 0.06,
+    textTransform: 'uppercase',
+    color: T.subText,
   },
 
   deleteBtn: {
@@ -777,8 +744,6 @@ function IntervalSwipeRow({
       >
         <IntervalRow
           interval={interval}
-          T={T}
-          styles={styles}
           isActive={isActive}
           onCyclePhase={onCyclePhase}
           onOpenPicker={onOpenPicker}

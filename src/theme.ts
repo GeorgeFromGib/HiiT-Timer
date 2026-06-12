@@ -119,6 +119,9 @@ export function withOpacity(color: string, alpha: number): string {
   return color + Math.round(alpha).toString(16).padStart(2, '0');
 }
 
+export const selectedBg = (color: string): string => withOpacity(color, 0x14);
+export const selectedBorder = (color: string): string => withOpacity(color, 0x55);
+
 export function ghostBtnStyle(T: ThemeTokens): ViewStyle {
   return {
     width: 36,

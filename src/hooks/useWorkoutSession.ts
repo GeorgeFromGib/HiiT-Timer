@@ -67,19 +67,20 @@ export function useWorkoutSession(
     () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
   );
 
+  const volume = () => settingsRef.current.soundVolume / 100;
+  const cueEnabled = () => !settingsRef.current.soundOff && settingsRef.current.soundCues;
+  const beepEnabled = () => !settingsRef.current.soundOff && settingsRef.current.finalCountdownBeep;
+
   const { state, start, pause, resume, reset: engineReset, skip, extend } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
-      const { soundOff, soundCues, soundVolume } = settingsRef.current;
-      if (to && !soundOff && soundCues) audioRef.current.playChime(soundVolume / 100);
+      if (to && cueEnabled()) audioRef.current.playChime(volume());
     },
     onCountdown: () => {
-      const { soundOff, finalCountdownBeep, soundVolume } = settingsRef.current;
-      if (!soundOff && finalCountdownBeep) audioRef.current.playTick(soundVolume / 100);
+      if (beepEnabled()) audioRef.current.playTick(volume());
       onCountdownBeatRef.current?.();
     },
     onFinish: () => {
-      const { soundOff, soundCues, soundVolume } = settingsRef.current;
-      if (!soundOff && soundCues) audioRef.current.playFinish(soundVolume / 100);
+      if (cueEnabled()) audioRef.current.playFinish(volume());
       audioRef.current.stopKeepAlive();
     },
   });
@@ -92,15 +93,13 @@ export function useWorkoutSession(
 
   const beginPreStart = useCallback(() => {
     setPreStartCount(3);
-    const { soundOff, soundCues, soundVolume } = settingsRef.current;
-    if (!soundOff && soundCues) audioRef.current.playTick(soundVolume / 100);
+    if (cueEnabled()) audioRef.current.playTick(volume());
     let count = 3;
     preStartIntervalRef.current = setInterval(() => {
       count -= 1;
       if (count > 0) {
         setPreStartCount(count as 2 | 1);
-        const { soundOff, soundCues, soundVolume } = settingsRef.current;
-        if (!soundOff && soundCues) audioRef.current.playTick(soundVolume / 100);
+        if (cueEnabled()) audioRef.current.playTick(volume());
       } else {
         clearInterval(preStartIntervalRef.current!);
         preStartIntervalRef.current = null;

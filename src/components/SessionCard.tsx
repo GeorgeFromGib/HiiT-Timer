@@ -2,9 +2,10 @@ import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import { totalDuration, fmtDuration } from '../lib/workout';
+import DragHandle from './DragHandle';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
-import { useTheme, withOpacity, buttonShadow, glowShadow, type ThemeTokens } from '../theme';
+import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
 
 
@@ -35,9 +36,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
     >
       {onDrag && (
         <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
-          <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
-            <Path d="M8 6h.01M16 6h.01M8 12h.01M16 12h.01M8 18h.01M16 18h.01" stroke={T.subText} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
+          <DragHandle color={T.subText} />
         </Pressable>
       )}
 
@@ -94,13 +93,13 @@ function makeStyles(T: ThemeTokens) {
       borderColor: T.hairline,
     },
     cardSelected: {
-      backgroundColor: withOpacity(T.accent, 0x14),
+      backgroundColor: selectedBg(T.accent),
       borderColor: T.accent,
       ...glowShadow(T),
     },
     cardActive: {
       borderColor: T.accent,
-      backgroundColor: withOpacity(T.accent, 0x14),
+      backgroundColor: selectedBg(T.accent),
       ...glowShadow(T),
       shadowOpacity: 0.25,
       shadowRadius: 12,

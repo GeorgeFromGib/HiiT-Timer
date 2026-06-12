@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 import { loadSessions, saveSessions, deleteSessionById, newId, getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
-import { type PresetLevel, DURATION_PRESETS, SPEED_PRESETS } from '../lib/presets';
+import { type PresetLevel, DURATION_PRESETS, SPEED_PRESETS, findMatchingDurationPreset, findMatchingDurationPresetForIntervals, findMatchingSpeedPreset } from '../lib/presets';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
-  totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
+  totalDuration, tryConvertToEasy, buildIntervalsFromEasy, convertKmhToMph, convertMphToKmh,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
 
@@ -30,33 +30,6 @@ type CommitResult =
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 
-function findMatchingDurationPreset(warmup: number, work: number, rest: number, rounds: number, cooldown: number): PresetLevel | null {
-  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
-  return levels.find(level => {
-    const p = DURATION_PRESETS[level];
-    return p.warmup === warmup && p.work === work && p.rest === rest && p.rounds === rounds && p.cooldown === cooldown;
-  }) ?? null;
-}
-
-function findMatchingDurationPresetForIntervals(intervals: Interval[]): PresetLevel | null {
-  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
-  return levels.find(level => {
-    const p = DURATION_PRESETS[level];
-    const expected = buildIntervalsFromEasy({ warmup: p.warmup, high: p.work, low: p.rest, rounds: p.rounds, cooldown: p.cooldown });
-    return expected.length === intervals.length &&
-      expected.every((e, i) => e.type === intervals[i].type && e.dur === intervals[i].dur);
-  }) ?? null;
-}
-
-function findMatchingSpeedPreset(speeds: RunSpeeds): PresetLevel | null {
-  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
-  return levels.find(level => {
-    const p = SPEED_PRESETS[level];
-    return p.warmupSpeed === speeds.warmupSpeed && p.workSpeed === speeds.workSpeed &&
-           p.restSpeed === speeds.restSpeed && p.cooldownSpeed === speeds.cooldownSpeed;
-  }) ?? null;
-}
-
 // All state the screen needs to render — no setters.
 export interface EditSessionDraft {
   name:                string;
@@ -70,6 +43,7 @@ export interface EditSessionDraft {
   runSpeeds:           RunSpeeds;
   activeTimingPreset:  PresetLevel | null;
   activeSpeedPreset:   PresetLevel | null;
+  hasChanges:          boolean;
 }
 
 // Picker modal state: null when closed.
@@ -116,7 +90,19 @@ export interface EditSessionInterface {
   applySpeedPreset:    (level: PresetLevel) => void;
   // Persistence
   save:          () => Promise<void>;
+  cancel:        () => void;
   deleteSession: () => void;
+}
+
+function serializeState(
+  name: string,
+  mode: 'easy' | 'advanced',
+  warmup: number, work: number, rest: number, cooldown: number, rounds: number,
+  intervals: Array<Omit<Interval, never>>,
+  activityType: 'run' | undefined,
+  runSpeeds: RunSpeeds,
+) {
+  return JSON.stringify({ name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds });
 }
 
 function usePickerState(
@@ -190,11 +176,11 @@ function usePickerState(
       onCommit({ type: 'rounds', value: pickerRounds + 1 });
     } else if (activePicker.type === 'speed') {
       const displayVal = speedWhole + speedDecimal / 10;
-      const kmh = activePicker.isMiles ? displayVal / 0.621371 : displayVal;
+      const kmh = activePicker.isMiles ? convertMphToKmh(displayVal) : displayVal;
       onCommit({ type: 'speed', field: activePicker.field, kmh });
     } else if (activePicker.type === 'intervalSpeed') {
       const displayVal = speedWhole + speedDecimal / 10;
-      const kmh = activePicker.isMiles ? displayVal / 0.621371 : displayVal;
+      const kmh = activePicker.isMiles ? convertMphToKmh(displayVal) : displayVal;
       onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh });
     } else {
       const secs = pickerMinutes * 60 + pickerSeconds;
@@ -264,6 +250,19 @@ export function useEditSession(
 
   const [timingDirty, setTimingDirty] = useState(false);
   const [speedsDirty, setSpeedsDirty] = useState(false);
+
+  const initialSnapshot = useRef(serializeState(
+    existing?.name ?? '',
+    existing?.mode ?? 'easy',
+    existing?.mode === 'easy' ? existing.config.warmup   : 30,
+    existing?.mode === 'easy' ? existing.config.high     : 30,
+    existing?.mode === 'easy' ? existing.config.low      : 15,
+    existing?.mode === 'easy' ? existing.config.cooldown : 30,
+    existing?.mode === 'easy' ? existing.config.rounds   : 4,
+    existing?.mode === 'advanced' ? existing.intervals   : [],
+    existing?.activityType,
+    existing?.runSpeeds ?? DEFAULT_RUN_SPEEDS,
+  )).current;
 
   const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() => {
     if (!existing) return null;
@@ -446,7 +445,7 @@ export function useEditSession(
     const iv = intervals.find(i => i._key === key);
     if (!iv) return;
     const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
-    const displayVal = isMiles ? kmh * 0.621371 : kmh;
+    const displayVal = isMiles ? convertKmhToMph(kmh) : kmh;
     openIntervalSpeedPickerInner(key, displayVal, isMiles);
   }
 
@@ -481,6 +480,28 @@ export function useEditSession(
     onBack();
   };
 
+  const hasChanges = useMemo(() => {
+    const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+    const current = serializeState(name, mode, warmup, work, rest, cooldown, rounds, cleanIntervals, activityType, runSpeeds);
+    return current !== initialSnapshot;
+  }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds]);
+
+  function cancel() {
+    if (hasChanges) {
+      Alert.alert(
+        'Unsaved changes',
+        'Would you like to save before leaving?',
+        [
+          { text: 'Save', onPress: () => save() },
+          { text: 'Discard', style: 'destructive', onPress: onBack },
+          { text: 'Keep editing', style: 'cancel' },
+        ],
+      );
+    } else {
+      onBack();
+    }
+  }
+
   function deleteSession() {
     if (!existing) return;
     confirmDeleteSession(existing.name, async () => {
@@ -501,6 +522,7 @@ export function useEditSession(
     runSpeeds,
     activeTimingPreset,
     activeSpeedPreset,
+    hasChanges,
   };
 
   return {
@@ -525,6 +547,7 @@ export function useEditSession(
     applyDurationPreset,
     applySpeedPreset,
     save,
+    cancel,
     deleteSession,
   };
 }
