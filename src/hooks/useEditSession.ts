@@ -38,6 +38,16 @@ function findMatchingDurationPreset(warmup: number, work: number, rest: number, 
   }) ?? null;
 }
 
+function findMatchingDurationPresetForIntervals(intervals: Interval[]): PresetLevel | null {
+  const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
+  return levels.find(level => {
+    const p = DURATION_PRESETS[level];
+    const expected = buildIntervalsFromEasy({ warmup: p.warmup, high: p.work, low: p.rest, rounds: p.rounds, cooldown: p.cooldown });
+    return expected.length === intervals.length &&
+      expected.every((e, i) => e.type === intervals[i].type && e.dur === intervals[i].dur);
+  }) ?? null;
+}
+
 function findMatchingSpeedPreset(speeds: RunSpeeds): PresetLevel | null {
   const levels: PresetLevel[] = ['easy', 'medium', 'hard'];
   return levels.find(level => {
@@ -255,14 +265,16 @@ export function useEditSession(
   const [timingDirty, setTimingDirty] = useState(false);
   const [speedsDirty, setSpeedsDirty] = useState(false);
 
-  const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() =>
-    existing?.mode === 'easy'
-      ? findMatchingDurationPreset(
-          existing.config.warmup, existing.config.high, existing.config.low,
-          existing.config.rounds, existing.config.cooldown,
-        )
-      : null
-  );
+  const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() => {
+    if (!existing) return null;
+    if (existing.mode === 'easy') {
+      return findMatchingDurationPreset(
+        existing.config.warmup, existing.config.high, existing.config.low,
+        existing.config.rounds, existing.config.cooldown,
+      );
+    }
+    return findMatchingDurationPresetForIntervals(existing.intervals);
+  });
   const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
     existing?.runSpeeds ? findMatchingSpeedPreset(existing.runSpeeds) : null
   );
