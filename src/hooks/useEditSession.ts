@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 import { loadSessions, saveSessions, deleteSessionById, newId, getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
+import { type PresetLevel, DURATION_PRESETS, SPEED_PRESETS } from '../lib/presets';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
   totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
@@ -81,6 +82,9 @@ export interface EditSessionInterface {
   updatePicker:       (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => void;
   commitPicker:       () => void;
   dismissPicker:      () => void;
+  // Presets
+  applyDurationPreset: (level: PresetLevel) => void;
+  applySpeedPreset:    (level: PresetLevel) => void;
   // Persistence
   save:          () => Promise<void>;
   deleteSession: () => void;
@@ -340,6 +344,51 @@ export function useEditSession(
     setIntervals(ivs => ivs.filter(iv => iv._key !== key));
   }
 
+  function applyDurationPreset(level: PresetLevel): void {
+    const doApply = () => {
+      const p = DURATION_PRESETS[level];
+      setWarmup(p.warmup);
+      setWork(p.work);
+      setRest(p.rest);
+      setRounds(p.rounds);
+      setCooldown(p.cooldown);
+      if (mode === 'advanced') {
+        setIntervals(
+          buildIntervalsFromEasy({
+            warmup: p.warmup, high: p.work, low: p.rest,
+            rounds: p.rounds, cooldown: p.cooldown,
+          }).map(toLocal)
+        );
+      }
+      setTimingDirty(false);
+    };
+    if (timingDirty) {
+      Alert.alert(
+        'Overwrite settings?',
+        'Applying this preset will replace your current timing settings.',
+        [{ text: 'Cancel', style: 'cancel' }, { text: 'Apply', onPress: doApply }],
+      );
+    } else {
+      doApply();
+    }
+  }
+
+  function applySpeedPreset(level: PresetLevel): void {
+    const doApply = () => {
+      setRunSpeeds(SPEED_PRESETS[level]);
+      setSpeedsDirty(false);
+    };
+    if (speedsDirty) {
+      Alert.alert(
+        'Overwrite settings?',
+        'Applying this preset will replace your current speed settings.',
+        [{ text: 'Cancel', style: 'cancel' }, { text: 'Apply', onPress: doApply }],
+      );
+    } else {
+      doApply();
+    }
+  }
+
   function openIntervalSpeedPicker(key: string, isMiles: boolean) {
     const iv = intervals.find(i => i._key === key);
     if (!iv) return;
@@ -418,6 +467,8 @@ export function useEditSession(
     updatePicker,
     commitPicker,
     dismissPicker,
+    applyDurationPreset,
+    applySpeedPreset,
     save,
     deleteSession,
   };
