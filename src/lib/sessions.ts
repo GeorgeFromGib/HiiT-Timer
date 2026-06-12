@@ -42,6 +42,7 @@ export function getSessionSegments(session: Session): Segment[] {
     : expandWorkout(session.config);
   if (session.activityType === 'run' && session.runSpeeds) {
     if (session.mode === 'advanced') {
+      // intervalsToSegments is a strict 1:1 map, so base[i] === intervals[i]
       return base.map((seg, i) => ({
         ...seg,
         speed: session.intervals[i].speed ?? speedForPhase(seg.phase, session.runSpeeds!),
