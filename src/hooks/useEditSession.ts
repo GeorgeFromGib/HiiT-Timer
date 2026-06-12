@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Alert } from 'react-native';
-import { loadSessions, saveSessions, deleteSessionById, newId, getSessionSegments, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
+import { loadSessions, saveSessions, deleteSessionById, newId, getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
   totalDuration, tryConvertToEasy, buildIntervalsFromEasy,
@@ -17,13 +17,15 @@ type ActivePicker =
   | { type: 'field'; field: TimeField }
   | { type: 'interval'; key: string }
   | { type: 'rounds' }
-  | { type: 'speed'; field: keyof RunSpeeds; isMiles: boolean };
+  | { type: 'speed'; field: keyof RunSpeeds; isMiles: boolean }
+  | { type: 'intervalSpeed'; key: string; isMiles: boolean };
 
 type CommitResult =
-  | { type: 'field';    field: TimeField; secs: number }
-  | { type: 'interval'; key: string;      secs: number }
-  | { type: 'rounds';   value: number }
-  | { type: 'speed';    field: keyof RunSpeeds; kmh: number };
+  | { type: 'field';         field: TimeField;       secs: number }
+  | { type: 'interval';      key: string;            secs: number }
+  | { type: 'rounds';        value: number }
+  | { type: 'speed';         field: keyof RunSpeeds; kmh: number }
+  | { type: 'intervalSpeed'; key: string;            kmh: number };
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 
@@ -73,7 +75,9 @@ export interface EditSessionInterface {
   openFieldPicker:    (field: TimeField) => void;
   openRoundsPicker:   () => void;
   openIntervalPicker: (key: string) => void;
-  openSpeedPicker:    (field: keyof RunSpeeds, displayValue: number, isMiles: boolean) => void;
+  openSpeedPicker:         (field: keyof RunSpeeds, displayValue: number, isMiles: boolean) => void;
+  openIntervalSpeedPicker: (key: string, isMiles: boolean) => void;
+  clearIntervalSpeed:      (key: string) => void;
   updatePicker:       (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => void;
   commitPicker:       () => void;
   dismissPicker:      () => void;
@@ -102,6 +106,10 @@ function usePickerState(
     if (activePicker.type === 'speed') {
       const phase = activePicker.field.replace('Speed', '');
       return phase.charAt(0).toUpperCase() + phase.slice(1) + ' Speed';
+    }
+    if (activePicker.type === 'intervalSpeed') {
+      const idx = intervals.findIndex(iv => iv._key === activePicker.key);
+      return `Interval ${idx + 1} Speed`;
     }
     const idx = intervals.findIndex(iv => iv._key === activePicker.key);
     return `Interval ${idx + 1}`;
@@ -135,6 +143,14 @@ function usePickerState(
     setActivePicker({ type: 'speed', field, isMiles });
   }
 
+  function openIntervalSpeedPicker(key: string, displayValue: number, isMiles: boolean) {
+    const whole = Math.floor(displayValue);
+    const decimal = Math.min(9, Math.round((displayValue - whole) * 10));
+    setSpeedWhole(whole);
+    setSpeedDecimal(decimal);
+    setActivePicker({ type: 'intervalSpeed', key, isMiles });
+  }
+
   function commitPicker() {
     if (!activePicker) return;
     if (activePicker.type === 'rounds') {
@@ -143,6 +159,10 @@ function usePickerState(
       const displayVal = speedWhole + speedDecimal / 10;
       const kmh = activePicker.isMiles ? displayVal / 0.621371 : displayVal;
       onCommit({ type: 'speed', field: activePicker.field, kmh });
+    } else if (activePicker.type === 'intervalSpeed') {
+      const displayVal = speedWhole + speedDecimal / 10;
+      const kmh = activePicker.isMiles ? displayVal / 0.621371 : displayVal;
+      onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh });
     } else {
       const secs = pickerMinutes * 60 + pickerSeconds;
       if (activePicker.type === 'field') {
@@ -157,8 +177,8 @@ function usePickerState(
   const picker: EditSessionPicker | null = activePicker ? {
     title:        pickerTitle,
     isRounds:     activePicker.type === 'rounds',
-    isSpeed:      activePicker.type === 'speed',
-    speedUnit:    activePicker.type === 'speed' && activePicker.isMiles ? 'miles' : 'km',
+    isSpeed:      activePicker.type === 'speed' || activePicker.type === 'intervalSpeed',
+    speedUnit:    (activePicker.type === 'speed' || activePicker.type === 'intervalSpeed') && activePicker.isMiles ? 'miles' : 'km',
     minutes:      pickerMinutes,
     seconds:      pickerSeconds,
     rounds:       pickerRounds,
@@ -172,6 +192,7 @@ function usePickerState(
     openRoundsPicker,
     openIntervalPicker,
     openSpeedPicker,
+    openIntervalSpeedPicker,
     updatePicker: (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => {
       if (partial.minutes      !== undefined) setPickerMinutes(partial.minutes);
       if (partial.seconds      !== undefined) setPickerSeconds(partial.seconds);
@@ -239,6 +260,7 @@ export function useEditSession(
     openRoundsPicker: openRoundsPickerInner,
     openIntervalPicker,
     openSpeedPicker,
+    openIntervalSpeedPicker: openIntervalSpeedPickerInner,
     updatePicker,
     commitPicker,
     dismissPicker,
@@ -249,6 +271,10 @@ export function useEditSession(
       fieldSetters[result.field](result.secs);
     } else if (result.type === 'speed') {
       setRunSpeed(result.field, result.kmh);
+    } else if (result.type === 'intervalSpeed') {
+      setIntervals(ivs =>
+        ivs.map(iv => iv._key === result.key ? { ...iv, speed: result.kmh } : iv)
+      );
     } else {
       setIntervals(ivs =>
         ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
@@ -300,6 +326,20 @@ export function useEditSession(
 
   function removeInterval(key: string) {
     setIntervals(ivs => ivs.filter(iv => iv._key !== key));
+  }
+
+  function openIntervalSpeedPicker(key: string, isMiles: boolean) {
+    const iv = intervals.find(i => i._key === key);
+    if (!iv) return;
+    const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
+    const displayVal = isMiles ? kmh * 0.621371 : kmh;
+    openIntervalSpeedPickerInner(key, displayVal, isMiles);
+  }
+
+  function clearIntervalSpeed(key: string) {
+    setIntervals(ivs =>
+      ivs.map(iv => iv._key === key ? { ...iv, speed: undefined } : iv)
+    );
   }
 
   const save = async () => {
@@ -361,6 +401,8 @@ export function useEditSession(
     openRoundsPicker: () => openRoundsPickerInner(rounds),
     openIntervalPicker,
     openSpeedPicker,
+    openIntervalSpeedPicker,
+    clearIntervalSpeed,
     updatePicker,
     commitPicker,
     dismissPicker,
