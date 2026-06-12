@@ -31,9 +31,11 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 
-function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): string {
+function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
-  return isMiles ? (kmh * 0.621371).toFixed(1) : kmh.toFixed(1);
+  return isMiles
+    ? { value: (kmh * 0.621371).toFixed(1), unit: 'mph' }
+    : { value: kmh.toFixed(1), unit: 'km/h' };
 }
 
 interface Props {
@@ -311,7 +313,7 @@ interface IntervalRowProps {
   onCyclePhase:       () => void;
   onOpenPicker:       () => void;
   onDrag:             () => void;
-  displaySpeed?:      string;
+  displaySpeed?:      { value: string; unit: string };
   onOpenSpeedPicker?: () => void;
   onClearSpeed?:      () => void;
 }
@@ -336,8 +338,9 @@ function IntervalRow({
 
       {displaySpeed !== undefined && onOpenSpeedPicker && (
         <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8} style={styles.intervalSpeed}>
-          <Text style={[styles.intervalDurationText, { color: interval.speed != null ? T.text : T.subText }]}>
-            {displaySpeed}
+          <Text style={styles.intervalDurationText}>
+            {displaySpeed.value}
+            <Text style={styles.intervalSpeedUnit}>{' '}{displaySpeed.unit}</Text>
           </Text>
         </Pressable>
       )}
@@ -501,6 +504,10 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   intervalSpeed: {
     flex: 1,
     alignItems: 'center',
+  },
+  intervalSpeedUnit: {
+    fontSize: 11,
+    fontFamily: 'Inter_400Regular',
   },
   intervalDuration: {
     flex: 1,
@@ -666,7 +673,7 @@ function IntervalSwipeRow({
   onRemove:           () => void;
   onCyclePhase:       () => void;
   onOpenPicker:       () => void;
-  displaySpeed?:      string;
+  displaySpeed?:      { value: string; unit: string };
   onOpenSpeedPicker?: () => void;
   onClearSpeed?:      () => void;
 }) {
