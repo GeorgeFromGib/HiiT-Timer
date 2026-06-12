@@ -335,14 +335,14 @@ function IntervalRow({
       </Pressable>
 
       {displaySpeed !== undefined && onOpenSpeedPicker && (
-        <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8}>
+        <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8} style={styles.intervalSpeed}>
           <Text style={[styles.intervalDurationText, { color: interval.speed != null ? T.text : T.subText }]}>
             {displaySpeed}
           </Text>
         </Pressable>
       )}
 
-      <Pressable onPress={onOpenPicker} style={styles.intervalDuration}>
+      <Pressable onPress={onOpenPicker} style={[styles.intervalDuration, displaySpeed !== undefined && { flex: 0 }]}>
         <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
       </Pressable>
     </View>
@@ -495,6 +495,10 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     fontFamily: 'Inter_700Bold',
     fontSize: 11,
     letterSpacing: 11 * 0.06,
+  },
+  intervalSpeed: {
+    flex: 1,
+    alignItems: 'center',
   },
   intervalDuration: {
     flex: 1,
