@@ -12,7 +12,8 @@ export interface Segment {
 
 export interface Interval {
   type: Phase;
-  dur: number; // seconds
+  dur: number;    // seconds
+  speed?: number; // km/h — run sessions only; overrides session-level RunSpeeds when set
 }
 
 export interface WorkoutConfig {
