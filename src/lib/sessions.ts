@@ -26,7 +26,7 @@ export type Session = {
   | { mode: 'advanced'; intervals: Interval[] }
 );
 
-function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
+export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   const map: Record<Phase, number> = {
     warmup:   speeds.warmupSpeed,
     work:     speeds.workSpeed,
@@ -41,6 +41,12 @@ export function getSessionSegments(session: Session): Segment[] {
     ? intervalsToSegments(session.intervals)
     : expandWorkout(session.config);
   if (session.activityType === 'run' && session.runSpeeds) {
+    if (session.mode === 'advanced') {
+      return base.map((seg, i) => ({
+        ...seg,
+        speed: session.intervals[i].speed ?? speedForPhase(seg.phase, session.runSpeeds!),
+      }));
+    }
     return base.map(seg => ({ ...seg, speed: speedForPhase(seg.phase, session.runSpeeds!) }));
   }
   return base;
