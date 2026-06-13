@@ -12,6 +12,7 @@ import { useTheme, THEME_PREVIEWS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { useSettings } from '../lib/settingsContext';
 import { usePremium } from '../lib/premiumContext';
+import { setForceNextReview } from '../lib/reviewState';
 import { SettingsToggle } from '../components/SettingsToggle';
 import { SettingsRow } from '../components/SettingsRow';
 import { SettingsSection } from '../components/SettingsSection';
@@ -27,6 +28,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
 
   const { settings, updateSettings } = useSettings();
   const { isPremium, trialDaysRemaining, setMockPremium, expireTrialForTesting, resetTrialForTesting } = usePremium();
+  const [forceReview, setForceReview] = React.useState(false);
 
   return (
     <LinearGradient
@@ -156,6 +158,11 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
               label="Reset trial"
               sub="Restart the 30-day trial window"
               right={<Pressable onPress={resetTrialForTesting} style={styles.devBtn}><Text style={styles.devBtnText}>Reset</Text></Pressable>}
+            />
+            <SettingsRow
+              label="Trigger review prompt"
+              sub="Show review dialog after next workout"
+              right={<SettingsToggle value={forceReview} onChange={v => { setForceReview(v); setForceNextReview(v); }} />}
               last
             />
           </SettingsSection>

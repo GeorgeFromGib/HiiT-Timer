@@ -1,5 +1,7 @@
 import { File, Paths } from 'expo-file-system';
-import * as StoreReview from 'expo-store-review';
+
+let _forceNextReview = false;
+export function setForceNextReview(v: boolean) { _forceNextReview = v; }
 
 interface ReviewState {
   promptsShown: number;
@@ -40,16 +42,22 @@ export async function checkAndRequestReview(): Promise<void> {
   const updated = { ...state, totalWorkouts: state.totalWorkouts + 1 };
   await saveReviewState(updated);
 
-  if (updated.promptsShown >= 3) return;
+  const forced = _forceNextReview;
+  if (!forced) {
+    if (updated.promptsShown >= 3) return;
+    const gap = updated.totalWorkouts - updated.workoutsAtLastPrompt;
+    if (gap < THRESHOLDS[updated.promptsShown]) return;
+  }
 
-  const gap = updated.totalWorkouts - updated.workoutsAtLastPrompt;
-  if (gap < THRESHOLDS[updated.promptsShown]) return;
-
-  await StoreReview.requestReview();
-
-  await saveReviewState({
-    ...updated,
-    promptsShown: updated.promptsShown + 1,
-    workoutsAtLastPrompt: updated.totalWorkouts,
-  });
+  try {
+    _forceNextReview = false;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const StoreReview = require('expo-store-review');
+    await StoreReview.requestReview();
+    await saveReviewState({
+      ...updated,
+      promptsShown: updated.promptsShown + 1,
+      workoutsAtLastPrompt: updated.totalWorkouts,
+    });
+  } catch {}
 }
