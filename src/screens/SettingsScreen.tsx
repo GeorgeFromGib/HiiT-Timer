@@ -26,7 +26,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
   const styles = useMemo(() => makeStyles(T), [T]);
 
   const { settings, updateSettings } = useSettings();
-  const { isPremium, setMockPremium } = usePremium();
+  const { isPremium, trialDaysRemaining, setMockPremium, expireTrialForTesting, resetTrialForTesting } = usePremium();
 
   return (
     <LinearGradient
@@ -142,6 +142,20 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
               label="Mock Premium"
               sub="Simulate premium unlock"
               right={<SettingsToggle value={isPremium} onChange={setMockPremium} />}
+            />
+            <SettingsRow
+              label="Trial days remaining"
+              right={<Text style={styles.versionText}>{trialDaysRemaining}</Text>}
+            />
+            <SettingsRow
+              label="Expire trial"
+              sub="Set trial start to 31 days ago"
+              right={<Pressable onPress={expireTrialForTesting} style={styles.devBtn}><Text style={styles.devBtnText}>Expire</Text></Pressable>}
+            />
+            <SettingsRow
+              label="Reset trial"
+              sub="Restart the 30-day trial window"
+              right={<Pressable onPress={resetTrialForTesting} style={styles.devBtn}><Text style={styles.devBtnText}>Reset</Text></Pressable>}
               last
             />
           </SettingsSection>
@@ -208,6 +222,20 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'ChakraPetch_700Bold',
       fontSize: 13,
       color: T.faintText,
+    },
+
+    // Dev buttons
+    devBtn: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+      borderWidth: 1.5,
+      borderColor: T.accent,
+    },
+    devBtnText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 13,
+      color: T.accent,
     },
 
     // Segmented control

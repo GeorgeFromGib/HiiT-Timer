@@ -1,4 +1,4 @@
-# Paywall — 30-Day Trial Monetisation
+  # Paywall — 30-Day Trial Monetisation
 
 **Date:** 2026-06-12
 **Status:** Approved design

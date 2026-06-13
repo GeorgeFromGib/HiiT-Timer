@@ -1,6 +1,5 @@
 import React, { useRef, useImperativeHandle, useMemo, useState } from 'react';
 import {
-  Alert,
   Animated,
   Pressable,
   StyleSheet,
@@ -12,8 +11,8 @@ import Svg, { Path } from 'react-native-svg';
 import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
-import { canCreateSession } from '../lib/sessionLimit';
 import { usePremium } from '../lib/premiumContext';
+import PaywallModal from '../components/PaywallModal';
 import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
 import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../theme';
@@ -23,20 +22,18 @@ import SessionCard from '../components/SessionCard';
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
-  const { isPremium } = usePremium();
+  const { hasAccess } = usePremium();
 
   const [sessions, setSessions]     = useState<Session[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   React.useEffect(() => {
     loadSessions().then(setSessions);
   }, []);
 
   const handleDuplicate = (session: Session) => {
-    if (!canCreateSession(sessions.length, isPremium)) {
-      Alert.alert('Premium Required', 'Toggle Mock Premium in Settings (dev mode) to test this.');
-      return;
-    }
+    if (!hasAccess) { setShowPaywall(true); return; }
     const idx = sessions.findIndex(s => s.id === session.id);
     const copy: Session = { ...session, id: newId(), name: `Copy of ${session.name}` };
     const next = [...sessions.slice(0, idx + 1), copy, ...sessions.slice(idx + 1)];
@@ -77,10 +74,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         }
         right={
           <Pressable style={styles.addBtn} onPress={() => {
-              if (!canCreateSession(sessions.length, isPremium)) {
-                Alert.alert('Premium Required', 'Toggle Mock Premium in Settings (dev mode) to test this.');
-                return;
-              }
+              if (!hasAccess) { setShowPaywall(true); return; }
               onNavigate({ name: 'EditSession' });
             }}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
@@ -111,11 +105,18 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             onDuplicate={() => handleDuplicate(session)}
             onDelete={(swipeable) => handleDelete(session, swipeable)}
             onSelect={() => setSelectedId(prev => prev === session.id ? null : session.id)}
-            onEdit={() => onNavigate({ name: 'EditSession', session })}
-            onStart={() => onNavigate({ name: 'Workout', session })}
+            onEdit={() => {
+              if (!hasAccess) { setShowPaywall(true); return; }
+              onNavigate({ name: 'EditSession', session });
+            }}
+            onStart={() => {
+              if (!hasAccess) { setShowPaywall(true); return; }
+              onNavigate({ name: 'Workout', session });
+            }}
           />
         )}
       />
+      <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
     </LinearGradient>
   );
 }
