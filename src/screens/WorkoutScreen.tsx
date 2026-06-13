@@ -23,6 +23,7 @@ import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } f
 import ScreenHeader from '../components/ScreenHeader';
 import WorkoutIcon from '../components/WorkoutIcon';
 import GhostBtn  from '../components/GhostBtn';
+import { checkAndRequestReview } from '../lib/reviewState';
 
 const GOLD = '#C89B20';
 const EXTEND_OPTIONS = [5, 10, 15] as const;
@@ -69,6 +70,13 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const [flashing, setFlashing] = useState(false);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
+
+  const reviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (status !== 'finished') return;
+    reviewTimerRef.current = setTimeout(() => { checkAndRequestReview(); }, 1500);
+    return () => { if (reviewTimerRef.current) clearTimeout(reviewTimerRef.current); };
+  }, [status]);
 
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
   const seg            = segments[effectiveIndex];
