@@ -28,11 +28,11 @@ Both are one-shot: tapping a pill immediately fills values (no persistent highli
 
 ### Speed Presets (Run only)
 
-| Level  | Warmup | Work   | Rest  | Cooldown |
-|--------|--------|--------|-------|----------|
-| Easy   | 5 km/h | 8 km/h | 5 km/h| 4.5 km/h|
-| Medium | 6 km/h | 11 km/h| 6 km/h| 5.5 km/h|
-| Hard   | 7 km/h | 14 km/h| 7 km/h| 6 km/h  |
+| Level  | Warmup | Work    | Rest   | Cooldown |
+|--------|--------|---------|--------|----------|
+| Easy   | 5 km/h | 10 km/h | 5 km/h | 4.5 km/h|
+| Medium | 6 km/h | 12 km/h | 7 km/h | 5.5 km/h|
+| Hard   | 7 km/h | 16 km/h | 9 km/h | 6 km/h  |
 
 Source: `design/default-presets.md`. Warmup/cooldown durations derived from "3–5 min, scaling with fitness level" note.
 

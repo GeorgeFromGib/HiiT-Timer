@@ -226,6 +226,11 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             <Text style={[styles.nextPhase, { color: nextPhaseColor!, marginLeft: 5 }]}>
               {nextMeta.word}
             </Text>
+            {nextSeg!.speed !== undefined && (
+              <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
+                {fmtSpeed(nextSeg!.speed, settings.speedUnit)}
+              </Text>
+            )}
           </>
         ) : (
           <Text style={[styles.nextPhase, { color: phaseColor }]}>FINISH</Text>

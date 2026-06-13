@@ -107,6 +107,32 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             />
           </View>
 
+          {/* Preview */}
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>PREVIEW</Text>
+            <View style={styles.previewCard}>
+              {previewTotal > 0 && (
+                <View style={styles.previewStrip}>
+                  {previewSegments.map((seg, i) => (
+                    <View
+                      key={i}
+                      style={[
+                        styles.previewStripSeg,
+                        {
+                          flex: seg.duration / previewTotal,
+                          backgroundColor: withOpacity(T.phases[seg.phase], 0xd9),
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+              )}
+              <Text style={styles.previewMeta}>
+                {fmtDuration(previewTotal)} · {previewSegments.length} intervals
+              </Text>
+            </View>
+          </View>
+
           {/* Activity Type */}
           <View style={styles.fieldGroup}>
             <Text style={styles.fieldLabel}>ACTIVITY TYPE</Text>
@@ -261,32 +287,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </View>
           )}
 
-          {/* Preview */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>PREVIEW</Text>
-            <View style={styles.previewCard}>
-              {previewTotal > 0 && (
-                <View style={styles.previewStrip}>
-                  {previewSegments.map((seg, i) => (
-                    <View
-                      key={i}
-                      style={[
-                        styles.previewStripSeg,
-                        {
-                          flex: seg.duration / previewTotal,
-                          backgroundColor: withOpacity(T.phases[seg.phase], 0xd9),
-                        },
-                      ]}
-                    />
-                  ))}
-                </View>
-              )}
-              <Text style={styles.previewMeta}>
-                {fmtDuration(previewTotal)} · {previewSegments.length} intervals
-              </Text>
-            </View>
-          </View>
-
           {/* Save / Cancel */}
           <Pressable onPress={save} style={[styles.saveBtn, !hasChanges && styles.saveBtnDisabled]} disabled={!hasChanges}>
             <Text style={styles.saveBtnText}>
@@ -314,9 +314,12 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
 // ── Preset strip ─────────────────────────────────────────────────────────────
 
 const PRESET_LEVELS: { label: string; level: PresetLevel }[] = [
-  { label: 'Easy',   level: 'easy'   },
-  { label: 'Medium', level: 'medium' },
-  { label: 'Hard',   level: 'hard'   },
+  { label: '1', level: '1' },
+  { label: '2', level: '2' },
+  { label: '3', level: '3' },
+  { label: '4', level: '4' },
+  { label: '5', level: '5' },
+  { label: '6', level: '6' },
 ];
 
 function PresetStrip({
@@ -331,22 +334,28 @@ function PresetStrip({
   activePreset?: PresetLevel | null;
 }) {
   return (
-    <View style={styles.presetStrip}>
-      {PRESET_LEVELS.map(({ label, level }) => {
-        const isActive = level === activePreset;
-        return (
-          <Pressable
-            key={level}
-            style={({ pressed }) => [
-              styles.presetPill,
-              (pressed || isActive) && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) },
-            ]}
-            onPress={() => onApply(level)}
-          >
-            <Text style={[styles.presetPillText, { color: isActive ? T.accent : T.subText }]}>{label}</Text>
-          </Pressable>
-        );
-      })}
+    <View>
+      <View style={styles.presetRangeLabels}>
+        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>Easy</Text>
+        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>Hard</Text>
+      </View>
+      <View style={styles.presetStrip}>
+        {PRESET_LEVELS.map(({ label, level }) => {
+          const isActive = level === activePreset;
+          return (
+            <Pressable
+              key={level}
+              style={({ pressed }) => [
+                styles.presetPill,
+                (pressed || isActive) && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) },
+              ]}
+              onPress={() => onApply(level)}
+            >
+              <Text style={[styles.presetPillText, { color: isActive ? T.accent : T.subText }]}>{label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -422,6 +431,17 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     gap: 10,
   },
 
+  presetRangeLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  presetRangeLabelText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 10,
+    letterSpacing: 10 * 0.06,
+    textTransform: 'uppercase',
+  },
   presetStrip: {
     flexDirection: 'row',
     gap: 8,
