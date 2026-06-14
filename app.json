@@ -4,18 +4,9 @@
     "slug": "clear-hiit",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/hiit-splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
-      "icon": {
-        "any": "./assets/hiit-icon.png",
-        "dark": "./assets/hiit-icon-dark.png",
-        "tinted": "./assets/hiit-icon-tinted.png"
-      },
       "supportsTablet": true,
       "bundleIdentifier": "com.georgefromgib.hiittimer",
       "infoPlist": {
@@ -49,7 +40,15 @@
     ],
     "plugins": [
       "expo-audio",
-      "expo-splash-screen"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/hiit-splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-asset"
     ],
     "extra": {
       "eas": {
