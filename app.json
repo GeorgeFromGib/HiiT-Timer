@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Clear HiiT",
-    "slug": "clear-hiit",
+    "slug": "hiit-timer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/hiit-icon.png",
@@ -54,6 +54,7 @@
       "eas": {
         "projectId": "b088a50f-b0f1-4ed6-810b-092b1cb02360"
       }
-    }
+    },
+    "owner": "georgefromgib"
   }
 }
