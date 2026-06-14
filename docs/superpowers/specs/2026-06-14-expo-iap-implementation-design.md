@@ -31,7 +31,15 @@ A `PRODUCT_ID` placeholder constant at the top of the file must be replaced with
 
 ---
 
+## API verification (required before implementation)
+
+The function names in this spec (`connectAsync`, `purchaseItemAsync`, `getPurchaseHistoryAsync`, `finishTransactionAsync`, `IAPResponseCode`) are based on the known API shape but **must be verified against the installed package before writing code**. Per AGENTS.md, read the versioned Expo SDK 56 docs at https://docs.expo.dev/versions/v56.0.0/ and the `expo-in-app-purchases` changelog before implementing.
+
+---
+
 ## Function-by-function
+
+**Listener lifecycle:** The purchase listener is registered once in `initPurchases()` and never replaced. `initPurchases()` is called once at app start from `App.tsx` — no guard against double-registration is needed.
 
 | Function | New behaviour |
 |---|---|
@@ -57,6 +65,20 @@ A `PRODUCT_ID` placeholder constant at the top of the file must be replaced with
 | `finishTransactionAsync` fails | Purchase still persisted. `finishTransaction` is best-effort — never blocks the user on an acknowledged receipt. |
 | Restore finds no matching purchase | Returns `false`, no state change. |
 | Duplicate purchase event | Guarded by `responseCode === OK` check — idempotent. |
+
+---
+
+## Success criteria (manual verification)
+
+Since there are no automated tests configured, these are the manual checks that confirm the implementation is correct:
+
+| # | Scenario | Expected result |
+|---|---|---|
+| 1 | Fresh install — no `premium_v1.json` | `hasAccess: true`, trial active, `trialDaysRemaining` ~30 (confirm via dev toggle in SettingsScreen) |
+| 2 | Purchase flow completes → app restart | `isPremium: true` after restart — confirms `premium_v1.json` persistence |
+| 3 | Restore on a device that previously purchased | `isPremium: true` after restore |
+| 4 | User cancels purchase dialog | `isPremium` unchanged, no error thrown |
+| 5 | Store unavailable at launch | App opens normally, trial state works, no crash |
 
 ---
 
