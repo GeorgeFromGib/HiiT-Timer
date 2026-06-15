@@ -1,14 +1,14 @@
-# expo-in-app-purchases Implementation Design
+# expo-iap Implementation Design
 
 **Date:** 2026-06-14
 **Branch:** paywall-2
-**Scope:** Replace mock `purchases.ts` with real `expo-in-app-purchases` calls, keeping all existing interfaces unchanged.
+**Scope:** Replace mock `purchases.ts` with real `expo-iap` calls, keeping all existing interfaces unchanged. Add Restore purchases button to `PaywallModal` (required by App Store guidelines).
 
 ---
 
 ## Goal
 
-Swap the mock body of `src/lib/purchases.ts` for a real one-time (non-consumable) purchase flow using `expo-in-app-purchases`. No other file changes.
+Swap the mock body of `src/lib/purchases.ts` for a real one-time (non-consumable) purchase flow using `expo-iap`. No other file changes.
 
 The 30-day local trial (tracked in `trial_v1.json`) is retained. Trial expiry is not enforced during TestFlight — this runs in production only.
 
@@ -16,36 +16,53 @@ The 30-day local trial (tracked in `trial_v1.json`) is retained. Trial expiry is
 
 ## Architecture
 
-Only `src/lib/purchases.ts` changes. Everything above it — `premiumContext.ts`, `usePremiumState.ts`, `usePremium()`, all screens, `PaywallModal` — is untouched.
+Two files change: `src/lib/purchases.ts` (IAP logic) and `src/components/PaywallModal.tsx` (Restore purchases button). Everything above — `premiumContext.ts`, `usePremiumState.ts`, `usePremium()`, all screens — is untouched.
 
 ```
 App.tsx
   └── usePremiumState()            ← no change
-        └── purchases.ts           ← ONLY file that changes
-              ├── expo-in-app-purchases  (new dependency)
+        └── purchases.ts           ← IAP logic (expo-iap)
+              ├── expo-iap               (new dependency)
               ├── trial_v1.json    (existing — 30-day trial state)
               └── premium_v1.json  (new — persists isPremium across restarts)
+
+PaywallModal.tsx                   ← adds Restore purchases button
+  └── usePremium().restore()       ← already wired in context, no change needed
 ```
 
 A `PRODUCT_ID` placeholder constant at the top of the file must be replaced with the real App Store product ID before production release.
 
 ---
 
-## API verification (required before implementation)
+## API reference
 
-The function names in this spec (`connectAsync`, `purchaseItemAsync`, `getPurchaseHistoryAsync`, `finishTransactionAsync`, `IAPResponseCode`) are based on the known API shape but **must be verified against the installed package before writing code**. Per AGENTS.md, read the versioned Expo SDK 56 docs at https://docs.expo.dev/versions/v56.0.0/ and the `expo-in-app-purchases` changelog before implementing.
+`expo-iap` exports the following functions used in this implementation:
+
+| Function | Description |
+|---|---|
+| `initConnection()` | Connect to the store (StoreKit 2 on iOS). Returns `Promise<boolean>`. |
+| `endConnection()` | Disconnect from the store. Call on unmount if needed. |
+| `requestPurchase(args)` | Initiate a purchase. `args` shape: `{ sku: string }` on iOS. Returns `Promise<Purchase \| Purchase[] \| null>`. |
+| `getAvailablePurchases()` | Fetch all non-consumed past purchases for the current Apple ID. Used for restore. |
+| `finishTransaction({ purchase })` | Finish/acknowledge a transaction on iOS. Best-effort — call after persisting. |
+| `purchaseUpdatedListener(fn)` | Event listener — fires on successful purchase. Returns an `EventSubscription`. |
+| `purchaseErrorListener(fn)` | Event listener — fires on error or cancellation. |
+
+Error codes live in the `ErrorCode` enum — notably `ErrorCode.UserCancelled`.
 
 ---
 
 ## Function-by-function
 
-**Listener lifecycle:** The purchase listener is registered once in `initPurchases()` and never replaced. `initPurchases()` is called once at app start from `App.tsx` — no guard against double-registration is needed.
+**Listener lifecycle:** `purchaseUpdatedListener` and `purchaseErrorListener` are registered once in `initPurchases()` and stored as module-level refs. `initPurchases()` is called once at app start from `App.tsx` — no guard against double-registration is needed.
+
+**Purchase flow:** `purchasePremium()` calls `requestPurchase()` and wraps the two event listeners in a one-shot Promise. The `purchaseUpdatedListener` fires on success; `purchaseErrorListener` fires on cancel or error.
 
 | Function | New behaviour |
 |---|---|
-| `initPurchases()` | `connectAsync()` to the store. Load `premium_v1.json` → `_isPremium`. Load `trial_v1.json` as before. Register purchase listener (required before purchases can complete). |
-| `purchasePremium()` | `purchaseItemAsync(PRODUCT_ID)`. Listener resolves a one-shot Promise: `IAPResponseCode.OK` → persist `_isPremium = true` to `premium_v1.json`, return `true`. User cancel → return `false`. |
-| `restorePurchases()` | `getPurchaseHistoryAsync()`. If any entry matches `PRODUCT_ID`, set `_isPremium = true`, persist, return `true`. Otherwise return `false`. |
+| `initPurchases()` | `initConnection()` to the store. Load `premium_v1.json` → `_isPremium`. Load `trial_v1.json` as before. Register `purchaseUpdatedListener` and `purchaseErrorListener`. |
+| `purchasePremium()` | `requestPurchase({ sku: PRODUCT_ID })`. One-shot Promise resolved by listeners: success → persist `_isPremium = true` to `premium_v1.json`, call `finishTransaction`, return `true`. `ErrorCode.UserCancelled` or any error → return `false`. |
+| `restorePurchases()` | `getAvailablePurchases()`. If any entry's `productId` matches `PRODUCT_ID`, set `_isPremium = true`, persist, return `true`. Otherwise return `false`. |
 | `getIsPremium()` | Reads `_isPremium` in-memory (loaded at init). Signature unchanged. |
 | `getHasAccess()` | Unchanged — `_isPremium \|\| isWithinTrial()`. |
 | `getTrialDaysRemaining()` | Unchanged. |
@@ -59,12 +76,12 @@ The function names in this spec (`connectAsync`, `purchaseItemAsync`, `getPurcha
 
 | Scenario | Behaviour |
 |---|---|
-| User cancels purchase | Listener returns `USER_CANCELLED` — `purchasePremium()` returns `false`, no state change. |
-| Store unavailable at init | `connectAsync()` error caught silently. Falls back to disk state. Trial logic still works. |
+| User cancels purchase | `purchaseErrorListener` fires with `ErrorCode.UserCancelled` — `purchasePremium()` returns `false`, no state change. |
+| Store unavailable at init | `initConnection()` error caught silently. Falls back to disk state. Trial logic still works. |
 | `premium_v1.json` missing or corrupt | Treated as not premium — same as first launch. |
-| `finishTransactionAsync` fails | Purchase still persisted. `finishTransaction` is best-effort — never blocks the user on an acknowledged receipt. |
+| `finishTransaction` fails | Purchase still persisted. `finishTransaction` is best-effort — never blocks the user on an acknowledged receipt. |
 | Restore finds no matching purchase | Returns `false`, no state change. |
-| Duplicate purchase event | Guarded by `responseCode === OK` check — idempotent. |
+| Duplicate purchase event | Guarded by checking `purchase.productId === PRODUCT_ID` before persisting — idempotent. |
 
 ---
 
@@ -85,16 +102,17 @@ Since there are no automated tests configured, these are the manual checks that 
 ## New dependency
 
 ```
-expo-in-app-purchases
+expo-iap
 ```
 
-Install via: `npx expo install expo-in-app-purchases`
+Install via: `npx expo install expo-iap`
 
 ---
 
 ## Out of scope
 
-- No changes to `premiumContext.ts`, `usePremiumState.ts`, `PaywallModal.tsx`, or any screen.
+- No changes to `premiumContext.ts`, `usePremiumState.ts`, or any screen.
+- `PaywallModal.tsx` receives one addition only: a "Restore purchases" text button that calls `restore()` from `usePremium()` and dismisses the modal.
 - No subscription products.
 - No server-side receipt validation.
 - No Android (placeholder only; Android IAP uses a different product ID namespace).
