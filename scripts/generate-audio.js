@@ -43,6 +43,20 @@ function silence(sec) {
   return buildWav(new Float32Array(Math.floor(SR * sec)));
 }
 
+function concat(...wavBufs) {
+  const totalSamples = wavBufs.reduce((sum, b) => sum + (b.length - 44) / 2, 0);
+  const out = Buffer.alloc(44 + totalSamples * 2);
+  wavBufs[0].copy(out, 0, 0, 44);
+  out.writeUInt32LE(36 + totalSamples * 2, 4);
+  out.writeUInt32LE(totalSamples * 2, 40);
+  let offset = 44;
+  for (const b of wavBufs) {
+    b.copy(out, offset, 44);
+    offset += b.length - 44;
+  }
+  return out;
+}
+
 const outDir = path.join(__dirname, '../assets/audio');
 fs.mkdirSync(outDir, { recursive: true });
 
@@ -51,7 +65,12 @@ const files = {
   'high.wav':      tone(880,  0.25), // A5 — "go"
   'low.wav':       tone(523,  0.25), // C5 — "recover"
   'tick.wav':      tone(1047, 0.07), // C6 — 3-2-1 blip
-  'finish.wav':    tone(659,  0.50), // E5 — done
+  'finish.wav':    concat(           // rising arpeggio ta-da
+    tone(1047, 0.13, 0.7),           // C6 blip
+    tone(1319, 0.13, 0.7),           // E6 blip
+    tone(1568, 0.13, 0.7),           // G6 blip
+    tone(1568, 0.40, 0.9),           // G6 sustain
+  ),
 };
 
 for (const [name, buf] of Object.entries(files)) {
