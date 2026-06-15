@@ -65,11 +65,11 @@ const files = {
   'high.wav':      tone(880,  0.25), // A5 — "go"
   'low.wav':       tone(523,  0.25), // C5 — "recover"
   'tick.wav':      tone(1047, 0.07), // C6 — 3-2-1 blip
-  'finish.wav':    concat(           // rising arpeggio ta-da
-    tone(1047, 0.13, 0.7),           // C6 blip
-    tone(1319, 0.13, 0.7),           // E6 blip
-    tone(1568, 0.13, 0.7),           // G6 blip
-    tone(1568, 0.40, 0.9),           // G6 sustain
+  'finish.wav':    concat(           // rising arpeggio ta-da, starts at session-start freq, perfect 5th intervals
+    tone( 880, 0.15, 0.7),           // A5 blip  (matches session start / high.wav)
+    tone(1319, 0.15, 0.7),           // E6 blip  (perfect 5th up)
+    tone(1760, 0.15, 0.7),           // A6 blip  (octave above start)
+    tone(1760, 0.45, 0.9),           // A6 sustain
   ),
 };
 
