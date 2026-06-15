@@ -9,6 +9,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.georgefromgib.hiittimer",
+      "appleTeamId": "XDDJQKHRY8",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [
@@ -45,7 +46,8 @@
         {
           "image": "./assets/hiit-splash.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "imageWidth": 400
         }
       ],
       "expo-asset",
