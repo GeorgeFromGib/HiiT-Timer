@@ -11,10 +11,15 @@ interface Props {
 export default function PaywallModal({ visible, onDismiss }: Props) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
-  const { purchase, loading } = usePremium();
+  const { purchase, restore, loading } = usePremium();
 
   async function handlePurchase() {
     await purchase();
+    onDismiss();
+  }
+
+  async function handleRestore() {
+    await restore();
     onDismiss();
   }
 
@@ -44,6 +49,13 @@ export default function PaywallModal({ visible, onDismiss }: Props) {
             disabled={loading}
           >
             <Text style={styles.dismissBtnText}>Not now</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.restoreBtn, loading && styles.disabled]}
+            onPress={handleRestore}
+            disabled={loading}
+          >
+            <Text style={styles.restoreBtnText}>Restore purchases</Text>
           </Pressable>
         </Pressable>
       </Pressable>
@@ -105,6 +117,16 @@ function makeStyles(T: ThemeTokens) {
     dismissBtnText: {
       fontFamily: 'Inter_600SemiBold',
       fontSize: 15,
+      color: T.subText,
+    },
+    restoreBtn: {
+      paddingVertical: 8,
+      width: '100%',
+      alignItems: 'center',
+    },
+    restoreBtnText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 13,
       color: T.subText,
     },
     disabled: {
