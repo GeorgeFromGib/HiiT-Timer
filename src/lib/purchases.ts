@@ -71,8 +71,18 @@ export async function initPurchases(_apiKey?: string): Promise<void> {
     await initConnection();
 
     purchaseUpdatedListener(async (purchase) => {
-      if (!_purchaseResolve) return;
       if (purchase.productId !== PRODUCT_ID) return;
+
+      // Handle unfinished-transaction replay (no active purchase flow)
+      if (!_purchaseResolve) {
+        _isPremium = true;
+        savePremium();
+        try {
+          await finishTransaction({ purchase });
+        } catch {}
+        return;
+      }
+
       const resolve = _purchaseResolve;
       _purchaseResolve = null;
       _isPremium = true;
@@ -83,7 +93,8 @@ export async function initPurchases(_apiKey?: string): Promise<void> {
       resolve(true);
     });
 
-    purchaseErrorListener(() => {
+    purchaseErrorListener((error) => {
+      console.warn('[purchases] purchaseError:', error);
       if (!_purchaseResolve) return;
       const resolve = _purchaseResolve;
       _purchaseResolve = null;
@@ -108,6 +119,7 @@ export function getTrialDaysRemaining(): number {
 }
 
 export async function purchasePremium(): Promise<boolean> {
+  if (_purchaseResolve) return false;
   return new Promise((resolve) => {
     _purchaseResolve = resolve;
     requestPurchase({
