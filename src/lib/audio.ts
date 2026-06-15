@@ -1,5 +1,6 @@
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import type { Phase } from './workout';
 
 // Static requires let Metro bundle the WAV files and give us asset module
 // numbers that expo-audio accepts on both native (AVFoundation / ExoPlayer)
@@ -79,4 +80,47 @@ export function useWorkoutAudio() {
     startKeepAlive,
     stopKeepAlive,
   };
+}
+
+export interface WorkoutAudioCues {
+  onTransition(to: Phase | null): void;
+  onCountdown(): void;
+  onFinish(): void;
+  onPreStartTick(): void;
+  startKeepAlive(): void;
+  stopKeepAlive(): void;
+}
+
+export function useWorkoutAudioCues(
+  getSettings: () => { soundOff: boolean; soundCues: boolean; finalCountdownBeep: boolean; soundVolume: number }
+): WorkoutAudioCues {
+  const audio = useWorkoutAudio();
+  const audioRef = useRef(audio);
+  audioRef.current = audio;
+
+  return useMemo(() => ({
+    onTransition(to) {
+      const s = getSettings();
+      const cueEnabled = !s.soundOff && s.soundCues;
+      if (to && cueEnabled) audioRef.current.playChime(s.soundVolume / 100);
+    },
+    onCountdown() {
+      const s = getSettings();
+      const beepEnabled = !s.soundOff && s.finalCountdownBeep;
+      if (beepEnabled) audioRef.current.playTick(s.soundVolume / 100);
+    },
+    onFinish() {
+      const s = getSettings();
+      const cueEnabled = !s.soundOff && s.soundCues;
+      if (cueEnabled) audioRef.current.playFinish(s.soundVolume / 100);
+      audioRef.current.stopKeepAlive();
+    },
+    onPreStartTick() {
+      const s = getSettings();
+      const cueEnabled = !s.soundOff && s.soundCues;
+      if (cueEnabled) audioRef.current.playTick(s.soundVolume / 100);
+    },
+    startKeepAlive: () => audioRef.current.startKeepAlive(),
+    stopKeepAlive: () => audioRef.current.stopKeepAlive(),
+  }), []); // eslint-disable-line react-hooks/exhaustive-deps -- stable: audioRef is a ref, getSettings is read at call-time
 }

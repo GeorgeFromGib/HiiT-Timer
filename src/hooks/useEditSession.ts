@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
-import { loadSessions, saveSessions, deleteSessionById, newId, getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
+import { loadSessions, saveSessions, deleteSessionById, getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
+import { serializeDraft, buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel, DURATION_PRESETS, SPEED_PRESETS, findMatchingDurationPreset, findMatchingDurationPresetForIntervals, findMatchingSpeedPreset } from '../lib/presets';
 import { confirmDeleteSession } from '../lib/alerts';
 import {
@@ -92,17 +93,6 @@ export interface EditSessionInterface {
   save:          () => Promise<void>;
   cancel:        () => void;
   deleteSession: () => void;
-}
-
-function serializeState(
-  name: string,
-  mode: 'easy' | 'advanced',
-  warmup: number, work: number, rest: number, cooldown: number, rounds: number,
-  intervals: Array<Omit<Interval, never>>,
-  activityType: 'run' | undefined,
-  runSpeeds: RunSpeeds,
-) {
-  return JSON.stringify({ name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds });
 }
 
 function usePickerState(
@@ -251,7 +241,7 @@ export function useEditSession(
   const [timingDirty, setTimingDirty] = useState(false);
   const [speedsDirty, setSpeedsDirty] = useState(false);
 
-  const initialSnapshot = useRef(serializeState(
+  const initialSnapshot = useRef(serializeDraft(
     existing?.name ?? '',
     existing?.mode ?? 'easy',
     existing?.mode === 'easy' ? existing.config.warmup   : 30,
@@ -456,22 +446,13 @@ export function useEditSession(
   }
 
   const save = async () => {
-    if (!name.trim()) {
-      Alert.alert('Name required', 'Please enter a session name.');
+    const validation = validateDraft(name, mode, intervals);
+    if (!validation.ok) {
+      Alert.alert(validation.title, validation.message);
       return;
     }
-    if (mode === 'advanced' && intervals.length === 0) {
-      Alert.alert('No intervals', 'Add at least one interval.');
-      return;
-    }
-    const base = { id: existing?.id ?? newId(), name: name.trim() };
-    const speedProps = activityType === 'run'
-      ? { activityType: 'run' as const, runSpeeds }
-      : {};
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
-    const updated: Session = mode === 'easy'
-      ? { ...base, ...speedProps, mode: 'easy', config: easyConfig }
-      : { ...base, ...speedProps, mode: 'advanced', intervals: cleanIntervals };
+    const updated = buildSessionFromDraft(mode, name.trim(), easyConfig, cleanIntervals, activityType, runSpeeds, existing?.id);
     const sessions = await loadSessions();
     const next = existing
       ? sessions.map(s => (s.id === updated.id ? updated : s))
@@ -482,7 +463,7 @@ export function useEditSession(
 
   const hasChanges = useMemo(() => {
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
-    const current = serializeState(name, mode, warmup, work, rest, cooldown, rounds, cleanIntervals, activityType, runSpeeds);
+    const current = serializeDraft(name, mode, warmup, work, rest, cooldown, rounds, cleanIntervals, activityType, runSpeeds);
     return current !== initialSnapshot;
   }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds]);
 

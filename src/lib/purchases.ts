@@ -13,9 +13,14 @@ const PRODUCT_ID = 'com.yourapp.premium_lifetime';
 
 const TRIAL_DAYS = 30;
 
-let _isPremium = false;
-let _trialStartedAt: string | null = null;
-let _purchaseResolve: ((success: boolean) => void) | null = null;
+type FlowState = 'idle' | 'purchasing' | 'restoring';
+
+const state = {
+  isPremium: false,
+  trialStartedAt: null as string | null,
+  flowState: 'idle' as FlowState,
+  pendingResolve: null as ((success: boolean) => void) | null,
+};
 
 const trialFile = () => new File(Paths.document, 'trial_v1.json');
 const premiumFile = () => new File(Paths.document, 'premium_v1.json');
@@ -44,27 +49,34 @@ async function saveTrialStart(iso: string): Promise<void> {
 }
 
 function isWithinTrial(): boolean {
-  if (!_trialStartedAt) return false;
+  if (!state.trialStartedAt) return false;
   const elapsed =
-    (Date.now() - new Date(_trialStartedAt).getTime()) / (1000 * 60 * 60 * 24);
+    (Date.now() - new Date(state.trialStartedAt).getTime()) / (1000 * 60 * 60 * 24);
   return elapsed < TRIAL_DAYS;
 }
 
+function settlePurchase(success: boolean): void {
+  const resolve = state.pendingResolve;
+  state.pendingResolve = null;
+  state.flowState = 'idle';
+  resolve?.(success);
+}
+
 export async function initPurchases(_apiKey?: string): Promise<void> {
-  _isPremium = await loadPremium();
+  state.isPremium = await loadPremium();
 
   try {
     const f = trialFile();
     if (f.exists) {
       const raw = await f.text();
       const data = JSON.parse(raw) as { startedAt: string };
-      _trialStartedAt = data.startedAt;
+      state.trialStartedAt = data.startedAt;
     } else {
-      _trialStartedAt = new Date().toISOString();
-      await saveTrialStart(_trialStartedAt);
+      state.trialStartedAt = new Date().toISOString();
+      await saveTrialStart(state.trialStartedAt);
     }
   } catch {
-    _trialStartedAt = new Date().toISOString();
+    state.trialStartedAt = new Date().toISOString();
   }
 
   try {
@@ -72,56 +84,41 @@ export async function initPurchases(_apiKey?: string): Promise<void> {
 
     purchaseUpdatedListener(async (purchase) => {
       if (purchase.productId !== PRODUCT_ID) return;
-
-      // Handle unfinished-transaction replay (no active purchase flow)
-      if (!_purchaseResolve) {
-        _isPremium = true;
-        savePremium();
-        try {
-          await finishTransaction({ purchase });
-        } catch {}
-        return;
-      }
-
-      const resolve = _purchaseResolve;
-      _purchaseResolve = null;
-      _isPremium = true;
+      state.isPremium = true;
       savePremium();
       try {
         await finishTransaction({ purchase });
       } catch {}
-      resolve(true);
+      if (state.flowState === 'purchasing') settlePurchase(true);
     });
 
     purchaseErrorListener((error) => {
       console.warn('[purchases] purchaseError:', error);
-      if (!_purchaseResolve) return;
-      const resolve = _purchaseResolve;
-      _purchaseResolve = null;
-      resolve(false);
+      if (state.flowState === 'purchasing') settlePurchase(false);
     });
   } catch {}
 }
 
 export async function getIsPremium(): Promise<boolean> {
-  return _isPremium;
+  return state.isPremium;
 }
 
 export function getHasAccess(): boolean {
-  return _isPremium || isWithinTrial();
+  return state.isPremium || isWithinTrial();
 }
 
 export function getTrialDaysRemaining(): number {
-  if (!_trialStartedAt) return 0;
+  if (!state.trialStartedAt) return 0;
   const elapsed =
-    (Date.now() - new Date(_trialStartedAt).getTime()) / (1000 * 60 * 60 * 24);
+    (Date.now() - new Date(state.trialStartedAt).getTime()) / (1000 * 60 * 60 * 24);
   return Math.max(0, Math.ceil(TRIAL_DAYS - elapsed));
 }
 
 export async function purchasePremium(): Promise<boolean> {
-  if (_purchaseResolve) return false;
+  if (state.flowState !== 'idle') return false;
   return new Promise((resolve) => {
-    _purchaseResolve = resolve;
+    state.flowState = 'purchasing';
+    state.pendingResolve = resolve;
     requestPurchase({
       type: 'in-app',
       request: {
@@ -129,37 +126,41 @@ export async function purchasePremium(): Promise<boolean> {
         google: { skus: [PRODUCT_ID] },
       },
     }).catch(() => {
-      _purchaseResolve = null;
-      resolve(false);
+      if (state.flowState === 'purchasing') settlePurchase(false);
     });
   });
 }
 
 export async function restorePurchases(): Promise<boolean> {
+  if (state.flowState !== 'idle') return false;
+  state.flowState = 'restoring';
   try {
     const purchases = await getAvailablePurchases();
     const found = purchases.some((p) => p.productId === PRODUCT_ID);
     if (found) {
-      _isPremium = true;
+      state.isPremium = true;
       savePremium();
-      return true;
     }
-  } catch {}
-  return false;
+    return found;
+  } catch {
+    return false;
+  } finally {
+    state.flowState = 'idle';
+  }
 }
 
 export function setMockPremium(val: boolean): void {
-  _isPremium = val;
+  state.isPremium = val;
 }
 
 export async function expireTrialForTesting(): Promise<void> {
-  _trialStartedAt = new Date(
+  state.trialStartedAt = new Date(
     Date.now() - 31 * 24 * 60 * 60 * 1000
   ).toISOString();
-  await saveTrialStart(_trialStartedAt);
+  await saveTrialStart(state.trialStartedAt);
 }
 
 export async function resetTrialForTesting(): Promise<void> {
-  _trialStartedAt = new Date().toISOString();
-  await saveTrialStart(_trialStartedAt);
+  state.trialStartedAt = new Date().toISOString();
+  await saveTrialStart(state.trialStartedAt);
 }

@@ -11,7 +11,7 @@ import Svg, { Path } from 'react-native-svg';
 import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
-import { usePremium } from '../lib/premiumContext';
+import { useGatedAction } from '../hooks/useGatedAction';
 import PaywallModal from '../components/PaywallModal';
 import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
@@ -22,18 +22,16 @@ import SessionCard from '../components/SessionCard';
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
-  const { hasAccess } = usePremium();
-
   const [sessions, setSessions]     = useState<Session[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
     loadSessions().then(setSessions);
   }, []);
 
   const handleDuplicate = (session: Session) => {
-    if (!hasAccess) { setShowPaywall(true); return; }
     const idx = sessions.findIndex(s => s.id === session.id);
     const copy: Session = { ...session, id: newId(), name: `Copy of ${session.name}` };
     const next = [...sessions.slice(0, idx + 1), copy, ...sessions.slice(idx + 1)];
@@ -73,10 +71,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           </Pressable>
         }
         right={
-          <Pressable style={styles.addBtn} onPress={() => {
-              if (!hasAccess) { setShowPaywall(true); return; }
-              onNavigate({ name: 'EditSession' });
-            }}>
+          <Pressable style={styles.addBtn} onPress={gate(() => onNavigate({ name: 'EditSession' }))}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
             </Svg>
@@ -102,17 +97,11 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             drag={drag}
             isActive={isActive}
             selectedId={selectedId}
-            onDuplicate={() => handleDuplicate(session)}
+            onDuplicate={gate(() => handleDuplicate(session))}
             onDelete={(swipeable) => handleDelete(session, swipeable)}
             onSelect={() => setSelectedId(prev => prev === session.id ? null : session.id)}
-            onEdit={() => {
-              if (!hasAccess) { setShowPaywall(true); return; }
-              onNavigate({ name: 'EditSession', session });
-            }}
-            onStart={() => {
-              if (!hasAccess) { setShowPaywall(true); return; }
-              onNavigate({ name: 'Workout', session });
-            }}
+            onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
+            onStart={gate(() => onNavigate({ name: 'Workout', session }))}
           />
         )}
       />

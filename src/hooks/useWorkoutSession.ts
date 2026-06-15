@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
+import { configureAudioSession, useWorkoutAudioCues } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import { Segment } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
@@ -48,14 +48,10 @@ export function useWorkoutSession(
   settings: Settings = DEFAULT_SETTINGS,
   onCountdownBeat?: () => void,
 ): WorkoutSession {
-  const audio = useWorkoutAudio();
-  // Stable ref so interval callbacks always reach the latest audio methods
-  // without appearing in useCallback dep arrays.
-  const audioRef = useRef(audio);
-  audioRef.current = audio;
-
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
+
+  const cues = useWorkoutAudioCues(() => settingsRef.current);
 
   const onCountdownBeatRef = useRef(onCountdownBeat);
   onCountdownBeatRef.current = onCountdownBeat;
@@ -67,21 +63,16 @@ export function useWorkoutSession(
     () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
   );
 
-  const volume = () => settingsRef.current.soundVolume / 100;
-  const cueEnabled = () => !settingsRef.current.soundOff && settingsRef.current.soundCues;
-  const beepEnabled = () => !settingsRef.current.soundOff && settingsRef.current.finalCountdownBeep;
-
   const { state, start, pause, resume, reset: engineReset, skip, extend } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
-      if (to && cueEnabled()) audioRef.current.playChime(volume());
+      cues.onTransition(to);
     },
     onCountdown: () => {
-      if (beepEnabled()) audioRef.current.playTick(volume());
+      cues.onCountdown();
       onCountdownBeatRef.current?.();
     },
     onFinish: () => {
-      if (cueEnabled()) audioRef.current.playFinish(volume());
-      audioRef.current.stopKeepAlive();
+      cues.onFinish();
     },
   });
 
@@ -93,22 +84,22 @@ export function useWorkoutSession(
 
   const beginPreStart = useCallback(() => {
     setPreStartCount(3);
-    if (cueEnabled()) audioRef.current.playTick(volume());
+    cues.onPreStartTick();
     let count = 3;
     preStartIntervalRef.current = setInterval(() => {
       count -= 1;
       if (count > 0) {
         setPreStartCount(count as 2 | 1);
-        if (cueEnabled()) audioRef.current.playTick(volume());
+        cues.onPreStartTick();
       } else {
         clearInterval(preStartIntervalRef.current!);
         preStartIntervalRef.current = null;
         setPreStartCount(null);
-        audioRef.current.startKeepAlive();
+        cues.startKeepAlive();
         start();
       }
     }, 1000);
-  }, [start]);
+  }, [start, cues]);
 
   const handlePlayPause = useCallback(() => {
     // Use the ref as the pre-start check so this callback doesn't need
