@@ -51,7 +51,8 @@
         }
       ],
       "expo-asset",
-      "expo-iap"
+      "expo-iap",
+      "expo-localization"
     ],
     "extra": {
       "eas": {

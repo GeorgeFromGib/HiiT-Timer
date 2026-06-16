@@ -74,12 +74,12 @@ export default function App() {
   }, [fontsLoaded, audioReady]);
 
   function updateSettings<K extends keyof Settings>(key: K, value: Settings[K]) {
-    const next: Settings = key === 'speedUnit'
+    const next: Settings = key === ('speedUnit' satisfies keyof Settings)
       ? { ...settings, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
       : { ...settings, [key]: value };
     setSettings(next);
     saveSettings(next);
-    if (key === 'theme') setThemeKey(value as ThemeKey);
+    if (key === ('theme' satisfies keyof Settings)) setThemeKey(value as ThemeKey);
   }
 
   const setTheme = (key: ThemeKey) => setThemeKey(key);

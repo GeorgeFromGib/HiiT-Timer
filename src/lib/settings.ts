@@ -1,5 +1,4 @@
 import { File, Paths } from 'expo-file-system';
-import { getLocales } from 'expo-localization';
 
 export type ThemeKey = 'tidal' | 'daybreak';
 
@@ -32,8 +31,14 @@ export const DEFAULT_SETTINGS: Settings = {
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');
 
 export function detectSpeedUnit(): 'km' | 'miles' {
-  const system = getLocales()[0]?.measurementSystem;
-  return system === 'us' || system === 'uk' ? 'miles' : 'km';
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { getLocales } = require('expo-localization') as typeof import('expo-localization');
+    const system = getLocales()[0]?.measurementSystem;
+    return system === 'us' || system === 'uk' ? 'miles' : 'km';
+  } catch {
+    return 'km';
+  }
 }
 
 export async function loadSettings(): Promise<Settings> {

@@ -108,3 +108,5 @@ Implement pixel-close to the designs. Colors, spacing, and interactions are fina
 - MINOR (_.0._) — new features, backwards compatible
 - PATCH (_._.0) — bug fixes, no new features
 
+### Planning
+- When you have finshed written a plan from a spec ask if you should run the karpathy skill on it.
