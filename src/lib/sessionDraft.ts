@@ -35,12 +35,12 @@ export function validateDraft(
   name: string,
   mode: 'easy' | 'advanced',
   intervals: { length: number },
-): { ok: true } | { ok: false; title: string; message: string } {
+): { ok: true } | { ok: false; titleKey: string; messageKey: string } {
   if (!name.trim()) {
-    return { ok: false, title: 'Name required', message: 'Please enter a session name.' };
+    return { ok: false, titleKey: 'alerts.nameRequiredTitle', messageKey: 'alerts.nameRequiredMessage' };
   }
   if (mode === 'advanced' && intervals.length === 0) {
-    return { ok: false, title: 'No intervals', message: 'Add at least one interval.' };
+    return { ok: false, titleKey: 'alerts.noIntervalsTitle', messageKey: 'alerts.noIntervalsMessage' };
   }
   return { ok: true };
 }
