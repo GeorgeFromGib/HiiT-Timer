@@ -1,6 +1,7 @@
 import { File, Paths } from 'expo-file-system';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments } from './workout';
+import { i18n, type Language } from './i18n';
 
 export interface RunSpeeds {
   warmupSpeed: number;
@@ -55,46 +56,49 @@ export function getSessionSegments(session: Session): Segment[] {
 
 const sessionsFile = () => new File(Paths.document, 'sessions_v2.json');
 
-export const DEFAULT_SESSIONS: Session[] = [
-  {
-    id: 'default-1',
-    name: 'Tabata Burnout',
-    mode: 'easy',
-    config: { warmup: 45, high: 20, low: 10, rounds: 8, cooldown: 60 },
-  },
-  {
-    id: 'default-2',
-    name: 'Quick HiiT',
-    mode: 'advanced',
-    intervals: [
-      { type: 'warmup',   dur: 20 },
-      { type: 'work',     dur: 20 },
-      { type: 'rest',     dur: 10 },
-      { type: 'work',     dur: 30 },
-      { type: 'rest',     dur: 15 },
-      { type: 'work',     dur: 20 },
-      { type: 'rest',     dur: 10 },
-      { type: 'cooldown', dur: 30 },
-    ],
-  },
-  {
-    id: 'default-run-2',
-    name: 'Interval Run',
-    mode: 'easy',
-    activityType: 'run',
-    config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
-    runSpeeds: { warmupSpeed: 7, workSpeed: 11, restSpeed: 6, cooldownSpeed: 5.5 },
-  },
-];
+export function getDefaultSessions(language: Language = 'en'): Session[] {
+  const locale = language;
+  return [
+    {
+      id: 'default-1',
+      name: i18n.t('defaultSessions.tabata', { locale }),
+      mode: 'easy',
+      config: { warmup: 45, high: 20, low: 10, rounds: 8, cooldown: 60 },
+    },
+    {
+      id: 'default-2',
+      name: i18n.t('defaultSessions.quick', { locale }),
+      mode: 'advanced',
+      intervals: [
+        { type: 'warmup',   dur: 20 },
+        { type: 'work',     dur: 20 },
+        { type: 'rest',     dur: 10 },
+        { type: 'work',     dur: 30 },
+        { type: 'rest',     dur: 15 },
+        { type: 'work',     dur: 20 },
+        { type: 'rest',     dur: 10 },
+        { type: 'cooldown', dur: 30 },
+      ],
+    },
+    {
+      id: 'default-run-2',
+      name: i18n.t('defaultSessions.run', { locale }),
+      mode: 'easy',
+      activityType: 'run',
+      config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
+      runSpeeds: { warmupSpeed: 7, workSpeed: 11, restSpeed: 6, cooldownSpeed: 5.5 },
+    },
+  ];
+}
 
-export async function loadSessions(): Promise<Session[]> {
+export async function loadSessions(language: Language = 'en'): Promise<Session[]> {
   try {
     const f = sessionsFile();
-    if (!f.exists) return DEFAULT_SESSIONS;
+    if (!f.exists) return getDefaultSessions(language);
     const raw = await f.text();
     return JSON.parse(raw) as Session[];
   } catch {
-    return DEFAULT_SESSIONS;
+    return getDefaultSessions(language);
   }
 }
 

@@ -13,14 +13,18 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
 import { useGatedAction } from '../hooks/useGatedAction';
 import PaywallModal from '../components/PaywallModal';
+import { useSettings } from '../lib/settingsContext';
 import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
 import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
+import { useTranslation } from '../lib/i18n';
 
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
   const { T } = useTheme();
+  const { t } = useTranslation();
+  const { settings } = useSettings();
   const styles = useMemo(() => makeStyles(T), [T]);
   const [sessions, setSessions]     = useState<Session[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -28,12 +32,12 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
-    loadSessions().then(setSessions);
-  }, []);
+    loadSessions(settings.language).then(setSessions);
+  }, [settings.language]);
 
   const handleDuplicate = (session: Session) => {
     const idx = sessions.findIndex(s => s.id === session.id);
-    const copy: Session = { ...session, id: newId(), name: `Copy of ${session.name}` };
+    const copy: Session = { ...session, id: newId(), name: t('sessions.copyOf', { name: session.name }) };
     const next = [...sessions.slice(0, idx + 1), copy, ...sessions.slice(idx + 1)];
     setSessions(next);
     saveSessions(next);
@@ -60,7 +64,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
       style={styles.root}
     >
       <ScreenHeader
-        title="My Sessions"
+        title={t('sessions.title')}
         style={styles.header}
         left={
           <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })}>
@@ -89,7 +93,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           setSessions(data);
           saveSessions(data);
         }}
-        ListEmptyComponent={<Text style={styles.emptyText}>No sessions yet. Tap + to add one.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>{t('sessions.empty')}</Text>}
         renderItem={({ item: session, drag, isActive }: RenderItemParams<Session>) => (
           <SessionSwipeRow
             session={session}
@@ -185,6 +189,7 @@ const SwipeDuplicateAction = React.forwardRef<
   { reset: () => void },
   { styles: ReturnType<typeof makeStyles>; onDuplicate: () => void; swipeable: { close: () => void } }
 >(function SwipeDuplicateAction({ styles, onDuplicate, swipeable }, ref) {
+  const { t } = useTranslation();
   const opacity = useRef(new Animated.Value(1)).current;
 
   useImperativeHandle(ref, () => ({ reset: () => opacity.setValue(1) }));
@@ -203,7 +208,7 @@ const SwipeDuplicateAction = React.forwardRef<
           <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
           <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </Svg>
-        <Text style={styles.swipeDuplicateText}>Duplicate</Text>
+        <Text style={styles.swipeDuplicateText}>{t('common.duplicate')}</Text>
       </Pressable>
     </Animated.View>
   );
@@ -224,6 +229,7 @@ function SessionSwipeRow({
   onEdit:      () => void;
   onStart:     () => void;
 }) {
+  const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
 
   return (
@@ -245,7 +251,7 @@ function SessionSwipeRow({
               <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
             </Svg>
-            <Text style={styles.swipeDeleteText}>Delete</Text>
+            <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
           </Pressable>
         )}
       >

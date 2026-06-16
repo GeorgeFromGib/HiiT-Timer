@@ -1,14 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { fmtDuration, type Interval, type Phase } from '../lib/workout';
+import { fmtDuration, type Interval } from '../lib/workout';
 import { useTheme, withOpacity, glowShadow, type ThemeTokens } from '../theme';
 import DragHandle from './DragHandle';
-
-const PHASE_LABELS: Record<Phase, string> = {
-  warmup:   'Warm Up',
-  work:     'Work',
-  rest:     'Rest',
-  cooldown: 'Cool Down',
-};
+import { useTranslation } from '../lib/i18n';
 
 export interface IntervalRowProps {
   interval:           Interval;
@@ -27,6 +21,7 @@ export default function IntervalRow({
   displaySpeed, onOpenSpeedPicker, onClearSpeed,
 }: IntervalRowProps) {
   const { T } = useTheme();
+  const { t } = useTranslation();
   const styles = makeStyles(T);
   const phaseColor = T.phases[interval.type];
 
@@ -37,7 +32,7 @@ export default function IntervalRow({
       </Pressable>
 
       <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor }]}>
-        <Text style={[styles.phasePillText, { color: phaseColor }]}>{PHASE_LABELS[interval.type]}</Text>
+        <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phases.' + interval.type)}</Text>
       </Pressable>
 
       {displaySpeed !== undefined && onOpenSpeedPicker && (

@@ -89,7 +89,7 @@ export function segmentIndexAt(segments: Segment[], elapsed: number): number {
 
 export type ConvertToEasyResult =
   | { ok: true; warmup: number; work: number; rest: number; rounds: number; cooldown: number }
-  | { ok: false; reason: string };
+  | { ok: false; reasonKey: string; reasonParams?: Record<string, string | number> };
 
 export function buildIntervalsFromEasy(cfg: WorkoutConfig): Interval[] {
   const intervals: Interval[] = [];
@@ -115,33 +115,33 @@ export function tryConvertToEasy(ivs: Interval[]): ConvertToEasyResult {
     easyCooldown = list[list.length - 1].dur;
     list = list.slice(0, -1);
   }
-  if (list.length === 0) return { ok: false, reason: 'No work intervals found.' };
+  if (list.length === 0) return { ok: false, reasonKey: 'validation.noWorkIntervals' };
 
   for (const iv of list) {
     if (iv.type !== 'work' && iv.type !== 'rest')
-      return { ok: false, reason: `"${PHASE_META[iv.type].word}" phase cannot appear between work intervals in easy mode.` };
+      return { ok: false, reasonKey: 'validation.phaseNotAllowed', reasonParams: { phase: iv.type } };
   }
-  if (list[0].type !== 'work') return { ok: false, reason: 'Intervals must start with a Work phase.' };
+  if (list[0].type !== 'work') return { ok: false, reasonKey: 'validation.mustStartWithWork' };
 
   const hasRest = list.some(iv => iv.type === 'rest');
   if (hasRest) {
     if (list.length % 2 !== 0)
-      return { ok: false, reason: 'Each Work interval must be paired with a Rest interval.' };
+      return { ok: false, reasonKey: 'validation.workRestPairing' };
     for (let i = 0; i < list.length; i += 2) {
-      if (list[i].type !== 'work')     return { ok: false, reason: 'Expected Work at position ' + (i + 1) + '.' };
-      if (list[i + 1].type !== 'rest') return { ok: false, reason: 'Expected Rest after Work at position ' + (i + 1) + '.' };
+      if (list[i].type !== 'work')     return { ok: false, reasonKey: 'validation.expectedWorkAt', reasonParams: { pos: i + 1 } };
+      if (list[i + 1].type !== 'rest') return { ok: false, reasonKey: 'validation.expectedRestAfterWorkAt', reasonParams: { pos: i + 1 } };
     }
     const workDur = list[0].dur;
     const restDur = list[1].dur;
     for (let i = 0; i < list.length; i += 2) {
-      if (list[i].dur !== workDur)     return { ok: false, reason: 'All Work intervals must have the same duration.' };
-      if (list[i + 1].dur !== restDur) return { ok: false, reason: 'All Rest intervals must have the same duration.' };
+      if (list[i].dur !== workDur)     return { ok: false, reasonKey: 'validation.sameWorkDuration' };
+      if (list[i + 1].dur !== restDur) return { ok: false, reasonKey: 'validation.sameRestDuration' };
     }
     return { ok: true, warmup: easyWarmup, work: workDur, rest: restDur, rounds: list.length / 2, cooldown: easyCooldown };
   } else {
     const workDur = list[0].dur;
     for (const iv of list) {
-      if (iv.dur !== workDur) return { ok: false, reason: 'All Work intervals must have the same duration.' };
+      if (iv.dur !== workDur) return { ok: false, reasonKey: 'validation.sameWorkDuration' };
     }
     return { ok: true, warmup: easyWarmup, work: workDur, rest: 0, rounds: list.length, cooldown: easyCooldown };
   }

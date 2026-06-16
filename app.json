@@ -14,7 +14,8 @@
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [
           "audio"
-        ]
+        ],
+        "CFBundleLocalizations": ["en", "es"]
       }
     },
     "android": {

@@ -11,6 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, THEME_PREVIEWS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { useSettings } from '../lib/settingsContext';
+import { useTranslation } from '../lib/i18n';
 import { usePremium } from '../lib/premiumContext';
 import { setForceNextReview } from '../lib/reviewState';
 import { SettingsToggle } from '../components/SettingsToggle';
@@ -27,6 +28,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
   const styles = useMemo(() => makeStyles(T), [T]);
 
   const { settings, updateSettings } = useSettings();
+  const { t } = useTranslation();
   const { isPremium, trialDaysRemaining, setMockPremium, expireTrialForTesting, resetTrialForTesting } = usePremium();
   const [forceReview, setForceReview] = React.useState(false);
 
@@ -43,11 +45,11 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         showsVerticalScrollIndicator={false}
       >
         {/* ── Header ── */}
-        <ScreenHeader onBack={onBack} subtitle="Preferences" title="Settings" style={styles.header} />
+        <ScreenHeader onBack={onBack} subtitle={t('settings.subtitle')} title={t('settings.title')} style={styles.header} />
 
         {/* ── Appearance ── */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Appearance</Text>
+          <Text style={styles.sectionTitle}>{t('settings.appearance')}</Text>
           <View style={styles.themeRow}>
             {THEME_PREVIEWS.map(th => (
               <ThemeCard
@@ -61,30 +63,30 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         </View>
 
         {/* ── Workout ── */}
-        <SettingsSection title="Workout">
+        <SettingsSection title={t('settings.sectionWorkout')}>
           <SettingsRow
-            label="Congratulatory message"
-            sub="Full-screen celebration at workout end"
+            label={t('settings.congratsLabel')}
+            sub={t('settings.congratsSub')}
             right={<SettingsToggle value={settings.congratsMessage} onChange={v => updateSettings('congratsMessage', v)} />}
           />
           <SettingsRow
-            label="Countdown flash"
-            sub="Digits flash on last 3 seconds of each interval"
+            label={t('settings.countdownFlashLabel')}
+            sub={t('settings.countdownFlashSub')}
             right={<SettingsToggle value={settings.countdownFlash} onChange={v => updateSettings('countdownFlash', v)} />}
           />
           <SettingsRow
-            label="Keep screen awake"
-            sub="Prevent display sleep during workout"
+            label={t('settings.keepAwakeLabel')}
+            sub={t('settings.keepAwakeSub')}
             right={<SettingsToggle value={settings.keepScreenAwake} onChange={v => updateSettings('keepScreenAwake', v)} />}
             last
           />
         </SettingsSection>
 
         {/* ── Units ── */}
-        <SettingsSection title="Units">
+        <SettingsSection title={t('settings.units')}>
           <SettingsRow
-            label="Speed unit"
-            sub="Display unit for Run session speeds"
+            label={t('settings.speedUnitLabel')}
+            sub={t('settings.speedUnitSub')}
             last
             right={
               <View style={styles.segControl}>
@@ -110,11 +112,41 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
           />
         </SettingsSection>
 
-        {/* ── Audio ── */}
-        <SettingsSection title="Audio">
+        {/* ── Language ── */}
+        <SettingsSection title={t('settings.language')}>
           <SettingsRow
-            label="Sound off"
-            sub="Mute all audio"
+            label={t('settings.language')}
+            sub={t('settings.languageSub')}
+            last
+            right={
+              <View style={styles.segControl}>
+                {(['en', 'es'] as const).map(lng => (
+                  <Pressable
+                    key={lng}
+                    onPress={() => updateSettings('language', lng)}
+                    style={[
+                      styles.segBtn,
+                      settings.language === lng && { backgroundColor: T.accent },
+                    ]}
+                  >
+                    <Text style={[
+                      styles.segBtnText,
+                      { color: settings.language === lng ? T.btnGlyph : T.subText },
+                    ]}>
+                      {lng === 'en' ? 'English' : 'Español'}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            }
+          />
+        </SettingsSection>
+
+        {/* ── Audio ── */}
+        <SettingsSection title={t('settings.audio')}>
+          <SettingsRow
+            label={t('settings.soundOffLabel')}
+            sub={t('settings.soundOffSub')}
             right={<SettingsToggle value={settings.soundOff} onChange={v => updateSettings('soundOff', v)} />}
           />
           <VolumeRow
@@ -123,14 +155,14 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             disabled={settings.soundOff}
           />
           <SettingsRow
-            label="Sound cues"
-            sub="Play tones on phase changes"
+            label={t('settings.soundCuesLabel')}
+            sub={t('settings.soundCuesSub')}
             disabled={settings.soundOff}
             right={<SettingsToggle value={settings.soundCues} onChange={v => updateSettings('soundCues', v)} disabled={settings.soundOff} />}
           />
           <SettingsRow
-            label="Final countdown beep"
-            sub="Audio cue in last 3 seconds"
+            label={t('settings.finalBeepLabel')}
+            sub={t('settings.finalBeepSub')}
             disabled={settings.soundOff}
             right={<SettingsToggle value={settings.finalCountdownBeep} onChange={v => updateSettings('finalCountdownBeep', v)} disabled={settings.soundOff} />}
             last
@@ -169,13 +201,13 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         )}
 
         {/* ── About ── */}
-        <SettingsSection title="About">
+        <SettingsSection title={t('settings.about')}>
           <SettingsRow
-            label="Version"
+            label={t('settings.version')}
             right={<Text style={styles.versionText}>1.0.0</Text>}
           />
           <SettingsRow
-            label="Rate the app"
+            label={t('settings.rateApp')}
             right={
               <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
                 <Path

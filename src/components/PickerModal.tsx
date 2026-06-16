@@ -3,6 +3,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import WheelColumn from './WheelColumn';
 import type { EditSessionPicker } from '../hooks/useEditSession';
+import { useTranslation } from '../lib/i18n';
 
 const MINUTE_LABELS   = Array.from({ length: 60 }, (_, i) => String(i));
 const SECOND_LABELS   = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
@@ -20,6 +21,7 @@ interface Props {
 
 export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: Props) {
   const { T } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
 
   return (
@@ -34,11 +36,11 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
         <View style={styles.modalSheet}>
           <View style={styles.modalHeader}>
             <Pressable onPress={onDismiss} style={styles.modalCancelBtn}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{t('common.cancel')}</Text>
             </Pressable>
             <Text style={styles.modalTitle}>{picker?.title}</Text>
             <Pressable onPress={onCommit} style={styles.modalDoneBtn}>
-              <Text style={styles.modalDoneText}>Done</Text>
+              <Text style={styles.modalDoneText}>{t('common.done')}</Text>
             </Pressable>
           </View>
 
@@ -52,7 +54,7 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
                 />
               </View>
               <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>rounds</Text>
+                <Text style={styles.pickerUnitLabel}>{t('picker.rounds')}</Text>
               </View>
             </>
           ) : picker?.isSpeed ? (
@@ -75,7 +77,7 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
               <View style={styles.pickerUnits}>
                 <Text style={styles.pickerUnitLabel}>{picker.speedUnit === 'miles' ? 'mph' : 'km/h'}</Text>
                 <View style={{ flex: 0, width: 24 }} />
-                <Text style={styles.pickerUnitLabel}>dec</Text>
+                <Text style={styles.pickerUnitLabel}>{t('picker.dec')}</Text>
               </View>
             </>
           ) : (
@@ -96,9 +98,9 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
                 />
               </View>
               <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>min</Text>
+                <Text style={styles.pickerUnitLabel}>{t('picker.min')}</Text>
                 <View style={{ flex: 0, width: 24 }} />
-                <Text style={styles.pickerUnitLabel}>sec</Text>
+                <Text style={styles.pickerUnitLabel}>{t('picker.sec')}</Text>
               </View>
             </>
           )}

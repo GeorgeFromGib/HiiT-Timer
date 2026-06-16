@@ -3,29 +3,7 @@ import { configureAudioSession, useWorkoutAudioCues } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import { Segment } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
-
-const CONGRATS = [
-  "You crushed it.",
-  "That's what you're made of.",
-  "Every rep counted.",
-  "Nothing left in the tank. Perfect.",
-  "Earned.",
-  "That's the streak. Keep it.",
-  "One more session in the bank.",
-  "Progress doesn't lie.",
-  "You showed up. That's everything.",
-  "Tomorrow you'll be glad you did this.",
-  "Your future self says thanks.",
-  "Sweat well spent.",
-  "Rest. You've earned it.",
-  "Not bad at all.",
-  "The couch wasn't this good anyway.",
-  "Done. Well done.",
-  "Work complete.",
-  "That happened.",
-  "Check.",
-  "Session closed.",
-] as const;
+import { getCongratsMessages } from '../lib/i18n';
 
 export type WorkoutStatus = 'idle' | 'preStart' | 'running' | 'paused' | 'finished';
 
@@ -59,9 +37,10 @@ export function useWorkoutSession(
   const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
   const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const [congratsMsg] = useState(
-    () => CONGRATS[Math.floor(Math.random() * CONGRATS.length)]
-  );
+  const [congratsMsg] = useState(() => {
+    const msgs = getCongratsMessages();
+    return msgs[Math.floor(Math.random() * msgs.length)];
+  });
 
   const { state, start, pause, resume, reset: engineReset, skip, extend } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
