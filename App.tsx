@@ -20,7 +20,7 @@ import EditSessionScreen from './src/screens/EditSessionScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
-import { DEFAULT_SETTINGS, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
+import { DEFAULT_SETTINGS, detectSpeedUnit, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
 import { SettingsContext } from './src/lib/settingsContext';
 import { PremiumContext } from './src/lib/premiumContext';
 import { usePremiumState } from './src/hooks/usePremiumState';
@@ -58,8 +58,12 @@ export default function App() {
 
   useEffect(() => {
     loadSettings().then(s => {
-      setSettings(s);
-      setThemeKey(s.theme);
+      const resolved = s.speedUnitIsManuallySet
+        ? s
+        : { ...s, speedUnit: detectSpeedUnit() };
+      setSettings(resolved);
+      setThemeKey(resolved.theme);
+      if (!s.speedUnitIsManuallySet) saveSettings(resolved);
     });
   }, []);
 
@@ -70,7 +74,9 @@ export default function App() {
   }, [fontsLoaded, audioReady]);
 
   function updateSettings<K extends keyof Settings>(key: K, value: Settings[K]) {
-    const next = { ...settings, [key]: value };
+    const next: Settings = key === 'speedUnit'
+      ? { ...settings, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
+      : { ...settings, [key]: value };
     setSettings(next);
     saveSettings(next);
     if (key === 'theme') setThemeKey(value as ThemeKey);
