@@ -142,12 +142,20 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             }
           </View>
 
-          <Text style={[styles.phaseLabel, {
-            color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
-            textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
-          }]}>
-            {isDone ? t('workout.done') : isPreStart ? t('workout.getReady') : t('workout.phase.' + seg.phase)}
-          </Text>
+          {(() => {
+            const label = isDone ? t('workout.done') : isPreStart ? t('workout.getReady') : t('workout.phase.' + seg.phase);
+            const labelSize = label.length > 9 ? 35 : 44;
+            return (
+              <Text style={[styles.phaseLabel, {
+                color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
+                textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
+                fontSize:        labelSize,
+                letterSpacing:   labelSize * 0.01,
+              }]}>
+                {label}
+              </Text>
+            );
+          })()}
 
           {seg.speed !== undefined && !isDone && !isPreStart && (
             <View style={[styles.speedPill, {
