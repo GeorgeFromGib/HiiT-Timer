@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- **English is the source of truth and fallback.** `i18n.enableFallback = true`, `i18n.defaultLocale = 'en'`. `es.ts` is typed as `typeof en` so missing/renamed keys fail `tsc`.
+- **English is the source of truth and fallback.** `i18n.enableFallback = true`, `i18n.defaultLocale = 'en'`. `en.ts` has no `as const` so `typeof en` is a plain object type; `es` is typed as `typeof en` so missing/renamed keys fail `tsc`.
 - **Interpolation uses `%{name}` syntax** (i18n-js default).
 - **Two languages only:** `'en' | 'es'`.
 - **No automated tests** for this feature (explicit user decision). Verify each task with `npx tsc --noEmit` (no errors) plus the stated manual check.
@@ -55,7 +55,7 @@ export const en = {
     delete: 'Delete',
     duplicate: 'Duplicate',
     apply: 'Apply',
-    intervalsCount: { one: '%{count} interval', other: '%{count} intervals' },
+    intervals: 'intervals',
   },
   phases: {
     warmup: 'Warm Up',
@@ -208,31 +208,19 @@ export const en = {
     quick: 'Quick HiiT',
     run: 'Interval Run',
   },
-} as const;
+};
 
 export default en;
 ```
 
 - [ ] **Step 3: Create the Spanish dictionary**
 
-Create `src/locales/es.ts`. It is typed against `en` via a `DeepPartialSame` helper so structure must match while values are translated. Use a plain typed object:
+Create `src/locales/es.ts`. Because `en` has no `as const`, `typeof en` is a plain object type; typing `es` as `typeof en` gives full key-completeness checking with zero type magic:
 
 ```ts
 import en from './en';
 
-// es must mirror en's shape exactly; typing as `typeof en` (loosened to string
-// for leaf values) makes tsc flag any missing or renamed key.
-type Dictionary = {
-  [K in keyof typeof en]: typeof en[K] extends readonly string[]
-    ? string[]
-    : typeof en[K] extends Record<string, unknown>
-      ? { [P in keyof typeof en[K]]: typeof en[K][P] extends Record<string, unknown>
-          ? { [Q in keyof typeof en[K][P]]: string }
-          : string }
-      : string;
-};
-
-export const es: Dictionary = {
+export const es: typeof en = {
   common: {
     cancel: 'Cancelar',
     save: 'Guardar',
@@ -240,7 +228,7 @@ export const es: Dictionary = {
     delete: 'Eliminar',
     duplicate: 'Duplicar',
     apply: 'Aplicar',
-    intervalsCount: { one: '%{count} intervalo', other: '%{count} intervalos' },
+    intervals: 'intervalos',
   },
   phases: {
     warmup: 'Calentamiento',
@@ -406,7 +394,7 @@ Create `src/lib/i18n.ts`:
 import { useCallback } from 'react';
 import { I18n } from 'i18n-js';
 import en from '../locales/en';
-import es from '../locales/es';
+import es from '../locales/es'; // also used directly in getCongratsMessages
 import { useSettings } from './settingsContext';
 
 export type Language = 'en' | 'es';
@@ -427,8 +415,7 @@ export function detectLanguage(): Language {
 }
 
 export function getCongratsMessages(): string[] {
-  const table = i18n.translations[i18n.locale] as typeof en | undefined;
-  return (table?.congrats ?? en.congrats) as string[];
+  return i18n.locale === 'es' ? es.congrats : en.congrats;
 }
 
 export function useTranslation() {
@@ -842,7 +829,7 @@ Replace literals:
 - `SESSION NAME` → `{t('edit.nameLabel')}`
 - `placeholder="e.g. Morning Blast"` → `placeholder={t('edit.namePlaceholder')}`
 - `PREVIEW` → `{t('edit.preview')}`
-- The preview meta (lines 130-132) → `{fmtDuration(previewTotal)} · {t('common.intervalsCount', { count: previewSegments.length })}`
+- The preview meta (lines 130-132) → `{fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}`
 - `ACTIVITY TYPE` → `{t('edit.activityType')}`
 - `General` → `{t('edit.general')}`; `Run` → `{t('edit.run')}`
 - `SETUP MODE` → `{t('edit.setupMode')}`
@@ -856,25 +843,13 @@ Replace literals:
 - `{isEditing ? 'SAVE CHANGES' : 'SAVE'}` → `{isEditing ? t('edit.saveChanges') : t('edit.save')}`
 - `Cancel` (line 297) → `{t('edit.cancel')}`
 
-In the `PresetStrip` component, the `Easy` / `Hard` range labels (lines 339-340): pass them down. Add a `t` to PresetStrip's props OR (simpler) translate at the call sites by passing labels. Easiest surgical change: import `useTranslation` is not available in the nested `PresetStrip` (defined at module scope). Add `t` to its props:
+`PresetStrip` is a React function component — call `useTranslation()` directly inside it. Add the import to `EditSessionScreen.tsx`'s module-level imports (already done in Step 6). Add `const { t } = useTranslation();` as the first line of `PresetStrip`'s function body. Replace `>Easy<` → `>{t('edit.presetEasy')}<` and `>Hard<` → `>{t('edit.presetHard')}<`. No prop changes needed.
 
-```ts
-function PresetStrip({ onApply, T, styles, activePreset, t }: {
-  onApply: (level: PresetLevel) => void;
-  T: ThemeTokens;
-  styles: ReturnType<typeof makeStyles>;
-  activePreset?: PresetLevel | null;
-  t: (scope: string, opts?: object) => string;
-}) {
-```
-
-Replace `>Easy<` → `>{t('edit.presetEasy')}<` and `>Hard<` → `>{t('edit.presetHard')}<`, and pass `t={t}` at all four `<PresetStrip ... />` usages.
-
-Leave the swipe `Duplicate` / `Delete` action labels for Step 8.
+Leave the swipe `Duplicate` / `Delete` action labels for Step 7.
 
 - [ ] **Step 7: Translate the swipe action labels in EditSessionScreen**
 
-`IntervalSwipeDuplicateAction` and the delete `Pressable` are module-scope. Add `t` to their props the same way and replace `>Duplicate<` → `>{t('common.duplicate')}<` and `>Delete<` → `>{t('common.delete')}<`. Thread `t` from `IntervalSwipeRow` (add `t` to its props and pass it down) and from the `renderItem` in the screen body where `<IntervalSwipeRow ... />` is rendered (`t={t}`).
+`IntervalSwipeDuplicateAction` (a `forwardRef` component) and `IntervalSwipeRow` are React components — call `useTranslation()` directly inside each. Add `const { t } = useTranslation();` at the top of `IntervalSwipeDuplicateAction`'s render function and replace `>Duplicate<` → `>{t('common.duplicate')}<`. In the inline delete `Pressable` inside `IntervalSwipeRow`, add `const { t } = useTranslation();` at the top of `IntervalSwipeRow` and replace `>Delete<` → `>{t('common.delete')}<`. No prop threading needed.
 
 - [ ] **Step 8: Translate PickerModal**
 
@@ -1007,21 +982,10 @@ Add `import { useTranslation } from '../lib/i18n';` and `const { t } = useTransl
 - [ ] **Step 3: Translate SessionCard**
 
 Add `import { useTranslation } from '../lib/i18n';` and `const { t } = useTranslation();`. Replace:
-- The stats intervals (lines 67-69):
+- The stats interval label (line 69) — no structural change, just replace the literal:
   ```tsx
-          <Text style={styles.statValue}>{segments.length}</Text>
-          <Text style={styles.statLabel}> {t('common.intervalsCount', { count: segments.length })}</Text>
+  <Text style={styles.statLabel}> {t('common.intervals')}</Text>
   ```
-  Wait — `statValue` already shows the number. Replace the two-Text stat with a single translated string to avoid duplicating the count:
-  ```tsx
-        <View style={styles.statsRow}>
-          <Text style={styles.statValue}>{fmtDuration(total)}</Text>
-          <View style={styles.statItem}>
-            <Text style={styles.statLabel}>{t('common.intervalsCount', { count: segments.length })}</Text>
-          </View>
-        </View>
-  ```
-  (Removes the separate numeric `statValue` for intervals; `common.intervalsCount` already includes the number. The duration `statValue` stays.)
 - `SELECT` (line 74) → `{t('sessions.select')}`
 
 - [ ] **Step 4: Translate PaywallModal**
@@ -1105,7 +1069,7 @@ export function getDefaultSessions(language: Language): Session[] {
 Replace `loadSessions` (lines 90-99):
 
 ```ts
-export async function loadSessions(language: Language): Promise<Session[]> {
+export async function loadSessions(language: Language = 'en'): Promise<Session[]> {
   try {
     const f = sessionsFile();
     if (!f.exists) return getDefaultSessions(language);
@@ -1117,7 +1081,7 @@ export async function loadSessions(language: Language): Promise<Session[]> {
 }
 ```
 
-`deleteSessionById` (line 112) also calls `loadSessions()` — but at that point the file always exists (you can only delete an existing, persisted session). Pass the current locale to satisfy the signature: change line 112 to `const sessions = await loadSessions(i18n.locale as Language);`.
+The default `'en'` means `deleteSessionById`'s existing `loadSessions()` call needs no change — the file always exists at that point anyway.
 
 - [ ] **Step 3: Update SessionsListScreen call site**
 
@@ -1134,8 +1098,10 @@ Add `settings.language` to the effect's dependency array: `}, [settings.language
 In `src/hooks/useEditSession.ts` (which already imports `i18n` from Task 5), change the save load (line 456):
 
 ```ts
-    const sessions = await loadSessions(i18n.locale as 'en' | 'es');
+    const sessions = await loadSessions(i18n.locale as Language);
 ```
+
+(`Language` type is exported from `src/lib/i18n.ts` — import it alongside `i18n`.)
 
 - [ ] **Step 5: Verify**
 
