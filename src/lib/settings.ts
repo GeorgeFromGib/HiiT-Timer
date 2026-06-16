@@ -13,6 +13,8 @@ export interface Settings {
   soundVolume: number; // 0–100
   speedUnit: 'km' | 'miles';
   speedUnitIsManuallySet: boolean;
+  language: 'en' | 'es';
+  languageIsManuallySet: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -26,6 +28,8 @@ export const DEFAULT_SETTINGS: Settings = {
   soundVolume: 100,
   speedUnit: 'km',
   speedUnitIsManuallySet: false,
+  language: 'en',
+  languageIsManuallySet: false,
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');

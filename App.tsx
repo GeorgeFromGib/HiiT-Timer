@@ -22,6 +22,7 @@ import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { DEFAULT_SETTINGS, detectSpeedUnit, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
 import { SettingsContext } from './src/lib/settingsContext';
+import { detectLanguage, i18n } from './src/lib/i18n';
 import { PremiumContext } from './src/lib/premiumContext';
 import { usePremiumState } from './src/hooks/usePremiumState';
 import { configureAudioSession } from './src/lib/audio';
@@ -58,12 +59,15 @@ export default function App() {
 
   useEffect(() => {
     loadSettings().then(s => {
-      const resolved = s.speedUnitIsManuallySet
-        ? s
-        : { ...s, speedUnit: detectSpeedUnit() };
+      const resolved: Settings = {
+        ...s,
+        speedUnit: s.speedUnitIsManuallySet ? s.speedUnit : detectSpeedUnit(),
+        language: s.languageIsManuallySet ? s.language : detectLanguage(),
+      };
+      i18n.locale = resolved.language;
       setSettings(resolved);
       setThemeKey(resolved.theme);
-      if (!s.speedUnitIsManuallySet) saveSettings(resolved);
+      if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
     });
   }, []);
 
@@ -74,9 +78,13 @@ export default function App() {
   }, [fontsLoaded, audioReady]);
 
   function updateSettings<K extends keyof Settings>(key: K, value: Settings[K]) {
-    const next: Settings = key === ('speedUnit' satisfies keyof Settings)
-      ? { ...settings, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
-      : { ...settings, [key]: value };
+    const next: Settings =
+      key === ('speedUnit' satisfies keyof Settings)
+        ? { ...settings, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
+        : key === ('language' satisfies keyof Settings)
+          ? { ...settings, language: value as 'en' | 'es', languageIsManuallySet: true }
+          : { ...settings, [key]: value };
+    if (key === ('language' satisfies keyof Settings)) i18n.locale = value as 'en' | 'es';
     setSettings(next);
     saveSettings(next);
     if (key === ('theme' satisfies keyof Settings)) setThemeKey(value as ThemeKey);
