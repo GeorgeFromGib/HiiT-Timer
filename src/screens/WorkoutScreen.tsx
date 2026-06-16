@@ -12,11 +12,11 @@ import Svg, { Path, Rect } from 'react-native-svg';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
 import { useSettings } from '../lib/settingsContext';
 import {
-  PHASE_META,
   totalDuration,
   fmtTimer,
   fmtSpeed,
 } from '../lib/workout';
+import { useTranslation } from '../lib/i18n';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
@@ -30,6 +30,7 @@ const EXTEND_OPTIONS = [5, 10, 15] as const;
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   const { settings } = useSettings();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (settings.keepScreenAwake) {
@@ -81,8 +82,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
   const seg            = segments[effectiveIndex];
   const nextSeg        = segments[effectiveIndex + 1];
-  const meta           = PHASE_META[seg.phase];
-  const nextMeta       = nextSeg ? PHASE_META[nextSeg.phase] : null;
   const phaseColor     = T.phases[seg.phase];
   const nextPhaseColor = nextSeg ? T.phases[nextSeg.phase] : null;
 
@@ -147,7 +146,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
             textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
           }]}>
-            {isDone ? 'DONE' : isPreStart ? 'GET READY' : meta.word}
+            {isDone ? t('workout.done') : isPreStart ? t('workout.getReady') : t('workout.phase.' + seg.phase)}
           </Text>
 
           {seg.speed !== undefined && !isDone && !isPreStart && (
@@ -188,9 +187,9 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         <View style={styles.phaseBottom}>
           {!isDone && (
             <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
-              {'INTERVAL '}
+              {t('workout.intervalPrefix')}
               <Text style={{ color: T.onBg }}>{intervalNum}</Text>
-              {` OF ${segments.length}`}
+              {t('workout.intervalSuffix', { total: segments.length })}
             </Text>
           )}
 
@@ -226,22 +225,22 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
       {/* ── Next up row ── */}
       <View style={[styles.nextUpRow, isDone && { opacity: 0 }]}>
-        {nextMeta ? (
+        {nextSeg ? (
           <>
-            <Text style={styles.nextLabel}>NEXT</Text>
+            <Text style={styles.nextLabel}>{t('workout.next')}</Text>
             <Text style={[styles.nextLabel, { marginHorizontal: 4 }]}>→</Text>
-            <WorkoutIcon variant="phase" phase={nextSeg!.phase} color={nextPhaseColor!} size={20} />
+            <WorkoutIcon variant="phase" phase={nextSeg.phase} color={nextPhaseColor!} size={20} />
             <Text style={[styles.nextPhase, { color: nextPhaseColor!, marginLeft: 5 }]}>
-              {nextMeta.word}
+              {t('workout.phase.' + nextSeg.phase)}
             </Text>
-            {nextSeg!.speed !== undefined && (
+            {nextSeg.speed !== undefined && (
               <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
-                {fmtSpeed(nextSeg!.speed, settings.speedUnit)}
+                {fmtSpeed(nextSeg.speed, settings.speedUnit)}
               </Text>
             )}
           </>
         ) : (
-          <Text style={[styles.nextPhase, { color: phaseColor }]}>FINISH</Text>
+          <Text style={[styles.nextPhase, { color: phaseColor }]}>{t('workout.finish')}</Text>
         )}
       </View>
 
@@ -299,7 +298,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
         <View style={styles.timelineLabels}>
           <Text style={styles.timelineLabelText}>{pct}%</Text>
-          <Text style={styles.timelineLabelText}>{displayRemaining} left</Text>
+          <Text style={styles.timelineLabelText}>{t('workout.left', { time: displayRemaining })}</Text>
         </View>
       </View>
 

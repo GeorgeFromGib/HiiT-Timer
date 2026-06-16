@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import { usePremium } from '../lib/premiumContext';
+import { useTranslation } from '../lib/i18n';
 
 interface Props {
   visible: boolean;
@@ -10,6 +11,7 @@ interface Props {
 
 export default function PaywallModal({ visible, onDismiss }: Props) {
   const { T } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
   const { purchase, restore, loading } = usePremium();
 
@@ -32,30 +34,28 @@ export default function PaywallModal({ visible, onDismiss }: Props) {
     >
       <Pressable style={styles.overlay} onPress={onDismiss}>
         <Pressable style={styles.card} onPress={e => e.stopPropagation()}>
-          <Text style={styles.heading}>Trial Ended</Text>
-          <Text style={styles.body}>
-            Your 30-day free trial has ended. Purchase to keep using all features.
-          </Text>
+          <Text style={styles.heading}>{t('paywall.title')}</Text>
+          <Text style={styles.body}>{t('paywall.body')}</Text>
           <Pressable
             style={[styles.purchaseBtn, loading && styles.disabled]}
             onPress={handlePurchase}
             disabled={loading}
           >
-            <Text style={styles.purchaseBtnText}>Purchase</Text>
+            <Text style={styles.purchaseBtnText}>{t('paywall.purchase')}</Text>
           </Pressable>
           <Pressable
             style={[styles.dismissBtn, loading && styles.disabled]}
             onPress={onDismiss}
             disabled={loading}
           >
-            <Text style={styles.dismissBtnText}>Not now</Text>
+            <Text style={styles.dismissBtnText}>{t('paywall.notNow')}</Text>
           </Pressable>
           <Pressable
             style={[styles.restoreBtn, loading && styles.disabled]}
             onPress={handleRestore}
             disabled={loading}
           >
-            <Text style={styles.restoreBtnText}>Restore purchases</Text>
+            <Text style={styles.restoreBtnText}>{t('paywall.restore')}</Text>
           </Pressable>
         </Pressable>
       </Pressable>

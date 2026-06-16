@@ -24,6 +24,7 @@ import IntervalRow from '../components/IntervalRow';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
 import { type PresetLevel } from '../lib/presets';
 import { useSettings } from '../lib/settingsContext';
+import { useTranslation } from '../lib/i18n';
 
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
@@ -40,6 +41,7 @@ interface Props {
 export default function EditSessionScreen({ session: existing, onBack }: Props) {
   const { T } = useTheme();
   const { settings } = useSettings();
+  const { t } = useTranslation();
   const isMiles = settings.speedUnit === 'miles';
   const styles = useMemo(() => makeStyles(T), [T]);
   const isEditing = !!existing;
@@ -61,17 +63,17 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
   const isRun = activityType === 'run';
 
   const timeFields: { label: string; field: TimeField }[] = [
-    { label: 'Warmup',   field: 'warmup'   },
-    { label: 'Work',     field: 'work'     },
-    { label: 'Rest',     field: 'rest'     },
-    { label: 'Cooldown', field: 'cooldown' },
+    { label: t('phases.warmup'),   field: 'warmup'   },
+    { label: t('phases.work'),     field: 'work'     },
+    { label: t('phases.rest'),     field: 'rest'     },
+    { label: t('phases.cooldown'), field: 'cooldown' },
   ];
 
   const speedFields: { label: string; field: keyof RunSpeeds }[] = [
-    { label: 'Warmup',   field: 'warmupSpeed'   },
-    { label: 'Work',     field: 'workSpeed'     },
-    { label: 'Rest',     field: 'restSpeed'     },
-    { label: 'Cooldown', field: 'cooldownSpeed' },
+    { label: t('phases.warmup'),   field: 'warmupSpeed'   },
+    { label: t('phases.work'),     field: 'workSpeed'     },
+    { label: t('phases.rest'),     field: 'restSpeed'     },
+    { label: t('phases.cooldown'), field: 'cooldownSpeed' },
   ];
 
   return (
@@ -84,7 +86,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kav}>
         <ScreenHeader
           onBack={cancel}
-          title={isEditing ? 'Edit Session' : 'New Session'}
+          title={isEditing ? t('edit.editTitle') : t('edit.newTitle')}
           style={styles.header}
         />
 
@@ -96,12 +98,12 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
         >
           {/* Name */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>SESSION NAME</Text>
+            <Text style={styles.fieldLabel}>{t('edit.nameLabel')}</Text>
             <TextInput
               style={styles.textInput}
               value={name}
               onChangeText={setName}
-              placeholder="e.g. Morning Blast"
+              placeholder={t('edit.namePlaceholder')}
               placeholderTextColor={T.faintText}
               returnKeyType="done"
             />
@@ -109,7 +111,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
 
           {/* Preview */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>PREVIEW</Text>
+            <Text style={styles.fieldLabel}>{t('edit.preview')}</Text>
             <View style={styles.previewCard}>
               {previewTotal > 0 && (
                 <View style={styles.previewStrip}>
@@ -128,26 +130,26 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 </View>
               )}
               <Text style={styles.previewMeta}>
-                {fmtDuration(previewTotal)} · {previewSegments.length} intervals
+                {fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}
               </Text>
             </View>
           </View>
 
           {/* Activity Type */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>ACTIVITY TYPE</Text>
+            <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
             <View style={styles.activityTypeRow}>
               <Pressable
                 style={[styles.activityTypeBtn, !isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
                 onPress={() => setActivityType(undefined)}
               >
-                <Text style={[styles.activityTypeBtnText, { color: !isRun ? T.accent : T.subText }]}>General</Text>
+                <Text style={[styles.activityTypeBtnText, { color: !isRun ? T.accent : T.subText }]}>{t('edit.general')}</Text>
               </Pressable>
               <Pressable
                 style={[styles.activityTypeBtn, isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
                 onPress={() => setActivityType('run')}
               >
-                <Text style={[styles.activityTypeBtnText, { color: isRun ? T.accent : T.subText }]}>Run</Text>
+                <Text style={[styles.activityTypeBtnText, { color: isRun ? T.accent : T.subText }]}>{t('edit.run')}</Text>
               </Pressable>
             </View>
           </View>
@@ -155,16 +157,16 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           {/* Mode toggle — always visible; back-conversion to easy is validated by tryConvertToEasy */}
           {(
             <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>SETUP MODE</Text>
+              <Text style={styles.fieldLabel}>{t('edit.setupMode')}</Text>
               <View style={styles.modeToggleRow}>
-                <Text style={[styles.modeToggleLabel, { color: !isAdvanced ? T.accent : T.subText }]}>Easy</Text>
+                <Text style={[styles.modeToggleLabel, { color: !isAdvanced ? T.accent : T.subText }]}>{t('edit.easy')}</Text>
                 <Switch
                   value={isAdvanced}
                   onValueChange={toggleMode}
                   trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
                   thumbColor={T.accent}
                 />
-                <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>Advanced</Text>
+                <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>{t('edit.advanced')}</Text>
               </View>
             </View>
           )}
@@ -173,17 +175,17 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             <>
               {/* Intervals */}
               <View style={styles.fieldGroup}>
-                <Text style={styles.fieldLabel}>INTERVAL PRESETS</Text>
+                <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
                 <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} activePreset={activeTimingPreset} />
                 {isRun && (
                   <>
-                    <Text style={styles.fieldLabel}>SPEED PRESETS</Text>
+                    <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
                     <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} activePreset={activeSpeedPreset} />
                   </>
                 )}
                 {intervals.length === 0 && (
                   <View style={styles.emptyState}>
-                    <Text style={styles.emptyStateText}>No intervals yet. Add one below.</Text>
+                    <Text style={styles.emptyStateText}>{t('edit.noIntervals')}</Text>
                   </View>
                 )}
               </View>
@@ -215,11 +217,11 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                   <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
                     <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
                   </Svg>
-                  <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>Add Interval</Text>
+                  <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>{t('edit.addInterval')}</Text>
                 </Pressable>
                 {intervals.length > 0 && (
                   <Pressable onPress={clearIntervals} style={styles.clearIntervalsBtn}>
-                    <Text style={[styles.addIntervalBtnText, { color: T.subText }]}>Clear All</Text>
+                    <Text style={[styles.addIntervalBtnText, { color: T.subText }]}>{t('edit.clearAll')}</Text>
                   </Pressable>
                 )}
               </View>
@@ -228,7 +230,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             <>
               {/* Easy mode timing */}
               <View style={styles.fieldGroup}>
-                <Text style={styles.fieldLabel}>INTERVAL PRESETS</Text>
+                <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
                 <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} activePreset={activeTimingPreset} />
                 <View style={styles.configGrid}>
                   {timeFields.map(({ label, field }) => (
@@ -245,7 +247,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                     </View>
                   ))}
                   <View style={styles.configCell}>
-                    <Text style={styles.configCellLabel}>Rounds</Text>
+                    <Text style={styles.configCellLabel}>{t('edit.rounds')}</Text>
                     <Pressable style={styles.configInput} onPress={openRoundsPicker}>
                       <Text style={styles.configInputText}>{rounds}</Text>
                     </Pressable>
@@ -259,7 +261,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           {/* Speeds — only shown in Easy mode (Advanced mode has speed presets inline above intervals) */}
           {isRun && !isAdvanced && (
             <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>SPEED PRESETS</Text>
+              <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
               <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} activePreset={activeSpeedPreset} />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => (
@@ -290,11 +292,11 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           {/* Save / Cancel */}
           <Pressable onPress={save} style={[styles.saveBtn, !hasChanges && styles.saveBtnDisabled]} disabled={!hasChanges}>
             <Text style={styles.saveBtnText}>
-              {isEditing ? 'SAVE CHANGES' : 'SAVE'}
+              {isEditing ? t('edit.saveChanges') : t('edit.save')}
             </Text>
           </Pressable>
           <Pressable onPress={cancel} style={styles.cancelBtn}>
-            <Text style={styles.cancelBtnText}>Cancel</Text>
+            <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
           </Pressable>
 
 
@@ -333,11 +335,12 @@ function PresetStrip({
   styles: ReturnType<typeof makeStyles>;
   activePreset?: PresetLevel | null;
 }) {
+  const { t } = useTranslation();
   return (
     <View>
       <View style={styles.presetRangeLabels}>
-        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>Easy</Text>
-        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>Hard</Text>
+        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{t('edit.presetEasy')}</Text>
+        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{t('edit.presetHard')}</Text>
       </View>
       <View style={styles.presetStrip}>
         {PRESET_LEVELS.map(({ label, level }) => {
@@ -692,6 +695,7 @@ const IntervalSwipeDuplicateAction = React.forwardRef<
   { reset: () => void },
   { styles: ReturnType<typeof makeStyles>; onDuplicate: () => void; swipeable: { close: () => void } }
 >(function IntervalSwipeDuplicateAction({ styles, onDuplicate, swipeable }, ref) {
+  const { t } = useTranslation();
   const opacity = useRef(new Animated.Value(1)).current;
 
   useImperativeHandle(ref, () => ({ reset: () => opacity.setValue(1) }));
@@ -710,7 +714,7 @@ const IntervalSwipeDuplicateAction = React.forwardRef<
           <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
           <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </Svg>
-        <Text style={styles.swipeDuplicateText}>Duplicate</Text>
+        <Text style={styles.swipeDuplicateText}>{t('common.duplicate')}</Text>
       </Pressable>
     </Animated.View>
   );
@@ -734,6 +738,7 @@ function IntervalSwipeRow({
   onOpenSpeedPicker?: () => void;
   onClearSpeed?:      () => void;
 }) {
+  const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
 
   return (
@@ -758,7 +763,7 @@ function IntervalSwipeRow({
               <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
             </Svg>
-            <Text style={styles.swipeDeleteText}>Delete</Text>
+            <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
           </Pressable>
         )}
       >

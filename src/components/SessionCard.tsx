@@ -7,6 +7,7 @@ import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
+import { useTranslation } from '../lib/i18n';
 
 
 
@@ -23,6 +24,7 @@ interface Props {
 
 export default function SessionCard({ session, selected, onPress, onLongPress, onEdit, onStart, onDrag, isActive }: Props) {
   const { T } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
 
   const segments = useMemo(() => getSessionSegments(session), [session]);
@@ -65,13 +67,13 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
           <Text style={styles.statValue}>{fmtDuration(total)}</Text>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{segments.length}</Text>
-            <Text style={styles.statLabel}> intervals</Text>
+            <Text style={styles.statLabel}> {t('common.intervals')}</Text>
           </View>
         </View>
 
         {selected && (
           <Pressable onPress={onStart} style={styles.startBtn}>
-            <Text style={styles.startBtnText}>SELECT</Text>
+            <Text style={styles.startBtnText}>{t('sessions.select')}</Text>
           </Pressable>
         )}
       </View>

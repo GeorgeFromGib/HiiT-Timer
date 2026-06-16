@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { i18n, type Language } from '../lib/i18n';
 import { Alert } from 'react-native';
 import { loadSessions, saveSessions, deleteSessionById, getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
 import { serializeDraft, buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
@@ -109,19 +110,18 @@ function usePickerState(
 
   const pickerTitle = (() => {
     if (!activePicker) return '';
-    if (activePicker.type === 'rounds') return 'Rounds';
-    if (activePicker.type === 'field')
-      return activePicker.field.charAt(0).toUpperCase() + activePicker.field.slice(1);
+    if (activePicker.type === 'rounds') return i18n.t('picker.roundsTitle');
+    if (activePicker.type === 'field') return i18n.t('phases.' + activePicker.field);
     if (activePicker.type === 'speed') {
       const phase = activePicker.field.replace('Speed', '');
-      return phase.charAt(0).toUpperCase() + phase.slice(1) + ' Speed';
+      return i18n.t('picker.speedSuffix', { phase: i18n.t('phases.' + phase) });
     }
     if (activePicker.type === 'intervalSpeed') {
       const idx = intervals.findIndex(iv => iv._key === activePicker.key);
-      return `Interval ${idx + 1} Speed`;
+      return i18n.t('picker.intervalSpeedTitle', { n: idx + 1 });
     }
     const idx = intervals.findIndex(iv => iv._key === activePicker.key);
-    return `Interval ${idx + 1}`;
+    return i18n.t('picker.intervalTitle', { n: idx + 1 });
   })();
 
   function openFieldPicker(field: TimeField) {
@@ -339,7 +339,12 @@ export function useEditSession(
     } else {
       const result = tryConvertToEasy(intervals);
       if (!result.ok) {
-        Alert.alert('Cannot switch to Easy', result.reason);
+        Alert.alert(
+          i18n.t('alerts.cannotSwitchEasyTitle'),
+          i18n.t(result.reasonKey, result.reasonParams?.phase !== undefined
+            ? { ...result.reasonParams, phase: i18n.t('phases.' + result.reasonParams.phase) }
+            : result.reasonParams),
+        );
         return;
       }
       setWarmup(result.warmup);
@@ -405,9 +410,9 @@ export function useEditSession(
     };
     if (timingDirty) {
       Alert.alert(
-        'Overwrite settings?',
-        'Applying this preset will replace your current timing settings.',
-        [{ text: 'Cancel', style: 'cancel' }, { text: 'Apply', onPress: doApply }],
+        i18n.t('alerts.overwriteTitle'),
+        i18n.t('alerts.overwriteTimingMessage'),
+        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
       );
     } else {
       doApply();
@@ -422,9 +427,9 @@ export function useEditSession(
     };
     if (speedsDirty) {
       Alert.alert(
-        'Overwrite settings?',
-        'Applying this preset will replace your current speed settings.',
-        [{ text: 'Cancel', style: 'cancel' }, { text: 'Apply', onPress: doApply }],
+        i18n.t('alerts.overwriteTitle'),
+        i18n.t('alerts.overwriteSpeedMessage'),
+        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
       );
     } else {
       doApply();
@@ -448,12 +453,12 @@ export function useEditSession(
   const save = async () => {
     const validation = validateDraft(name, mode, intervals);
     if (!validation.ok) {
-      Alert.alert(validation.title, validation.message);
+      Alert.alert(i18n.t(validation.titleKey), i18n.t(validation.messageKey));
       return;
     }
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     const updated = buildSessionFromDraft(mode, name.trim(), easyConfig, cleanIntervals, activityType, runSpeeds, existing?.id);
-    const sessions = await loadSessions();
+    const sessions = await loadSessions(i18n.locale as Language);
     const next = existing
       ? sessions.map(s => (s.id === updated.id ? updated : s))
       : [...sessions, updated];
@@ -470,12 +475,12 @@ export function useEditSession(
   function cancel() {
     if (hasChanges) {
       Alert.alert(
-        'Unsaved changes',
-        'Would you like to save before leaving?',
+        i18n.t('alerts.unsavedTitle'),
+        i18n.t('alerts.unsavedMessage'),
         [
-          { text: 'Save', onPress: () => save() },
-          { text: 'Discard', style: 'destructive', onPress: onBack },
-          { text: 'Keep editing', style: 'cancel' },
+          { text: i18n.t('alerts.saveBtn'), onPress: () => save() },
+          { text: i18n.t('alerts.discard'), style: 'destructive', onPress: onBack },
+          { text: i18n.t('alerts.keepEditing'), style: 'cancel' },
         ],
       );
     } else {
