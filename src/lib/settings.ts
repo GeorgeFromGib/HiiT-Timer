@@ -1,4 +1,5 @@
 import { File, Paths } from 'expo-file-system';
+import { getLocales } from 'expo-localization';
 
 export type ThemeKey = 'tidal' | 'daybreak';
 
@@ -12,6 +13,7 @@ export interface Settings {
   countdownFlash: boolean;
   soundVolume: number; // 0–100
   speedUnit: 'km' | 'miles';
+  speedUnitIsManuallySet: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -24,9 +26,15 @@ export const DEFAULT_SETTINGS: Settings = {
   countdownFlash: true,
   soundVolume: 100,
   speedUnit: 'km',
+  speedUnitIsManuallySet: false,
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');
+
+export function detectSpeedUnit(): 'km' | 'miles' {
+  const system = getLocales()[0]?.measurementSystem;
+  return system === 'us' || system === 'uk' ? 'miles' : 'km';
+}
 
 export async function loadSettings(): Promise<Settings> {
   try {
