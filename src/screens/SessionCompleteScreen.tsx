@@ -9,11 +9,14 @@ import { fmtTimer, type Segment } from '../lib/workout';
 import type { Session } from '../lib/sessions';
 
 interface Props {
-  session:  Session;
-  segments: Segment[];
-  totalDur: number;
-  onDone:   () => void;
-  onRepeat: () => void;
+  session:      Session;
+  segments:     Segment[];
+  totalDur:     number;
+  congratsMsg:  string;
+  skippedCount: number;
+  skippedSecs:  number;
+  onDone:       () => void;
+  onRepeat:     () => void;
 }
 
 function StatCard({ label, value, accent, T }: { label: string; value: string; accent?: string; T: ThemeTokens }) {
@@ -26,7 +29,7 @@ function StatCard({ label, value, accent, T }: { label: string; value: string; a
   );
 }
 
-export default function SessionCompleteScreen({ session, segments, totalDur, onDone, onRepeat }: Props) {
+export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, skippedCount, skippedSecs, onDone, onRepeat }: Props) {
   const { T } = useTheme();
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
@@ -112,8 +115,10 @@ export default function SessionCompleteScreen({ session, segments, totalDur, onD
       })}
 
       {/* Eyebrow */}
-      <Animated.View style={{ opacity: eyebrowAnim, transform: [{ translateY: eyebrowAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }}>
-        <Text style={[styles.eyebrow, { color: T.accent }]}>{t('complete.eyebrow')}</Text>
+      <Animated.View style={{ marginTop: 48, opacity: eyebrowAnim, transform: [{ translateY: eyebrowAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }}>
+        <Text style={[styles.eyebrow, { color: T.accent }]}>
+          {skippedCount > 0 ? t('complete.eyebrowPartial') : t('complete.eyebrow')}
+        </Text>
       </Animated.View>
 
       {/* Hero checkmark */}
@@ -132,7 +137,9 @@ export default function SessionCompleteScreen({ session, segments, totalDur, onD
 
       {/* Headline */}
       <Animated.View style={[styles.headlineWrap, { opacity: headlineAnim, transform: [{ translateY: headlineAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
-        <Text style={[styles.headline, { color: T.text }]}>{t('complete.headline')}</Text>
+        {skippedCount === 0 && (
+          <Text style={[styles.headline, { color: T.text }]}>{congratsMsg}</Text>
+        )}
         <Text style={[styles.subline, { color: T.subText }]}>
           {t('complete.sublinePrefix')}{' '}
           <Text style={{ color: T.text, fontFamily: 'Inter_800ExtraBold' }}>{session.name}</Text>
@@ -145,6 +152,14 @@ export default function SessionCompleteScreen({ session, segments, totalDur, onD
         <StatCard label={t('complete.intervals')} value={String(segments.length)} T={T} />
         <StatCard label={t('complete.workTime')} value={fmtTimer(workSecs)} T={T} />
       </Animated.View>
+
+      {/* Skipped stats */}
+      {skippedCount > 0 && (
+        <Animated.View style={[styles.statsRow, { marginTop: 9, opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
+          <StatCard label={t('complete.skippedIntervals')} value={String(skippedCount)} T={T} />
+          <StatCard label={t('complete.skippedTime')} value={fmtTimer(skippedSecs)} T={T} />
+        </Animated.View>
+      )}
 
       {/* Phase recap */}
       <Animated.View style={[styles.recapWrap, { opacity: recapAnim, transform: [{ translateY: recapAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
@@ -187,15 +202,15 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   eyebrow: {
     fontFamily: 'Inter_800ExtraBold',
-    fontSize: 11,
-    letterSpacing: 11 * 0.24,
+    fontSize: 22,
+    letterSpacing: 22 * 0.24,
     textTransform: 'uppercase',
     textAlign: 'center',
   },
   heroWrap: {
     alignItems: 'center',
-    marginTop: 14,
-    marginBottom: 4,
+    marginTop: 32,
+    marginBottom: 32,
   },
   checkCircle: {
     width: 96,
@@ -210,13 +225,14 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   headlineWrap: {
     alignItems: 'center',
-    marginTop: 6,
+    marginTop: 0,
   },
   headline: {
     fontFamily: 'Inter_900Black',
     fontSize: 30,
     letterSpacing: 30 * -0.02,
     lineHeight: 32,
+    textAlign: 'center',
   },
   subline: {
     fontFamily: 'Inter_600SemiBold',

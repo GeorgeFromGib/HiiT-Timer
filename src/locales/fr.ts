@@ -48,8 +48,11 @@ export const fr: typeof en = {
     intervals:     'Intervalles',
     workTime:      'Temps de travail',
     sessionRecap:  'Récapitulatif',
-    done:          'TERMINER',
-    repeat:        'RECOMMENCER',
+    done:             'TERMINER',
+    repeat:           'RECOMMENCER',
+    eyebrowPartial:   'SÉANCE TERMINÉE',
+    skippedIntervals: 'Ignorés',
+    skippedTime:      'Temps ignoré',
   },
   congrats: [
     "Tu l'as écrasé.",

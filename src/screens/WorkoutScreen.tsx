@@ -71,7 +71,21 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
   });
 
-  const reset = useCallback(() => { resetEngine(); setSegments(initialSegments); }, [resetEngine, initialSegments]);
+  const [skippedCount, setSkippedCount] = useState(0);
+  const [skippedSecs,  setSkippedSecs]  = useState(0);
+
+  const reset = useCallback(() => {
+    resetEngine();
+    setSegments(initialSegments);
+    setSkippedCount(0);
+    setSkippedSecs(0);
+  }, [resetEngine, initialSegments]);
+
+  const handleSkip = useCallback(() => {
+    setSkippedCount(c => c + 1);
+    setSkippedSecs(s => s + Math.ceil(remainingInSegment));
+    skip();
+  }, [skip, remainingInSegment]);
 
   const appendLastTwo = useCallback(() => {
     if (!toInsert.length) return;
@@ -134,6 +148,9 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         session={session}
         segments={segments}
         totalDur={TOTAL_DUR}
+        congratsMsg={congratsMsg}
+        skippedCount={skippedCount}
+        skippedSecs={skippedSecs}
         onDone={onBack}
         onRepeat={reset}
       />
@@ -365,7 +382,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           </View>
         </Pressable>
 
-        <GhostBtn onPress={skip} disabled={isIdle || isDone || isPreStart}>
+        <GhostBtn onPress={handleSkip} disabled={isIdle || isDone || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M4 4l9 6-9 6V4z" fill={T.subText} />
             <Rect x="15" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />

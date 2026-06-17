@@ -22,7 +22,7 @@ When a HIIT session finishes (`status === 'finished'`), the workout timer UI is 
 ```ts
 {
   session:  Session;    // for session.name in headline
-  segments: Segment[];  // for PhaseStrip + ring arcs + stats
+  segments: Segment[];  // for PhaseStrip + stats
   totalDur: number;     // pre-computed total seconds (sum of all segment durations)
   onDone:   () => void; // navigates to Sessions list (calls onBack in WorkoutScreen)
   onRepeat: () => void; // resets engine + segments, returns to idle state
@@ -48,11 +48,9 @@ Same `LinearGradient` as the workout screen (`T.bgGradient`). An absolute-positi
 - Color: `T.accent`
 - Alignment: centered
 
-### 4. Hero ring + checkmark
-- `SegmentedRing` SVG component (188px diameter, stroke width 12) built with `react-native-svg`
-- Arcs drawn per segment proportional to duration, each colored by `T.phases[segment.phase]`, all at 0.32 opacity (fully elapsed state)
-- Centered inside the ring: a 96px circular View with `T.accent` background and a radial gradient-style glow shadow
-- Inside that circle: checkmark SVG path (`M10 25l9.5 9.5L38 15`) stroked in `T.btnGlyph`
+### 4. Hero checkmark
+- A 96px circular View with `T.accent` background and a radial gradient-style glow shadow
+- Inside: checkmark SVG path (`M10 25l9.5 9.5L38 15`) stroked in `T.btnGlyph`
 - Entry animation: spring scale `0.7 → 1` + opacity `0 → 1` on mount
 
 ### 5. Headline
@@ -103,27 +101,6 @@ Vertical stack, gap 10, `marginTop: 'auto'`:
 
 ---
 
-## SegmentedRing Component
-
-New file: `src/components/SegmentedRing.tsx`
-
-**Props:**
-```ts
-{
-  size:      number;    // outer diameter (188 on complete screen)
-  stroke:    number;    // arc stroke width (12)
-  segments:  Segment[]; // from workout lib
-  totalDur:  number;    // sum of all durations
-  gapDeg?:   number;    // gap between arcs in degrees (default 2.4)
-}
-```
-
-Built with `react-native-svg` (`Svg`, `Path`, `Circle`, `Defs`, `Filter` from `react-native-svg`). All segments rendered at 0.32 opacity (complete state — no live progress handle needed on the done screen).
-
-Arc math identical to the web design's `arcPath` / `polar` helpers (polar coordinates, clockwise from 12 o'clock).
-
----
-
 ## Animations
 
 All entry animations use `Animated.timing` with `useNativeDriver: true` where possible (opacity + transform), firing sequentially on mount via `useEffect`.
@@ -146,7 +123,6 @@ Confetti is skipped if `AccessibilityInfo.isReduceMotionEnabled()` is true (chec
 | File | Change |
 |------|--------|
 | `src/screens/SessionCompleteScreen.tsx` | New file |
-| `src/components/SegmentedRing.tsx` | New file |
 | `src/screens/WorkoutScreen.tsx` | Conditionally render `SessionCompleteScreen` when `isDone` |
 
 No changes to `App.tsx`, `navigation.ts`, or the router.

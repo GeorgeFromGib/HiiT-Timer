@@ -46,8 +46,11 @@ export const en = {
     intervals:     'Intervals',
     workTime:      'Work Time',
     sessionRecap:  'Session Recap',
-    done:          'DONE',
-    repeat:        'REPEAT SESSION',
+    done:             'DONE',
+    repeat:           'REPEAT SESSION',
+    eyebrowPartial:   'SESSION ENDED',
+    skippedIntervals: 'Skipped',
+    skippedTime:      'Time Skipped',
   },
   congrats: [
     'You crushed it.',

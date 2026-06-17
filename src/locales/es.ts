@@ -48,8 +48,11 @@ export const es: typeof en = {
     intervals:     'Intervalos',
     workTime:      'Tiempo de trabajo',
     sessionRecap:  'Resumen',
-    done:          'LISTO',
-    repeat:        'REPETIR SESIÓN',
+    done:             'LISTO',
+    repeat:           'REPETIR SESIÓN',
+    eyebrowPartial:   'SESIÓN FINALIZADA',
+    skippedIntervals: 'Omitidos',
+    skippedTime:      'Tiempo omitido',
   },
   congrats: [
     'Lo lograste.',
