@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -12,6 +12,7 @@ import Svg, { Path, Rect } from 'react-native-svg';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
 import { useSettings } from '../lib/settingsContext';
 import {
+  type Segment,
   totalDuration,
   fmtTimer,
   fmtSpeed,
@@ -26,7 +27,18 @@ import GhostBtn  from '../components/GhostBtn';
 import { checkAndRequestReview } from '../lib/reviewState';
 
 const GOLD = '#C89B20';
-const EXTEND_OPTIONS = [5, 10, 15] as const;
+const EXTEND_OPTIONS = [5, 10] as const;
+
+function reindexFrom(segs: Segment[], startCursor: number, startIdx: number): Segment[] {
+  let cursor = startCursor;
+  let idx = startIdx;
+  return segs.map(s => {
+    const seg = { ...s, startAt: cursor, endAt: cursor + s.duration, index: idx };
+    cursor += s.duration;
+    idx++;
+    return seg;
+  });
+}
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   const { settings } = useSettings();
@@ -42,7 +54,11 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const { T, themeKey } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
-  const initialSegments = useMemo(() => getSessionSegments(session), []);
+  const initialSegments = useMemo(() => getSessionSegments(session), [session]);
+  const toInsert = useMemo(
+    () => initialSegments.filter(s => s.phase !== 'cooldown').slice(-2),
+    [initialSegments],
+  );
   const [segments, setSegments] = useState(initialSegments);
   const TOTAL_DUR = useMemo(() => totalDuration(segments), [segments]);
 
@@ -58,6 +74,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     reset: resetEngine,
     skip,
     extend,
+    replaceSegments,
+    getSegments,
   } = useWorkoutSession(segments, settings, () => {
     if (!settings.countdownFlash) return;
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
@@ -65,7 +83,20 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
   });
 
-  const reset = () => { resetEngine(); setSegments(initialSegments); };
+  const reset = useCallback(() => { resetEngine(); setSegments(initialSegments); }, [resetEngine, initialSegments]);
+
+  const appendLastTwo = useCallback(() => {
+    if (!toInsert.length) return;
+    const live = getSegments();
+    const insertAt = live.findLastIndex(s => s.phase !== 'cooldown') + 1;
+    const before = live.slice(0, insertAt);
+    const after  = live.slice(insertAt);
+    const cursor0 = before.length ? before[before.length - 1].endAt : 0;
+    const inserted = reindexFrom(toInsert, cursor0, before.length);
+    const cursor1  = inserted.length ? inserted[inserted.length - 1].endAt : cursor0;
+    const recalcAfter = reindexFrom(after, cursor1, before.length + inserted.length);
+    setSegments(replaceSegments([...before, ...inserted, ...recalcAfter]));
+  }, [toInsert, getSegments, replaceSegments]);
 
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);
@@ -221,11 +252,19 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
           {!isDone && !isPreStart && (
             <View style={styles.extendRow}>
-              {EXTEND_OPTIONS.map((secs) => (
-                <GhostBtn key={secs} onPress={() => setSegments(extend(secs))} disabled={isIdle} color={phaseColor} size={68}>
-                  <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
-                </GhostBtn>
-              ))}
+              <View style={styles.extendLeft}>
+                {EXTEND_OPTIONS.map((secs) => (
+                  <GhostBtn key={secs} onPress={() => setSegments(extend(secs))} disabled={isIdle} color={phaseColor} size={68}>
+                    <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
+                  </GhostBtn>
+                ))}
+              </View>
+              <GhostBtn onPress={appendLastTwo} disabled={isIdle} color={phaseColor} size={68}>
+                <Text style={[styles.intervalCounter, { color: phaseColor }]}>
+                  {'+1 '}
+                  <Text style={styles.roundAbbr}>{t('workout.roundAbbr')}</Text>
+                </Text>
+              </GhostBtn>
             </View>
           )}
         </View>
@@ -437,7 +476,18 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     letterSpacing: 19 * 0.08,
     color: T.onBg,
   },
+  roundAbbr: {
+    fontSize: 13,
+    letterSpacing: 13 * 0.08,
+  },
   extendRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    marginHorizontal: 16,
+  },
+  extendLeft: {
     flexDirection: 'row',
     gap: 12,
   },

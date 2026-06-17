@@ -170,7 +170,12 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     tick();
   }, [tick]);
 
-  // Extend the current segment by the given number of seconds.
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
   const extend = useCallback((seconds: number): Segment[] => {
     const elapsed = computeElapsed();
     const idx = segmentIndexAt(segmentsRef.current, elapsed);
@@ -184,11 +189,12 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     return newSegments;
   }, []);
 
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+  const replaceSegments = useCallback((newSegs: Segment[]): Segment[] => {
+    segmentsRef.current = newSegs;
+    return newSegs;
   }, []);
 
-  return { state, start, pause, resume, reset, skip, extend, sync: tick };
+  const getSegments = useCallback((): Segment[] => segmentsRef.current, []);
+
+  return { state, start, pause, resume, reset, skip, extend, replaceSegments, getSegments, sync: tick };
 }

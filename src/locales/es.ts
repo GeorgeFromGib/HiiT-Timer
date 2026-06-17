@@ -38,6 +38,7 @@ export const es: typeof en = {
       rest: 'RECUPERA',
       cooldown: 'ENFRIAMIENTO',
     },
+    roundAbbr: 'rda',
   },
   congrats: [
     'Lo lograste.',

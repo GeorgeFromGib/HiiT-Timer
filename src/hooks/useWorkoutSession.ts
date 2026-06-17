@@ -20,6 +20,8 @@ export interface WorkoutSession {
   reset: () => void;
   skip: () => void;
   extend: (seconds: number) => Segment[];
+  replaceSegments: (newSegs: Segment[]) => Segment[];
+  getSegments: () => Segment[];
 }
 
 export function useWorkoutSession(
@@ -37,7 +39,7 @@ export function useWorkoutSession(
     return msgs[Math.floor(Math.random() * msgs.length)];
   });
 
-  const { state, start, pause, resume, reset: engineReset, skip, extend } = useTimerEngine(segments, {
+  const { state, start, pause, resume, reset: engineReset, skip, extend, replaceSegments: engineReplaceSegments, getSegments } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
       cues.onTransition(to?.phase ?? null);
     },
@@ -76,6 +78,8 @@ export function useWorkoutSession(
     engineReset();
   }, [countdown, engineReset]);
 
+  const replaceSegments = useCallback((newSegs: Segment[]) => engineReplaceSegments(newSegs), [engineReplaceSegments]);
+
   return {
     status: countdown.count !== null ? 'preStart' : state.status,
     preStartCount: countdown.count,
@@ -88,5 +92,7 @@ export function useWorkoutSession(
     reset,
     skip,
     extend,
+    replaceSegments,
+    getSegments,
   };
 }

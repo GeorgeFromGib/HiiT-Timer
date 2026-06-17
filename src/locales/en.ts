@@ -36,6 +36,7 @@ export const en = {
       rest: 'RECOVER',
       cooldown: 'COOL DOWN',
     },
+    roundAbbr: 'rnd',
   },
   congrats: [
     'You crushed it.',
