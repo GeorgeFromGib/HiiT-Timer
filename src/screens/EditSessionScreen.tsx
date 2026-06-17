@@ -15,7 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { loadSessions, saveSessions, deleteSessionById, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
+import { loadSessions, saveSessions, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
 import { fmtDuration, convertKmhToMph } from '../lib/workout';
 import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -26,7 +26,6 @@ import { useEditSession, type LocalInterval, type TimeField } from '../hooks/use
 import { type PresetLevel } from '../lib/presets';
 import { useSettings } from '../lib/settingsContext';
 import { i18n, type Language, useTranslation } from '../lib/i18n';
-import { confirmDeleteSession } from '../lib/alerts';
 
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
@@ -58,7 +57,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     applyDurationPreset, applySpeedPreset,
-    buildSavePayload, getDeleteTarget,
+    buildSavePayload,
   } = useEditSession(existing, onBack);
 
   const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges } = draft;
@@ -105,14 +104,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     );
   }
 
-  function handleDelete() {
-    const target = getDeleteTarget();
-    if (!target) return;
-    confirmDeleteSession(target.name, async () => {
-      await deleteSessionById(target.id);
-      onBack();
-    });
-  }
 
   return (
     <LinearGradient
@@ -716,17 +707,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.subText,
   },
 
-  deleteBtn: {
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  deleteBtnText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 14,
-    letterSpacing: 14 * 0.06,
-    textTransform: 'uppercase',
-    color: '#ff5a5f',
-  },
 }); }
 
 const IntervalSwipeDuplicateAction = React.forwardRef<

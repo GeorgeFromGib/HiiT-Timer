@@ -95,7 +95,6 @@ export interface EditSessionInterface {
   applySpeedPreset:    (level: PresetLevel) => void;
   // Persistence
   buildSavePayload: () => SavePayload;
-  getDeleteTarget:  () => { id: string; name: string } | null;
 }
 
 function usePickerState(
@@ -468,11 +467,6 @@ export function useEditSession(
     return current !== initialSnapshot;
   }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds]);
 
-  function getDeleteTarget(): { id: string; name: string } | null {
-    if (!existing) return null;
-    return { id: existing.id, name: existing.name };
-  }
-
   const draft: EditSessionDraft = {
     name,
     isAdvanced: mode === 'advanced',
@@ -510,6 +504,5 @@ export function useEditSession(
     applyDurationPreset,
     applySpeedPreset,
     buildSavePayload,
-    getDeleteTarget,
   };
 }
