@@ -93,10 +93,10 @@ export function useWorkoutSession(
     const insertAt = live.findLastIndex(s => s.phase !== 'cooldown') + 1;
     const before = live.slice(0, insertAt);
     const after  = live.slice(insertAt);
-    const cursor0 = before.length ? before[before.length - 1].endAt : 0;
-    const inserted = reindexFrom(segsToInsert, cursor0, before.length);
-    const cursor1  = inserted.length ? inserted[inserted.length - 1].endAt : cursor0;
-    const recalcAfter = reindexFrom(after, cursor1, before.length + inserted.length);
+    const insertionCursor = before.length ? before[before.length - 1].endAt : 0;
+    const inserted = reindexFrom(segsToInsert, insertionCursor, before.length);
+    const afterCursor = inserted.length ? inserted[inserted.length - 1].endAt : insertionCursor;
+    const recalcAfter = reindexFrom(after, afterCursor, before.length + inserted.length);
     return replaceSegments([...before, ...inserted, ...recalcAfter]);
   }, [getSegments, replaceSegments]);
 
