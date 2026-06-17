@@ -40,6 +40,17 @@ export const fr: typeof en = {
     },
     roundAbbr: 'rnd',
   },
+  complete: {
+    eyebrow:       'ENTRAÎNEMENT TERMINÉ',
+    headline:      'Bravo !',
+    sublinePrefix: 'Vous avez terminé',
+    totalTime:     'Durée totale',
+    intervals:     'Intervalles',
+    workTime:      'Temps de travail',
+    sessionRecap:  'Récapitulatif',
+    done:          'TERMINER',
+    repeat:        'RECOMMENCER',
+  },
   congrats: [
     "Tu l'as écrasé.",
     "C'est de ça que tu es fait.",

@@ -38,6 +38,17 @@ export const en = {
     },
     roundAbbr: 'rnd',
   },
+  complete: {
+    eyebrow:       'WORKOUT COMPLETE',
+    headline:      'Crushed it!',
+    sublinePrefix: 'You finished',
+    totalTime:     'Total Time',
+    intervals:     'Intervals',
+    workTime:      'Work Time',
+    sessionRecap:  'Session Recap',
+    done:          'DONE',
+    repeat:        'REPEAT SESSION',
+  },
   congrats: [
     'You crushed it.',
     "That's what you're made of.",
