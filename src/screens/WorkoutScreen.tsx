@@ -12,7 +12,6 @@ import Svg, { Path, Rect } from 'react-native-svg';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
 import { useSettings } from '../lib/settingsContext';
 import {
-  type Segment,
   totalDuration,
   fmtTimer,
   fmtSpeed,
@@ -28,17 +27,6 @@ import { checkAndRequestReview } from '../lib/reviewState';
 
 const GOLD = '#C89B20';
 const EXTEND_OPTIONS = [5, 10] as const;
-
-function reindexFrom(segs: Segment[], startCursor: number, startIdx: number): Segment[] {
-  let cursor = startCursor;
-  let idx = startIdx;
-  return segs.map(s => {
-    const seg = { ...s, startAt: cursor, endAt: cursor + s.duration, index: idx };
-    cursor += s.duration;
-    idx++;
-    return seg;
-  });
-}
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
   const { settings } = useSettings();
@@ -74,8 +62,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     reset: resetEngine,
     skip,
     extend,
-    replaceSegments,
-    getSegments,
+    addRound,
   } = useWorkoutSession(segments, settings, () => {
     if (!settings.countdownFlash) return;
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
@@ -87,16 +74,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
   const appendLastTwo = useCallback(() => {
     if (!toInsert.length) return;
-    const live = getSegments();
-    const insertAt = live.findLastIndex(s => s.phase !== 'cooldown') + 1;
-    const before = live.slice(0, insertAt);
-    const after  = live.slice(insertAt);
-    const cursor0 = before.length ? before[before.length - 1].endAt : 0;
-    const inserted = reindexFrom(toInsert, cursor0, before.length);
-    const cursor1  = inserted.length ? inserted[inserted.length - 1].endAt : cursor0;
-    const recalcAfter = reindexFrom(after, cursor1, before.length + inserted.length);
-    setSegments(replaceSegments([...before, ...inserted, ...recalcAfter]));
-  }, [toInsert, getSegments, replaceSegments]);
+    setSegments(addRound(toInsert));
+  }, [toInsert, addRound]);
 
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);

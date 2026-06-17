@@ -20,8 +20,18 @@ export interface WorkoutSession {
   reset: () => void;
   skip: () => void;
   extend: (seconds: number) => Segment[];
-  replaceSegments: (newSegs: Segment[]) => Segment[];
-  getSegments: () => Segment[];
+  addRound: (segsToInsert: Segment[]) => Segment[];
+}
+
+function reindexFrom(segs: Segment[], startCursor: number, startIdx: number): Segment[] {
+  let cursor = startCursor;
+  let idx = startIdx;
+  return segs.map(s => {
+    const seg = { ...s, startAt: cursor, endAt: cursor + s.duration, index: idx };
+    cursor += s.duration;
+    idx++;
+    return seg;
+  });
 }
 
 export function useWorkoutSession(
@@ -39,7 +49,7 @@ export function useWorkoutSession(
     return msgs[Math.floor(Math.random() * msgs.length)];
   });
 
-  const { state, start, pause, resume, reset: engineReset, skip, extend, replaceSegments: engineReplaceSegments, getSegments } = useTimerEngine(segments, {
+  const { state, start, pause, resume, reset: engineReset, skip, extend, replaceSegments, getSegments } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
       cues.onTransition(to?.phase ?? null);
     },
@@ -78,7 +88,17 @@ export function useWorkoutSession(
     engineReset();
   }, [countdown, engineReset]);
 
-  const replaceSegments = useCallback((newSegs: Segment[]) => engineReplaceSegments(newSegs), [engineReplaceSegments]);
+  const addRound = useCallback((segsToInsert: Segment[]): Segment[] => {
+    const live = getSegments();
+    const insertAt = live.findLastIndex(s => s.phase !== 'cooldown') + 1;
+    const before = live.slice(0, insertAt);
+    const after  = live.slice(insertAt);
+    const cursor0 = before.length ? before[before.length - 1].endAt : 0;
+    const inserted = reindexFrom(segsToInsert, cursor0, before.length);
+    const cursor1  = inserted.length ? inserted[inserted.length - 1].endAt : cursor0;
+    const recalcAfter = reindexFrom(after, cursor1, before.length + inserted.length);
+    return replaceSegments([...before, ...inserted, ...recalcAfter]);
+  }, [getSegments, replaceSegments]);
 
   return {
     status: countdown.count !== null ? 'preStart' : state.status,
@@ -92,7 +112,6 @@ export function useWorkoutSession(
     reset,
     skip,
     extend,
-    replaceSegments,
-    getSegments,
+    addRound,
   };
 }
