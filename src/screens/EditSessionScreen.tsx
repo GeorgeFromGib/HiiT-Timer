@@ -537,8 +537,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.faintText,
   },
 
-  advancedHeader: { gap: 22 },
-  advancedFooter: { gap: 22 },
   intervalSwipeContainer: { marginBottom: 6 },
   intervalRow: {
     flexDirection: 'row',
@@ -677,7 +675,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.subText,
   },
 
-  // ── Save / Delete ──────────────────────────────────────────────────────────
+  // ── Save / Cancel ─────────────────────────────────────────────────────────
   saveBtn: {
     backgroundColor: T.accent,
     borderRadius: 14,
