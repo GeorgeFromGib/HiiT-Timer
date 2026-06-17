@@ -44,7 +44,7 @@ export function useWorkoutSession(
 
   const { state, start, pause, resume, reset: engineReset, skip, extend } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
-      cues.onTransition(to);
+      cues.onTransition(to?.phase ?? null);
     },
     onCountdown: () => {
       cues.onCountdown();
