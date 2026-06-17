@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
+import { usePreStartCountdown } from './usePreStartCountdown';
 import { Segment } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
 import { getCongratsMessages } from '../lib/i18n';
@@ -31,9 +32,6 @@ export function useWorkoutSession(
   const onCountdownBeatRef = useRef(onCountdownBeat);
   onCountdownBeatRef.current = onCountdownBeat;
 
-  const [preStartCount, setPreStartCount] = useState<null | 3 | 2 | 1>(null);
-  const preStartIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const [congratsMsg] = useState(() => {
     const msgs = getCongratsMessages();
     return msgs[Math.floor(Math.random() * msgs.length)];
@@ -54,59 +52,33 @@ export function useWorkoutSession(
 
   useEffect(() => { configureAudioSession(); }, []);
 
-  useEffect(() => () => {
-    if (preStartIntervalRef.current) clearInterval(preStartIntervalRef.current);
-  }, []);
-
-  const beginPreStart = useCallback(() => {
-    setPreStartCount(3);
-    cues.onPreStartTick();
-    let count = 3;
-    preStartIntervalRef.current = setInterval(() => {
-      count -= 1;
-      if (count > 0) {
-        setPreStartCount(count as 2 | 1);
-        cues.onPreStartTick();
-      } else {
-        clearInterval(preStartIntervalRef.current!);
-        preStartIntervalRef.current = null;
-        setPreStartCount(null);
-        cues.startKeepAlive();
-        start();
-      }
-    }, 1000);
-  }, [start, cues]);
+  const countdown = usePreStartCountdown({
+    onTick: () => cues.onPreStartTick(),
+    onComplete: () => { cues.startKeepAlive(); start(); },
+  });
 
   const handlePlayPause = useCallback(() => {
-    // Use the ref as the pre-start check so this callback doesn't need
-    // preStartCount in its dep array (avoids stale-closure issues).
-    if (preStartIntervalRef.current !== null) {
-      clearInterval(preStartIntervalRef.current);
-      preStartIntervalRef.current = null;
-      setPreStartCount(null);
+    if (countdown.isRunning()) {
+      countdown.cancel();
       return;
     }
     if (state.status === 'idle' || state.status === 'finished') {
-      beginPreStart();
+      countdown.begin();
     } else if (state.status === 'running') {
       pause();
     } else {
       resume();
     }
-  }, [state.status, beginPreStart, pause, resume]);
+  }, [countdown, state.status, pause, resume]);
 
   const reset = useCallback(() => {
-    if (preStartIntervalRef.current) {
-      clearInterval(preStartIntervalRef.current);
-      preStartIntervalRef.current = null;
-      setPreStartCount(null);
-    }
+    countdown.cancel();
     engineReset();
-  }, [engineReset]);
+  }, [countdown, engineReset]);
 
   return {
-    status: preStartCount !== null ? 'preStart' : state.status,
-    preStartCount,
+    status: countdown.count !== null ? 'preStart' : state.status,
+    preStartCount: countdown.count,
     elapsed: state.elapsed,
     currentIndex: state.currentIndex,
     remainingInSegment: state.remainingInSegment,
