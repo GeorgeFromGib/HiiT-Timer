@@ -2,12 +2,13 @@ import { useCallback } from 'react';
 import { I18n } from 'i18n-js';
 import en from '../locales/en';
 import es from '../locales/es'; // also used directly in getCongratsMessages
+import fr from '../locales/fr'; // also used directly in getCongratsMessages
 import { useSettings } from './settingsContext';
 
-export type Language = 'en' | 'es';
+export type Language = 'en' | 'es' | 'fr';
 
 export const i18n = new I18n(
-  { en, es },
+  { en, es, fr },
   { locale: 'en', defaultLocale: 'en', enableFallback: true },
 );
 
@@ -15,14 +16,19 @@ export function detectLanguage(): Language {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { getLocales } = require('expo-localization') as typeof import('expo-localization');
-    return getLocales()[0]?.languageCode === 'es' ? 'es' : 'en';
+    const code = getLocales()[0]?.languageCode;
+    if (code === 'es') return 'es';
+    if (code === 'fr') return 'fr';
+    return 'en';
   } catch {
     return 'en';
   }
 }
 
 export function getCongratsMessages(): string[] {
-  return i18n.locale === 'es' ? es.congrats : en.congrats;
+  if (i18n.locale === 'es') return es.congrats;
+  if (i18n.locale === 'fr') return fr.congrats;
+  return en.congrats;
 }
 
 export function useTranslation() {

@@ -13,7 +13,7 @@ export interface Settings {
   soundVolume: number; // 0–100
   speedUnit: 'km' | 'miles';
   speedUnitIsManuallySet: boolean;
-  language: 'en' | 'es';
+  language: 'en' | 'es' | 'fr';
   languageIsManuallySet: boolean;
 }
 

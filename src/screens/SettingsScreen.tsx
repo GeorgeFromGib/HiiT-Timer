@@ -120,7 +120,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             last
             right={
               <View style={styles.segControl}>
-                {(['en', 'es'] as const).map(lng => (
+                {(['en', 'es', 'fr'] as const).map(lng => (
                   <Pressable
                     key={lng}
                     onPress={() => updateSettings('language', lng)}
@@ -133,7 +133,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
                       styles.segBtnText,
                       { color: settings.language === lng ? T.btnGlyph : T.subText },
                     ]}>
-                      {lng === 'en' ? 'English' : 'Español'}
+                      {lng === 'en' ? 'English' : lng === 'es' ? 'Español' : 'Français'}
                     </Text>
                   </Pressable>
                 ))}
