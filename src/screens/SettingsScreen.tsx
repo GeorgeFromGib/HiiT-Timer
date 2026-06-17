@@ -54,7 +54,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
             {THEME_PREVIEWS.map(th => (
               <ThemeCard
                 key={th.key}
-                theme={th}
+                theme={{ ...th, name: t(`theme.${th.key}.name`), note: t(`theme.${th.key}.note`) }}
                 selected={themeKey === th.key}
                 onSelect={() => updateSettings('theme', th.key)}
               />

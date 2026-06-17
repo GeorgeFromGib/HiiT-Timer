@@ -2,6 +2,7 @@ import {
   initConnection,
   requestPurchase,
   getAvailablePurchases,
+  restorePurchases as iapRestorePurchases,
   finishTransaction,
   purchaseUpdatedListener,
   purchaseErrorListener,
@@ -135,6 +136,7 @@ export async function restorePurchases(): Promise<boolean> {
   if (state.flowState !== 'idle') return false;
   state.flowState = 'restoring';
   try {
+    await iapRestorePurchases();
     const purchases = await getAvailablePurchases();
     const found = purchases.some((p) => p.productId === PRODUCT_ID);
     if (found) {

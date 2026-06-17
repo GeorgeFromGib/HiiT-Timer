@@ -2,12 +2,13 @@
   "expo": {
     "name": "Clear HiiT",
     "slug": "hiit-timer",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
+      "deploymentTarget": "16.4",
       "bundleIdentifier": "com.georgefromgib.hiittimer",
       "appleTeamId": "XDDJQKHRY8",
       "infoPlist": {

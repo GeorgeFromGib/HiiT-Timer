@@ -159,6 +159,10 @@ export const en = {
     quick: 'Quick HiiT',
     run: 'Interval Run',
   },
+  theme: {
+    tidal: { name: 'Tidal', note: 'Deep teal · calm' },
+    daybreak: { name: 'Daybreak', note: 'Light · warm paper' },
+  },
 };
 
 export default en;

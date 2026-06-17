@@ -161,6 +161,10 @@ export const es: typeof en = {
     quick: 'HIIT rápido',
     run: 'Carrera por intervalos',
   },
+  theme: {
+    tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },
+    daybreak: { name: 'Daybreak', note: 'Claro · papel cálido' },
+  },
 };
 
 export default es;

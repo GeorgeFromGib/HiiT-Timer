@@ -18,7 +18,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  theme: 'tidal',
+  theme: 'daybreak',
   congratsMessage: true,
   finalCountdownBeep: true,
   keepScreenAwake: true,
