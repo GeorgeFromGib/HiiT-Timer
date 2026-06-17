@@ -1,5 +1,6 @@
 import React, { useRef, useImperativeHandle, useMemo } from 'react';
 import {
+  Alert,
   Animated,
   KeyboardAvoidingView,
   Platform,
@@ -14,7 +15,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
+import { loadSessions, saveSessions, deleteSessionById, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
 import { fmtDuration, convertKmhToMph } from '../lib/workout';
 import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -24,7 +25,8 @@ import IntervalRow from '../components/IntervalRow';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
 import { type PresetLevel } from '../lib/presets';
 import { useSettings } from '../lib/settingsContext';
-import { useTranslation } from '../lib/i18n';
+import { i18n, type Language, useTranslation } from '../lib/i18n';
+import { confirmDeleteSession } from '../lib/alerts';
 
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
@@ -56,7 +58,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     applyDurationPreset, applySpeedPreset,
-    save, cancel, deleteSession,
+    buildSavePayload, getDeleteTarget,
   } = useEditSession(existing, onBack);
 
   const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges } = draft;
@@ -76,6 +78,42 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     { label: t('phases.cooldown'), field: 'cooldownSpeed' },
   ];
 
+  async function handleSave() {
+    const payload = buildSavePayload();
+    if (!payload.ok) {
+      Alert.alert(i18n.t(payload.titleKey), i18n.t(payload.messageKey));
+      return;
+    }
+    const sessions = await loadSessions(i18n.locale as Language);
+    const next = payload.isNew
+      ? [...sessions, payload.session]
+      : sessions.map(s => (s.id === payload.session.id ? payload.session : s));
+    await saveSessions(next);
+    onBack();
+  }
+
+  function handleCancel() {
+    if (!draft.hasChanges) { onBack(); return; }
+    Alert.alert(
+      i18n.t('alerts.unsavedTitle'),
+      i18n.t('alerts.unsavedMessage'),
+      [
+        { text: i18n.t('alerts.saveBtn'), onPress: handleSave },
+        { text: i18n.t('alerts.discard'), style: 'destructive', onPress: onBack },
+        { text: i18n.t('alerts.keepEditing'), style: 'cancel' },
+      ],
+    );
+  }
+
+  function handleDelete() {
+    const target = getDeleteTarget();
+    if (!target) return;
+    confirmDeleteSession(target.name, async () => {
+      await deleteSessionById(target.id);
+      onBack();
+    });
+  }
+
   return (
     <LinearGradient
       colors={T.bgGradient}
@@ -85,7 +123,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     >
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kav}>
         <ScreenHeader
-          onBack={cancel}
+          onBack={handleCancel}
           title={isEditing ? t('edit.editTitle') : t('edit.newTitle')}
           style={styles.header}
         />
@@ -290,12 +328,12 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           )}
 
           {/* Save / Cancel */}
-          <Pressable onPress={save} style={[styles.saveBtn, !hasChanges && styles.saveBtnDisabled]} disabled={!hasChanges}>
+          <Pressable onPress={handleSave} style={[styles.saveBtn, !hasChanges && styles.saveBtnDisabled]} disabled={!hasChanges}>
             <Text style={styles.saveBtnText}>
               {isEditing ? t('edit.saveChanges') : t('edit.save')}
             </Text>
           </Pressable>
-          <Pressable onPress={cancel} style={styles.cancelBtn}>
+          <Pressable onPress={handleCancel} style={styles.cancelBtn}>
             <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
           </Pressable>
 

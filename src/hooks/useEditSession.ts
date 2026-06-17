@@ -1,10 +1,9 @@
 import { useMemo, useRef, useState } from 'react';
-import { i18n, type Language } from '../lib/i18n';
+import { i18n } from '../lib/i18n';
 import { Alert } from 'react-native';
-import { loadSessions, saveSessions, deleteSessionById, getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
+import { getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
 import { serializeDraft, buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel, DURATION_PRESETS, SPEED_PRESETS, findMatchingDurationPreset, findMatchingDurationPresetForIntervals, findMatchingSpeedPreset } from '../lib/presets';
-import { confirmDeleteSession } from '../lib/alerts';
 import {
   totalDuration, tryConvertToEasy, buildIntervalsFromEasy, convertKmhToMph, convertMphToKmh,
   type Interval, type Phase, type Segment,
@@ -29,6 +28,10 @@ type CommitResult =
   | { type: 'rounds';        value: number }
   | { type: 'speed';         field: keyof RunSpeeds; kmh: number }
   | { type: 'intervalSpeed'; key: string;            kmh: number };
+
+export type SavePayload =
+  | { ok: true; session: Session; isNew: boolean }
+  | { ok: false; titleKey: string; messageKey: string };
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 
@@ -91,9 +94,8 @@ export interface EditSessionInterface {
   applyDurationPreset: (level: PresetLevel) => void;
   applySpeedPreset:    (level: PresetLevel) => void;
   // Persistence
-  save:          () => Promise<void>;
-  cancel:        () => void;
-  deleteSession: () => void;
+  buildSavePayload: () => SavePayload;
+  getDeleteTarget:  () => { id: string; name: string } | null;
 }
 
 function usePickerState(
@@ -450,21 +452,15 @@ export function useEditSession(
     );
   }
 
-  const save = async () => {
+  function buildSavePayload(): SavePayload {
     const validation = validateDraft(name, mode, intervals);
     if (!validation.ok) {
-      Alert.alert(i18n.t(validation.titleKey), i18n.t(validation.messageKey));
-      return;
+      return { ok: false, titleKey: validation.titleKey, messageKey: validation.messageKey };
     }
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
-    const updated = buildSessionFromDraft(mode, name.trim(), easyConfig, cleanIntervals, activityType, runSpeeds, existing?.id);
-    const sessions = await loadSessions(i18n.locale as Language);
-    const next = existing
-      ? sessions.map(s => (s.id === updated.id ? updated : s))
-      : [...sessions, updated];
-    await saveSessions(next);
-    onBack();
-  };
+    const session = buildSessionFromDraft(mode, name.trim(), easyConfig, cleanIntervals, activityType, runSpeeds, existing?.id);
+    return { ok: true, session, isNew: !existing };
+  }
 
   const hasChanges = useMemo(() => {
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
@@ -472,28 +468,9 @@ export function useEditSession(
     return current !== initialSnapshot;
   }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds]);
 
-  function cancel() {
-    if (hasChanges) {
-      Alert.alert(
-        i18n.t('alerts.unsavedTitle'),
-        i18n.t('alerts.unsavedMessage'),
-        [
-          { text: i18n.t('alerts.saveBtn'), onPress: () => save() },
-          { text: i18n.t('alerts.discard'), style: 'destructive', onPress: onBack },
-          { text: i18n.t('alerts.keepEditing'), style: 'cancel' },
-        ],
-      );
-    } else {
-      onBack();
-    }
-  }
-
-  function deleteSession() {
-    if (!existing) return;
-    confirmDeleteSession(existing.name, async () => {
-      await deleteSessionById(existing.id);
-      onBack();
-    });
+  function getDeleteTarget(): { id: string; name: string } | null {
+    if (!existing) return null;
+    return { id: existing.id, name: existing.name };
   }
 
   const draft: EditSessionDraft = {
@@ -532,8 +509,7 @@ export function useEditSession(
     dismissPicker,
     applyDurationPreset,
     applySpeedPreset,
-    save,
-    cancel,
-    deleteSession,
+    buildSavePayload,
+    getDeleteTarget,
   };
 }
