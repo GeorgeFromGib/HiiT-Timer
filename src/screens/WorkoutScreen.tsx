@@ -23,6 +23,7 @@ import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } f
 import ScreenHeader from '../components/ScreenHeader';
 import WorkoutIcon from '../components/WorkoutIcon';
 import GhostBtn  from '../components/GhostBtn';
+import SessionCompleteScreen from './SessionCompleteScreen';
 import { checkAndRequestReview } from '../lib/reviewState';
 
 const GOLD = '#C89B20';
@@ -126,6 +127,18 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     inputRange:  [0, 1],
     outputRange: [segEndPct, segStartPct],
   });
+
+  if (isDone) {
+    return (
+      <SessionCompleteScreen
+        session={session}
+        segments={segments}
+        totalDur={TOTAL_DUR}
+        onDone={onBack}
+        onRepeat={reset}
+      />
+    );
+  }
 
   return (
     <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
