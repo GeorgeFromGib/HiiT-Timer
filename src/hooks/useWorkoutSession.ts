@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { configureAudioSession, useWorkoutAudioCues } from '../lib/audio';
+import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import { Segment } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
@@ -26,10 +26,7 @@ export function useWorkoutSession(
   settings: Settings = DEFAULT_SETTINGS,
   onCountdownBeat?: () => void,
 ): WorkoutSession {
-  const settingsRef = useRef(settings);
-  settingsRef.current = settings;
-
-  const cues = useWorkoutAudioCues(() => settingsRef.current);
+  const cues = useWorkoutAudio(settings);
 
   const onCountdownBeatRef = useRef(onCountdownBeat);
   onCountdownBeatRef.current = onCountdownBeat;
