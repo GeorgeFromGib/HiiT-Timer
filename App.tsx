@@ -50,7 +50,10 @@ export default function App() {
   const [audioReady, setAudioReady] = useState(false);
   const [route, setRoute] = useState<Route>({ name: 'Sessions' });
   const [themeKey, setThemeKey] = useState<ThemeKey>('daybreak');
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<Settings>({
+    ...DEFAULT_SETTINGS,
+    language: detectLanguage(),
+  });
   const premiumState = usePremiumState();
 
   useEffect(() => {
