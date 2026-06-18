@@ -43,6 +43,19 @@ function silence(sec) {
   return buildWav(new Float32Array(Math.floor(SR * sec)));
 }
 
+function bell(hz, sec, vol = 0.8) {
+  const n = Math.floor(SR * sec);
+  const attack = Math.floor(SR * 0.005); // 5ms linear attack
+  const s = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const amp = i < attack
+      ? vol * (i / attack)
+      : vol * Math.exp(-4 * (i - attack) / (n - attack));
+    s[i] = amp * Math.sin((2 * Math.PI * hz * i) / SR);
+  }
+  return buildWav(s);
+}
+
 function concat(...wavBufs) {
   const totalSamples = wavBufs.reduce((sum, b) => sum + (b.length - 44) / 2, 0);
   const out = Buffer.alloc(44 + totalSamples * 2);
@@ -65,11 +78,12 @@ const files = {
   'high.wav':      tone(880,  0.25), // A5 — "go"
   'low.wav':       tone(523,  0.25), // C5 — "recover"
   'tick.wav':      tone(1047, 0.07), // C6 — 3-2-1 blip
-  'finish.wav':    concat(           // rising arpeggio ta-da, starts at session-start freq, perfect 5th intervals
-    tone( 880, 0.15, 0.7),           // A5 blip  (matches session start / high.wav)
-    tone(1319, 0.15, 0.7),           // E6 blip  (perfect 5th up)
-    tone(1760, 0.15, 0.7),           // A6 blip  (octave above start)
-    tone(1760, 0.45, 0.9),           // A6 sustain
+  'finish.wav':    concat(           // 5 bell chimes in fast succession
+    bell(1047, 0.35), silence(0.06),
+    bell(1047, 0.35), silence(0.06),
+    bell(1047, 0.35), silence(0.06),
+    bell(1047, 0.35), silence(0.06),
+    bell(1047, 0.35),
   ),
 };
 
