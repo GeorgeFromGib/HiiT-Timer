@@ -21,6 +21,7 @@ export const en = {
     select: 'SELECT',
     deleteTitle: 'Delete Session',
     deleteMessage: 'Remove "%{name}"?',
+    hint: 'Swipe right to duplicate, left to delete. Sort via the drag handles.',
   },
   workout: {
     done: 'DONE',

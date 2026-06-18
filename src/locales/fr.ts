@@ -23,6 +23,7 @@ export const fr: typeof en = {
     select: 'SÉLECTIONNER',
     deleteTitle: 'Supprimer la séance',
     deleteMessage: 'Supprimer « %{name} » ?',
+    hint: 'Glissez à droite pour dupliquer, à gauche pour supprimer. Triez via les poignées.',
   },
   workout: {
     done: 'TERMINÉ',

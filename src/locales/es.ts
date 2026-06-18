@@ -23,6 +23,7 @@ export const es: typeof en = {
     select: 'SELECCIONAR',
     deleteTitle: 'Eliminar sesión',
     deleteMessage: '¿Eliminar "%{name}"?',
+    hint: 'Desliza a la derecha para duplicar, a la izquierda para eliminar. Ordena con las asas.',
   },
   workout: {
     done: 'HECHO',
