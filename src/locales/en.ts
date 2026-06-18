@@ -170,9 +170,9 @@ export const en = {
     restore: 'Restore purchases',
   },
   defaultSessions: {
-    tabata: 'Tabata Burnout',
-    quick: 'Quick HiiT',
-    run: 'Interval Run',
+    example1: 'Example 1',
+    example2: 'Example 2',
+    example3: 'Example 3',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },

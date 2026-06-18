@@ -172,9 +172,9 @@ export const fr: typeof en = {
     restore: 'Restaurer les achats',
   },
   defaultSessions: {
-    tabata: 'Tabata Brûlant',
-    quick: 'HIIT Rapide',
-    run: 'Course par intervalles',
+    example1: 'Exemple 1',
+    example2: 'Exemple 2',
+    example3: 'Exemple 3',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Bleu-vert profond · calme' },

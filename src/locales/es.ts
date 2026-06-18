@@ -172,9 +172,9 @@ export const es: typeof en = {
     restore: 'Restaurar compras',
   },
   defaultSessions: {
-    tabata: 'Tabata a tope',
-    quick: 'HIIT rápido',
-    run: 'Carrera por intervalos',
+    example1: 'Ejemplo 1',
+    example2: 'Ejemplo 2',
+    example3: 'Ejemplo 3',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },

@@ -61,13 +61,13 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
   return [
     {
       id: 'default-1',
-      name: i18n.t('defaultSessions.tabata', { locale }),
+      name: i18n.t('defaultSessions.example1', { locale }),
       mode: 'easy',
       config: { warmup: 45, high: 20, low: 10, rounds: 8, cooldown: 60 },
     },
     {
       id: 'default-2',
-      name: i18n.t('defaultSessions.quick', { locale }),
+      name: i18n.t('defaultSessions.example2', { locale }),
       mode: 'advanced',
       intervals: [
         { type: 'warmup',   dur: 20 },
@@ -82,7 +82,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     },
     {
       id: 'default-run-2',
-      name: i18n.t('defaultSessions.run', { locale }),
+      name: i18n.t('defaultSessions.example3', { locale }),
       mode: 'easy',
       activityType: 'run',
       config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
