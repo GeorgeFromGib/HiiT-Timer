@@ -93,6 +93,11 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           setSessions(data);
           saveSessions(data);
         }}
+        ListHeaderComponent={
+          sessions.length > 0
+            ? <Text style={styles.hintText}>{t('sessions.hint')}</Text>
+            : null
+        }
         ListEmptyComponent={<Text style={styles.emptyText}>{t('sessions.empty')}</Text>}
         renderItem={({ item: session, drag, isActive }: RenderItemParams<Session>) => (
           <SessionSwipeRow
@@ -147,6 +152,13 @@ function makeStyles(T: ThemeTokens) {
       color: T.faintText,
       textAlign: 'center',
       marginTop: 48,
+    },
+
+    hintText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 11,
+      color: T.faintText,
+      textAlign: 'center',
     },
 
     swipeContainer: {
