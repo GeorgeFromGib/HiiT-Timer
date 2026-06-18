@@ -18,6 +18,7 @@ import { SettingsToggle } from '../components/SettingsToggle';
 import { SettingsRow } from '../components/SettingsRow';
 import { SettingsSection } from '../components/SettingsSection';
 import { ThemeCard } from '../components/ThemeCard';
+import Constants from 'expo-constants';
 import { VolumeRow } from '../components/VolumeRow';
 
 // ══════════════════════════════════════════════════════════════
@@ -204,7 +205,7 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
         <SettingsSection title={t('settings.about')}>
           <SettingsRow
             label={t('settings.version')}
-            right={<Text style={styles.versionText}>1.0.0</Text>}
+            right={<Text style={styles.versionText}>{Constants.expoConfig?.version ?? '—'}</Text>}
           />
           <SettingsRow
             label={t('settings.rateApp')}
