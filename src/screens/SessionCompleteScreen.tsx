@@ -15,6 +15,7 @@ interface Props {
   congratsMsg:  string;
   skippedCount: number;
   skippedSecs:  number;
+  showConfetti: boolean;
   onDone:       () => void;
   onRepeat:     () => void;
 }
@@ -29,7 +30,7 @@ function StatCard({ label, value, accent, T }: { label: string; value: string; a
   );
 }
 
-export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, skippedCount, skippedSecs, onDone, onRepeat }: Props) {
+export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, skippedCount, skippedSecs, showConfetti, onDone, onRepeat }: Props) {
   const { T } = useTheme();
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
@@ -67,7 +68,7 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
   }, []);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (!showConfetti || reduceMotion) return;
     const loops = confettiAnims.map((anim, i) =>
       Animated.loop(
         Animated.sequence([
@@ -83,7 +84,7 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
     );
     loops.forEach(l => l.start());
     return () => loops.forEach(l => l.stop());
-  }, [reduceMotion]);
+  }, [showConfetti, reduceMotion]);
 
   return (
     <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
@@ -91,7 +92,7 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
       <View style={[styles.accentGlow, { backgroundColor: withOpacity(T.accent, 0x22) }]} />
 
       {/* Confetti */}
-      {!reduceMotion && confettiAnims.map((anim, i) => {
+      {showConfetti && !reduceMotion && confettiAnims.map((anim, i) => {
         const PHASES = ['warmup', 'work', 'rest', 'cooldown'] as const;
         const color  = T.phases[PHASES[i % PHASES.length]];
         const sz     = 5 + (i % 3) * 2;

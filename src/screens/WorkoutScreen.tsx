@@ -151,6 +151,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         congratsMsg={congratsMsg}
         skippedCount={skippedCount}
         skippedSecs={skippedSecs}
+        showConfetti={settings.congratsMessage}
         onDone={onBack}
         onRepeat={reset}
       />
