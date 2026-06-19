@@ -27,7 +27,7 @@ const POLICY_SECTIONS = [
   },
   {
     heading: null,
-    body: 'If you have any questions about this policy, please contact us at george.gaskin.gg@gmail.com.',
+    body: 'If you have any questions about this policy, please contact me at george.gaskin.gg@gmail.com.',
   },
 ];
 
