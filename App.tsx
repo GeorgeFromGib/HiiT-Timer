@@ -18,6 +18,7 @@ LogBox.ignoreLogs(['ref.measureLayout must be called with a ref to a native comp
 import WorkoutScreen from './src/screens/WorkoutScreen';
 import EditSessionScreen from './src/screens/EditSessionScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { DEFAULT_SETTINGS, detectSpeedUnit, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
@@ -112,7 +113,17 @@ export default function App() {
         <RouteScreen><EditSessionScreen session={route.session} onBack={goBack} /></RouteScreen>
       )}
       {route.name === 'Settings' && (
-        <RouteScreen><SettingsScreen onBack={goBack} /></RouteScreen>
+        <RouteScreen>
+          <SettingsScreen
+            onBack={goBack}
+            onPrivacyPolicy={() => setRoute({ name: 'PrivacyPolicy' })}
+          />
+        </RouteScreen>
+      )}
+      {route.name === 'PrivacyPolicy' && (
+        <RouteScreen>
+          <PrivacyPolicyScreen onBack={() => setRoute({ name: 'Settings' })} />
+        </RouteScreen>
       )}
       {route.name === 'Sessions' && (
         <RouteScreen><SessionsListScreen onNavigate={setRoute} /></RouteScreen>

@@ -24,7 +24,7 @@ import { VolumeRow } from '../components/VolumeRow';
 // ══════════════════════════════════════════════════════════════
 // SETTINGS SCREEN
 // ══════════════════════════════════════════════════════════════
-export default function SettingsScreen({ onBack }: { onBack: () => void }) {
+export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: () => void; onPrivacyPolicy: () => void }) {
   const { T, themeKey } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
@@ -220,9 +220,28 @@ export default function SettingsScreen({ onBack }: { onBack: () => void }) {
                 />
               </Svg>
             }
-            last
           />
+          <Pressable onPress={onPrivacyPolicy}>
+            <SettingsRow
+              label={t('settings.privacyPolicy')}
+              right={
+                <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+                  <Path
+                    d="M6 12L10 8 6 4"
+                    stroke={T.faintText}
+                    strokeWidth={1.8}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </Svg>
+              }
+              last
+            />
+          </Pressable>
         </SettingsSection>
+
+        {/* ── Footer ── */}
+        <Text style={styles.footer}>{t('settings.developedBy')}</Text>
       </ScrollView>
     </LinearGradient>
   );
@@ -262,6 +281,16 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'ChakraPetch_700Bold',
       fontSize: 13,
       color: T.faintText,
+    },
+
+    // Footer
+    footer: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 12,
+      color: T.subText,
+      textAlign: 'center',
+      marginTop: 32,
+      marginBottom: 8,
     },
 
     // Dev buttons

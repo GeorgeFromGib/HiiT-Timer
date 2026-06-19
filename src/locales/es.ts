@@ -103,6 +103,8 @@ export const es: typeof en = {
     about: 'Acerca de',
     version: 'Versión',
     rateApp: 'Valorar la app',
+    privacyPolicy: 'Declaración de privacidad',
+    developedBy: '© 2026 George Gaskin',
   },
   edit: {
     editTitle: 'Editar sesión',

@@ -101,6 +101,8 @@ export const en = {
     about: 'About',
     version: 'Version',
     rateApp: 'Rate the app',
+    privacyPolicy: 'Privacy Statement',
+    developedBy: '© 2026 George Gaskin',
   },
   edit: {
     editTitle: 'Edit Session',
