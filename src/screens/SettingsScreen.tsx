@@ -207,20 +207,35 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             label={t('settings.version')}
             right={<Text style={styles.versionText}>{Constants.expoConfig?.version ?? '—'}</Text>}
           />
-          <SettingsRow
-            label={t('settings.rateApp')}
-            right={
-              <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
-                <Path
-                  d="M6 12L10 8 6 4"
-                  stroke={T.faintText}
-                  strokeWidth={1.8}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </Svg>
+          <Pressable onPress={async () => {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const StoreReview = require('expo-store-review');
+            if (await StoreReview.isAvailableAsync()) {
+              await StoreReview.requestReview();
+            } else {
+              const url = StoreReview.storeUrl();
+              if (url) {
+                // eslint-disable-next-line @typescript-eslint/no-require-imports
+                const { Linking } = require('react-native');
+                Linking.openURL(url);
+              }
             }
-          />
+          }}>
+            <SettingsRow
+              label={t('settings.rateApp')}
+              right={
+                <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+                  <Path
+                    d="M6 12L10 8 6 4"
+                    stroke={T.faintText}
+                    strokeWidth={1.8}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </Svg>
+              }
+            />
+          </Pressable>
           <Pressable onPress={onPrivacyPolicy}>
             <SettingsRow
               label={t('settings.privacyPolicy')}
