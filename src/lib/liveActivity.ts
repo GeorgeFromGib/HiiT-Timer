@@ -1,8 +1,17 @@
-import { NativeModules, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { PHASE_META, type Phase } from './workout';
 
-const { LiveActivityModule } = NativeModules;
-const isSupported = Platform.OS === 'ios' && !!LiveActivityModule;
+let LiveActivityModule: any = null;
+if (Platform.OS === 'ios') {
+  try {
+    const { requireNativeModule } = require('expo-modules-core');
+    LiveActivityModule = requireNativeModule('LiveActivityModule');
+  } catch {
+    // module not available (simulator, Expo Go, or prebuild not run)
+  }
+}
+
+const isSupported = !!LiveActivityModule;
 
 export async function startWorkoutActivity(params: {
   sessionName: string;
