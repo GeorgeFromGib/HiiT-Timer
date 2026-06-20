@@ -18,8 +18,9 @@ private extension Color {
     }
 }
 
-private func timerText(_ endDate: Date, font: Font) -> some View {
-    Text(timerInterval: Date.now...endDate, countsDown: true)
+private func timerText(_ endUnix: Double, font: Font) -> some View {
+    let end = Date(timeIntervalSince1970: endUnix)
+    return Text(timerInterval: Date.now...end, countsDown: true)
         .monospacedDigit()
         .font(font)
         .foregroundColor(.white)

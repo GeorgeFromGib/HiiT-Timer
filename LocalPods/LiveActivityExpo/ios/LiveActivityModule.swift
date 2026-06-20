@@ -6,7 +6,7 @@ struct WorkoutActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         var phase: String
         var phaseLabel: String
-        var endDate: Date
+        var endDate: Double     // Unix seconds
         var phaseColor: String
     }
     var sessionName: String
@@ -30,7 +30,7 @@ public class LiveActivityModule: Module {
             let state = WorkoutActivityAttributes.ContentState(
                 phase: phase,
                 phaseLabel: phaseLabel,
-                endDate: Date(timeIntervalSince1970: endTime),
+                endDate: endTime,
                 phaseColor: phaseColor
             )
             self.currentActivity = try Activity.request(
@@ -46,7 +46,7 @@ public class LiveActivityModule: Module {
             let state = WorkoutActivityAttributes.ContentState(
                 phase: phase,
                 phaseLabel: phaseLabel,
-                endDate: Date(timeIntervalSince1970: endTime),
+                endDate: endTime,
                 phaseColor: phaseColor
             )
             await activity.update(ActivityContent(state: state, staleDate: nil))
