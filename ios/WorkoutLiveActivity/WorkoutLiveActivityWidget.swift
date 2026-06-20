@@ -18,6 +18,15 @@ private extension Color {
     }
 }
 
+private func phaseSymbol(_ phase: String) -> String {
+    switch phase {
+    case "warmup":   return "sun.max"
+    case "work":     return "flame"
+    case "cooldown": return "snowflake"
+    default:         return "pause"
+    }
+}
+
 private func timerText(_ endUnix: Double, font: Font) -> some View {
     let end = Date(timeIntervalSince1970: endUnix)
     return Text(timerInterval: Date.now...end, countsDown: true)
@@ -31,9 +40,9 @@ struct WorkoutLiveActivityWidget: Widget {
         ActivityConfiguration(for: WorkoutActivityAttributes.self) { context in
             // Lock Screen / Notification banner view
             HStack(spacing: 16) {
-                Circle()
-                    .fill(Color(hex: context.state.phaseColor))
-                    .frame(width: 10, height: 10)
+                Image(systemName: phaseSymbol(context.state.phase))
+                    .foregroundColor(Color(hex: context.state.phaseColor))
+                    .font(.system(size: 16, weight: .semibold))
                 Text(context.state.phaseLabel)
                     .font(.system(size: 16, weight: .black))
                     .foregroundColor(Color(hex: context.state.phaseColor))
@@ -47,9 +56,9 @@ struct WorkoutLiveActivityWidget: Widget {
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 8) {
-                        Circle()
-                            .fill(Color(hex: context.state.phaseColor))
-                            .frame(width: 10, height: 10)
+                        Image(systemName: phaseSymbol(context.state.phase))
+                            .foregroundColor(Color(hex: context.state.phaseColor))
+                            .font(.system(size: 15, weight: .semibold))
                         Text(context.state.phaseLabel)
                             .font(.system(size: 15, weight: .black))
                             .foregroundColor(Color(hex: context.state.phaseColor))
@@ -58,6 +67,7 @@ struct WorkoutLiveActivityWidget: Widget {
                 }
                 DynamicIslandExpandedRegion(.trailing) {
                     timerText(context.state.endDate, font: .system(size: 28, weight: .bold, design: .monospaced))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.trailing, 8)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
@@ -67,18 +77,23 @@ struct WorkoutLiveActivityWidget: Widget {
                         .padding(.bottom, 4)
                 }
             } compactLeading: {
-                Circle()
-                    .fill(Color(hex: context.state.phaseColor))
-                    .frame(width: 8, height: 8)
-                    .padding(.leading, 4)
+                HStack(spacing: 4) {
+                    Image(systemName: phaseSymbol(context.state.phase))
+                        .foregroundColor(Color(hex: context.state.phaseColor))
+                        .font(.system(size: 11, weight: .semibold))
+                    Text(context.state.phaseLabel)
+                        .font(.system(size: 11, weight: .black))
+                        .foregroundColor(Color(hex: context.state.phaseColor))
+                }
+                .padding(.leading, 4)
             } compactTrailing: {
                 timerText(context.state.endDate, font: .system(size: 13, weight: .semibold, design: .monospaced))
                     .padding(.trailing, 4)
                     .minimumScaleFactor(0.7)
             } minimal: {
-                Circle()
-                    .fill(Color(hex: context.state.phaseColor))
-                    .frame(width: 8, height: 8)
+                Image(systemName: phaseSymbol(context.state.phase))
+                    .foregroundColor(Color(hex: context.state.phaseColor))
+                    .font(.system(size: 10, weight: .semibold))
             }
         }
     }
