@@ -7,41 +7,41 @@ interface Props {
   status: WorkoutStatus;
   phase: Phase;
   phaseColor: string;
-  timeRemaining: number; // must be Math.ceil(remainingInSegment) — integer changes once/sec
+  timeRemaining: number; // seconds left in this segment — used to calculate endTime
   sessionName: string;
 }
 
 export function useLiveActivity({ status, phase, phaseColor, timeRemaining, sessionName }: Props) {
   const isActiveRef = useRef(false);
-  const lastSecRef = useRef(-1);
   const lastPhaseRef = useRef<Phase | null>(null);
+  // timeRemaining is captured via closure at effect-run time, intentionally not in deps.
+  // We only want to fire on phase/status change, not every second.
+  const timeRemainingRef = useRef(timeRemaining);
+  timeRemainingRef.current = timeRemaining;
 
   useEffect(() => {
     if (status === 'running') {
-      const secChanged = timeRemaining !== lastSecRef.current;
+      const endTime = Date.now() / 1000 + timeRemainingRef.current;
       const phaseChanged = phase !== lastPhaseRef.current;
 
       if (!isActiveRef.current) {
         isActiveRef.current = true;
         lastPhaseRef.current = phase;
-        lastSecRef.current = timeRemaining;
-        startWorkoutActivity({ sessionName, phase, timeRemaining, phaseColor }).catch(() => {});
-      } else if (phaseChanged || secChanged) {
+        startWorkoutActivity({ sessionName, phase, endTime, phaseColor }).catch(() => {});
+      } else if (phaseChanged) {
         lastPhaseRef.current = phase;
-        lastSecRef.current = timeRemaining;
-        updateWorkoutActivity({ phase, timeRemaining, phaseColor }).catch(() => {});
+        updateWorkoutActivity({ phase, endTime, phaseColor }).catch(() => {});
       }
     } else if (status === 'finished' || status === 'idle') {
       if (isActiveRef.current) {
         isActiveRef.current = false;
-        lastSecRef.current = -1;
         lastPhaseRef.current = null;
         endWorkoutActivity().catch(() => {});
       }
     }
-  }, [status, phase, phaseColor, timeRemaining, sessionName]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, phase, phaseColor, sessionName]);
 
-  // End activity if the component unmounts mid-workout (e.g. back button)
   useEffect(() => {
     return () => {
       if (isActiveRef.current) {

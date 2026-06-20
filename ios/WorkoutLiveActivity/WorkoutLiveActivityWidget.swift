@@ -18,9 +18,11 @@ private extension Color {
     }
 }
 
-private func formatTimer(_ seconds: Int) -> String {
-    if seconds < 60 { return "\(seconds)" }
-    return String(format: "%02d:%02d", seconds / 60, seconds % 60)
+private func timerText(_ endDate: Date, font: Font) -> some View {
+    Text(timerInterval: Date.now...endDate, countsDown: true)
+        .monospacedDigit()
+        .font(font)
+        .foregroundColor(.white)
 }
 
 struct WorkoutLiveActivityWidget: Widget {
@@ -35,9 +37,7 @@ struct WorkoutLiveActivityWidget: Widget {
                     .font(.system(size: 16, weight: .black))
                     .foregroundColor(Color(hex: context.state.phaseColor))
                 Spacer()
-                Text(formatTimer(context.state.timeRemaining))
-                    .font(.system(size: 32, weight: .bold, design: .monospaced))
-                    .foregroundColor(.white)
+                timerText(context.state.endDate, font: .system(size: 32, weight: .bold, design: .monospaced))
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
@@ -56,9 +56,7 @@ struct WorkoutLiveActivityWidget: Widget {
                     .padding(.leading, 4)
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    Text(formatTimer(context.state.timeRemaining))
-                        .font(.system(size: 28, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white)
+                    timerText(context.state.endDate, font: .system(size: 28, weight: .bold, design: .monospaced))
                         .padding(.trailing, 8)
                 }
                 DynamicIslandExpandedRegion(.bottom) {
@@ -73,9 +71,7 @@ struct WorkoutLiveActivityWidget: Widget {
                     .frame(width: 8, height: 8)
                     .padding(.leading, 4)
             } compactTrailing: {
-                Text(formatTimer(context.state.timeRemaining))
-                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.white)
+                timerText(context.state.endDate, font: .system(size: 13, weight: .semibold, design: .monospaced))
                     .padding(.trailing, 4)
                     .minimumScaleFactor(0.7)
             } minimal: {

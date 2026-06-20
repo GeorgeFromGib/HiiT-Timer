@@ -1,12 +1,12 @@
 import ExpoModulesCore
 import ActivityKit
 
-// Must match the struct in WorkoutLiveActivityWidget.swift (same Codable layout).
+// Must match WorkoutActivityAttributes.swift in the widget extension (same Codable layout).
 struct WorkoutActivityAttributes: ActivityAttributes {
     struct ContentState: Codable, Hashable {
         var phase: String
         var phaseLabel: String
-        var timeRemaining: Int
+        var endDate: Date
         var phaseColor: String
     }
     var sessionName: String
@@ -18,9 +18,8 @@ public class LiveActivityModule: Module {
     public func definition() -> ModuleDefinition {
         Name("LiveActivityModule")
 
-        AsyncFunction("startActivity") { (sessionName: String, phase: String, phaseLabel: String, timeRemaining: Int, phaseColor: String) async throws in
+        AsyncFunction("startActivity") { (sessionName: String, phase: String, phaseLabel: String, endTime: Double, phaseColor: String) async throws in
             let authInfo = ActivityAuthorizationInfo()
-            print("[LiveActivity] startActivity — areActivitiesEnabled: \(authInfo.areActivitiesEnabled)")
             guard authInfo.areActivitiesEnabled else { return }
 
             if let existing = self.currentActivity {
@@ -31,24 +30,23 @@ public class LiveActivityModule: Module {
             let state = WorkoutActivityAttributes.ContentState(
                 phase: phase,
                 phaseLabel: phaseLabel,
-                timeRemaining: timeRemaining,
+                endDate: Date(timeIntervalSince1970: endTime),
                 phaseColor: phaseColor
             )
-            let content = ActivityContent(state: state, staleDate: nil)
             self.currentActivity = try Activity.request(
                 attributes: WorkoutActivityAttributes(sessionName: sessionName),
-                content: content,
+                content: ActivityContent(state: state, staleDate: nil),
                 pushType: nil
             )
-            print("[LiveActivity] activity started — id: \(self.currentActivity?.id ?? "nil")")
+            print("[LiveActivity] started — id: \(self.currentActivity?.id ?? "nil")")
         }
 
-        AsyncFunction("updateActivity") { (phase: String, phaseLabel: String, timeRemaining: Int, phaseColor: String) async in
+        AsyncFunction("updateActivity") { (phase: String, phaseLabel: String, endTime: Double, phaseColor: String) async in
             guard let activity = self.currentActivity else { return }
             let state = WorkoutActivityAttributes.ContentState(
                 phase: phase,
                 phaseLabel: phaseLabel,
-                timeRemaining: timeRemaining,
+                endDate: Date(timeIntervalSince1970: endTime),
                 phaseColor: phaseColor
             )
             await activity.update(ActivityContent(state: state, staleDate: nil))

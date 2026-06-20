@@ -16,7 +16,7 @@ const isSupported = !!LiveActivityModule;
 export async function startWorkoutActivity(params: {
   sessionName: string;
   phase: Phase;
-  timeRemaining: number;
+  endTime: number; // Unix seconds when this segment ends
   phaseColor: string;
 }): Promise<void> {
   if (!isSupported) return;
@@ -24,21 +24,21 @@ export async function startWorkoutActivity(params: {
     params.sessionName,
     params.phase,
     PHASE_META[params.phase].word,
-    params.timeRemaining,
+    params.endTime,
     params.phaseColor,
   );
 }
 
 export async function updateWorkoutActivity(params: {
   phase: Phase;
-  timeRemaining: number;
+  endTime: number;
   phaseColor: string;
 }): Promise<void> {
   if (!isSupported) return;
   return LiveActivityModule.updateActivity(
     params.phase,
     PHASE_META[params.phase].word,
-    params.timeRemaining,
+    params.endTime,
     params.phaseColor,
   );
 }
