@@ -17,7 +17,8 @@
         "UIBackgroundModes": [
           "audio"
         ],
-        "CFBundleLocalizations": ["en", "es"]
+        "CFBundleLocalizations": ["en", "es"],
+        "NSSupportsLiveActivities": true
       }
     },
     "android": {
