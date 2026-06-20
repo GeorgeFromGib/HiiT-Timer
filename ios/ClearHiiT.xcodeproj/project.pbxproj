@@ -64,13 +64,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5E4990622FE70ECF00996152 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		5E4990622FE70ECF00996152 /* Exceptions for "WorkoutLiveActivity" folder in "ClearHiiT" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 			);
 			target = 13B07F861A680F5B00A75B9A /* ClearHiiT */;
 		};
-		5E9241842FE7069A0055BEAB /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		5E9241842FE7069A0055BEAB /* Exceptions for "WorkoutLiveActivity" folder in "WorkoutLiveActivityExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -80,7 +80,19 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5E9241762FE706980055BEAB /* WorkoutLiveActivity */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E4990622FE70ECF00996152 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 5E9241842FE7069A0055BEAB /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = WorkoutLiveActivity; sourceTree = "<group>"; };
+		5E9241762FE706980055BEAB /* WorkoutLiveActivity */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5E4990622FE70ECF00996152 /* Exceptions for "WorkoutLiveActivity" folder in "ClearHiiT" target */,
+				5E9241842FE7069A0055BEAB /* Exceptions for "WorkoutLiveActivity" folder in "WorkoutLiveActivityExtension" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = WorkoutLiveActivity;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,8 +252,6 @@
 				5E9241762FE706980055BEAB /* WorkoutLiveActivity */,
 			);
 			name = WorkoutLiveActivityExtension;
-			packageProductDependencies = (
-			);
 			productName = WorkoutLiveActivityExtension;
 			productReference = 5E9241712FE706970055BEAB /* WorkoutLiveActivityExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -602,6 +612,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.WorkoutLiveActivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -663,6 +674,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.WorkoutLiveActivity;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
