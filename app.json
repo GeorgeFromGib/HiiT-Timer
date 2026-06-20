@@ -7,7 +7,7 @@
     "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "deploymentTarget": "16.4",
       "bundleIdentifier": "com.georgefromgib.hiittimer",
       "buildNumber": "3",
