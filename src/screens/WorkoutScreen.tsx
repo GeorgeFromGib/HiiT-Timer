@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
+import { useLiveActivity } from '../hooks/useLiveActivity';
 import { useSettings } from '../lib/settingsContext';
 import {
   totalDuration,
@@ -107,6 +108,15 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
   const seg            = segments[effectiveIndex];
   const nextSeg        = segments[effectiveIndex + 1];
+
+  useLiveActivity({
+    status,
+    phase: seg.phase,
+    phaseColor: T.phases[seg.phase],
+    timeRemaining: Math.ceil(remainingInSegment),
+    sessionName: session.name,
+  });
+
   const phaseColor     = T.phases[seg.phase];
   const nextPhaseColor = nextSeg ? T.phases[nextSeg.phase] : null;
 
