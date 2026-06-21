@@ -69,13 +69,18 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     }
   };
 
-  const startKeepAlive = () => {
+  const startKeepAlive = async () => {
     if (keepAliveRef.current) return;
-    const p = createAudioPlayer(CUES.keepalive);
-    p.loop = true;
-    p.volume = 0;
-    p.play();
-    keepAliveRef.current = p;
+    try {
+      await configureAudioSession();
+      const p = createAudioPlayer(CUES.keepalive);
+      p.loop = true;
+      p.volume = 0;
+      p.play();
+      keepAliveRef.current = p;
+    } catch (e) {
+      console.warn('[Audio] startKeepAlive failed:', e);
+    }
   };
 
   const stopKeepAlive = () => {
