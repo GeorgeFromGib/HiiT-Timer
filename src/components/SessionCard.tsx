@@ -69,6 +69,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
             <Text style={styles.statValue}>{segments.length}</Text>
             <Text style={styles.statLabel}> {t('common.intervals')}</Text>
           </View>
+          <Text style={styles.modeLabel}>{session.activityType ?? 'generic'}</Text>
         </View>
 
         {selected && (
@@ -162,6 +163,13 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_600SemiBold',
       fontSize: 15,
       color: T.faintText,
+    },
+    modeLabel: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 13,
+      color: T.subText,
+      textTransform: 'capitalize',
+      marginLeft: 'auto',
     },
     startBtn: {
       marginTop: 12,
