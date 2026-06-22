@@ -77,7 +77,7 @@ const files = {
   'keepalive.wav': silence(2),       // looped to keep iOS audio session alive
   'high.wav':      tone(880,  0.25), // A5 — "go"
   'low.wav':       tone(523,  0.25), // C5 — "recover"
-  'tick.wav':      tone(1047, 0.07), // C6 — 3-2-1 blip
+  'tick.wav':      tone(1047, 0.07, 1.0), // C6 — 3-2-1 blip
   'finish.wav':    concat(           // 5 bell chimes in fast succession
     bell(1047, 0.35), silence(0.06),
     bell(1047, 0.35), silence(0.06),
