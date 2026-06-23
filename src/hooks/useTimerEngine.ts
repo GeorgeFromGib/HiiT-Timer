@@ -17,7 +17,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Segment, segmentIndexAt, totalDuration } from '../lib/workout';
-import { computeTimerSnapshot, detectCountdownBeat } from '../lib/timerComputation';
+import { computeTimerSnapshot } from '../lib/timerComputation';
 
 export interface TimerState {
   status: 'idle' | 'running' | 'paused' | 'finished';
@@ -61,9 +61,10 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
   const statusRef = useRef<TimerState['status']>('idle');
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // De-dupe refs so each event fires exactly once.
+  // De-dupe ref so transitions fire exactly once per segment crossing.
   const lastIndexRef = useRef<number>(-1);
-  const lastCountdownKeyRef = useRef<string>('');
+  // Precisely-scheduled countdown beat timeouts (replaces polling-based detection).
+  const beatTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const cbRef = useRef(cb);
   cbRef.current = cb;
@@ -75,6 +76,31 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     return accumulatedRef.current;
   };
 
+  const clearBeats = () => {
+    beatTimeoutsRef.current.forEach(clearTimeout);
+    beatTimeoutsRef.current = [];
+  };
+
+  // Schedule precise setTimeout for each countdown beat (3, 2, 1) still in the
+  // future. Using setTimeout instead of polling eliminates the ±200ms jitter
+  // that comes from detecting beats inside the 200ms tick interval.
+  const scheduleBeats = (segIndex: number, remainingSeconds: number) => {
+    clearBeats();
+    [3, 2, 1].forEach((beat) => {
+      const delayMs = (remainingSeconds - beat) * 1000;
+      if (delayMs >= 0) {
+        beatTimeoutsRef.current.push(
+          setTimeout(() => {
+            if (statusRef.current === 'running') {
+              const seg = segmentsRef.current[segIndex];
+              if (seg) cbRef.current.onCountdown?.(beat, seg);
+            }
+          }, delayMs),
+        );
+      }
+    });
+  };
+
   const tick = useCallback(() => {
     const segs = segmentsRef.current;
     const elapsed = Math.min(computeElapsed(), totalDuration(segs));
@@ -84,6 +110,7 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
       const prev = lastIndexRef.current >= 0 ? segs[lastIndexRef.current] : null;
       if (statusRef.current !== 'finished') {
         statusRef.current = 'finished';
+        clearBeats();
         if (intervalRef.current) clearInterval(intervalRef.current);
         intervalRef.current = null;
         cbRef.current.onTransition?.(prev, null);
@@ -100,12 +127,10 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
       const from = lastIndexRef.current >= 0 ? segs[lastIndexRef.current] : null;
       cbRef.current.onTransition?.(from, segs[index] ?? null);
       lastIndexRef.current = index;
-    }
-
-    const { beat, nextKey } = detectCountdownBeat(remainingInSegment, index, lastCountdownKeyRef.current);
-    if (beat !== null) {
-      lastCountdownKeyRef.current = nextKey;
-      cbRef.current.onCountdown?.(beat, segs[index]);
+      scheduleBeats(index, remainingInSegment);
+    } else if (remainingInSegment <= 4 && beatTimeoutsRef.current.length === 0) {
+      // Re-schedule after a resume (beats were cleared on pause).
+      scheduleBeats(index, remainingInSegment);
     }
 
     setState({ status: statusRef.current, elapsed, currentIndex: index, remainingInSegment, remainingTotal });
@@ -122,7 +147,7 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     resumeEpochRef.current = Date.now();
     statusRef.current = 'running';
     lastIndexRef.current = -1;
-    lastCountdownKeyRef.current = '';
+    clearBeats();
     startLoop();
   }, [startLoop]);
 
@@ -130,6 +155,7 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     if (statusRef.current !== 'running') return;
     accumulatedRef.current = computeElapsed();
     statusRef.current = 'paused';
+    clearBeats();
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = null;
     setState((s) => ({ ...s, status: 'paused' }));
@@ -143,12 +169,12 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
   }, [startLoop]);
 
   const reset = useCallback(() => {
+    clearBeats();
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = null;
     accumulatedRef.current = 0;
     statusRef.current = 'idle';
     lastIndexRef.current = -1;
-    lastCountdownKeyRef.current = '';
     setState({
       status: 'idle',
       elapsed: 0,
@@ -161,6 +187,7 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
   // Jump to the start of the next segment.
   const skip = useCallback(() => {
     if (statusRef.current === 'idle' || statusRef.current === 'finished') return;
+    clearBeats();
     const elapsed = computeElapsed();
     const idx = segmentIndexAt(segmentsRef.current, elapsed);
     const seg = segmentsRef.current[idx];
@@ -173,6 +200,7 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      beatTimeoutsRef.current.forEach(clearTimeout);
     };
   }, []);
 
@@ -186,6 +214,9 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
       return { ...s, startAt: s.startAt + seconds, endAt: s.endAt + seconds };
     });
     segmentsRef.current = newSegments;
+    if (statusRef.current === 'running') {
+      scheduleBeats(idx, newSegments[idx].endAt - elapsed);
+    }
     return newSegments;
   }, []);
 
