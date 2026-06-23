@@ -85,8 +85,9 @@ export function useWorkoutSession(
 
   const reset = useCallback(() => {
     countdown.cancel();
+    cues.stopKeepAlive();
     engineReset();
-  }, [countdown, engineReset]);
+  }, [countdown, cues, engineReset]);
 
   const addRound = useCallback((segsToInsert: Segment[]): Segment[] => {
     const live = getSegments();
