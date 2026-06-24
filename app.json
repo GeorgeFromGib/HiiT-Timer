@@ -2,7 +2,7 @@
   "expo": {
     "name": "Clear HiiT",
     "slug": "hiit-timer",
-    "version": "1.0.11",
+    "version": "1.0.8",
     "orientation": "portrait",
     "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
@@ -10,7 +10,7 @@
       "supportsTablet": false,
       "deploymentTarget": "16.4",
       "bundleIdentifier": "com.georgefromgib.hiittimer",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "appleTeamId": "KM666T7T27",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
