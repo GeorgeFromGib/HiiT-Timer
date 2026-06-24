@@ -3,10 +3,12 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
+  PixelRatio,
   Pressable,
   StyleSheet,
   Text,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import Svg, { Path, Rect } from 'react-native-svg';
 import { useWorkoutSession } from '../hooks/useWorkoutSession';
@@ -41,7 +43,11 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   }, [settings.keepScreenAwake]);
 
   const { T, themeKey } = useTheme();
-  const styles = useMemo(() => makeStyles(T), [T]);
+  const { height: screenHeight } = useWindowDimensions();
+  // Scale down when screen is logically smaller (Display Zoom or small device).
+  // Also account for the user's Larger Text preference so we don't overflow.
+  const uiScale = Math.min(1, (screenHeight / 844) / Math.max(1, PixelRatio.getFontScale()));
+  const styles = useMemo(() => makeStyles(T, uiScale), [T, uiScale]);
 
   const initialSegments = useMemo(() => getSessionSegments(session), [session]);
   const toInsert = useMemo(
@@ -133,7 +139,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const remainingForCountdown = Math.max(0, Math.ceil(isIdle ? segments[0].duration : remainingInSegment));
   const displayCountdown      = isPreStart ? String(preStartCount) : fmtTimer(remainingForCountdown);
   const countdownHasHours     = !isPreStart && remainingForCountdown >= 3600;
-  const countdownFontSize     = countdownHasHours ? 88 : 124;
+  const countdownFontSize     = Math.round((countdownHasHours ? 88 : 124) * uiScale);
   const intervalNum           = currentIndex >= 0 ? currentIndex + 1 : 1;
   const segStartPct           = `${(seg.startAt / TOTAL_DUR) * 100}%`;
   const segEndPct             = `${(seg.endAt   / TOTAL_DUR) * 100}%`;
@@ -185,14 +191,17 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
           {(() => {
             const label = isDone ? t('workout.done') : isPreStart ? t('workout.getReady') : t('workout.phase.' + seg.phase);
-            const labelSize = label.length > 9 ? 35 : 44;
+            const labelSize = Math.round((label.length > 9 ? 35 : 44) * uiScale);
             return (
-              <Text style={[styles.phaseLabel, {
-                color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
-                textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
-                fontSize:        labelSize,
-                letterSpacing:   labelSize * 0.01,
-              }]}>
+              <Text
+                allowFontScaling={false}
+                style={[styles.phaseLabel, {
+                  color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
+                  textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
+                  fontSize:        labelSize,
+                  letterSpacing:   labelSize * 0.01,
+                }]}
+              >
                 {label}
               </Text>
             );
@@ -216,6 +225,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           {displayCountdown.split('').map((ch, i) => (
             <Text
               key={i}
+              allowFontScaling={false}
               style={[styles.countdown, {
                 opacity: isDone ? 0 : flashing ? 0 : 1,
                 textShadowColor: withOpacity(isPreStart ? T.accent : phaseColor, 0x3a),
@@ -228,7 +238,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </Text>
           ))}
           {isDone && (
-            <Text style={styles.congratsMsg}>{congratsMsg}</Text>
+            <Text allowFontScaling={false} style={styles.congratsMsg}>{congratsMsg}</Text>
           )}
         </View>
 
@@ -371,12 +381,12 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         <Pressable onPress={handlePlayPause} style={styles.playBtn}>
           <View style={styles.playBtnInner}>
             {(isPlaying || isPreStart) ? (
-              <Svg width={26} height={28} viewBox="0 0 28 30">
+              <Svg width={Math.round(26 * uiScale)} height={Math.round(28 * uiScale)} viewBox="0 0 28 30">
                 <Rect x="3" y="2" width="8" height="26" rx="2.6" fill={T.btnGlyph} />
                 <Rect x="17" y="2" width="8" height="26" rx="2.6" fill={T.btnGlyph} />
               </Svg>
             ) : (
-              <Svg width={26} height={28} viewBox="0 0 28 30">
+              <Svg width={Math.round(26 * uiScale)} height={Math.round(28 * uiScale)} viewBox="0 0 28 30">
                 <Path d="M5 3 L25 15 L5 27 Z" fill={T.btnGlyph} stroke={T.btnGlyph} strokeWidth={3.5} strokeLinejoin="round" />
               </Svg>
             )}
@@ -394,12 +404,12 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   );
 }
 
-function makeStyles(T: ThemeTokens) { return StyleSheet.create({
+function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
   root: {
     flex: 1,
     paddingTop: 54,
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: Math.round(24 * s),
   },
 
   headerTitle: {
@@ -416,20 +426,20 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     flex: 0.9,
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: 24,
+    paddingBottom: Math.round(24 * s),
     gap: 4,
   },
   phaseBottom: {
     flex: 1.1,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginTop: -10,
-    gap: 24,
+    marginTop: Math.round(-10 * s),
+    gap: Math.round(24 * s),
   },
   iconBadge: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
+    width: Math.round(52 * s),
+    height: Math.round(52 * s),
+    borderRadius: Math.round(14 * s),
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -437,8 +447,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   phaseLabel: {
     fontFamily: 'Inter_900Black',
-    fontSize: 44,
-    letterSpacing: 44 * 0.01,
+    letterSpacing: 1,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 30,
   },
@@ -450,17 +459,17 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   speedPillText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 20,
+    fontSize: Math.round(20 * s),
     letterSpacing: 20 * 0.02,
   },
   congratsMsg: {
     fontFamily: 'Inter_700Bold_Italic',
-    fontSize: 24,
+    fontSize: Math.round(24 * s),
     letterSpacing: 24 * 0.05,
     color: T.onBg,
     opacity: 0.7,
     position: 'absolute',
-    top: 48,
+    top: Math.round(48 * s),
     left: 0,
     right: 0,
     textAlign: 'center',
@@ -473,8 +482,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   countdown: {
     fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 120,
-    lineHeight: 120,
     color: T.text,
     textAlign: 'center',
     textShadowOffset: { width: 0, height: 0 },
@@ -482,12 +489,12 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   intervalCounter: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 19,
+    fontSize: Math.round(19 * s),
     letterSpacing: 19 * 0.08,
     color: T.onBg,
   },
   roundAbbr: {
-    fontSize: 13,
+    fontSize: Math.round(13 * s),
     letterSpacing: 13 * 0.08,
   },
   extendRow: {
@@ -504,7 +511,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   progressTrack: {
     alignSelf: 'stretch',
     marginHorizontal: 16,
-    height: 26,
+    height: Math.round(26 * s),
     borderRadius: 6,
     backgroundColor: T.hairline,
     overflow: 'hidden',
@@ -523,28 +530,28 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 9,
-    paddingVertical: 8,
-    marginBottom: 16,
+    paddingVertical: Math.round(8 * s),
+    marginBottom: Math.round(16 * s),
   },
   nextLabel: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 15,
+    fontSize: Math.round(15 * s),
     letterSpacing: 15 * 0.14,
     color: T.onBg,
   },
   nextPhase: {
     fontFamily: 'Inter_800ExtraBold',
-    fontSize: 19,
+    fontSize: Math.round(19 * s),
     letterSpacing: 19 * 0.05,
   },
 
   timelineWrap: {
     gap: 8,
-    marginBottom: 24,
+    marginBottom: Math.round(24 * s),
     marginHorizontal: 16,
   },
   timelineBar: {
-    height: 26,
+    height: Math.round(26 * s),
     position: 'relative',
   },
   segmentsClip: {
@@ -574,7 +581,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   timelineLabelText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 19,
+    fontSize: Math.round(19 * s),
     letterSpacing: 19 * 0.04,
     color: T.subText,
   },
@@ -587,9 +594,9 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     marginTop: 6,
   },
   playBtn: {
-    width: 74,
-    height: 74,
-    borderRadius: 37,
+    width: Math.round(74 * s),
+    height: Math.round(74 * s),
+    borderRadius: Math.round(37 * s),
     ...buttonShadow(T),
     shadowOffset:  { width: 0, height: 12 },
     shadowOpacity: 0.55,
@@ -598,7 +605,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   playBtnInner: {
     flex: 1,
-    borderRadius: 37,
+    borderRadius: Math.round(37 * s),
     backgroundColor: T.accent,
     alignItems: 'center',
     justifyContent: 'center',

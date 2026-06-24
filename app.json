@@ -10,7 +10,7 @@
       "supportsTablet": false,
       "deploymentTarget": "16.4",
       "bundleIdentifier": "com.georgefromgib.hiittimer",
-      "buildNumber": "4",
+      "buildNumber": "5",
       "appleTeamId": "KM666T7T27",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,

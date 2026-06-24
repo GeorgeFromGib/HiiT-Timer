@@ -9,6 +9,7 @@ export const es: typeof en = {
     duplicate: 'Duplicar',
     apply: 'Aplicar',
     intervals: 'intervalos',
+    intervalsAbbr: 'Int.',
   },
   phases: {
     warmup: 'Calentamiento',

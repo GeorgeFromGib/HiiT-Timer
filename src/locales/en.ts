@@ -7,6 +7,7 @@ export const en = {
     duplicate: 'Duplicate',
     apply: 'Apply',
     intervals: 'intervals',
+    intervalsAbbr: 'Int.',
   },
   phases: {
     warmup: 'Warm Up',

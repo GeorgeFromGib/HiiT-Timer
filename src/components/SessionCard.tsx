@@ -67,7 +67,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
           <Text style={styles.statValue}>{fmtDuration(total)}</Text>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{segments.length}</Text>
-            <Text style={styles.statLabel}> {t('common.intervals')}</Text>
+            <Text style={styles.statLabel}> {t('common.intervalsAbbr')}</Text>
           </View>
           <Text style={styles.modeLabel}>{session.activityType ?? 'generic'}</Text>
         </View>

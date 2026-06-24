@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, Animated, PixelRatio, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme, withOpacity, buttonShadow, type ThemeTokens } from '../theme';
@@ -20,12 +20,12 @@ interface Props {
   onRepeat:     () => void;
 }
 
-function StatCard({ label, value, accent, T }: { label: string; value: string; accent?: string; T: ThemeTokens }) {
-  const styles = useMemo(() => makeStyles(T), [T]);
+function StatCard({ label, value, accent, T, uiScale }: { label: string; value: string; accent?: string; T: ThemeTokens; uiScale: number }) {
+  const styles = useMemo(() => makeStyles(T, uiScale), [T, uiScale]);
   return (
     <View style={[styles.statCard, { backgroundColor: T.card, borderColor: T.hairline }]}>
-      <Text style={[styles.statValue, { color: accent ?? T.text }]}>{value}</Text>
-      <Text style={[styles.statLabel, { color: T.faintText }]}>{label}</Text>
+      <Text allowFontScaling={false} style={[styles.statValue, { color: accent ?? T.text }]}>{value}</Text>
+      <Text allowFontScaling={false} style={[styles.statLabel, { color: T.faintText }]}>{label}</Text>
     </View>
   );
 }
@@ -33,7 +33,9 @@ function StatCard({ label, value, accent, T }: { label: string; value: string; a
 export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, skippedCount, skippedSecs, showConfetti, onDone, onRepeat }: Props) {
   const { T } = useTheme();
   const { t } = useTranslation();
-  const styles = useMemo(() => makeStyles(T), [T]);
+  const { height: screenHeight } = useWindowDimensions();
+  const uiScale = Math.min(1, (screenHeight / 844) / Math.max(1, PixelRatio.getFontScale()));
+  const styles = useMemo(() => makeStyles(T, uiScale), [T, uiScale]);
 
   const workSecs = segments
     .filter(s => s.phase === 'work')
@@ -116,8 +118,8 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
       })}
 
       {/* Eyebrow */}
-      <Animated.View style={{ marginTop: 48, opacity: eyebrowAnim, transform: [{ translateY: eyebrowAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }}>
-        <Text style={[styles.eyebrow, { color: T.accent }]}>
+      <Animated.View style={{ marginTop: Math.round(48 * uiScale), opacity: eyebrowAnim, transform: [{ translateY: eyebrowAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }}>
+        <Text allowFontScaling={false} style={[styles.eyebrow, { color: T.accent }]}>
           {skippedCount > 0 ? t('complete.eyebrowPartial') : t('complete.eyebrow')}
         </Text>
       </Animated.View>
@@ -129,7 +131,7 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
           transform: [{ scale: checkAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] }) }],
         }}>
           <View style={[styles.checkCircle, { backgroundColor: T.accent, shadowColor: T.accent }]}>
-            <Svg width={58} height={58} viewBox="0 0 48 48" fill="none">
+            <Svg width={Math.round(58 * uiScale)} height={Math.round(58 * uiScale)} viewBox="0 0 48 48" fill="none">
               <Path d="M10 25l9.5 9.5L38 15" stroke={T.btnGlyph} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
             </Svg>
           </View>
@@ -139,9 +141,9 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
       {/* Headline */}
       <Animated.View style={[styles.headlineWrap, { opacity: headlineAnim, transform: [{ translateY: headlineAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
         {skippedCount === 0 && (
-          <Text style={[styles.headline, { color: T.text }]}>{congratsMsg}</Text>
+          <Text allowFontScaling={false} style={[styles.headline, { color: T.text }]}>{congratsMsg}</Text>
         )}
-        <Text style={[styles.subline, { color: T.subText }]}>
+        <Text allowFontScaling={false} style={[styles.subline, { color: T.subText }]}>
           {t('complete.sublinePrefix')}{' '}
           <Text style={{ color: T.text, fontFamily: 'Inter_800ExtraBold' }}>{session.name}</Text>
         </Text>
@@ -149,16 +151,16 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
 
       {/* Stats */}
       <Animated.View style={[styles.statsRow, { opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
-        <StatCard label={t('complete.totalTime')} value={fmtTimer(totalDur)} accent={T.accent} T={T} />
-        <StatCard label={t('complete.intervals')} value={String(segments.length)} T={T} />
-        <StatCard label={t('complete.workTime')} value={fmtTimer(workSecs)} T={T} />
+        <StatCard label={t('complete.totalTime')} value={fmtTimer(totalDur)} accent={T.accent} T={T} uiScale={uiScale} />
+        <StatCard label={t('complete.intervals')} value={String(segments.length)} T={T} uiScale={uiScale} />
+        <StatCard label={t('complete.workTime')} value={fmtTimer(workSecs)} T={T} uiScale={uiScale} />
       </Animated.View>
 
       {/* Skipped stats */}
       {skippedCount > 0 && (
         <Animated.View style={[styles.statsRow, { marginTop: 9, opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
-          <StatCard label={t('complete.skippedIntervals')} value={String(skippedCount)} T={T} />
-          <StatCard label={t('complete.skippedTime')} value={fmtTimer(skippedSecs)} T={T} />
+          <StatCard label={t('complete.skippedIntervals')} value={String(skippedCount)} T={T} uiScale={uiScale} />
+          <StatCard label={t('complete.skippedTime')} value={fmtTimer(skippedSecs)} T={T} uiScale={uiScale} />
         </Animated.View>
       )}
 
@@ -185,12 +187,12 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
   );
 }
 
-function makeStyles(T: ThemeTokens) { return StyleSheet.create({
+function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
   root: {
     flex: 1,
     paddingTop: 54,
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: Math.round(24 * s),
   },
   accentGlow: {
     position: 'absolute',
@@ -203,20 +205,20 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   eyebrow: {
     fontFamily: 'Inter_800ExtraBold',
-    fontSize: 22,
+    fontSize: Math.round(22 * s),
     letterSpacing: 22 * 0.24,
     textTransform: 'uppercase',
     textAlign: 'center',
   },
   heroWrap: {
     alignItems: 'center',
-    marginTop: 32,
-    marginBottom: 32,
+    marginTop: Math.round(32 * s),
+    marginBottom: Math.round(32 * s),
   },
   checkCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: Math.round(96 * s),
+    height: Math.round(96 * s),
+    borderRadius: Math.round(48 * s),
     alignItems: 'center',
     justifyContent: 'center',
     shadowOffset: { width: 0, height: 12 },
@@ -230,65 +232,65 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   headline: {
     fontFamily: 'Inter_900Black',
-    fontSize: 30,
+    fontSize: Math.round(30 * s),
     letterSpacing: 30 * -0.02,
-    lineHeight: 32,
+    lineHeight: Math.round(32 * s),
     textAlign: 'center',
   },
   subline: {
     fontFamily: 'Inter_600SemiBold',
-    fontSize: 13.5,
-    marginTop: 6,
+    fontSize: Math.round(13.5 * s),
+    marginTop: Math.round(6 * s),
     textAlign: 'center',
   },
   statsRow: {
     flexDirection: 'row',
     gap: 9,
-    marginTop: 22,
+    marginTop: Math.round(22 * s),
   },
   statCard: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 13,
+    borderRadius: Math.round(16 * s),
+    paddingHorizontal: Math.round(14 * s),
+    paddingTop: Math.round(14 * s),
+    paddingBottom: Math.round(13 * s),
     alignItems: 'center',
     gap: 4,
   },
   statValue: {
     fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 25,
-    lineHeight: 25,
+    fontSize: Math.round(25 * s),
+    lineHeight: Math.round(25 * s),
     fontVariant: ['tabular-nums'],
   },
   statLabel: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 9.5,
+    fontSize: Math.max(8, Math.round(9.5 * s)),
     letterSpacing: 9.5 * 0.12,
     textTransform: 'uppercase',
     textAlign: 'center',
   },
   recapWrap: {
-    marginTop: 16,
+    marginTop: Math.round(16 * s),
   },
   recapLabel: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 10,
+    fontSize: Math.max(8, Math.round(10 * s)),
     letterSpacing: 10 * 0.14,
     textTransform: 'uppercase',
-    marginBottom: 8,
+    marginBottom: Math.round(8 * s),
     paddingLeft: 2,
   },
   actions: {
     marginTop: 'auto',
-    paddingTop: 20,
+    paddingTop: Math.round(20 * s),
     gap: 10,
   },
   doneBtn: {
     width: '100%',
-    paddingVertical: 14,
-    borderRadius: 16,
+    paddingVertical: Math.round(14 * s),
+    borderRadius: Math.round(16 * s),
     alignItems: 'center',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.55,
@@ -297,14 +299,14 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   doneBtnText: {
     fontFamily: 'Inter_800ExtraBold',
-    fontSize: 14.5,
+    fontSize: Math.round(14.5 * s),
     letterSpacing: 14.5 * 0.05,
     textTransform: 'uppercase',
   },
   repeatBtn: {
     width: '100%',
-    paddingVertical: 13,
-    borderRadius: 16,
+    paddingVertical: Math.round(13 * s),
+    borderRadius: Math.round(16 * s),
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -313,7 +315,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   repeatBtnText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: 13.5,
+    fontSize: Math.round(13.5 * s),
     letterSpacing: 13.5 * 0.05,
     textTransform: 'uppercase',
   },
