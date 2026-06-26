@@ -354,13 +354,45 @@ export function useEditSession(
     setActiveSpeedPreset(null);
   }
 
-  function setDisplayActivityType(type: 'general' | 'run' | 'circuit') {
+  function resetToDefaults(type: 'general' | 'run' | 'circuit') {
+    setName('');
+    setIntervals([]);
     if (type === 'circuit') {
       setMode('circuit');
+      setCircuitWarmup(60);
+      setCircuitCooldown(60);
+      setCircuitRest(30);
+      setCircuitCount(3);
     } else {
-      if (mode === 'circuit') setMode('advanced');
+      setMode('easy');
       setActivityType(type === 'run' ? 'run' : undefined);
+      setWarmup(30);
+      setWork(30);
+      setRest(15);
+      setCooldown(30);
+      setRounds(4);
+      setTimingDirty(false);
+      setSpeedsDirty(false);
+      setActiveTimingPreset(null);
+      setActiveSpeedPreset(null);
     }
+  }
+
+  function setDisplayActivityType(type: 'general' | 'run' | 'circuit') {
+    const currentType = mode === 'circuit' ? 'circuit' : activityType === 'run' ? 'run' : 'general';
+    if (currentType === type) return;
+    if (!hasChanges) {
+      resetToDefaults(type);
+      return;
+    }
+    Alert.alert(
+      i18n.t('alerts.switchTypeTitle'),
+      i18n.t('alerts.switchTypeMessage'),
+      [
+        { text: i18n.t('alerts.cancel'), style: 'cancel' },
+        { text: i18n.t('alerts.discard'), style: 'destructive', onPress: () => resetToDefaults(type) },
+      ],
+    );
   }
 
   const easyConfig = {

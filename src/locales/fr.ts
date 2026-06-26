@@ -174,6 +174,8 @@ export const fr: typeof en = {
     noIntervalsMessage: 'Ajoutez au moins un intervalle.',
     noWorkIntervalsTitle: 'Aucun intervalle de travail',
     noWorkIntervalsMessage: 'Ajoutez au moins un intervalle de travail.',
+    switchTypeTitle: "Changer le type d'activité ?",
+    switchTypeMessage: 'Vos modifications seront supprimées.',
   },
   validation: {
     noWorkIntervals: 'Aucun intervalle de travail trouvé.',
