@@ -143,6 +143,7 @@ export const es: typeof en = {
     circuitRest: 'Descanso',
     exercisePlaceholder: 'Nombre del ejercicio',
     newCircuitTitle: 'Nuevo Circuito',
+    circuit: 'Circuito',
   },
   picker: {
     rounds: 'rondas',

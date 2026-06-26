@@ -36,11 +36,10 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 
 interface Props {
   session?: Session;
-  newMode?: 'circuit';
   onBack: () => void;
 }
 
-export default function EditSessionScreen({ session: existing, newMode, onBack }: Props) {
+export default function EditSessionScreen({ session: existing, onBack }: Props) {
   const { T } = useTheme();
   const { settings } = useSettings();
   const { t } = useTranslation();
@@ -52,6 +51,7 @@ export default function EditSessionScreen({ session: existing, newMode, onBack }
     draft, picker,
     setName,
     setActivityType,
+    setDisplayActivityType,
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
@@ -61,7 +61,7 @@ export default function EditSessionScreen({ session: existing, newMode, onBack }
     applyDurationPreset, applySpeedPreset,
     setActivityLabel,
     buildSavePayload,
-  } = useEditSession(existing, onBack, newMode);
+  } = useEditSession(existing, onBack);
 
   const { name, isAdvanced, isCircuit, fieldValues, rounds, intervals, previewSegments, previewTotal,
           activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges,
@@ -176,7 +176,31 @@ export default function EditSessionScreen({ session: existing, newMode, onBack }
           </View>
 
           {/* Activity Type */}
-          {!isCircuit && (
+          {!isEditing ? (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
+              <View style={styles.activityTypeRow}>
+                <Pressable
+                  style={[styles.activityTypeBtn, (!isCircuit && activityType !== 'run') && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
+                  onPress={() => setDisplayActivityType('general')}
+                >
+                  <Text style={[styles.activityTypeBtnText, { color: (!isCircuit && activityType !== 'run') ? T.accent : T.subText }]}>{t('edit.general')}</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.activityTypeBtn, (!isCircuit && activityType === 'run') && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
+                  onPress={() => setDisplayActivityType('run')}
+                >
+                  <Text style={[styles.activityTypeBtnText, { color: (!isCircuit && activityType === 'run') ? T.accent : T.subText }]}>{t('edit.run')}</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.activityTypeBtn, isCircuit && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
+                  onPress={() => setDisplayActivityType('circuit')}
+                >
+                  <Text style={[styles.activityTypeBtnText, { color: isCircuit ? T.accent : T.subText }]}>{t('edit.circuit')}</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : !isCircuit ? (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
               <View style={styles.activityTypeRow}>
@@ -194,7 +218,7 @@ export default function EditSessionScreen({ session: existing, newMode, onBack }
                 </Pressable>
               </View>
             </View>
-          )}
+          ) : null}
 
           {/* Mode toggle — hidden for circuit sessions */}
           {!isCircuit && (

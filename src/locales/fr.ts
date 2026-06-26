@@ -143,6 +143,7 @@ export const fr: typeof en = {
     circuitRest: 'Repos',
     exercisePlaceholder: 'Nom de l\'exercice',
     newCircuitTitle: 'Nouveau Circuit',
+    circuit: 'Circuit',
   },
   picker: {
     rounds: 'rounds',

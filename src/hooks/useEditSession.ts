@@ -86,6 +86,7 @@ export interface EditSessionInterface {
   // Field edits
   setName:          (name: string) => void;
   setActivityType:  (type: 'run' | undefined) => void;
+  setDisplayActivityType: (type: 'general' | 'run' | 'circuit') => void;
   setRunSpeed:      (field: keyof RunSpeeds, value: number) => void;
   // Mode
   toggleMode:       (advanced: boolean) => void;
@@ -283,10 +284,9 @@ function usePickerState(
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
-  newMode?: 'circuit',
 ): EditSessionInterface {
   const [name, setName] = useState(existing?.name ?? '');
-  const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(existing?.mode ?? newMode ?? 'easy');
+  const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(existing?.mode ?? 'easy');
 
   const [warmup,   setWarmup]   = useState(existing?.mode === 'easy' ? existing.config.warmup   : 30);
   const [work,     setWork]     = useState(existing?.mode === 'easy' ? existing.config.high     : 30);
@@ -352,6 +352,15 @@ export function useEditSession(
     setRunSpeeds(prev => ({ ...prev, [field]: value }));
     setSpeedsDirty(true);
     setActiveSpeedPreset(null);
+  }
+
+  function setDisplayActivityType(type: 'general' | 'run' | 'circuit') {
+    if (type === 'circuit') {
+      setMode('circuit');
+    } else {
+      if (mode === 'circuit') setMode('advanced');
+      setActivityType(type === 'run' ? 'run' : undefined);
+    }
   }
 
   const easyConfig = {
@@ -625,6 +634,7 @@ export function useEditSession(
     picker,
     setName,
     setActivityType,
+    setDisplayActivityType,
     setRunSpeed,
     toggleMode,
     cyclePhase, addInterval, duplicateInterval, removeInterval,

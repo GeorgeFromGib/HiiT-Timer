@@ -141,6 +141,7 @@ export const en = {
     circuitRest: 'Rest',
     exercisePlaceholder: 'Exercise name',
     newCircuitTitle: 'New Circuit',
+    circuit: 'Circuit',
   },
   picker: {
     rounds: 'rounds',
