@@ -12,10 +12,11 @@ export const es: typeof en = {
     intervalsAbbr: 'Int.',
   },
   phases: {
-    warmup: 'Calentamiento',
-    work: 'Trabajo',
-    rest: 'Descanso',
-    cooldown: 'Enfriamiento',
+    warmup:      'Calentamiento',
+    work:        'Trabajo',
+    rest:        'Descanso',
+    cooldown:    'Enfriamiento',
+    circuitRest: 'Descanso Circuito',
   },
   sessions: {
     title: 'Mis sesiones',

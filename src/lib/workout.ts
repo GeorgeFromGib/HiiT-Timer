@@ -1,4 +1,4 @@
-export type Phase = 'warmup' | 'work' | 'rest' | 'cooldown';
+export type Phase = 'warmup' | 'work' | 'rest' | 'cooldown' | 'circuitRest';
 
 export interface Segment {
   phase: Phase;
@@ -29,10 +29,11 @@ export interface WorkoutConfig {
 }
 
 export const PHASE_META: Record<Phase, { word: string; icon: string }> = {
-  warmup:   { word: 'WARM UP',   icon: 'sun'   },
-  work:     { word: 'WORK',      icon: 'flame' },
-  rest:     { word: 'RECOVER',   icon: 'pause' },
-  cooldown: { word: 'COOL DOWN', icon: 'sun'   },
+  warmup:      { word: 'WARM UP',   icon: 'sun'   },
+  work:        { word: 'WORK',      icon: 'flame' },
+  rest:        { word: 'RECOVER',   icon: 'pause' },
+  cooldown:    { word: 'COOL DOWN', icon: 'sun'   },
+  circuitRest: { word: 'BREAK',     icon: 'time'  },
 };
 
 export function intervalsToSegments(intervals: Interval[]): Segment[] {
@@ -103,7 +104,7 @@ export function expandCircuit(
       });
     }
     if (c + 1 < circuits && circuitRest > 0) {
-      raw.push({ phase: 'rest', label: PHASE_META['rest'].word, duration: circuitRest });
+      raw.push({ phase: 'circuitRest', label: PHASE_META['circuitRest'].word, duration: circuitRest });
     }
   }
 

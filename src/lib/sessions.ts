@@ -24,10 +24,11 @@ export type Session =
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   const map: Record<Phase, number> = {
-    warmup:   speeds.warmupSpeed,
-    work:     speeds.workSpeed,
-    rest:     speeds.restSpeed,
-    cooldown: speeds.cooldownSpeed,
+    warmup:      speeds.warmupSpeed,
+    work:        speeds.workSpeed,
+    rest:        speeds.restSpeed,
+    cooldown:    speeds.cooldownSpeed,
+    circuitRest: speeds.restSpeed,
   };
   return map[phase];
 }

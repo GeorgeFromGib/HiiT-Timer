@@ -32,10 +32,11 @@ const tidal: ThemeTokens = {
   sheetBg:   '#0e2832',
   onBg:      '#ffffff',
   phases: {
-    warmup:   '#ff8a3d',
-    work:     '#ff5a5f',
-    rest:     '#5fd38a',
-    cooldown: '#46a6ff',
+    warmup:      '#ff8a3d',
+    work:        '#ff5a5f',
+    rest:        '#5fd38a',
+    cooldown:    '#46a6ff',
+    circuitRest: '#f5a94e',
   },
 };
 
@@ -52,10 +53,11 @@ const daybreak: ThemeTokens = {
   sheetBg:   '#e7e1d4',
   onBg:      '#2a2218',
   phases: {
-    warmup:   '#e0631a',
-    work:     '#e23b40',
-    rest:     '#1f9d57',
-    cooldown: '#1f7fd6',
+    warmup:      '#e0631a',
+    work:        '#e23b40',
+    rest:        '#1f9d57',
+    cooldown:    '#1f7fd6',
+    circuitRest: '#c97a1a',
   },
 };
 

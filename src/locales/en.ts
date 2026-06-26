@@ -10,10 +10,11 @@ export const en = {
     intervalsAbbr: 'Int.',
   },
   phases: {
-    warmup: 'Warm Up',
-    work: 'Work',
-    rest: 'Rest',
-    cooldown: 'Cool Down',
+    warmup:      'Warm Up',
+    work:        'Work',
+    rest:        'Rest',
+    cooldown:    'Cool Down',
+    circuitRest: 'Circuit Rest',
   },
   sessions: {
     title: 'My Sessions',
