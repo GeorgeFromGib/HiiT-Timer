@@ -359,6 +359,7 @@ export function useEditSession(
     setIntervals([]);
     if (type === 'circuit') {
       setMode('circuit');
+      setActivityType(undefined);
       setCircuitWarmup(60);
       setCircuitCooldown(60);
       setCircuitRest(30);

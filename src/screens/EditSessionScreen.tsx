@@ -401,7 +401,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           )}
 
           {/* Speeds — only shown in Easy mode (Advanced mode has speed presets inline above intervals) */}
-          {isRun && !isAdvanced && (
+          {isRun && !isAdvanced && !isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
               <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} activePreset={activeSpeedPreset} />
