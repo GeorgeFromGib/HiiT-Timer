@@ -322,6 +322,7 @@ export function useEditSession(
         existing.config.rounds, existing.config.cooldown,
       );
     }
+    if (existing.mode === 'circuit') return null;
     return findMatchingDurationPresetForIntervals(existing.intervals);
   });
   const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
