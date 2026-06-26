@@ -36,7 +36,7 @@ const tidal: ThemeTokens = {
     work:        '#ff5a5f',
     rest:        '#5fd38a',
     cooldown:    '#46a6ff',
-    circuitRest: '#f5a94e',
+    circuitRest: '#7dd3fc',
   },
 };
 
@@ -57,7 +57,7 @@ const daybreak: ThemeTokens = {
     work:        '#e23b40',
     rest:        '#1f9d57',
     cooldown:    '#1f7fd6',
-    circuitRest: '#c97a1a',
+    circuitRest: '#0891b2',
   },
 };
 
