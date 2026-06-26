@@ -207,6 +207,18 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             label={t('settings.version')}
             right={<Text style={styles.versionText}>{Constants.expoConfig?.version ?? '—'}</Text>}
           />
+          <SettingsRow
+            label={t('settings.subscription')}
+            right={
+              <Text style={styles.versionText}>
+                {isPremium
+                  ? t('settings.subscriptionPremium')
+                  : trialDaysRemaining > 0
+                    ? t('settings.subscriptionTrial', { days: trialDaysRemaining })
+                    : t('settings.subscriptionExpired')}
+              </Text>
+            }
+          />
           <Pressable onPress={async () => {
             // eslint-disable-next-line @typescript-eslint/no-require-imports
             const StoreReview = require('expo-store-review');
