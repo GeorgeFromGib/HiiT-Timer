@@ -1,11 +1,12 @@
 import { useMemo, useRef, useState } from 'react';
 import { i18n } from '../lib/i18n';
 import { Alert } from 'react-native';
-import { getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS } from '../lib/sessions';
+import { getSessionSegments, speedForPhase, type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS, newId } from '../lib/sessions';
 import { serializeDraft, buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel, DURATION_PRESETS, SPEED_PRESETS, findMatchingDurationPreset, findMatchingDurationPresetForIntervals, findMatchingSpeedPreset } from '../lib/presets';
 import {
   totalDuration, tryConvertToEasy, buildIntervalsFromEasy, convertKmhToMph, convertMphToKmh,
+  expandCircuit,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
 
@@ -20,25 +21,33 @@ type ActivePicker =
   | { type: 'interval'; key: string }
   | { type: 'rounds' }
   | { type: 'speed'; field: keyof RunSpeeds; isMiles: boolean }
-  | { type: 'intervalSpeed'; key: string; isMiles: boolean };
+  | { type: 'intervalSpeed'; key: string; isMiles: boolean }
+  | { type: 'circuitWarmup' }
+  | { type: 'circuitCooldown' }
+  | { type: 'circuitCount' };
 
 type CommitResult =
-  | { type: 'field';         field: TimeField;       secs: number }
-  | { type: 'interval';      key: string;            secs: number }
-  | { type: 'rounds';        value: number }
-  | { type: 'speed';         field: keyof RunSpeeds; kmh: number }
-  | { type: 'intervalSpeed'; key: string;            kmh: number };
+  | { type: 'field';          field: TimeField;       secs: number }
+  | { type: 'interval';       key: string;            secs: number }
+  | { type: 'rounds';         value: number }
+  | { type: 'speed';          field: keyof RunSpeeds; kmh: number }
+  | { type: 'intervalSpeed';  key: string;            kmh: number }
+  | { type: 'circuitWarmup';  secs: number }
+  | { type: 'circuitCooldown'; secs: number }
+  | { type: 'circuitCount';   value: number };
 
 export type SavePayload =
   | { ok: true; session: Session; isNew: boolean }
   | { ok: false; titleKey: string; messageKey: string };
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
+const CIRCUIT_PHASES: Phase[] = ['work', 'rest'];
 
 // All state the screen needs to render — no setters.
 export interface EditSessionDraft {
   name:                string;
   isAdvanced:          boolean;
+  isCircuit:           boolean;
   fieldValues:         Record<TimeField, number>;
   rounds:              number;
   intervals:           LocalInterval[];
@@ -49,6 +58,9 @@ export interface EditSessionDraft {
   activeTimingPreset:  PresetLevel | null;
   activeSpeedPreset:   PresetLevel | null;
   hasChanges:          boolean;
+  circuitWarmup:       number;
+  circuitCooldown:     number;
+  circuitCount:        number;
 }
 
 // Picker modal state: null when closed.
@@ -93,14 +105,20 @@ export interface EditSessionInterface {
   // Presets
   applyDurationPreset: (level: PresetLevel) => void;
   applySpeedPreset:    (level: PresetLevel) => void;
+  // Circuit
+  setActivityLabel:         (key: string, label: string) => void;
+  openCircuitWarmupPicker:  () => void;
+  openCircuitCooldownPicker: () => void;
+  openCircuitsPicker:       () => void;
   // Persistence
   buildSavePayload: () => SavePayload;
 }
 
 function usePickerState(
-  intervals:   LocalInterval[],
-  fieldValues: Record<TimeField, number>,
-  onCommit:    (result: CommitResult) => void,
+  intervals:     LocalInterval[],
+  fieldValues:   Record<TimeField, number>,
+  circuitValues: { warmup: number; cooldown: number; count: number },
+  onCommit:      (result: CommitResult) => void,
 ) {
   const [activePicker,  setActivePicker]  = useState<ActivePicker | null>(null);
   const [pickerMinutes, setPickerMinutes] = useState(0);
@@ -111,6 +129,9 @@ function usePickerState(
 
   const pickerTitle = (() => {
     if (!activePicker) return '';
+    if (activePicker.type === 'circuitCount') return i18n.t('picker.circuitsTitle');
+    if (activePicker.type === 'circuitWarmup') return i18n.t('phases.warmup');
+    if (activePicker.type === 'circuitCooldown') return i18n.t('phases.cooldown');
     if (activePicker.type === 'rounds') return i18n.t('picker.roundsTitle');
     if (activePicker.type === 'field') return i18n.t('phases.' + activePicker.field);
     if (activePicker.type === 'speed') {
@@ -161,6 +182,23 @@ function usePickerState(
     setActivePicker({ type: 'intervalSpeed', key, isMiles });
   }
 
+  function openCircuitWarmupPicker() {
+    setPickerMinutes(Math.floor(circuitValues.warmup / 60));
+    setPickerSeconds(circuitValues.warmup % 60);
+    setActivePicker({ type: 'circuitWarmup' });
+  }
+
+  function openCircuitCooldownPicker() {
+    setPickerMinutes(Math.floor(circuitValues.cooldown / 60));
+    setPickerSeconds(circuitValues.cooldown % 60);
+    setActivePicker({ type: 'circuitCooldown' });
+  }
+
+  function openCircuitCountPicker() {
+    setPickerRounds(circuitValues.count - 1);
+    setActivePicker({ type: 'circuitCount' });
+  }
+
   function commitPicker() {
     if (!activePicker) return;
     if (activePicker.type === 'rounds') {
@@ -173,6 +211,12 @@ function usePickerState(
       const displayVal = speedWhole + speedDecimal / 10;
       const kmh = activePicker.isMiles ? convertMphToKmh(displayVal) : displayVal;
       onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh });
+    } else if (activePicker.type === 'circuitCount') {
+      onCommit({ type: 'circuitCount', value: pickerRounds + 1 });
+    } else if (activePicker.type === 'circuitWarmup') {
+      onCommit({ type: 'circuitWarmup', secs: pickerMinutes * 60 + pickerSeconds });
+    } else if (activePicker.type === 'circuitCooldown') {
+      onCommit({ type: 'circuitCooldown', secs: pickerMinutes * 60 + pickerSeconds });
     } else {
       const secs = pickerMinutes * 60 + pickerSeconds;
       if (activePicker.type === 'field') {
@@ -186,7 +230,7 @@ function usePickerState(
 
   const picker: EditSessionPicker | null = activePicker ? {
     title:        pickerTitle,
-    isRounds:     activePicker.type === 'rounds',
+    isRounds:     activePicker.type === 'rounds' || activePicker.type === 'circuitCount',
     isSpeed:      activePicker.type === 'speed' || activePicker.type === 'intervalSpeed',
     speedUnit:    (activePicker.type === 'speed' || activePicker.type === 'intervalSpeed') && activePicker.isMiles ? 'miles' : 'km',
     minutes:      pickerMinutes,
@@ -203,6 +247,9 @@ function usePickerState(
     openIntervalPicker,
     openSpeedPicker,
     openIntervalSpeedPicker,
+    openCircuitWarmupPicker,
+    openCircuitCooldownPicker,
+    openCircuitCountPicker,
     updatePicker: (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => {
       if (partial.minutes      !== undefined) setPickerMinutes(partial.minutes);
       if (partial.seconds      !== undefined) setPickerSeconds(partial.seconds);
@@ -218,9 +265,10 @@ function usePickerState(
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
+  newMode?: 'circuit',
 ): EditSessionInterface {
   const [name, setName] = useState(existing?.name ?? '');
-  const [mode, setMode] = useState<'easy' | 'advanced'>(existing?.mode === 'circuit' ? 'easy' : (existing?.mode ?? 'easy'));
+  const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(existing?.mode ?? newMode ?? 'easy');
 
   const [warmup,   setWarmup]   = useState(existing?.mode === 'easy' ? existing.config.warmup   : 30);
   const [work,     setWork]     = useState(existing?.mode === 'easy' ? existing.config.high     : 30);
@@ -228,8 +276,13 @@ export function useEditSession(
   const [rounds,   setRounds]   = useState(existing?.mode === 'easy' ? existing.config.rounds   : 4);
   const [cooldown, setCooldown] = useState(existing?.mode === 'easy' ? existing.config.cooldown : 30);
 
+  const [circuitWarmup,   setCircuitWarmup]   = useState(existing?.mode === 'circuit' ? existing.warmup    : 60);
+  const [circuitCooldown, setCircuitCooldown] = useState(existing?.mode === 'circuit' ? existing.cooldown  : 60);
+  const [circuitCount,    setCircuitCount]    = useState(existing?.mode === 'circuit' ? existing.circuits  : 3);
+
   const [intervals, setIntervals] = useState<LocalInterval[]>(
-    existing?.mode === 'advanced' ? existing.intervals.map(toLocal) : []
+    existing?.mode === 'advanced' || existing?.mode === 'circuit'
+      ? existing.intervals.map(toLocal) : []
   );
 
   const [activityType, setActivityType] = useState<'run' | undefined>(
@@ -254,6 +307,12 @@ export function useEditSession(
     existing && existing.mode !== 'circuit' ? existing.activityType : undefined,
     existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS,
   )).current;
+
+  const initialCircuitSnapshot = useRef(
+    existing?.mode === 'circuit'
+      ? JSON.stringify({ name: existing.name, warmup: existing.warmup, cooldown: existing.cooldown, circuits: existing.circuits, intervals: existing.intervals })
+      : JSON.stringify({ name: '', warmup: 60, cooldown: 60, circuits: 3, intervals: [] })
+  ).current;
 
   const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() => {
     if (!existing) return null;
@@ -285,11 +344,14 @@ export function useEditSession(
 
   const previewSegments = useMemo(() => {
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+    if (mode === 'circuit') {
+      return expandCircuit(cleanIntervals, circuitCount, circuitWarmup, circuitCooldown);
+    }
     const draft: Session = mode === 'easy'
       ? { id: '', name: '', mode: 'easy', config: easyConfig, activityType, runSpeeds }
       : { id: '', name: '', mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds };
     return getSessionSegments(draft);
-  }, [mode, warmup, work, rest, rounds, cooldown, intervals, activityType, runSpeeds]);
+  }, [mode, warmup, work, rest, rounds, cooldown, intervals, activityType, runSpeeds, circuitWarmup, circuitCooldown, circuitCount]);
 
   const fieldValues: Record<TimeField, number> = { warmup, work, rest, cooldown };
   const fieldSetters: Record<TimeField, (v: number) => void> = {
@@ -303,10 +365,13 @@ export function useEditSession(
     openIntervalPicker,
     openSpeedPicker,
     openIntervalSpeedPicker: openIntervalSpeedPickerInner,
+    openCircuitWarmupPicker,
+    openCircuitCooldownPicker,
+    openCircuitCountPicker,
     updatePicker,
     commitPicker,
     dismissPicker,
-  } = usePickerState(intervals, fieldValues, (result) => {
+  } = usePickerState(intervals, fieldValues, { warmup: circuitWarmup, cooldown: circuitCooldown, count: circuitCount }, (result) => {
     if (result.type === 'rounds') {
       setRounds(result.value);
       setTimingDirty(true);
@@ -322,6 +387,15 @@ export function useEditSession(
       setIntervals(ivs =>
         ivs.map(iv => iv._key === result.key ? { ...iv, speed: result.kmh } : iv)
       );
+    } else if (result.type === 'circuitWarmup') {
+      setCircuitWarmup(result.secs);
+      setTimingDirty(true);
+    } else if (result.type === 'circuitCooldown') {
+      setCircuitCooldown(result.secs);
+      setTimingDirty(true);
+    } else if (result.type === 'circuitCount') {
+      setCircuitCount(result.value);
+      setTimingDirty(true);
     } else {
       setIntervals(ivs =>
         ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
@@ -360,11 +434,15 @@ export function useEditSession(
   function cyclePhase(key: string) {
     setTimingDirty(true);
     setActiveTimingPreset(null);
-    setIntervals(ivs => ivs.map(iv =>
-      iv._key === key
-        ? { ...iv, type: PHASES[(PHASES.indexOf(iv.type) + 1) % PHASES.length] }
-        : iv
-    ));
+    const phases = mode === 'circuit' ? CIRCUIT_PHASES : PHASES;
+    setIntervals(ivs => ivs.map(iv => {
+      if (iv._key !== key) return iv;
+      const currentIdx = phases.indexOf(iv.type);
+      const nextType = currentIdx >= 0
+        ? phases[(currentIdx + 1) % phases.length]
+        : phases[0];
+      return { ...iv, type: nextType };
+    }));
   }
 
   function addInterval() {
@@ -451,7 +529,33 @@ export function useEditSession(
     );
   }
 
+  function setActivityLabel(key: string, label: string) {
+    setIntervals(ivs => ivs.map(iv =>
+      iv._key === key ? { ...iv, activityLabel: label } : iv
+    ));
+  }
+
   function buildSavePayload(): SavePayload {
+    if (mode === 'circuit') {
+      if (!name.trim()) {
+        return { ok: false, titleKey: 'alerts.nameRequiredTitle', messageKey: 'alerts.nameRequiredMessage' };
+      }
+      const hasWork = intervals.some(iv => iv.type === 'work');
+      if (!hasWork) {
+        return { ok: false, titleKey: 'alerts.noWorkIntervalsTitle', messageKey: 'alerts.noWorkIntervalsMessage' };
+      }
+      const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+      const session: Session = {
+        id: existing?.id ?? newId(),
+        name: name.trim(),
+        mode: 'circuit',
+        intervals: cleanIntervals,
+        circuits: circuitCount,
+        warmup: circuitWarmup,
+        cooldown: circuitCooldown,
+      };
+      return { ok: true, session, isNew: !existing };
+    }
     const validation = validateDraft(name, mode, intervals);
     if (!validation.ok) {
       return { ok: false, titleKey: validation.titleKey, messageKey: validation.messageKey };
@@ -463,13 +567,18 @@ export function useEditSession(
 
   const hasChanges = useMemo(() => {
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+    if (mode === 'circuit') {
+      const current = JSON.stringify({ name, warmup: circuitWarmup, cooldown: circuitCooldown, circuits: circuitCount, intervals: cleanIntervals });
+      return current !== initialCircuitSnapshot;
+    }
     const current = serializeDraft(name, mode, warmup, work, rest, cooldown, rounds, cleanIntervals, activityType, runSpeeds);
     return current !== initialSnapshot;
-  }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds]);
+  }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds, circuitWarmup, circuitCooldown, circuitCount]);
 
   const draft: EditSessionDraft = {
     name,
     isAdvanced: mode === 'advanced',
+    isCircuit:  mode === 'circuit',
     fieldValues,
     rounds,
     intervals,
@@ -480,6 +589,9 @@ export function useEditSession(
     activeTimingPreset,
     activeSpeedPreset,
     hasChanges,
+    circuitWarmup,
+    circuitCooldown,
+    circuitCount,
   };
 
   return {
@@ -503,6 +615,10 @@ export function useEditSession(
     dismissPicker,
     applyDurationPreset,
     applySpeedPreset,
+    setActivityLabel,
+    openCircuitWarmupPicker,
+    openCircuitCooldownPicker,
+    openCircuitsPicker: openCircuitCountPicker,
     buildSavePayload,
   };
 }
