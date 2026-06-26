@@ -16,7 +16,7 @@ import PaywallModal from '../components/PaywallModal';
 import { useSettings } from '../lib/settingsContext';
 import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
-import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../theme';
+import { useTheme, ghostBtnStyle, buttonShadow, withOpacity, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
 import { useTranslation } from '../lib/i18n';
@@ -75,11 +75,19 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           </Pressable>
         }
         right={
-          <Pressable style={styles.addBtn} onPress={gate(() => onNavigate({ name: 'EditSession' }))}>
-            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-              <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
-            </Svg>
-          </Pressable>
+          <View style={styles.headerBtns}>
+            <Pressable
+              style={styles.circuitBtn}
+              onPress={gate(() => onNavigate({ name: 'EditSession', newMode: 'circuit' }))}
+            >
+              <Text style={styles.circuitBtnText}>{t('edit.newCircuitTitle')}</Text>
+            </Pressable>
+            <Pressable style={styles.addBtn} onPress={gate(() => onNavigate({ name: 'EditSession' }))}>
+              <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+                <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
+              </Svg>
+            </Pressable>
+          </View>
         }
       />
 
@@ -128,6 +136,25 @@ function makeStyles(T: ThemeTokens) {
     },
 
     header: { marginBottom: 20 },
+    headerBtns: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    circuitBtn: {
+      paddingHorizontal: 12,
+      paddingVertical: 7,
+      borderRadius: 14,
+      borderWidth: 1.5,
+      borderColor: T.accent,
+      backgroundColor: withOpacity(T.accent, 0x18),
+    },
+    circuitBtnText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 12,
+      letterSpacing: 12 * 0.04,
+      color: T.accent,
+    },
     addBtn: {
       width: 36,
       height: 36,
