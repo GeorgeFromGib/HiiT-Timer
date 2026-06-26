@@ -49,6 +49,8 @@ export default function WorkoutIcon(props: WorkoutIconProps) {
         <Path {...p} d="M12 2v20M2 12h20M5.5 5.5l13 13M18.5 5.5l-13 13M9.5 4.5l2.5 2.5 2.5-2.5M9.5 19.5l2.5-2.5 2.5 2.5M4.5 9.5l2.5 2.5-2.5 2.5M19.5 9.5l-2.5 2.5 2.5 2.5" />
       ) : phase === 'work' ? (
         <Path {...p} d="M12 2.5c3 4 6 5.5 6 10a6 6 0 0 1-12 0c0-2 1-3.4 2.4-4.6.2 1.6 1 2.4 2 2.6-1.2-3 .3-6.4 1.6-8z" />
+      ) : phase === 'circuitRest' ? (
+        <Path {...p} d="M7 3h10M7 21h10M7 3l5 9-5 9M17 3l-5 9 5 9" />
       ) : (
         <G {...p}>
           <Rect x="6" y="5" width="4" height="14" rx="1.5" />
