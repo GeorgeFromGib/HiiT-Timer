@@ -56,6 +56,21 @@ function bell(hz, sec, vol = 0.8) {
   return buildWav(s);
 }
 
+function beep(hz, sec, vol = 1.0) {
+  const n = Math.floor(SR * sec);
+  const attack = Math.floor(SR * 0.003); // 3ms attack
+  const s = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const amp = i < attack
+      ? vol * (i / attack)
+      : vol * Math.exp(-5 * (i - attack) / (n - attack));
+    // fundamental + octave harmonic — richer tone, perceived louder than pure sine
+    s[i] = amp * (0.65 * Math.sin(2 * Math.PI * hz * i / SR) +
+                  0.35 * Math.sin(2 * Math.PI * hz * 2 * i / SR));
+  }
+  return buildWav(s);
+}
+
 function concat(...wavBufs) {
   const totalSamples = wavBufs.reduce((sum, b) => sum + (b.length - 44) / 2, 0);
   const out = Buffer.alloc(44 + totalSamples * 2);
@@ -77,7 +92,7 @@ const files = {
   'keepalive.wav': silence(2),       // looped to keep iOS audio session alive
   'high.wav':      tone(880,  0.25), // A5 — "go"
   'low.wav':       tone(523,  0.25), // C5 — "recover"
-  'tick.wav':      tone(1047, 0.07, 1.0), // C6 — 3-2-1 blip
+  'tick.wav':      beep(1047, 0.25, 1.0), // C6 — 3-2-1 blip
   'finish.wav':    concat(           // 5 bell chimes in fast succession
     bell(1047, 0.35), silence(0.06),
     bell(1047, 0.35), silence(0.06),
