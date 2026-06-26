@@ -10,14 +10,14 @@
       "supportsTablet": false,
       "deploymentTarget": "16.4",
       "bundleIdentifier": "com.georgefromgib.hiittimer",
-      "buildNumber": "5",
+      "buildNumber": "6",
       "appleTeamId": "KM666T7T27",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": [
           "audio"
         ],
-        "CFBundleLocalizations": ["en", "es"]
+        "CFBundleLocalizations": ["en", "es", "fr"]
       }
     },
     "android": {
