@@ -16,7 +16,7 @@ import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { loadSessions, saveSessions, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
-import { fmtDuration, convertKmhToMph } from '../lib/workout';
+import { fmtDuration, convertKmhToMph, type Phase } from '../lib/workout';
 import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
@@ -68,6 +68,11 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           circuitWarmup, circuitCooldown, circuitRest, circuitCount } = draft;
   const isRun = activityType === 'run';
 
+  const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
+  const addPhaseOptions: Phase[] = isCircuit
+    ? ['work', 'rest']
+    : ['work', 'rest', 'warmup', 'cooldown'];
+
   const editorTitle = isEditing
     ? t('edit.editTitle')
     : isCircuit
@@ -115,6 +120,50 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     );
   }
 
+  function renderAddIntervalBar() {
+    if (showAddPhasePicker) {
+      return (
+        <View style={styles.intervalActions}>
+          {addPhaseOptions.map(phase => {
+            const phaseColor = T.phases[phase];
+            return (
+              <Pressable
+                key={phase}
+                style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor, flex: 1 }]}
+                onPress={() => {
+                  addInterval(phase);
+                  setShowAddPhasePicker(false);
+                }}
+              >
+                <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phases.' + phase)}</Text>
+              </Pressable>
+            );
+          })}
+          <Pressable
+            style={[styles.phasePill, { borderColor: T.hairline, flex: 0, paddingHorizontal: 14 }]}
+            onPress={() => setShowAddPhasePicker(false)}
+          >
+            <Text style={[styles.phasePillText, { color: T.subText }]}>{t('common.cancel')}</Text>
+          </Pressable>
+        </View>
+      );
+    }
+    return (
+      <View style={styles.intervalActions}>
+        <Pressable onPress={() => setShowAddPhasePicker(true)} style={styles.addIntervalBtn}>
+          <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+            <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
+          </Svg>
+          <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>{t('edit.addInterval')}</Text>
+        </Pressable>
+        {intervals.length > 0 && (
+          <Pressable onPress={clearIntervals} style={styles.clearIntervalsBtn}>
+            <Text style={[styles.addIntervalBtnText, { color: T.subText }]}>{t('edit.clearAll')}</Text>
+          </Pressable>
+        )}
+      </View>
+    );
+  }
 
   return (
     <LinearGradient
@@ -299,19 +348,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 )}
               />
 
-              <View style={styles.intervalActions}>
-                <Pressable onPress={addInterval} style={styles.addIntervalBtn}>
-                  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-                    <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
-                  </Svg>
-                  <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>{t('edit.addInterval')}</Text>
-                </Pressable>
-                {intervals.length > 0 && (
-                  <Pressable onPress={clearIntervals} style={styles.clearIntervalsBtn}>
-                    <Text style={[styles.addIntervalBtnText, { color: T.subText }]}>{t('edit.clearAll')}</Text>
-                  </Pressable>
-                )}
-              </View>
+              {renderAddIntervalBar()}
             </>
           ) : isAdvanced ? (
             <>
@@ -354,19 +391,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 )}
               />
 
-              <View style={styles.intervalActions}>
-                <Pressable onPress={addInterval} style={styles.addIntervalBtn}>
-                  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
-                    <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
-                  </Svg>
-                  <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>{t('edit.addInterval')}</Text>
-                </Pressable>
-                {intervals.length > 0 && (
-                  <Pressable onPress={clearIntervals} style={styles.clearIntervalsBtn}>
-                    <Text style={[styles.addIntervalBtnText, { color: T.subText }]}>{t('edit.clearAll')}</Text>
-                  </Pressable>
-                )}
-              </View>
+              {renderAddIntervalBar()}
             </>
           ) : (
             <>
