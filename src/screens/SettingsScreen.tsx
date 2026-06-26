@@ -205,7 +205,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
         <SettingsSection title={t('settings.about')}>
           <SettingsRow
             label={t('settings.version')}
-            right={<Text style={styles.versionText}>{Constants.expoConfig?.version ?? '—'}</Text>}
+            right={<Text style={styles.versionText}>{Constants.expoConfig?.version ?? '—'} ({Constants.expoConfig?.ios?.buildNumber ?? '—'})</Text>}
           />
           <SettingsRow
             label={t('settings.subscription')}
