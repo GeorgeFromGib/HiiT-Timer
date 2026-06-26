@@ -55,7 +55,7 @@ export default function EditSessionScreen({ session: existing, newMode, onBack }
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
-    openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitsPicker,
+    openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     applyDurationPreset, applySpeedPreset,
@@ -65,7 +65,7 @@ export default function EditSessionScreen({ session: existing, newMode, onBack }
 
   const { name, isAdvanced, isCircuit, fieldValues, rounds, intervals, previewSegments, previewTotal,
           activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges,
-          circuitWarmup, circuitCooldown, circuitCount } = draft;
+          circuitWarmup, circuitCooldown, circuitRest, circuitCount } = draft;
   const isRun = activityType === 'run';
 
   const editorTitle = isEditing
@@ -228,6 +228,12 @@ export default function EditSessionScreen({ session: existing, newMode, onBack }
                     <Text style={styles.configCellLabel}>{t('edit.circuitCooldown')}</Text>
                     <Pressable style={styles.configInput} onPress={openCircuitCooldownPicker}>
                       <Text style={styles.configInputText}>{fmtDuration(circuitCooldown)}</Text>
+                    </Pressable>
+                  </View>
+                  <View style={styles.configCell}>
+                    <Text style={styles.configCellLabel}>{t('edit.circuitRest')}</Text>
+                    <Pressable style={styles.configInput} onPress={openCircuitRestPicker}>
+                      <Text style={styles.configInputText}>{circuitRest > 0 ? fmtDuration(circuitRest) : '—'}</Text>
                     </Pressable>
                   </View>
                   <View style={styles.configCell}>

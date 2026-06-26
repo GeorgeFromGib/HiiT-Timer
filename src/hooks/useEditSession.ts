@@ -24,6 +24,7 @@ type ActivePicker =
   | { type: 'intervalSpeed'; key: string; isMiles: boolean }
   | { type: 'circuitWarmup' }
   | { type: 'circuitCooldown' }
+  | { type: 'circuitRest' }
   | { type: 'circuitCount' };
 
 type CommitResult =
@@ -34,6 +35,7 @@ type CommitResult =
   | { type: 'intervalSpeed';  key: string;            kmh: number }
   | { type: 'circuitWarmup';  secs: number }
   | { type: 'circuitCooldown'; secs: number }
+  | { type: 'circuitRest';   secs: number }
   | { type: 'circuitCount';   value: number };
 
 export type SavePayload =
@@ -60,6 +62,7 @@ export interface EditSessionDraft {
   hasChanges:          boolean;
   circuitWarmup:       number;
   circuitCooldown:     number;
+  circuitRest:         number;
   circuitCount:        number;
 }
 
@@ -110,6 +113,7 @@ export interface EditSessionInterface {
   setActivityLabel:         (key: string, label: string) => void;
   openCircuitWarmupPicker:  () => void;
   openCircuitCooldownPicker: () => void;
+  openCircuitRestPicker:    () => void;
   openCircuitsPicker:       () => void;
   // Persistence
   buildSavePayload: () => SavePayload;
@@ -118,7 +122,7 @@ export interface EditSessionInterface {
 function usePickerState(
   intervals:     LocalInterval[],
   fieldValues:   Record<TimeField, number>,
-  circuitValues: { warmup: number; cooldown: number; count: number },
+  circuitValues: { warmup: number; cooldown: number; rest: number; count: number },
   onCommit:      (result: CommitResult) => void,
 ) {
   const [activePicker,  setActivePicker]  = useState<ActivePicker | null>(null);
@@ -133,6 +137,7 @@ function usePickerState(
     if (activePicker.type === 'circuitCount') return i18n.t('picker.circuitsTitle');
     if (activePicker.type === 'circuitWarmup') return i18n.t('phases.warmup');
     if (activePicker.type === 'circuitCooldown') return i18n.t('phases.cooldown');
+    if (activePicker.type === 'circuitRest') return i18n.t('edit.circuitRest');
     if (activePicker.type === 'rounds') return i18n.t('picker.roundsTitle');
     if (activePicker.type === 'field') return i18n.t('phases.' + activePicker.field);
     if (activePicker.type === 'speed') {
@@ -195,6 +200,12 @@ function usePickerState(
     setActivePicker({ type: 'circuitCooldown' });
   }
 
+  function openCircuitRestPicker() {
+    setPickerMinutes(Math.floor(circuitValues.rest / 60));
+    setPickerSeconds(circuitValues.rest % 60);
+    setActivePicker({ type: 'circuitRest' });
+  }
+
   function openCircuitCountPicker() {
     setPickerRounds(circuitValues.count - 1);
     setActivePicker({ type: 'circuitCount' });
@@ -218,6 +229,8 @@ function usePickerState(
       onCommit({ type: 'circuitWarmup', secs: pickerMinutes * 60 + pickerSeconds });
     } else if (activePicker.type === 'circuitCooldown') {
       onCommit({ type: 'circuitCooldown', secs: pickerMinutes * 60 + pickerSeconds });
+    } else if (activePicker.type === 'circuitRest') {
+      onCommit({ type: 'circuitRest', secs: pickerMinutes * 60 + pickerSeconds });
     } else {
       const secs = pickerMinutes * 60 + pickerSeconds;
       if (activePicker.type === 'field') {
@@ -253,6 +266,7 @@ function usePickerState(
     openIntervalSpeedPicker,
     openCircuitWarmupPicker,
     openCircuitCooldownPicker,
+    openCircuitRestPicker,
     openCircuitCountPicker,
     updatePicker: (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => {
       if (partial.minutes      !== undefined) setPickerMinutes(partial.minutes);
@@ -373,11 +387,12 @@ export function useEditSession(
     openIntervalSpeedPicker: openIntervalSpeedPickerInner,
     openCircuitWarmupPicker,
     openCircuitCooldownPicker,
+    openCircuitRestPicker,
     openCircuitCountPicker,
     updatePicker,
     commitPicker,
     dismissPicker,
-  } = usePickerState(intervals, fieldValues, { warmup: circuitWarmup, cooldown: circuitCooldown, count: circuitCount }, (result) => {
+  } = usePickerState(intervals, fieldValues, { warmup: circuitWarmup, cooldown: circuitCooldown, rest: circuitRest, count: circuitCount }, (result) => {
     if (result.type === 'rounds') {
       setRounds(result.value);
       setTimingDirty(true);
@@ -398,6 +413,9 @@ export function useEditSession(
       setTimingDirty(true);
     } else if (result.type === 'circuitCooldown') {
       setCircuitCooldown(result.secs);
+      setTimingDirty(true);
+    } else if (result.type === 'circuitRest') {
+      setCircuitRest(result.secs);
       setTimingDirty(true);
     } else if (result.type === 'circuitCount') {
       setCircuitCount(result.value);
@@ -598,6 +616,7 @@ export function useEditSession(
     hasChanges,
     circuitWarmup,
     circuitCooldown,
+    circuitRest,
     circuitCount,
   };
 
@@ -625,6 +644,7 @@ export function useEditSession(
     setActivityLabel,
     openCircuitWarmupPicker,
     openCircuitCooldownPicker,
+    openCircuitRestPicker,
     openCircuitsPicker: openCircuitCountPicker,
     buildSavePayload,
   };
