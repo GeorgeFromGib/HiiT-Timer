@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { fmtDuration, type Interval } from '../lib/workout';
 import { useTheme, withOpacity, glowShadow, type ThemeTokens } from '../theme';
 import DragHandle from './DragHandle';
@@ -13,12 +13,15 @@ export interface IntervalRowProps {
   displaySpeed?:      { value: string; unit: string };
   onOpenSpeedPicker?: () => void;
   onClearSpeed?:      () => void;
+  activityLabel?:     string;
+  onLabelChange?:     (text: string) => void;
 }
 
 export default function IntervalRow({
   interval, isActive,
   onCyclePhase, onOpenPicker, onDrag,
   displaySpeed, onOpenSpeedPicker, onClearSpeed,
+  activityLabel, onLabelChange,
 }: IntervalRowProps) {
   const { T } = useTheme();
   const { t } = useTranslation();
@@ -35,6 +38,17 @@ export default function IntervalRow({
         <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phases.' + interval.type)}</Text>
       </Pressable>
 
+      {onLabelChange !== undefined && interval.type === 'work' && (
+        <TextInput
+          style={[styles.labelInput, { color: T.text, borderColor: T.hairline }]}
+          value={activityLabel ?? ''}
+          onChangeText={onLabelChange}
+          placeholder={t('edit.exercisePlaceholder')}
+          placeholderTextColor={T.faintText}
+          returnKeyType="done"
+        />
+      )}
+
       {displaySpeed !== undefined && onOpenSpeedPicker && (
         <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8} style={styles.intervalSpeed}>
           <Text style={styles.intervalDurationText}>
@@ -44,7 +58,13 @@ export default function IntervalRow({
         </Pressable>
       )}
 
-      <Pressable onPress={onOpenPicker} style={[styles.intervalDuration, displaySpeed !== undefined && { flex: 0 }]}>
+      <Pressable
+        onPress={onOpenPicker}
+        style={[
+          styles.intervalDuration,
+          (displaySpeed !== undefined || (onLabelChange !== undefined && interval.type === 'work')) && { flex: 0 },
+        ]}
+      >
         <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
       </Pressable>
     </View>
@@ -88,6 +108,16 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_700Bold',
       fontSize: 11,
       letterSpacing: 11 * 0.06,
+    },
+    labelInput: {
+      flex: 1,
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 13,
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      backgroundColor: 'transparent',
     },
     intervalSpeed: {
       flex: 1,
