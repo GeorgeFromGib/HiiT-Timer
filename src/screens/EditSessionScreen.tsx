@@ -36,10 +36,11 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 
 interface Props {
   session?: Session;
+  newMode?: 'circuit';
   onBack: () => void;
 }
 
-export default function EditSessionScreen({ session: existing, onBack }: Props) {
+export default function EditSessionScreen({ session: existing, newMode, onBack }: Props) {
   const { T } = useTheme();
   const { settings } = useSettings();
   const { t } = useTranslation();
@@ -54,14 +55,24 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
+    openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitsPicker,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     updatePicker, commitPicker, dismissPicker,
     applyDurationPreset, applySpeedPreset,
+    setActivityLabel,
     buildSavePayload,
-  } = useEditSession(existing, onBack);
+  } = useEditSession(existing, onBack, newMode);
 
-  const { name, isAdvanced, fieldValues, rounds, intervals, previewSegments, previewTotal, activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges } = draft;
+  const { name, isAdvanced, isCircuit, fieldValues, rounds, intervals, previewSegments, previewTotal,
+          activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges,
+          circuitWarmup, circuitCooldown, circuitCount } = draft;
   const isRun = activityType === 'run';
+
+  const editorTitle = isEditing
+    ? t('edit.editTitle')
+    : isCircuit
+      ? t('edit.newCircuitTitle')
+      : t('edit.newTitle');
 
   const timeFields: { label: string; field: TimeField }[] = [
     { label: t('phases.warmup'),   field: 'warmup'   },
@@ -115,7 +126,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kav}>
         <ScreenHeader
           onBack={handleCancel}
-          title={isEditing ? t('edit.editTitle') : t('edit.newTitle')}
+          title={editorTitle}
           style={styles.header}
         />
 
@@ -165,26 +176,28 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           </View>
 
           {/* Activity Type */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
-            <View style={styles.activityTypeRow}>
-              <Pressable
-                style={[styles.activityTypeBtn, !isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
-                onPress={() => setActivityType(undefined)}
-              >
-                <Text style={[styles.activityTypeBtnText, { color: !isRun ? T.accent : T.subText }]}>{t('edit.general')}</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.activityTypeBtn, isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
-                onPress={() => setActivityType('run')}
-              >
-                <Text style={[styles.activityTypeBtnText, { color: isRun ? T.accent : T.subText }]}>{t('edit.run')}</Text>
-              </Pressable>
+          {!isCircuit && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
+              <View style={styles.activityTypeRow}>
+                <Pressable
+                  style={[styles.activityTypeBtn, !isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
+                  onPress={() => setActivityType(undefined)}
+                >
+                  <Text style={[styles.activityTypeBtnText, { color: !isRun ? T.accent : T.subText }]}>{t('edit.general')}</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.activityTypeBtn, isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
+                  onPress={() => setActivityType('run')}
+                >
+                  <Text style={[styles.activityTypeBtnText, { color: isRun ? T.accent : T.subText }]}>{t('edit.run')}</Text>
+                </Pressable>
+              </View>
             </View>
-          </View>
+          )}
 
-          {/* Mode toggle — always visible; back-conversion to easy is validated by tryConvertToEasy */}
-          {(
+          {/* Mode toggle — hidden for circuit sessions */}
+          {!isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.setupMode')}</Text>
               <View style={styles.modeToggleRow}>
@@ -200,7 +213,77 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </View>
           )}
 
-          {isAdvanced ? (
+          {isCircuit ? (
+            <>
+              {/* Circuit config grid */}
+              <View style={styles.fieldGroup}>
+                <View style={styles.configGrid}>
+                  <View style={styles.configCell}>
+                    <Text style={styles.configCellLabel}>{t('edit.circuitWarmup')}</Text>
+                    <Pressable style={styles.configInput} onPress={openCircuitWarmupPicker}>
+                      <Text style={styles.configInputText}>{fmtDuration(circuitWarmup)}</Text>
+                    </Pressable>
+                  </View>
+                  <View style={styles.configCell}>
+                    <Text style={styles.configCellLabel}>{t('edit.circuitCooldown')}</Text>
+                    <Pressable style={styles.configInput} onPress={openCircuitCooldownPicker}>
+                      <Text style={styles.configInputText}>{fmtDuration(circuitCooldown)}</Text>
+                    </Pressable>
+                  </View>
+                  <View style={styles.configCell}>
+                    <Text style={styles.configCellLabel}>{t('edit.circuits')}</Text>
+                    <Pressable style={styles.configInput} onPress={openCircuitsPicker}>
+                      <Text style={styles.configInputText}>{circuitCount}</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+
+              {/* Circuit interval list */}
+              <View style={styles.fieldGroup}>
+                {intervals.length === 0 && (
+                  <View style={styles.emptyState}>
+                    <Text style={styles.emptyStateText}>{t('edit.noIntervals')}</Text>
+                  </View>
+                )}
+              </View>
+
+              <NestableDraggableFlatList
+                data={intervals}
+                keyExtractor={iv => iv._key}
+                onDragEnd={({ data }) => reorderIntervals(data)}
+                renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
+                  <IntervalSwipeRow
+                    interval={iv}
+                    T={T}
+                    styles={styles}
+                    isActive={isActive}
+                    drag={drag}
+                    onDuplicate={() => duplicateInterval(iv._key)}
+                    onRemove={() => removeInterval(iv._key)}
+                    onCyclePhase={() => cyclePhase(iv._key)}
+                    onOpenPicker={() => openIntervalPicker(iv._key)}
+                    activityLabel={iv.activityLabel}
+                    onLabelChange={iv.type === 'work' ? (label) => setActivityLabel(iv._key, label) : undefined}
+                  />
+                )}
+              />
+
+              <View style={styles.intervalActions}>
+                <Pressable onPress={addInterval} style={styles.addIntervalBtn}>
+                  <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
+                    <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
+                  </Svg>
+                  <Text style={[styles.addIntervalBtnText, { color: T.accent }]}>{t('edit.addInterval')}</Text>
+                </Pressable>
+                {intervals.length > 0 && (
+                  <Pressable onPress={clearIntervals} style={styles.clearIntervalsBtn}>
+                    <Text style={[styles.addIntervalBtnText, { color: T.subText }]}>{t('edit.clearAll')}</Text>
+                  </Pressable>
+                )}
+              </View>
+            </>
+          ) : isAdvanced ? (
             <>
               {/* Intervals */}
               <View style={styles.fieldGroup}>
@@ -740,6 +823,7 @@ function IntervalSwipeRow({
   interval, T, styles, isActive, drag,
   onDuplicate, onRemove, onCyclePhase, onOpenPicker,
   displaySpeed, onOpenSpeedPicker, onClearSpeed,
+  activityLabel, onLabelChange,
 }: {
   interval:           LocalInterval;
   T:                  ThemeTokens;
@@ -753,6 +837,8 @@ function IntervalSwipeRow({
   displaySpeed?:      { value: string; unit: string };
   onOpenSpeedPicker?: () => void;
   onClearSpeed?:      () => void;
+  activityLabel?:     string;
+  onLabelChange?:     (text: string) => void;
 }) {
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
@@ -792,6 +878,8 @@ function IntervalSwipeRow({
           displaySpeed={displaySpeed}
           onOpenSpeedPicker={onOpenSpeedPicker}
           onClearSpeed={onClearSpeed}
+          activityLabel={activityLabel}
+          onLabelChange={onLabelChange}
         />
       </ReanimatedSwipeable>
     </ScaleDecorator>

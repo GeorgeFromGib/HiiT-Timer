@@ -110,7 +110,7 @@ export default function App() {
         <RouteScreen><WorkoutScreen session={route.session} onBack={goBack} /></RouteScreen>
       )}
       {route.name === 'EditSession' && (
-        <RouteScreen><EditSessionScreen session={route.session} onBack={goBack} /></RouteScreen>
+        <RouteScreen><EditSessionScreen session={route.session} newMode={route.newMode} onBack={goBack} /></RouteScreen>
       )}
       {route.name === 'Settings' && (
         <RouteScreen>
