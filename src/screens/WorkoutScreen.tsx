@@ -218,6 +218,17 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </View>
           )}
 
+          {seg.activityLabel !== undefined && !isDone && !isPreStart && (
+            <View style={[styles.speedPill, {
+              backgroundColor: withOpacity(phaseColor, 0x21),
+              borderColor:     withOpacity(phaseColor, 0x59),
+            }]}>
+              <Text style={[styles.speedPillText, { color: phaseColor }]}>
+                {seg.activityLabel}
+              </Text>
+            </View>
+          )}
+
         </View>
 
         {/* countdown: always rendered to keep layout stable; digits hidden when done */}
@@ -271,21 +282,29 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           )}
 
           {!isDone && !isPreStart && (
-            <View style={styles.extendRow}>
-              <View style={styles.extendLeft}>
-                {EXTEND_OPTIONS.map((secs) => (
-                  <GhostBtn key={secs} onPress={() => setSegments(extend(secs))} disabled={isIdle} color={phaseColor} size={68}>
-                    <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
-                  </GhostBtn>
-                ))}
-              </View>
-              <GhostBtn onPress={appendLastTwo} disabled={isIdle} color={phaseColor} size={68}>
-                <Text style={[styles.intervalCounter, { color: phaseColor }]}>
-                  {'+1 '}
-                  <Text style={styles.roundAbbr}>{t('workout.roundAbbr')}</Text>
+            session.mode === 'circuit' ? (
+              seg.circuitNumber !== undefined && (
+                <Text style={[styles.intervalCounter, { color: T.onBg }]}>
+                  {t('workout.circuit')} {seg.circuitNumber} / {session.circuits}
                 </Text>
-              </GhostBtn>
-            </View>
+              )
+            ) : (
+              <View style={styles.extendRow}>
+                <View style={styles.extendLeft}>
+                  {EXTEND_OPTIONS.map((secs) => (
+                    <GhostBtn key={secs} onPress={() => setSegments(extend(secs))} disabled={isIdle} color={phaseColor} size={68}>
+                      <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
+                    </GhostBtn>
+                  ))}
+                </View>
+                <GhostBtn onPress={appendLastTwo} disabled={isIdle} color={phaseColor} size={68}>
+                  <Text style={[styles.intervalCounter, { color: phaseColor }]}>
+                    {'+1 '}
+                    <Text style={styles.roundAbbr}>{t('workout.roundAbbr')}</Text>
+                  </Text>
+                </GhostBtn>
+              </View>
+            )
           )}
         </View>
       </View>
@@ -303,6 +322,11 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             {nextSeg.speed !== undefined && (
               <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
                 {fmtSpeed(nextSeg.speed, settings.speedUnit)}
+              </Text>
+            )}
+            {nextSeg.activityLabel !== undefined && (
+              <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
+                {nextSeg.activityLabel}
               </Text>
             )}
           </>
