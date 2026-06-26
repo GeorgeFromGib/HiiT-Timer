@@ -92,7 +92,7 @@ export interface EditSessionInterface {
   toggleMode:       (advanced: boolean) => void;
   // Interval list
   cyclePhase:         (key: string) => void;
-  addInterval:        () => void;
+  addInterval:        (type: Phase) => void;
   duplicateInterval:  (key: string) => void;
   removeInterval:     (key: string) => void;
   clearIntervals:     () => void;
@@ -511,10 +511,15 @@ export function useEditSession(
     }));
   }
 
-  function addInterval() {
+  function addInterval(type: Phase) {
     setTimingDirty(true);
     setActiveTimingPreset(null);
-    setIntervals(ivs => [...ivs, toLocal({ type: 'work', dur: 30 })]);
+    const last = [...intervals].reverse().find(iv => iv.type === type);
+    setIntervals(ivs => [...ivs, toLocal({
+      type,
+      dur:           last?.dur ?? 30,
+      activityLabel: last?.activityLabel,
+    })]);
   }
 
   function duplicateInterval(key: string) {
