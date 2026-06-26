@@ -41,6 +41,7 @@ export const es: typeof en = {
       cooldown: 'ENFRIAMIENTO',
     },
     roundAbbr: 'rda',
+    circuit: 'CIRCUITO',
   },
   complete: {
     eyebrow:       'ENTRENAMIENTO COMPLETO',
@@ -134,6 +135,11 @@ export const es: typeof en = {
     saveChanges: 'GUARDAR CAMBIOS',
     save: 'GUARDAR',
     cancel: 'Cancelar',
+    circuits: 'Circuitos',
+    circuitWarmup: 'Calentamiento',
+    circuitCooldown: 'Enfriamiento',
+    exercisePlaceholder: 'Nombre del ejercicio',
+    newCircuitTitle: 'Nuevo Circuito',
   },
   picker: {
     rounds: 'rondas',
@@ -144,6 +150,7 @@ export const es: typeof en = {
     speedSuffix: 'Velocidad de %{phase}',
     intervalSpeedTitle: 'Velocidad del intervalo %{n}',
     intervalTitle: 'Intervalo %{n}',
+    circuitsTitle: 'Circuitos',
   },
   alerts: {
     cannotSwitchEasyTitle: 'No se puede cambiar a Fácil',
@@ -161,6 +168,8 @@ export const es: typeof en = {
     nameRequiredMessage: 'Introduce un nombre para la sesión.',
     noIntervalsTitle: 'Sin intervalos',
     noIntervalsMessage: 'Añade al menos un intervalo.',
+    noWorkIntervalsTitle: 'Sin intervalos de trabajo',
+    noWorkIntervalsMessage: 'Añade al menos un intervalo de trabajo.',
   },
   validation: {
     noWorkIntervals: 'No se encontraron intervalos de trabajo.',
@@ -183,7 +192,7 @@ export const es: typeof en = {
     example1: 'Ejemplo 1',
     example2: 'Ejemplo 2',
     example3: 'Ejemplo 3',
-    circuit1: 'Circuito 1',
+    circuit1: 'Circuito de Peso Corporal',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },

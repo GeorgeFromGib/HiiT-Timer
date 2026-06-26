@@ -41,6 +41,7 @@ export const fr: typeof en = {
       cooldown: 'RETOUR AU CALME',
     },
     roundAbbr: 'rnd',
+    circuit: 'CIRCUIT',
   },
   complete: {
     eyebrow:       'ENTRAÎNEMENT TERMINÉ',
@@ -134,6 +135,11 @@ export const fr: typeof en = {
     saveChanges: 'ENREGISTRER LES MODIFICATIONS',
     save: 'ENREGISTRER',
     cancel: 'Annuler',
+    circuits: 'Circuits',
+    circuitWarmup: 'Échauffement',
+    circuitCooldown: 'Récupération',
+    exercisePlaceholder: 'Nom de l\'exercice',
+    newCircuitTitle: 'Nouveau Circuit',
   },
   picker: {
     rounds: 'rounds',
@@ -144,6 +150,7 @@ export const fr: typeof en = {
     speedSuffix: 'Vitesse %{phase}',
     intervalSpeedTitle: "Vitesse de l'intervalle %{n}",
     intervalTitle: 'Intervalle %{n}',
+    circuitsTitle: 'Circuits',
   },
   alerts: {
     cannotSwitchEasyTitle: 'Impossible de passer en Facile',
@@ -161,6 +168,8 @@ export const fr: typeof en = {
     nameRequiredMessage: 'Veuillez saisir un nom de séance.',
     noIntervalsTitle: 'Aucun intervalle',
     noIntervalsMessage: 'Ajoutez au moins un intervalle.',
+    noWorkIntervalsTitle: 'Aucun intervalle de travail',
+    noWorkIntervalsMessage: 'Ajoutez au moins un intervalle de travail.',
   },
   validation: {
     noWorkIntervals: 'Aucun intervalle de travail trouvé.',
@@ -183,7 +192,7 @@ export const fr: typeof en = {
     example1: 'Exemple 1',
     example2: 'Exemple 2',
     example3: 'Exemple 3',
-    circuit1: 'Circuit 1',
+    circuit1: 'Circuit Poids du Corps',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Bleu-vert profond · calme' },

@@ -39,6 +39,7 @@ export const en = {
       cooldown: 'COOL DOWN',
     },
     roundAbbr: 'rnd',
+    circuit: 'CIRCUIT',
   },
   complete: {
     eyebrow:       'WORKOUT COMPLETE',
@@ -132,6 +133,11 @@ export const en = {
     saveChanges: 'SAVE CHANGES',
     save: 'SAVE',
     cancel: 'Cancel',
+    circuits: 'Circuits',
+    circuitWarmup: 'Warmup',
+    circuitCooldown: 'Cooldown',
+    exercisePlaceholder: 'Exercise name',
+    newCircuitTitle: 'New Circuit',
   },
   picker: {
     rounds: 'rounds',
@@ -142,6 +148,7 @@ export const en = {
     speedSuffix: '%{phase} Speed',
     intervalSpeedTitle: 'Interval %{n} Speed',
     intervalTitle: 'Interval %{n}',
+    circuitsTitle: 'Circuits',
   },
   alerts: {
     cannotSwitchEasyTitle: 'Cannot switch to Easy',
@@ -159,6 +166,8 @@ export const en = {
     nameRequiredMessage: 'Please enter a session name.',
     noIntervalsTitle: 'No intervals',
     noIntervalsMessage: 'Add at least one interval.',
+    noWorkIntervalsTitle: 'No work intervals',
+    noWorkIntervalsMessage: 'Add at least one work interval.',
   },
   validation: {
     noWorkIntervals: 'No work intervals found.',
@@ -181,7 +190,7 @@ export const en = {
     example1: 'Example 1',
     example2: 'Example 2',
     example3: 'Example 3',
-    circuit1: 'Circuit 1',
+    circuit1: 'Body Weight Circuit',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },
