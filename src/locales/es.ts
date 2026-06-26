@@ -183,6 +183,7 @@ export const es: typeof en = {
     example1: 'Ejemplo 1',
     example2: 'Ejemplo 2',
     example3: 'Ejemplo 3',
+    circuit1: 'Circuito 1',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },

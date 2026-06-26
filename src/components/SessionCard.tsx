@@ -69,7 +69,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
             <Text style={styles.statValue}>{segments.length}</Text>
             <Text style={styles.statLabel}> {t('common.intervalsAbbr')}</Text>
           </View>
-          <Text style={styles.modeLabel}>{session.activityType ?? 'generic'}</Text>
+          <Text style={styles.modeLabel}>{session.mode === 'circuit' ? 'circuit' : (session.activityType ?? 'generic')}</Text>
         </View>
 
         {selected && (

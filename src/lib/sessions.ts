@@ -1,6 +1,6 @@
 import { File, Paths } from 'expo-file-system';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
-import { expandWorkout, intervalsToSegments } from './workout';
+import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
 
 export interface RunSpeeds {
@@ -17,15 +17,10 @@ export const DEFAULT_RUN_SPEEDS: RunSpeeds = {
   cooldownSpeed: 4.5,
 };
 
-export type Session = {
-  id: string;
-  name: string;
-  activityType?: 'run';
-  runSpeeds?: RunSpeeds;
-} & (
-  | { mode: 'easy'; config: WorkoutConfig }
-  | { mode: 'advanced'; intervals: Interval[] }
-);
+export type Session =
+  | { id: string; name: string; activityType?: 'run'; runSpeeds?: RunSpeeds; mode: 'easy'; config: WorkoutConfig }
+  | { id: string; name: string; activityType?: 'run'; runSpeeds?: RunSpeeds; mode: 'advanced'; intervals: Interval[] }
+  | { id: string; name: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   const map: Record<Phase, number> = {
@@ -38,12 +33,14 @@ export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
 }
 
 export function getSessionSegments(session: Session): Segment[] {
+  if (session.mode === 'circuit') {
+    return expandCircuit(session.intervals, session.circuits, session.warmup, session.cooldown);
+  }
   const base = session.mode === 'advanced'
     ? intervalsToSegments(session.intervals)
     : expandWorkout(session.config);
   if (session.activityType === 'run' && session.runSpeeds) {
     if (session.mode === 'advanced') {
-      // intervalsToSegments is a strict 1:1 map, so base[i] === intervals[i]
       return base.map((seg, i) => ({
         ...seg,
         speed: session.intervals[i].speed ?? speedForPhase(seg.phase, session.runSpeeds!),
@@ -87,6 +84,22 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
       activityType: 'run',
       config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
       runSpeeds: { warmupSpeed: 7, workSpeed: 11, restSpeed: 6, cooldownSpeed: 5.5 },
+    },
+    {
+      id: 'default-circuit-1',
+      name: i18n.t('defaultSessions.circuit1', { locale }),
+      mode: 'circuit',
+      circuits: 3,
+      warmup: 60,
+      cooldown: 60,
+      intervals: [
+        { type: 'work', dur: 40, activityLabel: 'Push-ups' },
+        { type: 'rest', dur: 20 },
+        { type: 'work', dur: 40, activityLabel: 'Squats' },
+        { type: 'rest', dur: 20 },
+        { type: 'work', dur: 40, activityLabel: 'Plank' },
+        { type: 'rest', dur: 20 },
+      ],
     },
   ];
 }

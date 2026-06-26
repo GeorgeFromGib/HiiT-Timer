@@ -181,6 +181,7 @@ export const en = {
     example1: 'Example 1',
     example2: 'Example 2',
     example3: 'Example 3',
+    circuit1: 'Circuit 1',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },

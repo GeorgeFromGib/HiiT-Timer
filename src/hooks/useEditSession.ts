@@ -220,7 +220,7 @@ export function useEditSession(
   onBack: () => void,
 ): EditSessionInterface {
   const [name, setName] = useState(existing?.name ?? '');
-  const [mode, setMode] = useState<'easy' | 'advanced'>(existing?.mode ?? 'easy');
+  const [mode, setMode] = useState<'easy' | 'advanced'>(existing?.mode === 'circuit' ? 'easy' : (existing?.mode ?? 'easy'));
 
   const [warmup,   setWarmup]   = useState(existing?.mode === 'easy' ? existing.config.warmup   : 30);
   const [work,     setWork]     = useState(existing?.mode === 'easy' ? existing.config.high     : 30);
@@ -233,10 +233,10 @@ export function useEditSession(
   );
 
   const [activityType, setActivityType] = useState<'run' | undefined>(
-    existing?.activityType
+    existing && existing.mode !== 'circuit' ? existing.activityType : undefined
   );
   const [runSpeeds, setRunSpeeds] = useState<RunSpeeds>(
-    existing?.runSpeeds ?? DEFAULT_RUN_SPEEDS
+    existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS
   );
 
   const [timingDirty, setTimingDirty] = useState(false);
@@ -244,15 +244,15 @@ export function useEditSession(
 
   const initialSnapshot = useRef(serializeDraft(
     existing?.name ?? '',
-    existing?.mode ?? 'easy',
+    existing?.mode === 'circuit' ? 'easy' : (existing?.mode ?? 'easy'),
     existing?.mode === 'easy' ? existing.config.warmup   : 30,
     existing?.mode === 'easy' ? existing.config.high     : 30,
     existing?.mode === 'easy' ? existing.config.low      : 15,
     existing?.mode === 'easy' ? existing.config.cooldown : 30,
     existing?.mode === 'easy' ? existing.config.rounds   : 4,
     existing?.mode === 'advanced' ? existing.intervals   : [],
-    existing?.activityType,
-    existing?.runSpeeds ?? DEFAULT_RUN_SPEEDS,
+    existing && existing.mode !== 'circuit' ? existing.activityType : undefined,
+    existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS,
   )).current;
 
   const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() => {
@@ -266,7 +266,7 @@ export function useEditSession(
     return findMatchingDurationPresetForIntervals(existing.intervals);
   });
   const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
-    existing?.runSpeeds ? findMatchingSpeedPreset(existing.runSpeeds) : null
+    existing && existing.mode !== 'circuit' && existing.runSpeeds ? findMatchingSpeedPreset(existing.runSpeeds) : null
   );
 
   function setRunSpeed(field: keyof RunSpeeds, value: number) {
