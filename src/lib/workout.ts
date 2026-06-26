@@ -8,12 +8,15 @@ export interface Segment {
   endAt: number;
   index: number;
   speed?: number; // km/h — only present for run sessions
+  activityLabel?: string;
+  circuitNumber?: number; // 1-indexed; undefined for warmup/cooldown segments
 }
 
 export interface Interval {
   type: Phase;
   dur: number;    // seconds
   speed?: number; // km/h — run sessions only; overrides session-level RunSpeeds when set
+  activityLabel?: string; // circuit work phases only
 }
 
 export interface WorkoutConfig {
@@ -66,6 +69,42 @@ export function expandWorkout(cfg: WorkoutConfig): Segment[] {
 
   if (cfg.cooldown > 0) {
     raw.push({ phase: 'cooldown', label: 'Cool Down', duration: cfg.cooldown });
+  }
+
+  let cursor = 0;
+  return raw.map((s, i) => {
+    const seg: Segment = { ...s, index: i, startAt: cursor, endAt: cursor + s.duration };
+    cursor += s.duration;
+    return seg;
+  });
+}
+
+export function expandCircuit(
+  intervals: Interval[],
+  circuits: number,
+  warmup: number,
+  cooldown: number,
+): Segment[] {
+  const raw: Array<Pick<Segment, 'phase' | 'label' | 'duration' | 'activityLabel' | 'circuitNumber'>> = [];
+
+  if (warmup > 0) {
+    raw.push({ phase: 'warmup', label: 'Warm Up', duration: warmup });
+  }
+
+  for (let c = 0; c < circuits; c++) {
+    for (const iv of intervals) {
+      raw.push({
+        phase: iv.type,
+        label: `Circuit ${c + 1}/${circuits}`,
+        duration: iv.dur,
+        activityLabel: iv.activityLabel,
+        circuitNumber: c + 1,
+      });
+    }
+  }
+
+  if (cooldown > 0) {
+    raw.push({ phase: 'cooldown', label: 'Cool Down', duration: cooldown });
   }
 
   let cursor = 0;
