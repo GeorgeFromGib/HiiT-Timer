@@ -138,6 +138,7 @@ export const fr: typeof en = {
     circuits: 'Circuits',
     circuitWarmup: 'Échauffement',
     circuitCooldown: 'Récupération',
+    circuitRest: 'Repos',
     exercisePlaceholder: 'Nom de l\'exercice',
     newCircuitTitle: 'Nouveau Circuit',
   },

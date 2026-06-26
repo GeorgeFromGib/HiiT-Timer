@@ -20,7 +20,7 @@ export const DEFAULT_RUN_SPEEDS: RunSpeeds = {
 export type Session =
   | { id: string; name: string; activityType?: 'run'; runSpeeds?: RunSpeeds; mode: 'easy'; config: WorkoutConfig }
   | { id: string; name: string; activityType?: 'run'; runSpeeds?: RunSpeeds; mode: 'advanced'; intervals: Interval[] }
-  | { id: string; name: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number };
+  | { id: string; name: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   const map: Record<Phase, number> = {
@@ -34,7 +34,7 @@ export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
 
 export function getSessionSegments(session: Session): Segment[] {
   if (session.mode === 'circuit') {
-    return expandCircuit(session.intervals, session.circuits, session.warmup, session.cooldown);
+    return expandCircuit(session.intervals, session.circuits, session.warmup, session.cooldown, session.circuitRest);
   }
   const base = session.mode === 'advanced'
     ? intervalsToSegments(session.intervals)
@@ -92,6 +92,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
       circuits: 3,
       warmup: 60,
       cooldown: 60,
+      circuitRest: 30,
       intervals: [
         { type: 'work', dur: 40, activityLabel: 'Push-ups' },
         { type: 'rest', dur: 20 },

@@ -8,7 +8,7 @@ export function serializeDraft(
   intervals: Array<Omit<Interval, never>>,
   activityType: 'run' | undefined,
   runSpeeds: RunSpeeds,
-  circuitData?: { warmup: number; cooldown: number; circuits: number },
+  circuitData?: { warmup: number; cooldown: number; circuits: number; circuitRest: number },
 ): string {
   return JSON.stringify({ name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds, circuitData });
 }
@@ -21,7 +21,7 @@ export function buildSessionFromDraft(
   activityType: 'run' | undefined,
   runSpeeds: RunSpeeds,
   existingId: string | undefined,
-  circuitData?: { warmup: number; cooldown: number; circuits: number },
+  circuitData?: { warmup: number; cooldown: number; circuits: number; circuitRest: number },
 ): Session {
   const base = { id: existingId ?? newId(), name };
   if (mode === 'circuit') {
@@ -32,6 +32,7 @@ export function buildSessionFromDraft(
       circuits: circuitData!.circuits,
       warmup: circuitData!.warmup,
       cooldown: circuitData!.cooldown,
+      circuitRest: circuitData!.circuitRest,
     };
   }
   const speedProps = activityType === 'run'

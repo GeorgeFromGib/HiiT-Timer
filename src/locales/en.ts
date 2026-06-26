@@ -136,6 +136,7 @@ export const en = {
     circuits: 'Circuits',
     circuitWarmup: 'Warmup',
     circuitCooldown: 'Cooldown',
+    circuitRest: 'Rest',
     exercisePlaceholder: 'Exercise name',
     newCircuitTitle: 'New Circuit',
   },

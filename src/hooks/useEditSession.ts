@@ -280,9 +280,10 @@ export function useEditSession(
   const [rounds,   setRounds]   = useState(existing?.mode === 'easy' ? existing.config.rounds   : 4);
   const [cooldown, setCooldown] = useState(existing?.mode === 'easy' ? existing.config.cooldown : 30);
 
-  const [circuitWarmup,   setCircuitWarmup]   = useState(existing?.mode === 'circuit' ? existing.warmup    : 60);
-  const [circuitCooldown, setCircuitCooldown] = useState(existing?.mode === 'circuit' ? existing.cooldown  : 60);
-  const [circuitCount,    setCircuitCount]    = useState(existing?.mode === 'circuit' ? existing.circuits  : 3);
+  const [circuitWarmup,   setCircuitWarmup]   = useState(existing?.mode === 'circuit' ? existing.warmup      : 60);
+  const [circuitCooldown, setCircuitCooldown] = useState(existing?.mode === 'circuit' ? existing.cooldown    : 60);
+  const [circuitCount,    setCircuitCount]    = useState(existing?.mode === 'circuit' ? existing.circuits    : 3);
+  const [circuitRest,     setCircuitRest]     = useState(existing?.mode === 'circuit' ? existing.circuitRest : 30);
 
   const [intervals, setIntervals] = useState<LocalInterval[]>(
     existing?.mode === 'advanced' || existing?.mode === 'circuit'
@@ -314,8 +315,8 @@ export function useEditSession(
 
   const initialCircuitSnapshot = useRef(
     existing?.mode === 'circuit'
-      ? JSON.stringify({ name: existing.name, warmup: existing.warmup, cooldown: existing.cooldown, circuits: existing.circuits, intervals: existing.intervals })
-      : JSON.stringify({ name: '', warmup: 60, cooldown: 60, circuits: 3, intervals: [] })
+      ? JSON.stringify({ name: existing.name, warmup: existing.warmup, cooldown: existing.cooldown, circuits: existing.circuits, circuitRest: existing.circuitRest, intervals: existing.intervals })
+      : JSON.stringify({ name: '', warmup: 60, cooldown: 60, circuits: 3, circuitRest: 30, intervals: [] })
   ).current;
 
   const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() => {
@@ -350,13 +351,13 @@ export function useEditSession(
   const previewSegments = useMemo(() => {
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     if (mode === 'circuit') {
-      return expandCircuit(cleanIntervals, circuitCount, circuitWarmup, circuitCooldown);
+      return expandCircuit(cleanIntervals, circuitCount, circuitWarmup, circuitCooldown, circuitRest);
     }
     const draft: Session = mode === 'easy'
       ? { id: '', name: '', mode: 'easy', config: easyConfig, activityType, runSpeeds }
       : { id: '', name: '', mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds };
     return getSessionSegments(draft);
-  }, [mode, warmup, work, rest, rounds, cooldown, intervals, activityType, runSpeeds, circuitWarmup, circuitCooldown, circuitCount]);
+  }, [mode, warmup, work, rest, rounds, cooldown, intervals, activityType, runSpeeds, circuitWarmup, circuitCooldown, circuitCount, circuitRest]);
 
   const fieldValues: Record<TimeField, number> = { warmup, work, rest, cooldown };
   const fieldSetters: Record<TimeField, (v: number) => void> = {
@@ -558,6 +559,7 @@ export function useEditSession(
         circuits: circuitCount,
         warmup: circuitWarmup,
         cooldown: circuitCooldown,
+        circuitRest,
       };
       return { ok: true, session, isNew: !existing };
     }
@@ -573,12 +575,12 @@ export function useEditSession(
   const hasChanges = useMemo(() => {
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     if (mode === 'circuit') {
-      const current = JSON.stringify({ name, warmup: circuitWarmup, cooldown: circuitCooldown, circuits: circuitCount, intervals: cleanIntervals });
+      const current = JSON.stringify({ name, warmup: circuitWarmup, cooldown: circuitCooldown, circuits: circuitCount, circuitRest, intervals: cleanIntervals });
       return current !== initialCircuitSnapshot;
     }
     const current = serializeDraft(name, mode, warmup, work, rest, cooldown, rounds, cleanIntervals, activityType, runSpeeds);
     return current !== initialSnapshot;
-  }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds, circuitWarmup, circuitCooldown, circuitCount]);
+  }, [name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds, circuitWarmup, circuitCooldown, circuitCount, circuitRest]);
 
   const draft: EditSessionDraft = {
     name,

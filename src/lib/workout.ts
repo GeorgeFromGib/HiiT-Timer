@@ -84,6 +84,7 @@ export function expandCircuit(
   circuits: number,
   warmup: number,
   cooldown: number,
+  circuitRest: number,
 ): Segment[] {
   const raw: Array<Pick<Segment, 'phase' | 'label' | 'duration' | 'activityLabel' | 'circuitNumber'>> = [];
 
@@ -100,6 +101,9 @@ export function expandCircuit(
         activityLabel: iv.activityLabel,
         circuitNumber: c + 1,
       });
+    }
+    if (c + 1 < circuits && circuitRest > 0) {
+      raw.push({ phase: 'rest', label: PHASE_META['rest'].word, duration: circuitRest });
     }
   }
 

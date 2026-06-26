@@ -138,6 +138,7 @@ export const es: typeof en = {
     circuits: 'Circuitos',
     circuitWarmup: 'Calentamiento',
     circuitCooldown: 'Enfriamiento',
+    circuitRest: 'Descanso',
     exercisePlaceholder: 'Nombre del ejercicio',
     newCircuitTitle: 'Nuevo Circuito',
   },
