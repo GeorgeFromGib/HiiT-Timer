@@ -54,7 +54,7 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
                 />
               </View>
               <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{t('picker.rounds')}</Text>
+                <Text style={styles.pickerUnitLabel}>{picker.roundsLabel ?? t('picker.rounds')}</Text>
               </View>
             </>
           ) : picker?.isSpeed ? (

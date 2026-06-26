@@ -67,6 +67,7 @@ export interface EditSessionDraft {
 export interface EditSessionPicker {
   title:        string;
   isRounds:     boolean;
+  roundsLabel?: string;
   isSpeed:      boolean;
   speedUnit:    'km' | 'miles';
   minutes:      number;
@@ -231,6 +232,9 @@ function usePickerState(
   const picker: EditSessionPicker | null = activePicker ? {
     title:        pickerTitle,
     isRounds:     activePicker.type === 'rounds' || activePicker.type === 'circuitCount',
+    roundsLabel:  activePicker.type === 'circuitCount' ? i18n.t('picker.circuitsTitle')
+                : activePicker.type === 'rounds'       ? i18n.t('picker.rounds')
+                : undefined,
     isSpeed:      activePicker.type === 'speed' || activePicker.type === 'intervalSpeed',
     speedUnit:    (activePicker.type === 'speed' || activePicker.type === 'intervalSpeed') && activePicker.isMiles ? 'miles' : 'km',
     minutes:      pickerMinutes,
