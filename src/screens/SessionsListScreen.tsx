@@ -29,6 +29,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const [sessions, setSessions]     = useState<Session[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showTypeMenu, setShowTypeMenu] = useState(false);
   const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
@@ -75,7 +76,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           </Pressable>
         }
         right={
-          <Pressable style={styles.addBtn} onPress={gate(() => onNavigate({ name: 'EditSession' }))}>
+          <Pressable style={styles.addBtn} onPress={gate(() => setShowTypeMenu(true))}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
             </Svg>
@@ -115,6 +116,37 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         )}
       />
       <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
+
+      {showTypeMenu && (
+        <>
+          <Pressable
+            style={[StyleSheet.absoluteFill, { zIndex: 9 }]}
+            onPress={() => setShowTypeMenu(false)}
+          />
+          <View style={styles.typeMenu}>
+            <Pressable
+              style={styles.typeMenuRow}
+              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'general' }); }}
+            >
+              <Text style={styles.typeMenuText}>{t('edit.general')}</Text>
+            </Pressable>
+            <View style={styles.typeMenuSeparator} />
+            <Pressable
+              style={styles.typeMenuRow}
+              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'run' }); }}
+            >
+              <Text style={styles.typeMenuText}>{t('edit.run')}</Text>
+            </Pressable>
+            <View style={styles.typeMenuSeparator} />
+            <Pressable
+              style={styles.typeMenuRow}
+              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'circuit' }); }}
+            >
+              <Text style={styles.typeMenuText}>{t('edit.circuit')}</Text>
+            </Pressable>
+          </View>
+        </>
+      )}
     </LinearGradient>
   );
 }
@@ -159,6 +191,34 @@ function makeStyles(T: ThemeTokens) {
       fontSize: 11,
       color: T.faintText,
       textAlign: 'center',
+    },
+
+    typeMenu: {
+      position: 'absolute',
+      top: 98,
+      right: 20,
+      backgroundColor: T.ghostBg,
+      borderWidth: 1.5,
+      borderColor: T.hairline,
+      borderRadius: 14,
+      minWidth: 160,
+      zIndex: 10,
+      overflow: 'hidden',
+      ...buttonShadow(T),
+    },
+    typeMenuRow: {
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+    },
+    typeMenuSeparator: {
+      height: 1,
+      backgroundColor: T.hairline,
+      marginHorizontal: 12,
+    },
+    typeMenuText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 15,
+      color: T.text,
     },
 
     swipeContainer: {
