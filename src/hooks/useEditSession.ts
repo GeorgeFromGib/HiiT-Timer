@@ -55,7 +55,6 @@ export interface EditSessionInterface {
   picker:  EditSessionPicker | null;
   setName:                  (name: string) => void;
   setActivityType:          (type: 'run' | undefined) => void;
-  setDisplayActivityType:   (type: 'general' | 'run' | 'circuit') => void;
   setRunSpeed:              (field: keyof RunSpeeds, value: number) => void;
   toggleMode:               (advanced: boolean) => void;
   cyclePhase:               (key: string) => void;
@@ -85,17 +84,24 @@ export interface EditSessionInterface {
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
+  initialActivityType?: 'general' | 'run' | 'circuit',
 ): EditSessionInterface {
   const [name, setName] = useState(existing?.name ?? '');
-  const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(existing?.mode ?? 'easy');
+  const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(() => {
+    if (existing) return existing.mode;
+    if (initialActivityType === 'circuit') return 'circuit';
+    return 'easy';
+  });
 
   const [intervals, setIntervals] = useState<LocalInterval[]>(
     existing?.mode === 'advanced' || existing?.mode === 'circuit'
       ? existing.intervals.map(toLocal) : []
   );
-  const [activityType, setActivityType] = useState<'run' | undefined>(
-    existing && existing.mode !== 'circuit' ? existing.activityType : undefined
-  );
+  const [activityType, setActivityType] = useState<'run' | undefined>(() => {
+    if (existing && existing.mode !== 'circuit') return existing.activityType;
+    if (!existing && initialActivityType === 'run') return 'run';
+    return undefined;
+  });
   const [runSpeeds, setRunSpeeds] = useState<RunSpeeds>(
     existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS
   );
@@ -108,7 +114,11 @@ export function useEditSession(
 
   // Change tracking for coordinator-owned state
   const initialName         = useRef(existing?.name ?? '').current;
-  const initialActivityType = useRef(existing && existing.mode !== 'circuit' ? existing.activityType : undefined).current;
+  const initialActivityTypeRef = useRef<'run' | undefined>(
+    existing && existing.mode !== 'circuit'
+      ? existing.activityType
+      : (initialActivityType === 'run' ? 'run' : undefined)
+  ).current;
   const intervalsDraft      = useDraft<Interval[]>(
     existing?.mode === 'advanced' || existing?.mode === 'circuit' ? existing.intervals : []
   );
@@ -169,40 +179,6 @@ export function useEditSession(
     setRunSpeeds(prev => ({ ...prev, [field]: value }));
     setSpeedsDirty(true);
     setActiveSpeedPreset(null);
-  }
-
-  function resetToDefaults(type: 'general' | 'run' | 'circuit') {
-    setName('');
-    setIntervals([]);
-    setTimingDirty(false);
-    if (type === 'circuit') {
-      setMode('circuit');
-      setActivityType(undefined);
-      circuitEdit.reset();
-    } else {
-      setMode('easy');
-      setActivityType(type === 'run' ? 'run' : undefined);
-      setSpeedsDirty(false);
-      setActiveSpeedPreset(null);
-      easyEdit.reset();
-    }
-  }
-
-  function setDisplayActivityType(type: 'general' | 'run' | 'circuit') {
-    const currentType = mode === 'circuit' ? 'circuit' : activityType === 'run' ? 'run' : 'general';
-    if (currentType === type) return;
-    if (!hasChanges) {
-      resetToDefaults(type);
-      return;
-    }
-    Alert.alert(
-      i18n.t('alerts.switchTypeTitle'),
-      i18n.t('alerts.switchTypeMessage'),
-      [
-        { text: i18n.t('alerts.cancel'), style: 'cancel' },
-        { text: i18n.t('alerts.discard'), style: 'destructive', onPress: () => resetToDefaults(type) },
-      ],
-    );
   }
 
   const previewSegments = useMemo(() => {
@@ -382,12 +358,12 @@ export function useEditSession(
     return easyEdit.hasChanges
       || name !== initialName
       || intervalsDraft.isDirty(cleanIntervals)
-      || activityType !== initialActivityType
+      || activityType !== initialActivityTypeRef
       || runSpeedsDraft.isDirty(runSpeeds);
   }, [
     mode, name, intervals, activityType, runSpeeds,
     easyEdit.hasChanges, circuitEdit.hasChanges,
-    initialName, initialActivityType,
+    initialName, initialActivityTypeRef,
   ]);
 
   const activeTimingPreset: PresetLevel | null = mode === 'advanced'
@@ -419,7 +395,6 @@ export function useEditSession(
     picker: pickerState.picker,
     setName,
     setActivityType,
-    setDisplayActivityType,
     setRunSpeed,
     toggleMode,
     cyclePhase,
