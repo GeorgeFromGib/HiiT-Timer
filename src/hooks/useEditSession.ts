@@ -39,7 +39,7 @@ export interface EditSessionDraft {
   intervals:           LocalInterval[];
   previewSegments:     Segment[];
   previewTotal:        number;
-  activityType:        'run' | undefined;
+  activityType:        'run' | 'spinning' | undefined;
   runSpeeds:           RunSpeeds;
   activeTimingPreset:  PresetLevel | null;
   activeSpeedPreset:   PresetLevel | null;
@@ -96,7 +96,7 @@ export function useEditSession(
     existing?.mode === 'advanced' || existing?.mode === 'circuit'
       ? existing.intervals.map(toLocal) : []
   );
-  const [activityType] = useState<'run' | undefined>(() => {
+  const [activityType] = useState<'run' | 'spinning' | undefined>(() => {
     if (existing && existing.mode !== 'circuit') return existing.activityType;
     if (!existing && initialActivityType === 'run') return 'run';
     return undefined;
@@ -113,7 +113,7 @@ export function useEditSession(
 
   // Change tracking for coordinator-owned state
   const initialName         = useRef(existing?.name ?? '').current;
-  const initialActivityTypeRef = useRef<'run' | undefined>(
+  const initialActivityTypeRef = useRef<'run' | 'spinning' | undefined>(
     existing && existing.mode !== 'circuit'
       ? existing.activityType
       : (initialActivityType === 'run' ? 'run' : undefined)

@@ -6,7 +6,7 @@ export function serializeDraft(
   mode: 'easy' | 'advanced' | 'circuit',
   warmup: number, work: number, rest: number, cooldown: number, rounds: number,
   intervals: Array<Omit<Interval, never>>,
-  activityType: 'run' | undefined,
+  activityType: 'run' | 'spinning' | undefined,
   runSpeeds: RunSpeeds,
   circuitData?: { warmup: number; cooldown: number; circuits: number; circuitRest: number },
 ): string {
@@ -18,7 +18,7 @@ export function buildSessionFromDraft(
   name: string,
   easyConfig: { warmup: number; high: number; low: number; rounds: number; cooldown: number },
   intervals: Interval[],
-  activityType: 'run' | undefined,
+  activityType: 'run' | 'spinning' | undefined,
   runSpeeds: RunSpeeds,
   existingId: string | undefined,
   circuitData?: { warmup: number; cooldown: number; circuits: number; circuitRest: number },

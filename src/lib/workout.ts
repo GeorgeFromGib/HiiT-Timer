@@ -7,16 +7,20 @@ export interface Segment {
   startAt: number;
   endAt: number;
   index: number;
-  speed?: number; // km/h — only present for run sessions
+  speed?: number;       // km/h — run sessions only
+  resistance?: number;  // 1–10 — spinning sessions only
+  power?: number;       // W — spinning sessions only
   activityLabel?: string;
-  circuitNumber?: number; // 1-indexed; undefined for warmup/cooldown segments
+  circuitNumber?: number;
 }
 
 export interface Interval {
   type: Phase;
-  dur: number;    // seconds
-  speed?: number; // km/h — run sessions only; overrides session-level RunSpeeds when set
-  activityLabel?: string; // circuit work phases only
+  dur: number;
+  speed?: number;       // km/h — run sessions only; overrides session-level RunSpeeds
+  resistance?: number;  // 1–10 — spinning sessions; overrides session-level SpinValues
+  power?: number;       // W — spinning sessions; overrides session-level SpinValues
+  activityLabel?: string;
 }
 
 export interface WorkoutConfig {

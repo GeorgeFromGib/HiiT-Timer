@@ -17,9 +17,38 @@ export const DEFAULT_RUN_SPEEDS: RunSpeeds = {
   cooldownSpeed: 4.5,
 };
 
+export interface SpinValues {
+  warmupResistance:   number;
+  warmupPower:        number;
+  workResistance:     number;
+  workPower:          number;
+  restResistance:     number;
+  restPower:          number;
+  cooldownResistance: number;
+  cooldownPower:      number;
+}
+
+export const DEFAULT_SPIN_VALUES: SpinValues = {
+  warmupResistance:   3,  warmupPower:   100,
+  workResistance:     7,  workPower:     200,
+  restResistance:     3,  restPower:     100,
+  cooldownResistance: 2,  cooldownPower: 80,
+};
+
+export function spinValueForPhase(phase: Phase, values: SpinValues): { resistance: number; power: number } {
+  const map: Record<Phase, { resistance: number; power: number }> = {
+    warmup:      { resistance: values.warmupResistance,   power: values.warmupPower   },
+    work:        { resistance: values.workResistance,     power: values.workPower     },
+    rest:        { resistance: values.restResistance,     power: values.restPower     },
+    cooldown:    { resistance: values.cooldownResistance, power: values.cooldownPower },
+    circuitRest: { resistance: values.restResistance,     power: values.restPower     },
+  };
+  return map[phase];
+}
+
 export type Session =
-  | { id: string; name: string; activityType?: 'run'; runSpeeds?: RunSpeeds; mode: 'easy'; config: WorkoutConfig }
-  | { id: string; name: string; activityType?: 'run'; runSpeeds?: RunSpeeds; mode: 'advanced'; intervals: Interval[] }
+  | { id: string; name: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
+  | { id: string; name: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
   | { id: string; name: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
@@ -48,6 +77,23 @@ export function getSessionSegments(session: Session): Segment[] {
       }));
     }
     return base.map(seg => ({ ...seg, speed: speedForPhase(seg.phase, session.runSpeeds!) }));
+  }
+  if (session.activityType === 'spinning') {
+    const sv = session.spinValues ?? DEFAULT_SPIN_VALUES;
+    if (session.mode === 'advanced') {
+      return base.map((seg, i) => {
+        const defaults = spinValueForPhase(seg.phase, sv);
+        return {
+          ...seg,
+          resistance: session.intervals[i].resistance ?? defaults.resistance,
+          power:      session.intervals[i].power      ?? defaults.power,
+        };
+      });
+    }
+    return base.map(seg => {
+      const { resistance, power } = spinValueForPhase(seg.phase, sv);
+      return { ...seg, resistance, power };
+    });
   }
   return base;
 }
@@ -102,6 +148,14 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
         { type: 'work', dur: 40, activityLabel: 'Plank' },
         { type: 'rest', dur: 20 },
       ],
+    },
+    {
+      id: 'default-spinning-1',
+      name: i18n.t('defaultSessions.spinning1', { locale }),
+      mode: 'easy',
+      activityType: 'spinning',
+      config: { warmup: 60, high: 30, low: 20, rounds: 6, cooldown: 60 },
+      spinValues: DEFAULT_SPIN_VALUES,
     },
   ];
 }
