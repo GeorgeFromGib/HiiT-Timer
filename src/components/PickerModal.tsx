@@ -12,6 +12,8 @@ const ROUND_LABELS    = Array.from({ length: 99 }, (_, i) => String(i + 1));
 const KMH_WHOLE       = Array.from({ length: pickerRange('km').max + 1 }, (_, i) => String(i));
 const MPH_WHOLE       = Array.from({ length: pickerRange('miles').max + 1 }, (_, i) => String(i));
 const DECIMAL_LABELS  = Array.from({ length: 10 }, (_, i) => String(i));
+const RESISTANCE_LABELS = Array.from({ length: 10 }, (_, i) => String(i + 1));
+const POWER_LABELS      = Array.from({ length: 27 }, (_, i) => String(40 + i * 10));
 
 const EMPTY_VALUES: PickerValues = { minutes: 0, seconds: 0, rounds: 0, speedWhole: 0, speedDecimal: 0 };
 
@@ -95,6 +97,32 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
                   values={DECIMAL_LABELS}
                   selected={local.speedDecimal}
                   onChange={v => setLocal(prev => ({ ...prev, speedDecimal: v }))}
+                />
+              </View>
+            </>
+          ) : picker?.isResistance ? (
+            <>
+              <View style={styles.pickerUnits}>
+                <Text style={styles.pickerUnitLabel}>{t('picker.resistanceTitle')}</Text>
+              </View>
+              <View style={styles.pickerRow}>
+                <WheelColumn
+                  values={RESISTANCE_LABELS}
+                  selected={local.rounds}
+                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
+                />
+              </View>
+            </>
+          ) : picker?.isPower ? (
+            <>
+              <View style={styles.pickerUnits}>
+                <Text style={styles.pickerUnitLabel}>W</Text>
+              </View>
+              <View style={styles.pickerRow}>
+                <WheelColumn
+                  values={POWER_LABELS}
+                  selected={local.rounds}
+                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
                 />
               </View>
             </>

@@ -164,8 +164,7 @@ export function useEditSession(
       } else if (result.type === 'circuitCount') {
         circuitEdit.set('count', result.value);
         setTimingDirty(true);
-      } else {
-        // type === 'interval'
+      } else if (result.type === 'interval') {
         setIntervals(ivs =>
           ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
         );

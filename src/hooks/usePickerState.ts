@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { i18n } from '../lib/i18n';
-import { type RunSpeeds } from '../lib/sessions';
+import { type RunSpeeds, type SpinValues } from '../lib/sessions';
 import { fromDisplay } from '../lib/speedUnit';
 import { type LocalInterval, type TimeField } from './editSessionTypes';
 
@@ -13,7 +13,11 @@ export type ActivePicker =
   | { type: 'circuitWarmup' }
   | { type: 'circuitCooldown' }
   | { type: 'circuitRest' }
-  | { type: 'circuitCount' };
+  | { type: 'circuitCount' }
+  | { type: 'spinResistance';    field: keyof SpinValues }
+  | { type: 'spinPower';         field: keyof SpinValues }
+  | { type: 'intervalResistance'; key: string }
+  | { type: 'intervalPower';      key: string };
 
 export type CommitResult =
   | { type: 'field';           field: TimeField;       secs: number }
@@ -24,7 +28,11 @@ export type CommitResult =
   | { type: 'circuitWarmup';   secs: number }
   | { type: 'circuitCooldown'; secs: number }
   | { type: 'circuitRest';     secs: number }
-  | { type: 'circuitCount';    value: number };
+  | { type: 'circuitCount';    value: number }
+  | { type: 'spinResistance';    field: keyof SpinValues; value: number }
+  | { type: 'spinPower';         field: keyof SpinValues; value: number }
+  | { type: 'intervalResistance'; key: string;            value: number }
+  | { type: 'intervalPower';      key: string;            value: number };
 
 export interface EditSessionPicker {
   title:        string;
@@ -32,6 +40,8 @@ export interface EditSessionPicker {
   roundsLabel?: string;
   isSpeed:      boolean;
   speedUnit:    'km' | 'miles';
+  isResistance: boolean;
+  isPower:      boolean;
   minutes:      number;
   seconds:      number;
   rounds:       number;
@@ -76,6 +86,8 @@ export function usePickerState(
       const idx = intervals.findIndex(iv => iv._key === activePicker.key);
       return i18n.t('picker.intervalSpeedTitle', { n: idx + 1 });
     }
+    if (activePicker.type === 'spinResistance' || activePicker.type === 'intervalResistance') return i18n.t('picker.resistanceTitle');
+    if (activePicker.type === 'spinPower'      || activePicker.type === 'intervalPower')      return i18n.t('picker.powerTitle');
     const idx = intervals.findIndex(iv => iv._key === activePicker.key);
     return i18n.t('picker.intervalTitle', { n: idx + 1 });
   })();
@@ -139,6 +151,26 @@ export function usePickerState(
     setActivePicker({ type: 'circuitCount' });
   }
 
+  function openSpinResistancePicker(field: keyof SpinValues, currentValue: number) {
+    setPickerRounds(currentValue - 1); // index 0 = resistance 1
+    setActivePicker({ type: 'spinResistance', field });
+  }
+
+  function openSpinPowerPicker(field: keyof SpinValues, currentValue: number) {
+    setPickerRounds((currentValue - 40) / 10); // index 0 = 40W
+    setActivePicker({ type: 'spinPower', field });
+  }
+
+  function openIntervalResistancePicker(key: string, currentValue: number) {
+    setPickerRounds(currentValue - 1);
+    setActivePicker({ type: 'intervalResistance', key });
+  }
+
+  function openIntervalPowerPicker(key: string, currentValue: number) {
+    setPickerRounds((currentValue - 40) / 10);
+    setActivePicker({ type: 'intervalPower', key });
+  }
+
   function commitPicker(values: PickerValues) {
     if (!activePicker) return;
     if (activePicker.type === 'rounds') {
@@ -153,6 +185,14 @@ export function usePickerState(
       onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh });
     } else if (activePicker.type === 'circuitCount') {
       onCommit({ type: 'circuitCount', value: values.rounds + 1 });
+    } else if (activePicker.type === 'spinResistance') {
+      onCommit({ type: 'spinResistance', field: activePicker.field, value: values.rounds + 1 });
+    } else if (activePicker.type === 'spinPower') {
+      onCommit({ type: 'spinPower', field: activePicker.field, value: 40 + values.rounds * 10 });
+    } else if (activePicker.type === 'intervalResistance') {
+      onCommit({ type: 'intervalResistance', key: activePicker.key, value: values.rounds + 1 });
+    } else if (activePicker.type === 'intervalPower') {
+      onCommit({ type: 'intervalPower', key: activePicker.key, value: 40 + values.rounds * 10 });
     } else if (activePicker.type === 'circuitWarmup') {
       onCommit({ type: 'circuitWarmup', secs: values.minutes * 60 + values.seconds });
     } else if (activePicker.type === 'circuitCooldown') {
@@ -176,8 +216,10 @@ export function usePickerState(
     roundsLabel: activePicker.type === 'circuitCount' ? i18n.t('picker.circuitsTitle')
                : activePicker.type === 'rounds'       ? i18n.t('picker.rounds')
                : undefined,
-    isSpeed:     activePicker.type === 'speed' || activePicker.type === 'intervalSpeed',
-    speedUnit:   (activePicker.type === 'speed' || activePicker.type === 'intervalSpeed') && activePicker.isMiles ? 'miles' : 'km',
+    isSpeed:      activePicker.type === 'speed' || activePicker.type === 'intervalSpeed',
+    speedUnit:    (activePicker.type === 'speed' || activePicker.type === 'intervalSpeed') && activePicker.isMiles ? 'miles' : 'km',
+    isResistance: activePicker.type === 'spinResistance' || activePicker.type === 'intervalResistance',
+    isPower:      activePicker.type === 'spinPower'      || activePicker.type === 'intervalPower',
     minutes:     pickerMinutes,
     seconds:     pickerSeconds,
     rounds:      pickerRounds,
@@ -196,6 +238,10 @@ export function usePickerState(
     openCircuitCooldownPicker,
     openCircuitRestPicker,
     openCircuitCountPicker,
+    openSpinResistancePicker,
+    openSpinPowerPicker,
+    openIntervalResistancePicker,
+    openIntervalPowerPicker,
     commitPicker,
     dismissPicker: () => setActivePicker(null),
   };
