@@ -29,10 +29,10 @@ export interface SpinValues {
 }
 
 export const DEFAULT_SPIN_VALUES: SpinValues = {
-  warmupResistance:   3,  warmupPower:   100,
-  workResistance:     7,  workPower:     200,
-  restResistance:     3,  restPower:     100,
-  cooldownResistance: 2,  cooldownPower: 80,
+  warmupResistance:   3,  warmupPower:   85,
+  workResistance:     5,  workPower:     120,
+  restResistance:     2,  restPower:     60,
+  cooldownResistance: 3,  cooldownPower: 85,
 };
 
 export function spinValueForPhase(phase: Phase, values: SpinValues): { resistance: number; power: number } {
