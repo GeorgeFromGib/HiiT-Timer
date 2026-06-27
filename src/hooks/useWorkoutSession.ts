@@ -85,6 +85,7 @@ export function useWorkoutSession(
     },
     onFinish: () => {
       cues.onFinish();
+      if (settings.hapticFeedback) startHapticBurst();
     },
   });
 
