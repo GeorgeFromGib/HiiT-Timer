@@ -50,8 +50,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
               <ActivityTypeIcon
                 activityType={session.mode !== 'circuit' ? session.activityType : undefined}
                 mode={session.mode}
-                size={16}
-                color={T.subText}
+                size={20}
               />
               <Text style={styles.title}>{session.name}</Text>
             </View>
@@ -78,15 +77,6 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
             <Text style={styles.statValue}>{segments.length}</Text>
             <Text style={styles.statLabel}> {t('common.intervalsAbbr')}</Text>
           </View>
-          <Text style={styles.modeLabel}>
-            {session.mode === 'circuit'
-              ? t('edit.circuit')
-              : session.activityType === 'run'
-                ? t('edit.run')
-                : session.activityType === 'spinning'
-                  ? t('edit.spinning')
-                  : t('edit.general')}
-          </Text>
         </View>
 
         {selected && (
@@ -185,13 +175,6 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_600SemiBold',
       fontSize: 15,
       color: T.faintText,
-    },
-    modeLabel: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 13,
-      color: T.subText,
-      textTransform: 'capitalize',
-      marginLeft: 'auto',
     },
     startBtn: {
       marginTop: 12,

@@ -25,6 +25,7 @@ import { useSettings } from '../lib/settingsContext';
 import { i18n, type Language, useTranslation } from '../lib/i18n';
 import PresetStrip from '../components/EditSession/PresetStrip';
 import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
+import ActivityTypeIcon from '../components/ActivityTypeIcon';
 
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const unit = isMiles ? 'miles' : 'km';
@@ -58,7 +59,7 @@ export default function EditSessionScreen({ session: existing, activityType, onB
     clearIntervalResistance, clearIntervalPower,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     commitPicker, dismissPicker,
-    applyDurationPreset, applySpeedPreset,
+    applyDurationPreset, applySpeedPreset, applySpinPreset,
     setActivityLabel,
     buildSavePayload,
   } = useEditSession(existing, onBack, activityType);
@@ -67,7 +68,7 @@ export default function EditSessionScreen({ session: existing, activityType, onB
     name, isAdvanced, isCircuit, isSpinning, fieldValues, rounds, intervals,
     previewSegments, previewTotal,
     activityType: draftActivityType, runSpeeds, spinValues,
-    activeTimingPreset, activeSpeedPreset, hasChanges,
+    activeTimingPreset, activeSpeedPreset, activeSpinPreset, hasChanges,
     circuitWarmup, circuitCooldown, circuitRest, circuitCount,
   } = draft;
   const isRun = draftActivityType === 'run';
@@ -183,6 +184,13 @@ export default function EditSessionScreen({ session: existing, activityType, onB
           onBack={handleCancel}
           title={editorTitle}
           style={styles.header}
+          right={
+            <ActivityTypeIcon
+              mode={isCircuit ? 'circuit' : 'easy'}
+              activityType={draftActivityType === 'run' ? 'run' : draftActivityType === 'spinning' ? 'spinning' : undefined}
+              size={32}
+            />
+          }
         />
 
         <NestableScrollContainer
@@ -328,6 +336,12 @@ export default function EditSessionScreen({ session: existing, activityType, onB
                     <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} />
                   </>
                 )}
+                {isSpinning && (
+                  <>
+                    <Text style={styles.fieldLabel}>{t('edit.spinPresets')}</Text>
+                    <PresetStrip onApply={applySpinPreset} activePreset={activeSpinPreset} />
+                  </>
+                )}
                 {intervals.length === 0 && (
                   <View style={styles.emptyState}>
                     <Text style={styles.emptyStateText}>{t('edit.noIntervals')}</Text>
@@ -399,6 +413,10 @@ export default function EditSessionScreen({ session: existing, activityType, onB
 
               {isSpinning && (
                 <>
+                  <View style={styles.fieldGroup}>
+                    <Text style={styles.fieldLabel}>{t('edit.spinPresets')}</Text>
+                    <PresetStrip onApply={applySpinPreset} activePreset={activeSpinPreset} />
+                  </View>
                   <View style={styles.fieldGroup}>
                     <Text style={styles.fieldLabel}>{t('edit.spinResistance')}</Text>
                     <View style={styles.configGrid}>

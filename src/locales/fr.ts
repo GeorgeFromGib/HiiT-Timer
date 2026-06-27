@@ -159,6 +159,7 @@ export const fr: typeof en = {
     newSpinningTitle: 'Nouveau Spinning',
     spinResistance:   'Résistance',
     spinPower:        'Puissance (W)',
+    spinPresets:      'PRÉRÉGLAGES SPINNING',
   },
   picker: {
     rounds: 'rounds',
@@ -178,6 +179,7 @@ export const fr: typeof en = {
     overwriteTitle: 'Écraser les réglages ?',
     overwriteTimingMessage: 'Appliquer ce préréglage remplacera vos réglages de minutage actuels.',
     overwriteSpeedMessage: 'Appliquer ce préréglage remplacera vos réglages de vitesse actuels.',
+    overwriteSpinMessage:  'Appliquer ce préréglage remplacera vos réglages de résistance et de puissance actuels.',
     apply: 'Appliquer',
     cancel: 'Annuler',
     unsavedTitle: 'Modifications non enregistrées',

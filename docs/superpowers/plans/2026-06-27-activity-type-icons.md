@@ -12,7 +12,7 @@
 
 - No test framework is configured — all testing is manual via the Expo dev server
 - Follow existing SVG icon pattern: 24×24 viewBox, stroke-based, `BASE_SVG_STROKE` props spread onto SVG elements
-- `BASE_SVG_STROKE` is exported from `src/components/WorkoutIcon.tsx` as `{ fill: 'none', strokeWidth: 2.2, strokeLinecap: 'round', strokeLinejoin: 'round' }`
+- `BASE_SVG_STROKE` is exported from `src/components/svgStroke.ts` as `{ fill: 'none', strokeWidth: 2.2, strokeLinecap: 'round', strokeLinejoin: 'round' }`
 - `Session` type has three union members: `mode: 'easy'`, `mode: 'advanced'`, `mode: 'circuit'`; `activityType` is only present on easy/advanced
 - Do not modify any file except the two listed below
 

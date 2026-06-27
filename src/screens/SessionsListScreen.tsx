@@ -19,6 +19,7 @@ import type { Route } from '../navigation';
 import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
+import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import { useTranslation } from '../lib/i18n';
 
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
@@ -132,6 +133,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
               style={styles.typeMenuRow}
               onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'general' }); }}
             >
+              <ActivityTypeIcon mode="easy" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.general')}</Text>
             </Pressable>
             <View style={styles.typeMenuSeparator} />
@@ -139,6 +141,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
               style={styles.typeMenuRow}
               onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'run' }); }}
             >
+              <ActivityTypeIcon mode="easy" activityType="run" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.run')}</Text>
             </Pressable>
             <View style={styles.typeMenuSeparator} />
@@ -146,6 +149,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
               style={styles.typeMenuRow}
               onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'circuit' }); }}
             >
+              <ActivityTypeIcon mode="circuit" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.circuit')}</Text>
             </Pressable>
             <View style={styles.typeMenuSeparator} />
@@ -153,6 +157,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
               style={styles.typeMenuRow}
               onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'spinning' }); }}
             >
+              <ActivityTypeIcon mode="easy" activityType="spinning" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.spinning')}</Text>
             </Pressable>
           </View>
@@ -229,6 +234,9 @@ function makeStyles(T: ThemeTokens) {
       letterSpacing: 0.8,
     },
     typeMenuRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
       paddingVertical: 14,
       paddingHorizontal: 16,
     },

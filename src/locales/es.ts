@@ -159,6 +159,7 @@ export const es: typeof en = {
     newSpinningTitle: 'Nueva Sesión Spinning',
     spinResistance:   'Resistencia',
     spinPower:        'Potencia (W)',
+    spinPresets:      'PREAJUSTES DE SPINNING',
   },
   picker: {
     rounds: 'rondas',
@@ -178,6 +179,7 @@ export const es: typeof en = {
     overwriteTitle: '¿Sobrescribir ajustes?',
     overwriteTimingMessage: 'Aplicar este preajuste reemplazará tus ajustes de tiempo actuales.',
     overwriteSpeedMessage: 'Aplicar este preajuste reemplazará tus ajustes de velocidad actuales.',
+    overwriteSpinMessage:  'Aplicar este preajuste reemplazará tus ajustes de resistencia y potencia actuales.',
     apply: 'Aplicar',
     cancel: 'Cancelar',
     unsavedTitle: 'Cambios sin guardar',

@@ -74,7 +74,7 @@ export default function IntervalRow({
           hitSlop={8}
           style={styles.spinChip}
         >
-          <Text style={styles.intervalDurationText}>{displayResistance}</Text>
+          <Text style={styles.intervalDurationText}>{displayResistance}<Text style={styles.spinChipUnit}>R</Text></Text>
         </Pressable>
       )}
 
@@ -98,8 +98,8 @@ export default function IntervalRow({
           styles.intervalDuration,
           (displaySpeed !== undefined
             || (onLabelChange !== undefined && interval.type === 'work')
-            || displayResistance !== undefined
           ) && { flex: 0 },
+          displayResistance !== undefined && { flex: 1, alignItems: 'center', paddingRight: 0 },
         ]}
       >
         <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
@@ -175,6 +175,7 @@ function makeStyles(T: ThemeTokens) {
       color: T.text,
     },
     spinChip: {
+      flex: 1,
       alignItems: 'center',
     },
     spinChipUnit: {

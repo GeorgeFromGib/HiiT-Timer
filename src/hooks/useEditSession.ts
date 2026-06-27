@@ -9,8 +9,8 @@ import {
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import {
-  type PresetLevel, DURATION_PRESETS, SPEED_PRESETS,
-  findMatchingDurationPresetForIntervals, findMatchingSpeedPreset,
+  type PresetLevel, DURATION_PRESETS, SPEED_PRESETS, SPIN_PRESETS,
+  findMatchingDurationPresetForIntervals, findMatchingSpeedPreset, findMatchingSpinPreset,
 } from '../lib/presets';
 import {
   totalDuration, expandCircuit,
@@ -46,6 +46,7 @@ export interface EditSessionDraft {
   spinValues:          SpinValues;
   activeTimingPreset:  PresetLevel | null;
   activeSpeedPreset:   PresetLevel | null;
+  activeSpinPreset:    PresetLevel | null;
   hasChanges:          boolean;
   circuitWarmup:       number;
   circuitCooldown:     number;
@@ -75,6 +76,7 @@ export interface EditSessionInterface {
   dismissPicker:            () => void;
   applyDurationPreset:      (level: PresetLevel) => void;
   applySpeedPreset:         (level: PresetLevel) => void;
+  applySpinPreset:          (level: PresetLevel) => void;
   setActivityLabel:         (key: string, label: string) => void;
   openCircuitWarmupPicker:  () => void;
   openCircuitCooldownPicker: () => void;
@@ -121,9 +123,14 @@ export function useEditSession(
   );
   const [timingDirty, setTimingDirty] = useState(false);
   const [speedsDirty, setSpeedsDirty] = useState(false);
+  const [spinDirty,   setSpinDirty]   = useState(false);
   const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
     existing && existing.mode !== 'circuit' && existing.runSpeeds
       ? findMatchingSpeedPreset(existing.runSpeeds) : null
+  );
+  const [activeSpinPreset, setActiveSpinPreset] = useState<PresetLevel | null>(() =>
+    existing && existing.mode !== 'circuit' && existing.activityType === 'spinning' && existing.spinValues
+      ? findMatchingSpinPreset(existing.spinValues) : null
   );
 
   // Change tracking for coordinator-owned state
@@ -174,8 +181,10 @@ export function useEditSession(
         );
       } else if (result.type === 'spinResistance') {
         setSpinValues(prev => ({ ...prev, [result.field]: result.value }));
+        setSpinDirty(true); setActiveSpinPreset(null);
       } else if (result.type === 'spinPower') {
         setSpinValues(prev => ({ ...prev, [result.field]: result.value }));
+        setSpinDirty(true); setActiveSpinPreset(null);
       } else if (result.type === 'intervalResistance') {
         setIntervals(ivs =>
           ivs.map(iv => iv._key === result.key ? { ...iv, resistance: result.value } : iv)
@@ -325,6 +334,23 @@ export function useEditSession(
     }
   }
 
+  function applySpinPreset(level: PresetLevel) {
+    const doApply = () => {
+      setSpinValues(SPIN_PRESETS[level]);
+      setSpinDirty(false);
+      setActiveSpinPreset(level);
+    };
+    if (spinDirty) {
+      Alert.alert(
+        i18n.t('alerts.overwriteTitle'),
+        i18n.t('alerts.overwriteSpinMessage'),
+        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
+      );
+    } else {
+      doApply();
+    }
+  }
+
   function openIntervalSpeedPicker(key: string, isMiles: boolean) {
     const iv = intervals.find(i => i._key === key);
     if (!iv) return;
@@ -443,6 +469,7 @@ export function useEditSession(
     spinValues,
     activeTimingPreset,
     activeSpeedPreset,
+    activeSpinPreset,
     hasChanges,
     circuitWarmup:   circuitEdit.circuitWarmup,
     circuitCooldown: circuitEdit.circuitCooldown,
@@ -472,6 +499,7 @@ export function useEditSession(
     dismissPicker:   pickerState.dismissPicker,
     applyDurationPreset,
     applySpeedPreset,
+    applySpinPreset,
     setActivityLabel,
     openCircuitWarmupPicker:   pickerState.openCircuitWarmupPicker,
     openCircuitCooldownPicker: pickerState.openCircuitCooldownPicker,

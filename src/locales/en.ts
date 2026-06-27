@@ -157,6 +157,7 @@ export const en = {
     newSpinningTitle: 'New Spinning',
     spinResistance:   'Resistance',
     spinPower:        'Power (W)',
+    spinPresets:      'SPIN PRESETS',
   },
   picker: {
     rounds: 'rounds',
@@ -176,6 +177,7 @@ export const en = {
     overwriteTitle: 'Overwrite settings?',
     overwriteTimingMessage: 'Applying this preset will replace your current timing settings.',
     overwriteSpeedMessage: 'Applying this preset will replace your current speed settings.',
+    overwriteSpinMessage:  'Applying this preset will replace your current resistance and power settings.',
     apply: 'Apply',
     cancel: 'Cancel',
     unsavedTitle: 'Unsaved changes',
