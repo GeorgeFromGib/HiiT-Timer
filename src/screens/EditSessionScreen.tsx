@@ -1,7 +1,6 @@
-import React, { useRef, useImperativeHandle, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import {
   Alert,
-  Animated,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -13,19 +12,18 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
-import { NestableScrollContainer, NestableDraggableFlatList, ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import { NestableScrollContainer, NestableDraggableFlatList, type RenderItemParams } from 'react-native-draggable-flatlist';
 import { loadSessions, saveSessions, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
 import { fmtDuration, convertKmhToMph, type Phase } from '../lib/workout';
-import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
+import { useTheme, withOpacity, buttonShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import PickerModal from '../components/PickerModal';
-import IntervalRow from '../components/IntervalRow';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
-import { type PresetLevel } from '../lib/presets';
 import { useSettings } from '../lib/settingsContext';
 import { i18n, type Language, useTranslation } from '../lib/i18n';
+import PresetStrip from '../components/EditSession/PresetStrip';
+import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
 
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
@@ -334,8 +332,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
                   <IntervalSwipeRow
                     interval={iv}
-                    T={T}
-                    styles={styles}
                     isActive={isActive}
                     drag={drag}
                     onDuplicate={() => duplicateInterval(iv._key)}
@@ -355,11 +351,11 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               {/* Intervals */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
-                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} activePreset={activeTimingPreset} />
+                <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
                 {isRun && (
                   <>
                     <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
-                    <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} activePreset={activeSpeedPreset} />
+                    <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} />
                   </>
                 )}
                 {intervals.length === 0 && (
@@ -376,8 +372,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                 renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
                   <IntervalSwipeRow
                     interval={iv}
-                    T={T}
-                    styles={styles}
                     isActive={isActive}
                     drag={drag}
                     onDuplicate={() => duplicateInterval(iv._key)}
@@ -398,7 +392,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
               {/* Easy mode timing */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
-                <PresetStrip onApply={applyDurationPreset} T={T} styles={styles} activePreset={activeTimingPreset} />
+                <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
                 <View style={styles.configGrid}>
                   {timeFields.map(({ label, field }) => (
                     <View key={field} style={styles.configCell}>
@@ -421,7 +415,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                   </View>
                 </View>
               </View>
-
             </>
           )}
 
@@ -429,7 +422,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
           {isRun && !isAdvanced && !isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
-              <PresetStrip onApply={applySpeedPreset} T={T} styles={styles} activePreset={activeSpeedPreset} />
+              <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => (
                   <View key={field} style={styles.configCell}>
@@ -466,7 +459,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
           </Pressable>
 
-
         </NestableScrollContainer>
       </KeyboardAvoidingView>
 
@@ -477,56 +469,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
         onUpdate={updatePicker}
       />
     </LinearGradient>
-  );
-}
-
-// ── Preset strip ─────────────────────────────────────────────────────────────
-
-const PRESET_LEVELS: { label: string; level: PresetLevel }[] = [
-  { label: '1', level: '1' },
-  { label: '2', level: '2' },
-  { label: '3', level: '3' },
-  { label: '4', level: '4' },
-  { label: '5', level: '5' },
-  { label: '6', level: '6' },
-];
-
-function PresetStrip({
-  onApply,
-  T,
-  styles,
-  activePreset,
-}: {
-  onApply: (level: PresetLevel) => void;
-  T: ThemeTokens;
-  styles: ReturnType<typeof makeStyles>;
-  activePreset?: PresetLevel | null;
-}) {
-  const { t } = useTranslation();
-  return (
-    <View>
-      <View style={styles.presetRangeLabels}>
-        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{t('edit.presetEasy')}</Text>
-        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{t('edit.presetHard')}</Text>
-      </View>
-      <View style={styles.presetStrip}>
-        {PRESET_LEVELS.map(({ label, level }) => {
-          const isActive = level === activePreset;
-          return (
-            <Pressable
-              key={level}
-              style={({ pressed }) => [
-                styles.presetPill,
-                (pressed || isActive) && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) },
-              ]}
-              onPress={() => onApply(level)}
-            >
-              <Text style={[styles.presetPillText, { color: isActive ? T.accent : T.subText }]}>{label}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
-    </View>
   );
 }
 
@@ -600,36 +542,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     flexWrap: 'wrap',
     gap: 10,
   },
-
-  presetRangeLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  presetRangeLabelText: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 10,
-    letterSpacing: 10 * 0.06,
-    textTransform: 'uppercase',
-  },
-  presetStrip: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  presetPill: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: T.hairline,
-    backgroundColor: T.ghostBg,
-  },
-  presetPillText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 12,
-    letterSpacing: 12 * 0.04,
-  },
   configCell: {
     minWidth: '28%',
     flexGrow: 1,
@@ -660,6 +572,7 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     fontSize: 11,
     color: T.subText,
   },
+
   // ── Interval list ──────────────────────────────────────────────────────────
   emptyState: {
     backgroundColor: T.ghostBg,
@@ -675,30 +588,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.faintText,
   },
 
-  intervalSwipeContainer: { marginBottom: 6 },
-  intervalRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: T.ghostBg,
-    borderWidth: 1.5,
-    borderColor: T.hairline,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  intervalRowActive: {
-    borderColor: T.accent,
-    backgroundColor: selectedBg(T.accent),
-    ...glowShadow(T),
-    shadowRadius: 8,
-  },
-  dragHandle: {
-    alignSelf: 'stretch',
-    paddingHorizontal: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   phasePill: {
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -711,49 +600,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     fontFamily: 'Inter_700Bold',
     fontSize: 11,
     letterSpacing: 11 * 0.06,
-  },
-  intervalSpeed: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  intervalSpeedUnit: {
-    fontSize: 11,
-    fontFamily: 'Inter_400Regular',
-  },
-  intervalDuration: {
-    flex: 1,
-    alignItems: 'flex-end',
-    paddingRight: 4,
-  },
-  intervalDurationText: {
-    fontFamily: 'ChakraPetch_700Bold',
-    fontSize: 18,
-    color: T.text,
-  },
-  swipeDuplicateAction: {
-    backgroundColor: '#3b82f6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    width: 80,
-    borderRadius: 12,
-    marginRight: 6,
-  },
-  swipeDuplicateText: {
-    ...typography.controlLabel,
-    color: '#fff',
-  },
-  swipeDeleteAction: {
-    backgroundColor: '#ff5a5f',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 4,
-    width: 80,
-    borderRadius: 12,
-  },
-  swipeDeleteText: {
-    ...typography.controlLabel,
-    color: '#fff',
   },
 
   intervalActions: {
@@ -842,101 +688,4 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     textTransform: 'uppercase',
     color: T.subText,
   },
-
 }); }
-
-const IntervalSwipeDuplicateAction = React.forwardRef<
-  { reset: () => void },
-  { styles: ReturnType<typeof makeStyles>; onDuplicate: () => void; swipeable: { close: () => void } }
->(function IntervalSwipeDuplicateAction({ styles, onDuplicate, swipeable }, ref) {
-  const { t } = useTranslation();
-  const opacity = useRef(new Animated.Value(1)).current;
-
-  useImperativeHandle(ref, () => ({ reset: () => opacity.setValue(1) }));
-
-  const handlePress = () => {
-    onDuplicate();
-    Animated.timing(opacity, { toValue: 0, duration: 150, useNativeDriver: true }).start(
-      () => swipeable.close(),
-    );
-  };
-
-  return (
-    <Animated.View style={{ opacity, alignSelf: 'stretch' }}>
-      <Pressable onPress={handlePress} style={[styles.swipeDuplicateAction, { flex: 1 }]}>
-        <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-          <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-        </Svg>
-        <Text style={styles.swipeDuplicateText}>{t('common.duplicate')}</Text>
-      </Pressable>
-    </Animated.View>
-  );
-});
-
-function IntervalSwipeRow({
-  interval, T, styles, isActive, drag,
-  onDuplicate, onRemove, onCyclePhase, onOpenPicker,
-  displaySpeed, onOpenSpeedPicker, onClearSpeed,
-  activityLabel, onLabelChange,
-}: {
-  interval:           LocalInterval;
-  T:                  ThemeTokens;
-  styles:             ReturnType<typeof makeStyles>;
-  isActive:           boolean;
-  drag:               () => void;
-  onDuplicate:        () => void;
-  onRemove:           () => void;
-  onCyclePhase:       () => void;
-  onOpenPicker:       () => void;
-  displaySpeed?:      { value: string; unit: string };
-  onOpenSpeedPicker?: () => void;
-  onClearSpeed?:      () => void;
-  activityLabel?:     string;
-  onLabelChange?:     (text: string) => void;
-}) {
-  const { t } = useTranslation();
-  const duplicateRef = useRef<{ reset: () => void } | null>(null);
-
-  return (
-    <ScaleDecorator>
-      <ReanimatedSwipeable
-        containerStyle={styles.intervalSwipeContainer}
-        onSwipeableClose={() => duplicateRef.current?.reset()}
-        renderLeftActions={(_p, _d, swipeable) => (
-          <IntervalSwipeDuplicateAction
-            ref={duplicateRef}
-            styles={styles}
-            onDuplicate={onDuplicate}
-            swipeable={swipeable}
-          />
-        )}
-        renderRightActions={(_p, _d, swipeable) => (
-          <Pressable
-            onPress={() => { swipeable.close(); onRemove(); }}
-            style={styles.swipeDeleteAction}
-          >
-            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-              <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-              <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
-            </Svg>
-            <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
-          </Pressable>
-        )}
-      >
-        <IntervalRow
-          interval={interval}
-          isActive={isActive}
-          onCyclePhase={onCyclePhase}
-          onOpenPicker={onOpenPicker}
-          onDrag={drag}
-          displaySpeed={displaySpeed}
-          onOpenSpeedPicker={onOpenSpeedPicker}
-          onClearSpeed={onClearSpeed}
-          activityLabel={activityLabel}
-          onLabelChange={onLabelChange}
-        />
-      </ReanimatedSwipeable>
-    </ScaleDecorator>
-  );
-}
