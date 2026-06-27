@@ -212,11 +212,11 @@ export const en = {
     restore: 'Restore purchases',
   },
   defaultSessions: {
-    example1: 'Example 1',
-    example2: 'Example 2',
-    example3: 'Example 3',
-    circuit1: 'Body Weight Circuit',
-    spinning1: 'Spinning Session',
+    example1: 'Standard Example',
+    example2: 'Advanced Example',
+    example3: 'Run Example',
+    circuit1: 'Body Weight Circuit Example',
+    spinning1: 'Spinning Session Example',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },

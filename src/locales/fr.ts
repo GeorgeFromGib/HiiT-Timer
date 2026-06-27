@@ -214,11 +214,11 @@ export const fr: typeof en = {
     restore: 'Restaurer les achats',
   },
   defaultSessions: {
-    example1: 'Exemple 1',
-    example2: 'Exemple 2',
-    example3: 'Exemple 3',
-    circuit1: 'Circuit Poids du Corps',
-    spinning1: 'Séance de Spinning',
+    example1: 'Exemple Standard',
+    example2: 'Exemple Avancé',
+    example3: 'Exemple Course',
+    circuit1: 'Circuit Poids du Corps Exemple',
+    spinning1: 'Séance de Spinning Exemple',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Bleu-vert profond · calme' },

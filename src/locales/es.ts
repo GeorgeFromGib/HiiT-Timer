@@ -214,11 +214,11 @@ export const es: typeof en = {
     restore: 'Restaurar compras',
   },
   defaultSessions: {
-    example1: 'Ejemplo 1',
-    example2: 'Ejemplo 2',
-    example3: 'Ejemplo 3',
-    circuit1: 'Circuito de Peso Corporal',
-    spinning1: 'Sesión de Spinning',
+    example1: 'Ejemplo Estándar',
+    example2: 'Ejemplo Avanzado',
+    example3: 'Ejemplo de Carrera',
+    circuit1: 'Circuito de Peso Corporal Ejemplo',
+    spinning1: 'Sesión de Spinning Ejemplo',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },
