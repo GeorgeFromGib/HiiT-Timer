@@ -19,10 +19,10 @@ import { type LocalInterval, toLocal, type TimeField, type SavePayload } from '.
 import { useEasyModeEdit } from './useEasyModeEdit';
 import { useCircuitModeEdit } from './useCircuitModeEdit';
 import { useAdvancedModeEdit } from './useAdvancedModeEdit';
-import { usePickerState, type EditSessionPicker } from './usePickerState';
+import { usePickerState, type EditSessionPicker, type PickerValues } from './usePickerState';
 
 // Re-export shared types — EditSessionScreen imports these from here
-export type { LocalInterval, TimeField, SavePayload, EditSessionPicker };
+export type { LocalInterval, TimeField, SavePayload, EditSessionPicker, PickerValues };
 export { toLocal };
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
@@ -68,8 +68,7 @@ export interface EditSessionInterface {
   openSpeedPicker:          (field: keyof RunSpeeds, displayValue: number, isMiles: boolean) => void;
   openIntervalSpeedPicker:  (key: string, isMiles: boolean) => void;
   clearIntervalSpeed:       (key: string) => void;
-  updatePicker:             (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => void;
-  commitPicker:             () => void;
+  commitPicker:             (values: PickerValues) => void;
   dismissPicker:            () => void;
   applyDurationPreset:      (level: PresetLevel) => void;
   applySpeedPreset:         (level: PresetLevel) => void;
@@ -435,7 +434,6 @@ export function useEditSession(
     openSpeedPicker:    pickerState.openSpeedPicker,
     openIntervalSpeedPicker,
     clearIntervalSpeed,
-    updatePicker:    pickerState.updatePicker,
     commitPicker:    pickerState.commitPicker,
     dismissPicker:   pickerState.dismissPicker,
     applyDurationPreset,

@@ -39,6 +39,14 @@ export interface EditSessionPicker {
   speedDecimal: number;
 }
 
+export interface PickerValues {
+  minutes:      number;
+  seconds:      number;
+  rounds:       number;
+  speedWhole:   number;
+  speedDecimal: number;
+}
+
 export function usePickerState(
   intervals:     LocalInterval[],
   fieldValues:   Record<TimeField, number>,
@@ -131,28 +139,28 @@ export function usePickerState(
     setActivePicker({ type: 'circuitCount' });
   }
 
-  function commitPicker() {
+  function commitPicker(values: PickerValues) {
     if (!activePicker) return;
     if (activePicker.type === 'rounds') {
-      onCommit({ type: 'rounds', value: pickerRounds + 1 });
+      onCommit({ type: 'rounds', value: values.rounds + 1 });
     } else if (activePicker.type === 'speed') {
-      const displayVal = speedWhole + speedDecimal / 10;
+      const displayVal = values.speedWhole + values.speedDecimal / 10;
       const kmh = activePicker.isMiles ? convertMphToKmh(displayVal) : displayVal;
       onCommit({ type: 'speed', field: activePicker.field, kmh });
     } else if (activePicker.type === 'intervalSpeed') {
-      const displayVal = speedWhole + speedDecimal / 10;
+      const displayVal = values.speedWhole + values.speedDecimal / 10;
       const kmh = activePicker.isMiles ? convertMphToKmh(displayVal) : displayVal;
       onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh });
     } else if (activePicker.type === 'circuitCount') {
-      onCommit({ type: 'circuitCount', value: pickerRounds + 1 });
+      onCommit({ type: 'circuitCount', value: values.rounds + 1 });
     } else if (activePicker.type === 'circuitWarmup') {
-      onCommit({ type: 'circuitWarmup', secs: pickerMinutes * 60 + pickerSeconds });
+      onCommit({ type: 'circuitWarmup', secs: values.minutes * 60 + values.seconds });
     } else if (activePicker.type === 'circuitCooldown') {
-      onCommit({ type: 'circuitCooldown', secs: pickerMinutes * 60 + pickerSeconds });
+      onCommit({ type: 'circuitCooldown', secs: values.minutes * 60 + values.seconds });
     } else if (activePicker.type === 'circuitRest') {
-      onCommit({ type: 'circuitRest', secs: pickerMinutes * 60 + pickerSeconds });
+      onCommit({ type: 'circuitRest', secs: values.minutes * 60 + values.seconds });
     } else {
-      const secs = pickerMinutes * 60 + pickerSeconds;
+      const secs = values.minutes * 60 + values.seconds;
       if (activePicker.type === 'field') {
         onCommit({ type: 'field', field: activePicker.field, secs });
       } else {
@@ -188,13 +196,6 @@ export function usePickerState(
     openCircuitCooldownPicker,
     openCircuitRestPicker,
     openCircuitCountPicker,
-    updatePicker: (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => {
-      if (partial.minutes      !== undefined) setPickerMinutes(partial.minutes);
-      if (partial.seconds      !== undefined) setPickerSeconds(partial.seconds);
-      if (partial.rounds       !== undefined) setPickerRounds(partial.rounds);
-      if (partial.speedWhole   !== undefined) setSpeedWhole(partial.speedWhole);
-      if (partial.speedDecimal !== undefined) setSpeedDecimal(partial.speedDecimal);
-    },
     commitPicker,
     dismissPicker: () => setActivePicker(null),
   };

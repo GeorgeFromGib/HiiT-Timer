@@ -55,7 +55,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     openIntervalSpeedPicker, clearIntervalSpeed,
     openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
-    updatePicker, commitPicker, dismissPicker,
+    commitPicker, dismissPicker,
     applyDurationPreset, applySpeedPreset,
     setActivityLabel,
     buildSavePayload,
@@ -466,7 +466,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
         picker={picker}
         onDismiss={dismissPicker}
         onCommit={commitPicker}
-        onUpdate={updatePicker}
       />
     </LinearGradient>
   );

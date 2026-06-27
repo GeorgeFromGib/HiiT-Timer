@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import WheelColumn from './WheelColumn';
-import type { EditSessionPicker } from '../hooks/useEditSession';
+import type { EditSessionPicker, PickerValues } from '../hooks/useEditSession';
 import { useTranslation } from '../lib/i18n';
 
 const MINUTE_LABELS   = Array.from({ length: 60 }, (_, i) => String(i));
@@ -12,17 +12,34 @@ const KMH_WHOLE       = Array.from({ length: 51 }, (_, i) => String(i));
 const MPH_WHOLE       = Array.from({ length: 32 }, (_, i) => String(i));
 const DECIMAL_LABELS  = Array.from({ length: 10 }, (_, i) => String(i));
 
+const EMPTY_VALUES: PickerValues = { minutes: 0, seconds: 0, rounds: 0, speedWhole: 0, speedDecimal: 0 };
+
 interface Props {
   picker:    EditSessionPicker | null;
   onDismiss: () => void;
-  onCommit:  () => void;
-  onUpdate:  (partial: { minutes?: number; seconds?: number; rounds?: number; speedWhole?: number; speedDecimal?: number }) => void;
+  onCommit:  (values: PickerValues) => void;
 }
 
-export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: Props) {
+export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
   const { T } = useTheme();
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
+
+  const [local, setLocal] = useState<PickerValues>(EMPTY_VALUES);
+
+  useEffect(() => {
+    if (picker) {
+      setLocal({
+        minutes:      picker.minutes,
+        seconds:      picker.seconds,
+        rounds:       picker.rounds,
+        speedWhole:   picker.speedWhole,
+        speedDecimal: picker.speedDecimal,
+      });
+    }
+  // Re-initialize whenever the picker opens (null → non-null) or a different picker opens
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [picker !== null, picker?.title]);
 
   return (
     <Modal
@@ -39,7 +56,7 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
               <Text style={styles.modalCancelText}>{t('common.cancel')}</Text>
             </Pressable>
             <Text style={styles.modalTitle}>{picker?.title}</Text>
-            <Pressable onPress={onCommit} style={styles.modalDoneBtn}>
+            <Pressable onPress={() => onCommit(local)} style={styles.modalDoneBtn}>
               <Text style={styles.modalDoneText}>{t('common.done')}</Text>
             </Pressable>
           </View>
@@ -49,8 +66,8 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
               <View style={styles.pickerRow}>
                 <WheelColumn
                   values={ROUND_LABELS}
-                  selected={picker.rounds}
-                  onChange={v => onUpdate({ rounds: v })}
+                  selected={local.rounds}
+                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
                 />
               </View>
               <View style={styles.pickerUnits}>
@@ -62,16 +79,16 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
               <View style={styles.pickerRow}>
                 <WheelColumn
                   values={picker.speedUnit === 'miles' ? MPH_WHOLE : KMH_WHOLE}
-                  selected={picker.speedWhole}
-                  onChange={v => onUpdate({ speedWhole: v })}
+                  selected={local.speedWhole}
+                  onChange={v => setLocal(prev => ({ ...prev, speedWhole: v }))}
                 />
                 <View style={styles.pickerSeparator}>
                   <Text style={styles.pickerSeparatorText}>.</Text>
                 </View>
                 <WheelColumn
                   values={DECIMAL_LABELS}
-                  selected={picker.speedDecimal}
-                  onChange={v => onUpdate({ speedDecimal: v })}
+                  selected={local.speedDecimal}
+                  onChange={v => setLocal(prev => ({ ...prev, speedDecimal: v }))}
                 />
               </View>
               <View style={styles.pickerUnits}>
@@ -85,16 +102,16 @@ export default function PickerModal({ picker, onDismiss, onCommit, onUpdate }: P
               <View style={styles.pickerRow}>
                 <WheelColumn
                   values={MINUTE_LABELS}
-                  selected={picker?.minutes ?? 0}
-                  onChange={v => onUpdate({ minutes: v })}
+                  selected={local.minutes}
+                  onChange={v => setLocal(prev => ({ ...prev, minutes: v }))}
                 />
                 <View style={styles.pickerSeparator}>
                   <Text style={styles.pickerSeparatorText}>:</Text>
                 </View>
                 <WheelColumn
                   values={SECOND_LABELS}
-                  selected={picker?.seconds ?? 0}
-                  onChange={v => onUpdate({ seconds: v })}
+                  selected={local.seconds}
+                  onChange={v => setLocal(prev => ({ ...prev, seconds: v }))}
                 />
               </View>
               <View style={styles.pickerUnits}>
