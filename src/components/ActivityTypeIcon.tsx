@@ -39,8 +39,8 @@ export default function ActivityTypeIcon({ activityType, mode, size = 16, color 
     // Bicycle wheel: outer rim, hub, 4 spokes (N/S/E/W)
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24">
-        <Circle cx="12" cy="12" r="9" stroke={color} fill="none" strokeWidth={2.2} />
-        <Circle cx="12" cy="12" r="2" stroke={color} fill="none" strokeWidth={2.2} />
+        <Circle cx="12" cy="12" r="9" {...p} />
+        <Circle cx="12" cy="12" r="2" {...p} />
         <Path {...p} d="M12 3v7M12 14v7M3 12h7M14 12h7" />
       </Svg>
     );
