@@ -5,16 +5,22 @@ import DragHandle from './DragHandle';
 import { useTranslation } from '../lib/i18n';
 
 export interface IntervalRowProps {
-  interval:           Interval;
-  isActive:           boolean;
-  onCyclePhase:       () => void;
-  onOpenPicker:       () => void;
-  onDrag:             () => void;
-  displaySpeed?:      { value: string; unit: string };
-  onOpenSpeedPicker?: () => void;
-  onClearSpeed?:      () => void;
-  activityLabel?:     string;
-  onLabelChange?:     (text: string) => void;
+  interval:                Interval;
+  isActive:                boolean;
+  onCyclePhase:            () => void;
+  onOpenPicker:            () => void;
+  onDrag:                  () => void;
+  displaySpeed?:           { value: string; unit: string };
+  onOpenSpeedPicker?:      () => void;
+  onClearSpeed?:           () => void;
+  activityLabel?:          string;
+  onLabelChange?:          (text: string) => void;
+  displayResistance?:      number;
+  onOpenResistancePicker?: () => void;
+  onClearResistance?:      () => void;
+  displayPower?:           number;
+  onOpenPowerPicker?:      () => void;
+  onClearPower?:           () => void;
 }
 
 export default function IntervalRow({
@@ -22,6 +28,8 @@ export default function IntervalRow({
   onCyclePhase, onOpenPicker, onDrag,
   displaySpeed, onOpenSpeedPicker, onClearSpeed,
   activityLabel, onLabelChange,
+  displayResistance, onOpenResistancePicker, onClearResistance,
+  displayPower, onOpenPowerPicker, onClearPower,
 }: IntervalRowProps) {
   const { T } = useTheme();
   const { t } = useTranslation();
@@ -58,11 +66,40 @@ export default function IntervalRow({
         </Pressable>
       )}
 
+      {displayResistance !== undefined && onOpenResistancePicker && (
+        <Pressable
+          onPress={onOpenResistancePicker}
+          onLongPress={onClearResistance}
+          delayLongPress={500}
+          hitSlop={8}
+          style={styles.spinChip}
+        >
+          <Text style={styles.intervalDurationText}>{displayResistance}</Text>
+        </Pressable>
+      )}
+
+      {displayPower !== undefined && onOpenPowerPicker && (
+        <Pressable
+          onPress={onOpenPowerPicker}
+          onLongPress={onClearPower}
+          delayLongPress={500}
+          hitSlop={8}
+          style={styles.spinChip}
+        >
+          <Text style={styles.intervalDurationText}>
+            {displayPower}<Text style={styles.spinChipUnit}>W</Text>
+          </Text>
+        </Pressable>
+      )}
+
       <Pressable
         onPress={onOpenPicker}
         style={[
           styles.intervalDuration,
-          (displaySpeed !== undefined || (onLabelChange !== undefined && interval.type === 'work')) && { flex: 0 },
+          (displaySpeed !== undefined
+            || (onLabelChange !== undefined && interval.type === 'work')
+            || displayResistance !== undefined
+          ) && { flex: 0 },
         ]}
       >
         <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
@@ -136,6 +173,14 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'ChakraPetch_700Bold',
       fontSize: 18,
       color: T.text,
+    },
+    spinChip: {
+      alignItems: 'center',
+    },
+    spinChipUnit: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 11,
+      color: T.subText,
     },
   });
 }

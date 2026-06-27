@@ -9,18 +9,24 @@ import IntervalRow from '../IntervalRow';
 import { type LocalInterval } from '../../hooks/useEditSession';
 
 interface Props {
-  interval:           LocalInterval;
-  isActive:           boolean;
-  drag:               () => void;
-  onDuplicate:        () => void;
-  onRemove:           () => void;
-  onCyclePhase:       () => void;
-  onOpenPicker:       () => void;
-  displaySpeed?:      { value: string; unit: string };
-  onOpenSpeedPicker?: () => void;
-  onClearSpeed?:      () => void;
-  activityLabel?:     string;
-  onLabelChange?:     (text: string) => void;
+  interval:                LocalInterval;
+  isActive:                boolean;
+  drag:                    () => void;
+  onDuplicate:             () => void;
+  onRemove:                () => void;
+  onCyclePhase:            () => void;
+  onOpenPicker:            () => void;
+  displaySpeed?:           { value: string; unit: string };
+  onOpenSpeedPicker?:      () => void;
+  onClearSpeed?:           () => void;
+  activityLabel?:          string;
+  onLabelChange?:          (text: string) => void;
+  displayResistance?:      number;
+  onOpenResistancePicker?: () => void;
+  onClearResistance?:      () => void;
+  displayPower?:           number;
+  onOpenPowerPicker?:      () => void;
+  onClearPower?:           () => void;
 }
 
 const IntervalSwipeDuplicateAction = React.forwardRef<
@@ -57,6 +63,8 @@ export default function IntervalSwipeRow({
   onDuplicate, onRemove, onCyclePhase, onOpenPicker,
   displaySpeed, onOpenSpeedPicker, onClearSpeed,
   activityLabel, onLabelChange,
+  displayResistance, onOpenResistancePicker, onClearResistance,
+  displayPower, onOpenPowerPicker, onClearPower,
 }: Props) {
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
@@ -97,6 +105,12 @@ export default function IntervalSwipeRow({
           onClearSpeed={onClearSpeed}
           activityLabel={activityLabel}
           onLabelChange={onLabelChange}
+          displayResistance={displayResistance}
+          onOpenResistancePicker={onOpenResistancePicker}
+          onClearResistance={onClearResistance}
+          displayPower={displayPower}
+          onOpenPowerPicker={onOpenPowerPicker}
+          onClearPower={onClearPower}
         />
       </ReanimatedSwipeable>
     </ScaleDecorator>
