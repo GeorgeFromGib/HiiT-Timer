@@ -61,7 +61,7 @@ For spinning sessions, resolve resistance and power onto each segment — mirror
 - Advanced: `seg.resistance = interval.resistance ?? spinValueForPhase(seg.phase, spinValues)`
 - Easy: `seg.resistance = spinValueForPhase(seg.phase, spinValues)`
 
-Helper:
+Helper returns both values as an object (avoids calling the helper twice per segment — contrast with `speedForPhase` which returns a single `number`):
 ```ts
 export function spinValueForPhase(phase: Phase, values: SpinValues): { resistance: number; power: number }
 ```
@@ -75,7 +75,7 @@ export function spinValueForPhase(phase: Phase, values: SpinValues): { resistanc
 | Resistance | 1, 2, 3 … 10                    | 1             | —          |
 | Power      | 40, 50, 60 … 300 (10W steps)   | 1             | `W`        |
 
-Both use the existing `PickerModal` with `isResistance` and `isPower` boolean flags, following the same pattern as the existing `isSpeed` and `isRounds` flags.
+Both use the existing `PickerModal` with `isResistance` and `isPower` boolean flags, following the same pattern as the existing `isSpeed` and `isRounds` flags. Note: if a fifth picker type is ever added, migrating to a `kind` enum would be cleaner — but that's out of scope here.
 
 ---
 
@@ -103,7 +103,7 @@ Each interval card row (left → right):
 - Values displayed as plain numbers: `7` for resistance, `200W` for power.
 - Phase defaults are read from `spinValues` stored on the session draft.
 
-`IntervalRow` gains two new optional props: `displayResistance`, `onOpenResistancePicker`, `onClearResistance`, `displayPower`, `onOpenPowerPicker`, `onClearPower` — wired only when `activityType === 'spinning'`.
+`IntervalRow` gains **6** new optional props: `displayResistance`, `onOpenResistancePicker`, `onClearResistance`, `displayPower`, `onOpenPowerPicker`, `onClearPower` — wired only when `activityType === 'spinning'`.
 
 ---
 
@@ -115,7 +115,7 @@ During a spinning session, the current segment's resistance and power are shown 
 R 7        200 W
 ```
 
-Labels are small and uppercase; values use the `ChakraPetch_700Bold` font consistent with the rest of the workout screen. Values update on each segment transition. The workout screen reads `activeSegment.resistance` and `activeSegment.power` — no additional state required.
+This row only renders when `activeSegment.resistance !== undefined` (i.e. spinning sessions only). Labels are small and uppercase; values use the `ChakraPetch_700Bold` font consistent with the rest of the workout screen. Values update on each segment transition. The workout screen reads `activeSegment.resistance` and `activeSegment.power` — no additional state required.
 
 ---
 
@@ -123,12 +123,19 @@ Labels are small and uppercase; values use the `ChakraPetch_700Bold` font consis
 
 New keys under `edit`:
 - `spinning` — display name ("Spinning" / "Spinning" / "Spinning")
+- `newSpinningTitle` — editor header for new sessions ("New Spinning" / "Nueva Spinning" / "Nouveau Spinning") — mirrors `newCircuitTitle`
 - `spinResistance` — grid label ("Resistance" / "Resistencia" / "Résistance")
 - `spinPower` — grid label ("Power" / "Potencia" / "Puissance")
 
 New key under `picker`:
 - `resistanceTitle` — picker header ("Resistance")
 - `powerTitle` — picker header ("Power")
+
+---
+
+## Default Session
+
+`DEFAULT_SESSIONS` in `sessions.ts` gains one spinning entry — easy mode, name "Spinning Session", using `DEFAULT_SPIN_VALUES`. This ensures the sessions list is non-empty on first launch.
 
 ---
 
@@ -143,6 +150,17 @@ New key under `picker`:
 ## Presets
 
 Deferred. Manual entry only for now. Preset strip will be added in a follow-up once values are supplied.
+
+---
+
+## Success Criteria
+
+- A spinning session created in easy mode saves and reloads with correct `activityType: 'spinning'`, `spinValues`, and mode.
+- `getSessionSegments` resolves `resistance` and `power` onto every segment using phase defaults; per-interval overrides in advanced mode take precedence.
+- Workout screen displays correct resistance and power for each segment as it transitions; the row is absent for non-spinning sessions.
+- Easy mode grid shows all eight cells (4 phases × resistance + power) and picker wheels open/commit correctly.
+- Advanced mode interval cards show resistance and power chips; long-press clears to phase default.
+- Session card on the list shows "Spinning" as the type label.
 
 ---
 
