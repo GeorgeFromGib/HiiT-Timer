@@ -219,21 +219,15 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           )}
 
           {seg.resistance !== undefined && !isDone && !isPreStart && (
-            <View style={styles.spinRow}>
-              <View style={[styles.spinPill, {
-                backgroundColor: withOpacity(phaseColor, 0x21),
-                borderColor:     withOpacity(phaseColor, 0x59),
-              }]}>
-                <Text style={[styles.spinPillLabel, { color: phaseColor }]}>R</Text>
-                <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.resistance}</Text>
-              </View>
-              <View style={[styles.spinPill, {
-                backgroundColor: withOpacity(phaseColor, 0x21),
-                borderColor:     withOpacity(phaseColor, 0x59),
-              }]}>
-                <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.power}</Text>
-                <Text style={[styles.spinPillLabel, { color: phaseColor }]}>W</Text>
-              </View>
+            <View style={[styles.spinPill, {
+              backgroundColor: withOpacity(phaseColor, 0x21),
+              borderColor:     withOpacity(phaseColor, 0x59),
+            }]}>
+              <Text style={[styles.spinPillLabel, { color: phaseColor }]}>R</Text>
+              <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.resistance}</Text>
+              <Text style={[styles.spinPillLabel, { color: phaseColor }]}>·</Text>
+              <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.power}</Text>
+              <Text style={[styles.spinPillLabel, { color: phaseColor }]}>W</Text>
             </View>
           )}
 
@@ -513,11 +507,6 @@ function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
     fontFamily: 'Inter_700Bold',
     fontSize: Math.round(20 * s),
     letterSpacing: 20 * 0.02,
-  },
-  spinRow: {
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'center',
   },
   spinPill: {
     flexDirection: 'row',
