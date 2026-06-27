@@ -34,7 +34,7 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 
 interface Props {
   session?: Session;
-  activityType?: 'general' | 'run' | 'circuit';
+  activityType?: 'general' | 'run' | 'circuit' | 'spinning';
   onBack: () => void;
 }
 

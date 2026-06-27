@@ -83,7 +83,7 @@ export interface EditSessionInterface {
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
-  initialActivityType?: 'general' | 'run' | 'circuit',
+  initialActivityType?: 'general' | 'run' | 'circuit' | 'spinning',
 ): EditSessionInterface {
   const [name, setName] = useState(existing?.name ?? '');
   const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(() => {
