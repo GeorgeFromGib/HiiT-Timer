@@ -127,7 +127,7 @@ export const en = {
     namePlaceholder: 'e.g. Morning Blast',
     preview: 'PREVIEW',
     activityType: 'ACTIVITY TYPE',
-    general: 'General',
+    general: 'Standard',
     run: 'Run',
     setupMode: 'SETUP MODE',
     easy: 'Easy',

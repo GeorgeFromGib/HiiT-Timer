@@ -129,7 +129,7 @@ export const fr: typeof en = {
     namePlaceholder: 'ex. Blast matinal',
     preview: 'APERÇU',
     activityType: "TYPE D'ACTIVITÉ",
-    general: 'Général',
+    general: 'Standard',
     run: 'Course',
     setupMode: 'MODE DE CONFIGURATION',
     easy: 'Facile',

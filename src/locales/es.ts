@@ -129,7 +129,7 @@ export const es: typeof en = {
     namePlaceholder: 'p. ej. Explosión matutina',
     preview: 'VISTA PREVIA',
     activityType: 'TIPO DE ACTIVIDAD',
-    general: 'General',
+    general: 'Estándar',
     run: 'Correr',
     setupMode: 'MODO DE CONFIGURACIÓN',
     easy: 'Fácil',
