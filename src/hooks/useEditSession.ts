@@ -9,12 +9,10 @@ import {
   expandCircuit,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
+import { type LocalInterval, toLocal, type TimeField, type SavePayload } from './editSessionTypes';
 
-export type LocalInterval = Interval & { _key: string };
-export const toLocal = (iv: Interval): LocalInterval =>
-  ({ ...iv, _key: Math.random().toString(36).slice(2) });
-
-export type TimeField = 'warmup' | 'work' | 'rest' | 'cooldown';
+export type { LocalInterval, TimeField, SavePayload } from './editSessionTypes';
+export { toLocal } from './editSessionTypes';
 
 type ActivePicker =
   | { type: 'field'; field: TimeField }
@@ -37,10 +35,6 @@ type CommitResult =
   | { type: 'circuitCooldown'; secs: number }
   | { type: 'circuitRest';   secs: number }
   | { type: 'circuitCount';   value: number };
-
-export type SavePayload =
-  | { ok: true; session: Session; isNew: boolean }
-  | { ok: false; titleKey: string; messageKey: string };
 
 const PHASES: Phase[] = ['warmup', 'work', 'rest', 'cooldown'];
 const CIRCUIT_PHASES: Phase[] = ['work', 'rest'];
