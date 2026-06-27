@@ -131,7 +131,7 @@ export function useEditSession(
   const initialActivityTypeRef = useRef<'run' | 'spinning' | undefined>(
     existing && existing.mode !== 'circuit'
       ? existing.activityType
-      : (initialActivityType === 'run' ? 'run' : undefined)
+      : (initialActivityType === 'run' ? 'run' : initialActivityType === 'spinning' ? 'spinning' : undefined)
   ).current;
   const intervalsDraft      = useDraft<Interval[]>(
     existing?.mode === 'advanced' || existing?.mode === 'circuit' ? existing.intervals : []
