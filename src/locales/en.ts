@@ -99,6 +99,8 @@ export const en = {
     countdownFlashSub: 'Digits flash on last 3 seconds of each interval',
     keepAwakeLabel: 'Keep screen awake',
     keepAwakeSub: 'Prevent display sleep during workout',
+    hapticLabel: 'Haptic feedback',
+    hapticSub: 'Vibrate at the start of each interval',
     units: 'Units',
     speedUnitLabel: 'Speed unit',
     speedUnitSub: 'Display unit for Run session speeds',

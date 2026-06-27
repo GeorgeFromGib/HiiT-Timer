@@ -101,6 +101,8 @@ export const es: typeof en = {
     countdownFlashSub: 'Los dígitos parpadean en los últimos 3 segundos de cada intervalo',
     keepAwakeLabel: 'Mantener pantalla encendida',
     keepAwakeSub: 'Evita que la pantalla se apague durante el entrenamiento',
+    hapticLabel: 'Vibración háptica',
+    hapticSub: 'Vibra al inicio de cada intervalo',
     units: 'Unidades',
     speedUnitLabel: 'Unidad de velocidad',
     speedUnitSub: 'Unidad para las velocidades de sesiones de carrera',

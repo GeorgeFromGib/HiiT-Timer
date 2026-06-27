@@ -79,6 +79,11 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             label={t('settings.keepAwakeLabel')}
             sub={t('settings.keepAwakeSub')}
             right={<SettingsToggle value={settings.keepScreenAwake} onChange={v => updateSettings('keepScreenAwake', v)} />}
+          />
+          <SettingsRow
+            label={t('settings.hapticLabel')}
+            sub={t('settings.hapticSub')}
+            right={<SettingsToggle value={settings.hapticFeedback} onChange={v => updateSettings('hapticFeedback', v)} />}
             last
           />
         </SettingsSection>

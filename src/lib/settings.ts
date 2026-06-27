@@ -7,6 +7,7 @@ export interface Settings {
   congratsMessage: boolean;
   finalCountdownBeep: boolean;
   keepScreenAwake: boolean;
+  hapticFeedback: boolean;
   soundCues: boolean;
   soundOff: boolean;
   countdownFlash: boolean;
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   congratsMessage: true,
   finalCountdownBeep: true,
   keepScreenAwake: true,
+  hapticFeedback: true,
   soundCues: true,
   soundOff: false,
   countdownFlash: true,

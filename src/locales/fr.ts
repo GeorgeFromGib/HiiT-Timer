@@ -101,6 +101,8 @@ export const fr: typeof en = {
     countdownFlashSub: 'Les chiffres clignotent dans les 3 dernières secondes de chaque intervalle',
     keepAwakeLabel: "Garder l'écran allumé",
     keepAwakeSub: "Empêche la mise en veille pendant l'entraînement",
+    hapticLabel: 'Retour haptique',
+    hapticSub: 'Vibre au début de chaque intervalle',
     units: 'Unités',
     speedUnitLabel: 'Unité de vitesse',
     speedUnitSub: "Unité d'affichage pour les vitesses de séance de course",
