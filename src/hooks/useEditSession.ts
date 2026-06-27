@@ -96,7 +96,7 @@ export function useEditSession(
     existing?.mode === 'advanced' || existing?.mode === 'circuit'
       ? existing.intervals.map(toLocal) : []
   );
-  const [activityType, setActivityType] = useState<'run' | undefined>(() => {
+  const [activityType] = useState<'run' | undefined>(() => {
     if (existing && existing.mode !== 'circuit') return existing.activityType;
     if (!existing && initialActivityType === 'run') return 'run';
     return undefined;
