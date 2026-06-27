@@ -28,7 +28,7 @@ export default function ActivityTypeIcon({ activityType, mode, size = 16, color 
     // Simplified running figure: head + body in motion
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24">
-        <Circle cx="14" cy="4" r="1.5" stroke={color} fill="none" strokeWidth={2.2} />
+        <Circle cx="14" cy="4" r="1.5" {...p} />
         <Path {...p} d="M12 6.5l-3 5 3.5 2-3 5" />
         <Path {...p} d="M12 6.5l2.5 3.5-3.5 1.5" />
       </Svg>
