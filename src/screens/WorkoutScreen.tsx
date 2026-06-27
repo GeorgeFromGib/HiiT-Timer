@@ -218,6 +218,25 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </View>
           )}
 
+          {seg.resistance !== undefined && !isDone && !isPreStart && (
+            <View style={styles.spinRow}>
+              <View style={[styles.spinPill, {
+                backgroundColor: withOpacity(phaseColor, 0x21),
+                borderColor:     withOpacity(phaseColor, 0x59),
+              }]}>
+                <Text style={[styles.spinPillLabel, { color: phaseColor }]}>R</Text>
+                <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.resistance}</Text>
+              </View>
+              <View style={[styles.spinPill, {
+                backgroundColor: withOpacity(phaseColor, 0x21),
+                borderColor:     withOpacity(phaseColor, 0x59),
+              }]}>
+                <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.power}</Text>
+                <Text style={[styles.spinPillLabel, { color: phaseColor }]}>W</Text>
+              </View>
+            </View>
+          )}
+
           {seg.activityLabel !== undefined && !isDone && !isPreStart && (
             <View style={[styles.speedPill, {
               backgroundColor: withOpacity(phaseColor, 0x21),
@@ -489,6 +508,30 @@ function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
     fontFamily: 'Inter_700Bold',
     fontSize: Math.round(20 * s),
     letterSpacing: 20 * 0.02,
+  },
+  spinRow: {
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+  },
+  spinPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  spinPillLabel: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  spinPillValue: {
+    fontFamily: 'ChakraPetch_700Bold',
+    fontSize: 22,
   },
   congratsMsg: {
     fontFamily: 'Inter_700Bold_Italic',
