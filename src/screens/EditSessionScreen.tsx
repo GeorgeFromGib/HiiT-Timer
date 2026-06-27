@@ -16,7 +16,7 @@ import { NestableScrollContainer, NestableDraggableFlatList, type RenderItemPara
 import { loadSessions, saveSessions, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
 import { fmtDuration, type Phase } from '../lib/workout';
 import { toDisplay } from '../lib/speedUnit';
-import { useTheme, withOpacity, buttonShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
+import { useTheme, withOpacity, buttonShadow, selectedBorder, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import PickerModal from '../components/PickerModal';
@@ -34,10 +34,11 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 
 interface Props {
   session?: Session;
+  activityType?: 'general' | 'run' | 'circuit';
   onBack: () => void;
 }
 
-export default function EditSessionScreen({ session: existing, onBack }: Props) {
+export default function EditSessionScreen({ session: existing, activityType, onBack }: Props) {
   const { T } = useTheme();
   const { settings } = useSettings();
   const { t } = useTranslation();
@@ -48,8 +49,6 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
   const {
     draft, picker,
     setName,
-    setActivityType,
-    setDisplayActivityType,
     toggleMode,
     openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
@@ -59,12 +58,12 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
     applyDurationPreset, applySpeedPreset,
     setActivityLabel,
     buildSavePayload,
-  } = useEditSession(existing, onBack);
+  } = useEditSession(existing, onBack, activityType);
 
   const { name, isAdvanced, isCircuit, fieldValues, rounds, intervals, previewSegments, previewTotal,
-          activityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges,
+          activityType: draftActivityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges,
           circuitWarmup, circuitCooldown, circuitRest, circuitCount } = draft;
-  const isRun = activityType === 'run';
+  const isRun = draftActivityType === 'run';
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
   const addPhaseOptions: Phase[] = isCircuit
@@ -133,7 +132,7 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                   setShowAddPhasePicker(false);
                 }}
               >
-                <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phases.' + phase)}</Text>
+                <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phasesAbbr.' + phase)}</Text>
               </Pressable>
             );
           })}
@@ -222,50 +221,15 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
             </View>
           </View>
 
-          {/* Activity Type */}
-          {!isEditing ? (
-            <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
-              <View style={styles.activityTypeRow}>
-                <Pressable
-                  style={[styles.activityTypeBtn, (!isCircuit && activityType !== 'run') && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
-                  onPress={() => setDisplayActivityType('general')}
-                >
-                  <Text style={[styles.activityTypeBtnText, { color: (!isCircuit && activityType !== 'run') ? T.accent : T.subText }]}>{t('edit.general')}</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.activityTypeBtn, (!isCircuit && activityType === 'run') && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
-                  onPress={() => setDisplayActivityType('run')}
-                >
-                  <Text style={[styles.activityTypeBtnText, { color: (!isCircuit && activityType === 'run') ? T.accent : T.subText }]}>{t('edit.run')}</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.activityTypeBtn, isCircuit && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
-                  onPress={() => setDisplayActivityType('circuit')}
-                >
-                  <Text style={[styles.activityTypeBtnText, { color: isCircuit ? T.accent : T.subText }]}>{t('edit.circuit')}</Text>
-                </Pressable>
-              </View>
+          {/* Activity Type — read-only */}
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
+            <View style={styles.activityTypeLabelChip}>
+              <Text style={styles.activityTypeLabelText}>
+                {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : t('edit.general')}
+              </Text>
             </View>
-          ) : !isCircuit ? (
-            <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
-              <View style={styles.activityTypeRow}>
-                <Pressable
-                  style={[styles.activityTypeBtn, !isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
-                  onPress={() => setActivityType(undefined)}
-                >
-                  <Text style={[styles.activityTypeBtnText, { color: !isRun ? T.accent : T.subText }]}>{t('edit.general')}</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.activityTypeBtn, isRun && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
-                  onPress={() => setActivityType('run')}
-                >
-                  <Text style={[styles.activityTypeBtnText, { color: isRun ? T.accent : T.subText }]}>{t('edit.run')}</Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
+          </View>
 
           {/* Mode toggle — hidden for circuit sessions */}
           {!isCircuit && (
@@ -510,23 +474,20 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     ...typography.controlLabel,
   },
 
-  activityTypeRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  activityTypeBtn: {
-    flex: 1,
-    paddingVertical: 11,
-    alignItems: 'center',
-    borderRadius: 12,
+  activityTypeLabelChip: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
     borderWidth: 1.5,
     borderColor: T.hairline,
     backgroundColor: T.ghostBg,
   },
-  activityTypeBtnText: {
+  activityTypeLabelText: {
     fontFamily: 'Inter_700Bold',
     fontSize: 13,
     letterSpacing: 13 * 0.04,
+    color: T.subText,
   },
 
   configGrid: {
@@ -582,10 +543,10 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
 
   phasePill: {
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     borderRadius: 999,
     borderWidth: 1.5,
-    minWidth: 84,
+    minWidth: 56,
     alignItems: 'center',
   },
   phasePillText: {
