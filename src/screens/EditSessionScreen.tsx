@@ -13,7 +13,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, type RenderItemParams } from 'react-native-draggable-flatlist';
-import { loadSessions, saveSessions, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
+import { loadSessions, saveSessions, type Session, type RunSpeeds, type SpinValues, speedForPhase, spinValueForPhase } from '../lib/sessions';
 import { fmtDuration, type Phase } from '../lib/workout';
 import { toDisplay } from '../lib/speedUnit';
 import { useTheme, withOpacity, buttonShadow, selectedBorder, type ThemeTokens } from '../theme';
@@ -53,6 +53,9 @@ export default function EditSessionScreen({ session: existing, activityType, onB
     openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
     openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker,
+    openSpinResistancePicker, openSpinPowerPicker,
+    openIntervalResistancePicker, openIntervalPowerPicker,
+    clearIntervalResistance, clearIntervalPower,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     commitPicker, dismissPicker,
     applyDurationPreset, applySpeedPreset,
@@ -60,9 +63,13 @@ export default function EditSessionScreen({ session: existing, activityType, onB
     buildSavePayload,
   } = useEditSession(existing, onBack, activityType);
 
-  const { name, isAdvanced, isCircuit, fieldValues, rounds, intervals, previewSegments, previewTotal,
-          activityType: draftActivityType, runSpeeds, activeTimingPreset, activeSpeedPreset, hasChanges,
-          circuitWarmup, circuitCooldown, circuitRest, circuitCount } = draft;
+  const {
+    name, isAdvanced, isCircuit, isSpinning, fieldValues, rounds, intervals,
+    previewSegments, previewTotal,
+    activityType: draftActivityType, runSpeeds, spinValues,
+    activeTimingPreset, activeSpeedPreset, hasChanges,
+    circuitWarmup, circuitCooldown, circuitRest, circuitCount,
+  } = draft;
   const isRun = draftActivityType === 'run';
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
@@ -74,7 +81,9 @@ export default function EditSessionScreen({ session: existing, activityType, onB
     ? t('edit.editTitle')
     : isCircuit
       ? t('edit.newCircuitTitle')
-      : t('edit.newTitle');
+      : isSpinning
+        ? t('edit.newSpinningTitle')
+        : t('edit.newTitle');
 
   const timeFields: { label: string; field: TimeField }[] = [
     { label: t('phases.warmup'),   field: 'warmup'   },
@@ -347,6 +356,12 @@ export default function EditSessionScreen({ session: existing, activityType, onB
                     displaySpeed={isRun ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
                     onOpenSpeedPicker={isRun ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
                     onClearSpeed={isRun ? () => clearIntervalSpeed(iv._key) : undefined}
+                    displayResistance={isSpinning ? (iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance) : undefined}
+                    onOpenResistancePicker={isSpinning ? () => openIntervalResistancePicker(iv._key) : undefined}
+                    onClearResistance={isSpinning ? () => clearIntervalResistance(iv._key) : undefined}
+                    displayPower={isSpinning ? (iv.power ?? spinValueForPhase(iv.type, spinValues).power) : undefined}
+                    onOpenPowerPicker={isSpinning ? () => openIntervalPowerPicker(iv._key) : undefined}
+                    onClearPower={isSpinning ? () => clearIntervalPower(iv._key) : undefined}
                   />
                 )}
               />
@@ -381,6 +396,46 @@ export default function EditSessionScreen({ session: existing, activityType, onB
                   </View>
                 </View>
               </View>
+
+              {isSpinning && (
+                <>
+                  <View style={styles.fieldGroup}>
+                    <Text style={styles.fieldLabel}>{t('edit.spinResistance')}</Text>
+                    <View style={styles.configGrid}>
+                      {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
+                        const field = `${phase}Resistance` as keyof SpinValues;
+                        return (
+                          <View key={field} style={styles.configCell}>
+                            <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
+                            <Pressable style={styles.configInput} onPress={() => openSpinResistancePicker(field)}>
+                              <Text style={styles.configInputText}>{spinValues[field]}</Text>
+                            </Pressable>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View style={styles.fieldGroup}>
+                    <Text style={styles.fieldLabel}>{t('edit.spinPower')}</Text>
+                    <View style={styles.configGrid}>
+                      {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
+                        const field = `${phase}Power` as keyof SpinValues;
+                        return (
+                          <View key={field} style={styles.configCell}>
+                            <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
+                            <Pressable style={styles.configInput} onPress={() => openSpinPowerPicker(field)}>
+                              <Text style={styles.configInputText}>
+                                {spinValues[field]}<Text style={styles.speedUnitText}>W</Text>
+                              </Text>
+                            </Pressable>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+                </>
+              )}
             </>
           )}
 

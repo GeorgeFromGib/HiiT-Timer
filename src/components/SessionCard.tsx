@@ -69,7 +69,15 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
             <Text style={styles.statValue}>{segments.length}</Text>
             <Text style={styles.statLabel}> {t('common.intervalsAbbr')}</Text>
           </View>
-          <Text style={styles.modeLabel}>{session.mode === 'circuit' ? t('edit.circuit') : session.activityType === 'run' ? t('edit.run') : t('edit.general')}</Text>
+          <Text style={styles.modeLabel}>
+            {session.mode === 'circuit'
+              ? t('edit.circuit')
+              : session.activityType === 'run'
+                ? t('edit.run')
+                : session.activityType === 'spinning'
+                  ? t('edit.spinning')
+                  : t('edit.general')}
+          </Text>
         </View>
 
         {selected && (
