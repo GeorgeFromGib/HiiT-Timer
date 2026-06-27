@@ -16,6 +16,13 @@ export const en = {
     cooldown:    'Cool Down',
     circuitRest: 'Circuit Rest',
   },
+  phasesAbbr: {
+    warmup:      'WRM',
+    work:        'WRK',
+    rest:        'REC',
+    cooldown:    'CLD',
+    circuitRest: 'BRK',
+  },
   sessions: {
     title: 'My Sessions',
     empty: 'No sessions yet. Tap + to add one.',
@@ -173,8 +180,6 @@ export const en = {
     noIntervalsMessage: 'Add at least one interval.',
     noWorkIntervalsTitle: 'No work intervals',
     noWorkIntervalsMessage: 'Add at least one work interval.',
-    switchTypeTitle: 'Switch activity type?',
-    switchTypeMessage: 'Your changes will be discarded.',
   },
   validation: {
     noWorkIntervals: 'No work intervals found.',

@@ -18,6 +18,13 @@ export const fr: typeof en = {
     cooldown:    'Récupération',
     circuitRest: 'Repos Circuit',
   },
+  phasesAbbr: {
+    warmup:      'ECH',
+    work:        'TRV',
+    rest:        'REP',
+    cooldown:    'RCP',
+    circuitRest: 'RPC',
+  },
   sessions: {
     title: 'Mes séances',
     empty: 'Aucune séance. Appuyez sur + pour en ajouter une.',
@@ -175,8 +182,6 @@ export const fr: typeof en = {
     noIntervalsMessage: 'Ajoutez au moins un intervalle.',
     noWorkIntervalsTitle: 'Aucun intervalle de travail',
     noWorkIntervalsMessage: 'Ajoutez au moins un intervalle de travail.',
-    switchTypeTitle: "Changer le type d'activité ?",
-    switchTypeMessage: 'Vos modifications seront supprimées.',
   },
   validation: {
     noWorkIntervals: 'Aucun intervalle de travail trouvé.',

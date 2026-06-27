@@ -54,7 +54,6 @@ export interface EditSessionInterface {
   draft:   EditSessionDraft;
   picker:  EditSessionPicker | null;
   setName:                  (name: string) => void;
-  setActivityType:          (type: 'run' | undefined) => void;
   setRunSpeed:              (field: keyof RunSpeeds, value: number) => void;
   toggleMode:               (advanced: boolean) => void;
   cyclePhase:               (key: string) => void;
@@ -394,7 +393,6 @@ export function useEditSession(
     draft,
     picker: pickerState.picker,
     setName,
-    setActivityType,
     setRunSpeed,
     toggleMode,
     cyclePhase,
