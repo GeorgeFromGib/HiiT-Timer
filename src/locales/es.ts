@@ -33,6 +33,7 @@ export const es: typeof en = {
     deleteTitle: 'Eliminar sesión',
     deleteMessage: '¿Eliminar "%{name}"?',
     hint: 'Desliza a la derecha para duplicar, a la izquierda para eliminar. Ordena con las asas.',
+    typeMenuHeader: 'Tipo de sesión',
   },
   workout: {
     done: 'HECHO',

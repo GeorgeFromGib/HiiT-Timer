@@ -31,6 +31,7 @@ export const en = {
     deleteTitle: 'Delete Session',
     deleteMessage: 'Remove "%{name}"?',
     hint: 'Swipe right to duplicate, left to delete. Sort via the drag handles.',
+    typeMenuHeader: 'Session type',
   },
   workout: {
     done: 'DONE',

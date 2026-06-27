@@ -125,7 +125,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           />
           <View style={styles.typeMenu}>
             <View style={styles.typeMenuHeader}>
-              <Text style={styles.typeMenuHeaderText}>Session type</Text>
+              <Text style={styles.typeMenuHeaderText}>{t('sessions.typeMenuHeader')}</Text>
             </View>
             <View style={styles.typeMenuSeparator} />
             <Pressable
