@@ -52,8 +52,15 @@ export function useWorkoutSession(
     return msgs[Math.floor(Math.random() * msgs.length)];
   });
 
+  function cancelHapticBurst() {
+    if (hapticBurstRef.current) {
+      clearInterval(hapticBurstRef.current);
+      hapticBurstRef.current = null;
+    }
+  }
+
   function startHapticBurst() {
-    if (hapticBurstRef.current) clearInterval(hapticBurstRef.current);
+    cancelHapticBurst();
     let count = 0;
     hapticBurstRef.current = setInterval(() => {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -83,6 +90,12 @@ export function useWorkoutSession(
 
   useEffect(() => { configureAudioSession(); }, []);
 
+  useEffect(() => {
+    return () => {
+      cancelHapticBurst();
+    };
+  }, []);
+
   const countdown = usePreStartCountdown({
     onTick: () => cues.onPreStartTick(),
     onComplete: () => { cues.startKeepAlive(); start(); },
@@ -96,6 +109,7 @@ export function useWorkoutSession(
     if (state.status === 'idle' || state.status === 'finished') {
       countdown.begin();
     } else if (state.status === 'running') {
+      cancelHapticBurst();
       pause();
     } else {
       resume();
@@ -103,10 +117,7 @@ export function useWorkoutSession(
   }, [countdown, state.status, pause, resume]);
 
   const reset = useCallback(() => {
-    if (hapticBurstRef.current) {
-      clearInterval(hapticBurstRef.current);
-      hapticBurstRef.current = null;
-    }
+    cancelHapticBurst();
     countdown.cancel();
     cues.stopKeepAlive();
     engineReset();
