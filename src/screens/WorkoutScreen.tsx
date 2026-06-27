@@ -24,6 +24,7 @@ import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import WorkoutIcon from '../components/WorkoutIcon';
+import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import GhostBtn  from '../components/GhostBtn';
 import SessionCompleteScreen from './SessionCompleteScreen';
 import { checkAndRequestReview } from '../lib/reviewState';
@@ -171,6 +172,13 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         onBack={onBack}
         title={session.name}
         titleStyle={styles.headerTitle}
+        right={
+          <ActivityTypeIcon
+            mode={session.mode}
+            activityType={'activityType' in session ? session.activityType : undefined}
+            size={32}
+          />
+        }
       />
 
       {/* ── Phase center block ── */}
