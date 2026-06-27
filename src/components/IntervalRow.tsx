@@ -35,7 +35,7 @@ export default function IntervalRow({
       </Pressable>
 
       <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor }]}>
-        <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phases.' + interval.type)}</Text>
+        <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phasesAbbr.' + interval.type)}</Text>
       </Pressable>
 
       {onLabelChange !== undefined && interval.type === 'work' && (
@@ -98,10 +98,10 @@ function makeStyles(T: ThemeTokens) {
     },
     phasePill: {
       paddingVertical: 5,
-      paddingHorizontal: 10,
+      paddingHorizontal: 8,
       borderRadius: 999,
       borderWidth: 1.5,
-      minWidth: 84,
+      minWidth: 56,
       alignItems: 'center',
     },
     phasePillText: {
@@ -112,7 +112,7 @@ function makeStyles(T: ThemeTokens) {
     labelInput: {
       flex: 1,
       fontFamily: 'Inter_600SemiBold',
-      fontSize: 13,
+      fontSize: 16,
       borderWidth: 1,
       borderRadius: 8,
       paddingHorizontal: 8,

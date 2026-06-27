@@ -64,6 +64,9 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
 
           {picker?.isRounds ? (
             <>
+              <View style={styles.pickerUnits}>
+                <Text style={styles.pickerUnitLabel}>{picker.roundsLabel ?? t('picker.rounds')}</Text>
+              </View>
               <View style={styles.pickerRow}>
                 <WheelColumn
                   values={ROUND_LABELS}
@@ -71,12 +74,14 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
                   onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
                 />
               </View>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{picker.roundsLabel ?? t('picker.rounds')}</Text>
-              </View>
             </>
           ) : picker?.isSpeed ? (
             <>
+              <View style={styles.pickerUnits}>
+                <Text style={styles.pickerUnitLabel}>{picker.speedUnit === 'miles' ? 'mph' : 'km/h'}</Text>
+                <View style={{ flex: 0, width: 24 }} />
+                <Text style={styles.pickerUnitLabel}>{t('picker.dec')}</Text>
+              </View>
               <View style={styles.pickerRow}>
                 <WheelColumn
                   values={picker.speedUnit === 'miles' ? MPH_WHOLE : KMH_WHOLE}
@@ -92,14 +97,14 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
                   onChange={v => setLocal(prev => ({ ...prev, speedDecimal: v }))}
                 />
               </View>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{picker.speedUnit === 'miles' ? 'mph' : 'km/h'}</Text>
-                <View style={{ flex: 0, width: 24 }} />
-                <Text style={styles.pickerUnitLabel}>{t('picker.dec')}</Text>
-              </View>
             </>
           ) : (
             <>
+              <View style={styles.pickerUnits}>
+                <Text style={styles.pickerUnitLabel}>{t('picker.min')}</Text>
+                <View style={{ flex: 0, width: 24 }} />
+                <Text style={styles.pickerUnitLabel}>{t('picker.sec')}</Text>
+              </View>
               <View style={styles.pickerRow}>
                 <WheelColumn
                   values={MINUTE_LABELS}
@@ -114,11 +119,6 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
                   selected={local.seconds}
                   onChange={v => setLocal(prev => ({ ...prev, seconds: v }))}
                 />
-              </View>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{t('picker.min')}</Text>
-                <View style={{ flex: 0, width: 24 }} />
-                <Text style={styles.pickerUnitLabel}>{t('picker.sec')}</Text>
               </View>
             </>
           )}
@@ -184,7 +184,7 @@ function makeStyles(T: ThemeTokens) {
       flexDirection: 'row',
       alignItems: 'center',
       paddingHorizontal: 20,
-      paddingTop: 8,
+      paddingBottom: 8,
     },
     pickerSeparator: {
       width: 24,
@@ -198,7 +198,7 @@ function makeStyles(T: ThemeTokens) {
     pickerUnits: {
       flexDirection: 'row',
       paddingHorizontal: 20,
-      paddingBottom: 8,
+      paddingTop: 8,
     },
     pickerUnitLabel: {
       flex: 1,

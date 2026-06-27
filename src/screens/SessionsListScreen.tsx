@@ -124,6 +124,10 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             onPress={() => setShowTypeMenu(false)}
           />
           <View style={styles.typeMenu}>
+            <View style={styles.typeMenuHeader}>
+              <Text style={styles.typeMenuHeaderText}>Session type</Text>
+            </View>
+            <View style={styles.typeMenuSeparator} />
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'general' }); }}
@@ -197,7 +201,7 @@ function makeStyles(T: ThemeTokens) {
       position: 'absolute',
       top: 98,
       right: 20,
-      backgroundColor: T.ghostBg,
+      backgroundColor: T.sheetBg,
       borderWidth: 1.5,
       borderColor: T.hairline,
       borderRadius: 14,
@@ -205,6 +209,17 @@ function makeStyles(T: ThemeTokens) {
       zIndex: 10,
       overflow: 'hidden',
       ...buttonShadow(T),
+    },
+    typeMenuHeader: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+    },
+    typeMenuHeaderText: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 12,
+      color: T.faintText,
+      textTransform: 'uppercase',
+      letterSpacing: 0.8,
     },
     typeMenuRow: {
       paddingVertical: 14,

@@ -50,8 +50,8 @@ export const fr: typeof en = {
       circuitRest: 'PAUSE',
     },
     roundAbbr: 'rnd',
-    circuit: 'CIRCUIT',
-    nextCircuit: 'PROCHAIN CIRCUIT',
+    circuit: 'SÉRIE',
+    nextCircuit: 'SÉRIE SUIVANTE',
   },
   complete: {
     eyebrow:       'ENTRAÎNEMENT TERMINÉ',
@@ -145,7 +145,7 @@ export const fr: typeof en = {
     saveChanges: 'ENREGISTRER LES MODIFICATIONS',
     save: 'ENREGISTRER',
     cancel: 'Annuler',
-    circuits: 'Circuits',
+    circuits: 'Séries',
     circuitWarmup: 'Échauffement',
     circuitCooldown: 'Récupération',
     circuitRest: 'Repos',
@@ -162,7 +162,7 @@ export const fr: typeof en = {
     speedSuffix: 'Vitesse %{phase}',
     intervalSpeedTitle: "Vitesse de l'intervalle %{n}",
     intervalTitle: 'Intervalle %{n}',
-    circuitsTitle: 'Circuits',
+    circuitsTitle: 'Séries',
   },
   alerts: {
     cannotSwitchEasyTitle: 'Impossible de passer en Facile',
