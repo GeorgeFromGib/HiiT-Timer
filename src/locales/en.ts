@@ -152,6 +152,10 @@ export const en = {
     exercisePlaceholder: 'Exercise name',
     newCircuitTitle: 'New Circuit',
     circuit: 'Circuit',
+    spinning:         'Spinning',
+    newSpinningTitle: 'New Spinning',
+    spinResistance:   'Resistance',
+    spinPower:        'Power (W)',
   },
   picker: {
     rounds: 'rounds',
@@ -163,6 +167,8 @@ export const en = {
     intervalSpeedTitle: 'Interval %{n} Speed',
     intervalTitle: 'Interval %{n}',
     circuitsTitle: 'Sets',
+    resistanceTitle: 'Resistance',
+    powerTitle:      'Power',
   },
   alerts: {
     cannotSwitchEasyTitle: 'Cannot switch to Easy',
@@ -205,6 +211,7 @@ export const en = {
     example2: 'Example 2',
     example3: 'Example 3',
     circuit1: 'Body Weight Circuit',
+    spinning1: 'Spinning Session',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },

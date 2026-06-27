@@ -154,6 +154,10 @@ export const fr: typeof en = {
     exercisePlaceholder: 'Nom de l\'exercice',
     newCircuitTitle: 'Nouveau Circuit',
     circuit: 'Circuit',
+    spinning:         'Spinning',
+    newSpinningTitle: 'Nouveau Spinning',
+    spinResistance:   'Résistance',
+    spinPower:        'Puissance (W)',
   },
   picker: {
     rounds: 'rounds',
@@ -165,6 +169,8 @@ export const fr: typeof en = {
     intervalSpeedTitle: "Vitesse de l'intervalle %{n}",
     intervalTitle: 'Intervalle %{n}',
     circuitsTitle: 'Séries',
+    resistanceTitle: 'Résistance',
+    powerTitle:      'Puissance',
   },
   alerts: {
     cannotSwitchEasyTitle: 'Impossible de passer en Facile',
@@ -207,6 +213,7 @@ export const fr: typeof en = {
     example2: 'Exemple 2',
     example3: 'Exemple 3',
     circuit1: 'Circuit Poids du Corps',
+    spinning1: 'Séance de Spinning',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Bleu-vert profond · calme' },

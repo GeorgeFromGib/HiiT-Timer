@@ -148,6 +148,13 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             >
               <Text style={styles.typeMenuText}>{t('edit.circuit')}</Text>
             </Pressable>
+            <View style={styles.typeMenuSeparator} />
+            <Pressable
+              style={styles.typeMenuRow}
+              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'spinning' }); }}
+            >
+              <Text style={styles.typeMenuText}>{t('edit.spinning')}</Text>
+            </Pressable>
           </View>
         </>
       )}

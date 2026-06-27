@@ -154,6 +154,10 @@ export const es: typeof en = {
     exercisePlaceholder: 'Nombre del ejercicio',
     newCircuitTitle: 'Nuevo Circuito',
     circuit: 'Circuito',
+    spinning:         'Spinning',
+    newSpinningTitle: 'Nueva Sesión Spinning',
+    spinResistance:   'Resistencia',
+    spinPower:        'Potencia (W)',
   },
   picker: {
     rounds: 'rondas',
@@ -165,6 +169,8 @@ export const es: typeof en = {
     intervalSpeedTitle: 'Velocidad del intervalo %{n}',
     intervalTitle: 'Intervalo %{n}',
     circuitsTitle: 'Series',
+    resistanceTitle: 'Resistencia',
+    powerTitle:      'Potencia',
   },
   alerts: {
     cannotSwitchEasyTitle: 'No se puede cambiar a Fácil',
@@ -207,6 +213,7 @@ export const es: typeof en = {
     example2: 'Ejemplo 2',
     example3: 'Ejemplo 3',
     circuit1: 'Circuito de Peso Corporal',
+    spinning1: 'Sesión de Spinning',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },
