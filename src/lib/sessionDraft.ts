@@ -24,9 +24,12 @@ export function buildSessionFromDraft(
       circuitRest: circuitData!.circuitRest,
     };
   }
+  if (activityType === 'spinning' && spinValues === undefined) {
+    throw new Error('spinValues must be provided for spinning sessions');
+  }
   const activityProps =
     activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds } :
-    activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues } :
+    activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues: spinValues! } :
     {};
   if (mode === 'easy') {
     return { ...base, ...activityProps, mode: 'easy', config: easyConfig };

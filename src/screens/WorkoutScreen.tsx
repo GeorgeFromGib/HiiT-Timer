@@ -218,7 +218,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </View>
           )}
 
-          {seg.resistance !== undefined && !isDone && !isPreStart && (
+          {seg.resistance !== undefined && seg.power !== undefined && !isDone && !isPreStart && (
             <View style={[styles.spinPill, {
               backgroundColor: withOpacity(phaseColor, 0x21),
               borderColor:     withOpacity(phaseColor, 0x59),
@@ -341,7 +341,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
                 {formatSpeed(nextSeg.speed, settings.speedUnit)}
               </Text>
             )}
-            {nextSeg.resistance !== undefined && (
+            {nextSeg.resistance !== undefined && nextSeg.power !== undefined && (
               <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
                 {`R${nextSeg.resistance} · ${nextSeg.power}W`}
               </Text>
