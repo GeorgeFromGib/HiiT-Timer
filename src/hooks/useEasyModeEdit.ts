@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useDraft } from './useDraft';
 import { type Session } from '../lib/sessions';
 import { type PresetLevel, DURATION_PRESETS, findMatchingDurationPreset } from '../lib/presets';
 import { type TimeField } from './editSessionTypes';
@@ -45,13 +46,11 @@ export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
     warmup: setWarmup, work: setWork, rest: setRest, cooldown: setCooldown,
   };
 
-  const initialSnapshot = useRef(
-    JSON.stringify({ warmup: initW, work: initWk, rest: initR, rounds: initRd, cooldown: initC })
-  ).current;
+  const draft = useDraft({ warmup: initW, work: initWk, rest: initR, rounds: initRd, cooldown: initC });
 
   const hasChanges = useMemo(
-    () => JSON.stringify({ warmup, work, rest, rounds: rounds_, cooldown }) !== initialSnapshot,
-    [warmup, work, rest, rounds_, cooldown, initialSnapshot],
+    () => draft.isDirty({ warmup, work, rest, rounds: rounds_, cooldown }),
+    [warmup, work, rest, rounds_, cooldown],
   );
 
   function setField(field: TimeField, value: number) {

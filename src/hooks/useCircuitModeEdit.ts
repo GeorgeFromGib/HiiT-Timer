@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useDraft } from './useDraft';
 import { type Session } from '../lib/sessions';
 
 export interface CircuitModeEdit {
@@ -31,13 +32,11 @@ export function useCircuitModeEdit(initial: Session | undefined): CircuitModeEdi
     count:    setCircuitCount,
   };
 
-  const initialSnapshot = useRef(
-    JSON.stringify({ warmup: initW, cooldown: initC, rest: initR, count: initCt })
-  ).current;
+  const draft = useDraft({ warmup: initW, cooldown: initC, rest: initR, count: initCt });
 
   const hasChanges = useMemo(
-    () => JSON.stringify({ warmup: circuitWarmup, cooldown: circuitCooldown, rest: circuitRest, count: circuitCount }) !== initialSnapshot,
-    [circuitWarmup, circuitCooldown, circuitRest, circuitCount, initialSnapshot],
+    () => draft.isDirty({ warmup: circuitWarmup, cooldown: circuitCooldown, rest: circuitRest, count: circuitCount }),
+    [circuitWarmup, circuitCooldown, circuitRest, circuitCount],
   );
 
   function set(field: 'warmup' | 'cooldown' | 'rest' | 'count', value: number) {

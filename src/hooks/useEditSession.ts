@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
+import { useDraft } from './useDraft';
 import { i18n } from '../lib/i18n';
 import { Alert } from 'react-native';
 import {
@@ -105,17 +106,15 @@ export function useEditSession(
       ? findMatchingSpeedPreset(existing.runSpeeds) : null
   );
 
-  // Change tracking refs for coordinator-owned state
-  const initialName        = useRef(existing?.name ?? '').current;
-  const initialIntervals   = useRef(
+  // Change tracking for coordinator-owned state
+  const initialName         = useRef(existing?.name ?? '').current;
+  const initialActivityType = useRef(existing && existing.mode !== 'circuit' ? existing.activityType : undefined).current;
+  const intervalsDraft      = useDraft<Interval[]>(
     existing?.mode === 'advanced' || existing?.mode === 'circuit' ? existing.intervals : []
-  ).current;
-  const initialActivityType = useRef(
-    existing && existing.mode !== 'circuit' ? existing.activityType : undefined
-  ).current;
-  const initialRunSpeeds   = useRef(
+  );
+  const runSpeedsDraft      = useDraft(
     existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS
-  ).current;
+  );
 
   // Mode sub-hooks
   const easyEdit    = useEasyModeEdit(existing);
@@ -378,17 +377,17 @@ export function useEditSession(
     if (mode === 'circuit') {
       return circuitEdit.hasChanges
         || name !== initialName
-        || JSON.stringify(cleanIntervals) !== JSON.stringify(initialIntervals);
+        || intervalsDraft.isDirty(cleanIntervals);
     }
     return easyEdit.hasChanges
       || name !== initialName
-      || JSON.stringify(cleanIntervals) !== JSON.stringify(initialIntervals)
+      || intervalsDraft.isDirty(cleanIntervals)
       || activityType !== initialActivityType
-      || JSON.stringify(runSpeeds) !== JSON.stringify(initialRunSpeeds);
+      || runSpeedsDraft.isDirty(runSpeeds);
   }, [
     mode, name, intervals, activityType, runSpeeds,
     easyEdit.hasChanges, circuitEdit.hasChanges,
-    initialName, initialIntervals, initialActivityType, initialRunSpeeds,
+    initialName, initialActivityType,
   ]);
 
   const activeTimingPreset: PresetLevel | null = mode === 'advanced'
