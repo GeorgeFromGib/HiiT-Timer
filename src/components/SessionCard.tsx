@@ -8,6 +8,7 @@ import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
 import { useTranslation } from '../lib/i18n';
+import ActivityTypeIcon from './ActivityTypeIcon';
 
 
 
@@ -45,7 +46,15 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
       <View style={styles.cardBody}>
         <View style={styles.topRow}>
           <View style={styles.left}>
-            <Text style={styles.title}>{session.name}</Text>
+            <View style={styles.titleRow}>
+              <ActivityTypeIcon
+                activityType={session.mode !== 'circuit' ? session.activityType : undefined}
+                mode={session.mode}
+                size={16}
+                color={T.subText}
+              />
+              <Text style={styles.title}>{session.name}</Text>
+            </View>
           </View>
           <Pressable onPress={onEdit} style={styles.editBtn} hitSlop={8}>
             <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
@@ -132,6 +141,11 @@ function makeStyles(T: ThemeTokens) {
     },
     left: {
       flex: 1,
+      gap: 6,
+    },
+    titleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
     },
     title: {
