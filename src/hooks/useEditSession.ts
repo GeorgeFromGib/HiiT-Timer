@@ -11,9 +11,10 @@ import {
   findMatchingDurationPresetForIntervals, findMatchingSpeedPreset,
 } from '../lib/presets';
 import {
-  totalDuration, convertKmhToMph, expandCircuit,
+  totalDuration, expandCircuit,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
+import { toDisplay } from '../lib/speedUnit';
 
 import { type LocalInterval, toLocal, type TimeField, type SavePayload } from './editSessionTypes';
 import { useEasyModeEdit } from './useEasyModeEdit';
@@ -323,7 +324,7 @@ export function useEditSession(
     const iv = intervals.find(i => i._key === key);
     if (!iv) return;
     const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
-    const displayVal = isMiles ? convertKmhToMph(kmh) : kmh;
+    const displayVal = toDisplay(kmh, isMiles ? 'miles' : 'km');
     pickerState.openIntervalSpeedPicker(key, displayVal, isMiles);
   }
 

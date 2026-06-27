@@ -4,12 +4,13 @@ import { useTheme, type ThemeTokens } from '../theme';
 import WheelColumn from './WheelColumn';
 import type { EditSessionPicker, PickerValues } from '../hooks/useEditSession';
 import { useTranslation } from '../lib/i18n';
+import { pickerRange } from '../lib/speedUnit';
 
 const MINUTE_LABELS   = Array.from({ length: 60 }, (_, i) => String(i));
 const SECOND_LABELS   = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const ROUND_LABELS    = Array.from({ length: 99 }, (_, i) => String(i + 1));
-const KMH_WHOLE       = Array.from({ length: 51 }, (_, i) => String(i));
-const MPH_WHOLE       = Array.from({ length: 32 }, (_, i) => String(i));
+const KMH_WHOLE       = Array.from({ length: pickerRange('km').max + 1 }, (_, i) => String(i));
+const MPH_WHOLE       = Array.from({ length: pickerRange('miles').max + 1 }, (_, i) => String(i));
 const DECIMAL_LABELS  = Array.from({ length: 10 }, (_, i) => String(i));
 
 const EMPTY_VALUES: PickerValues = { minutes: 0, seconds: 0, rounds: 0, speedWhole: 0, speedDecimal: 0 };

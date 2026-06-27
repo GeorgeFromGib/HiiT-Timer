@@ -14,7 +14,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, type RenderItemParams } from 'react-native-draggable-flatlist';
 import { loadSessions, saveSessions, type Session, type RunSpeeds, speedForPhase } from '../lib/sessions';
-import { fmtDuration, convertKmhToMph, type Phase } from '../lib/workout';
+import { fmtDuration, type Phase } from '../lib/workout';
+import { toDisplay } from '../lib/speedUnit';
 import { useTheme, withOpacity, buttonShadow, selectedBg, selectedBorder, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
@@ -26,10 +27,9 @@ import PresetStrip from '../components/EditSession/PresetStrip';
 import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
 
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
+  const unit = isMiles ? 'miles' : 'km';
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
-  return isMiles
-    ? { value: convertKmhToMph(kmh).toFixed(1), unit: 'mph' }
-    : { value: kmh.toFixed(1), unit: 'km/h' };
+  return { value: toDisplay(kmh, unit).toFixed(1), unit: isMiles ? 'mph' : 'km/h' };
 }
 
 interface Props {
@@ -429,17 +429,10 @@ export default function EditSessionScreen({ session: existing, onBack }: Props) 
                     <Text style={styles.configCellLabel}>{label}</Text>
                     <Pressable
                       style={styles.configInput}
-                      onPress={() => {
-                        const displayVal = isMiles
-                          ? convertKmhToMph(runSpeeds[field])
-                          : runSpeeds[field];
-                        openSpeedPicker(field, displayVal, isMiles);
-                      }}
+                      onPress={() => openSpeedPicker(field, toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km'), isMiles)}
                     >
                       <Text style={styles.configInputText}>
-                        {isMiles
-                          ? convertKmhToMph(runSpeeds[field]).toFixed(1)
-                          : runSpeeds[field].toFixed(1)}
+                        {toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km').toFixed(1)}
                         <Text style={styles.speedUnitText}>{' '}{isMiles ? 'mph' : 'km/h'}</Text>
                       </Text>
                     </Pressable>

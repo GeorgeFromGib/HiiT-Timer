@@ -16,8 +16,8 @@ import { useSettings } from '../lib/settingsContext';
 import {
   totalDuration,
   fmtTimer,
-  fmtSpeed,
 } from '../lib/workout';
+import { formatSpeed } from '../lib/speedUnit';
 import { useTranslation } from '../lib/i18n';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
@@ -213,7 +213,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               borderColor:     withOpacity(phaseColor, 0x59),
             }]}>
               <Text style={[styles.speedPillText, { color: phaseColor }]}>
-                {fmtSpeed(seg.speed, settings.speedUnit)}
+                {formatSpeed(seg.speed, settings.speedUnit)}
               </Text>
             </View>
           )}
@@ -325,7 +325,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </Text>
             {nextSeg.speed !== undefined && (
               <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
-                {fmtSpeed(nextSeg.speed, settings.speedUnit)}
+                {formatSpeed(nextSeg.speed, settings.speedUnit)}
               </Text>
             )}
             {nextSeg.activityLabel !== undefined && (

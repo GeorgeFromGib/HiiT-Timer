@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { i18n } from '../lib/i18n';
 import { type RunSpeeds } from '../lib/sessions';
-import { convertMphToKmh } from '../lib/workout';
+import { fromDisplay } from '../lib/speedUnit';
 import { type LocalInterval, type TimeField } from './editSessionTypes';
 
 export type ActivePicker =
@@ -145,11 +145,11 @@ export function usePickerState(
       onCommit({ type: 'rounds', value: values.rounds + 1 });
     } else if (activePicker.type === 'speed') {
       const displayVal = values.speedWhole + values.speedDecimal / 10;
-      const kmh = activePicker.isMiles ? convertMphToKmh(displayVal) : displayVal;
+      const kmh = fromDisplay(displayVal, activePicker.isMiles ? 'miles' : 'km');
       onCommit({ type: 'speed', field: activePicker.field, kmh });
     } else if (activePicker.type === 'intervalSpeed') {
       const displayVal = values.speedWhole + values.speedDecimal / 10;
-      const kmh = activePicker.isMiles ? convertMphToKmh(displayVal) : displayVal;
+      const kmh = fromDisplay(displayVal, activePicker.isMiles ? 'miles' : 'km');
       onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh });
     } else if (activePicker.type === 'circuitCount') {
       onCommit({ type: 'circuitCount', value: values.rounds + 1 });
