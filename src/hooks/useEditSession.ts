@@ -3,8 +3,9 @@ import { useDraft } from './useDraft';
 import { i18n } from '../lib/i18n';
 import { Alert } from 'react-native';
 import {
-  getSessionSegments, speedForPhase,
-  type Session, type RunSpeeds, DEFAULT_RUN_SPEEDS, newId,
+  getSessionSegments, speedForPhase, spinValueForPhase,
+  type Session, type RunSpeeds, type SpinValues,
+  DEFAULT_RUN_SPEEDS, DEFAULT_SPIN_VALUES, newId,
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import {
@@ -34,6 +35,7 @@ export interface EditSessionDraft {
   name:                string;
   isAdvanced:          boolean;
   isCircuit:           boolean;
+  isSpinning:          boolean;
   fieldValues:         Record<TimeField, number>;
   rounds:              number;
   intervals:           LocalInterval[];
@@ -41,6 +43,7 @@ export interface EditSessionDraft {
   previewTotal:        number;
   activityType:        'run' | 'spinning' | undefined;
   runSpeeds:           RunSpeeds;
+  spinValues:          SpinValues;
   activeTimingPreset:  PresetLevel | null;
   activeSpeedPreset:   PresetLevel | null;
   hasChanges:          boolean;
@@ -77,6 +80,12 @@ export interface EditSessionInterface {
   openCircuitCooldownPicker: () => void;
   openCircuitRestPicker:    () => void;
   openCircuitsPicker:       () => void;
+  openSpinResistancePicker:    (field: keyof SpinValues) => void;
+  openSpinPowerPicker:         (field: keyof SpinValues) => void;
+  openIntervalResistancePicker: (key: string) => void;
+  openIntervalPowerPicker:     (key: string) => void;
+  clearIntervalResistance:     (key: string) => void;
+  clearIntervalPower:          (key: string) => void;
   buildSavePayload:         () => SavePayload;
 }
 
@@ -99,8 +108,14 @@ export function useEditSession(
   const [activityType] = useState<'run' | 'spinning' | undefined>(() => {
     if (existing && existing.mode !== 'circuit') return existing.activityType;
     if (!existing && initialActivityType === 'run') return 'run';
+    if (!existing && initialActivityType === 'spinning') return 'spinning';
     return undefined;
   });
+  const [spinValues, setSpinValues] = useState<SpinValues>(
+    existing && existing.mode !== 'circuit' && existing.activityType === 'spinning'
+      ? (existing.spinValues ?? DEFAULT_SPIN_VALUES)
+      : DEFAULT_SPIN_VALUES
+  );
   const [runSpeeds, setRunSpeeds] = useState<RunSpeeds>(
     existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS
   );
@@ -123,6 +138,11 @@ export function useEditSession(
   );
   const runSpeedsDraft      = useDraft(
     existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS
+  );
+  const spinValuesDraft     = useDraft(
+    existing && existing.mode !== 'circuit' && existing.activityType === 'spinning'
+      ? (existing.spinValues ?? DEFAULT_SPIN_VALUES)
+      : DEFAULT_SPIN_VALUES
   );
 
   // Mode sub-hooks
@@ -151,6 +171,18 @@ export function useEditSession(
       } else if (result.type === 'intervalSpeed') {
         setIntervals(ivs =>
           ivs.map(iv => iv._key === result.key ? { ...iv, speed: result.kmh } : iv)
+        );
+      } else if (result.type === 'spinResistance') {
+        setSpinValues(prev => ({ ...prev, [result.field]: result.value }));
+      } else if (result.type === 'spinPower') {
+        setSpinValues(prev => ({ ...prev, [result.field]: result.value }));
+      } else if (result.type === 'intervalResistance') {
+        setIntervals(ivs =>
+          ivs.map(iv => iv._key === result.key ? { ...iv, resistance: result.value } : iv)
+        );
+      } else if (result.type === 'intervalPower') {
+        setIntervals(ivs =>
+          ivs.map(iv => iv._key === result.key ? { ...iv, power: result.value } : iv)
         );
       } else if (result.type === 'circuitWarmup') {
         circuitEdit.set('warmup', result.secs);
@@ -185,10 +217,10 @@ export function useEditSession(
       return expandCircuit(cleanIntervals, circuitEdit.circuitCount, circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitRest);
     }
     const draft: Session = mode === 'easy'
-      ? { id: '', name: '', mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds }
-      : { id: '', name: '', mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds };
+      ? { id: '', name: '', mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds, spinValues }
+      : { id: '', name: '', mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds, spinValues };
     return getSessionSegments(draft);
-  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervals, activityType, runSpeeds,
+  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervals, activityType, runSpeeds, spinValues,
       circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitCount, circuitEdit.circuitRest]);
 
   function toggleMode(advanced_: boolean) {
@@ -307,6 +339,32 @@ export function useEditSession(
     );
   }
 
+  function openIntervalResistancePicker(key: string) {
+    const iv = intervals.find(i => i._key === key);
+    if (!iv) return;
+    const current = iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance;
+    pickerState.openIntervalResistancePicker(key, current);
+  }
+
+  function openIntervalPowerPicker(key: string) {
+    const iv = intervals.find(i => i._key === key);
+    if (!iv) return;
+    const current = iv.power ?? spinValueForPhase(iv.type, spinValues).power;
+    pickerState.openIntervalPowerPicker(key, current);
+  }
+
+  function clearIntervalResistance(key: string) {
+    setIntervals(ivs =>
+      ivs.map(iv => iv._key === key ? { ...iv, resistance: undefined } : iv)
+    );
+  }
+
+  function clearIntervalPower(key: string) {
+    setIntervals(ivs =>
+      ivs.map(iv => iv._key === key ? { ...iv, power: undefined } : iv)
+    );
+  }
+
   function setActivityLabel(key: string, label: string) {
     setIntervals(ivs => ivs.map(iv =>
       iv._key === key ? { ...iv, activityLabel: label } : iv
@@ -342,6 +400,7 @@ export function useEditSession(
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     const session = buildSessionFromDraft(
       mode, name.trim(), easyEdit.easyConfig, cleanIntervals, activityType, runSpeeds, existing?.id,
+      undefined, spinValues,
     );
     return { ok: true, session, isNew: !existing };
   }
@@ -357,9 +416,10 @@ export function useEditSession(
       || name !== initialName
       || intervalsDraft.isDirty(cleanIntervals)
       || activityType !== initialActivityTypeRef
-      || runSpeedsDraft.isDirty(runSpeeds);
+      || runSpeedsDraft.isDirty(runSpeeds)
+      || spinValuesDraft.isDirty(spinValues);
   }, [
-    mode, name, intervals, activityType, runSpeeds,
+    mode, name, intervals, activityType, runSpeeds, spinValues,
     easyEdit.hasChanges, circuitEdit.hasChanges,
     initialName, initialActivityTypeRef,
   ]);
@@ -372,6 +432,7 @@ export function useEditSession(
     name,
     isAdvanced:  mode === 'advanced',
     isCircuit:   mode === 'circuit',
+    isSpinning:  activityType === 'spinning',
     fieldValues: easyEdit.fieldValues,
     rounds:      easyEdit.rounds,
     intervals,
@@ -379,6 +440,7 @@ export function useEditSession(
     previewTotal: totalDuration(previewSegments),
     activityType,
     runSpeeds,
+    spinValues,
     activeTimingPreset,
     activeSpeedPreset,
     hasChanges,
@@ -415,6 +477,12 @@ export function useEditSession(
     openCircuitCooldownPicker: pickerState.openCircuitCooldownPicker,
     openCircuitRestPicker:     pickerState.openCircuitRestPicker,
     openCircuitsPicker:        pickerState.openCircuitCountPicker,
+    openSpinResistancePicker:    (field) => pickerState.openSpinResistancePicker(field, spinValues[field]),
+    openSpinPowerPicker:         (field) => pickerState.openSpinPowerPicker(field, spinValues[field]),
+    openIntervalResistancePicker,
+    openIntervalPowerPicker,
+    clearIntervalResistance,
+    clearIntervalPower,
     buildSavePayload,
   };
 }

@@ -1,4 +1,4 @@
-import { newId, type Session, type RunSpeeds } from './sessions';
+import { newId, type Session, type RunSpeeds, type SpinValues } from './sessions';
 import { type Interval } from './workout';
 
 export function serializeDraft(
@@ -22,6 +22,7 @@ export function buildSessionFromDraft(
   runSpeeds: RunSpeeds,
   existingId: string | undefined,
   circuitData?: { warmup: number; cooldown: number; circuits: number; circuitRest: number },
+  spinValues?: SpinValues,
 ): Session {
   const base = { id: existingId ?? newId(), name };
   if (mode === 'circuit') {
@@ -35,13 +36,14 @@ export function buildSessionFromDraft(
       circuitRest: circuitData!.circuitRest,
     };
   }
-  const speedProps = activityType === 'run'
-    ? { activityType: 'run' as const, runSpeeds }
-    : {};
+  const activityProps =
+    activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds } :
+    activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues } :
+    {};
   if (mode === 'easy') {
-    return { ...base, ...speedProps, mode: 'easy', config: easyConfig };
+    return { ...base, ...activityProps, mode: 'easy', config: easyConfig };
   }
-  return { ...base, ...speedProps, mode: 'advanced', intervals };
+  return { ...base, ...activityProps, mode: 'advanced', intervals };
 }
 
 export function validateDraft(
