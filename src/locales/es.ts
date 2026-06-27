@@ -44,6 +44,7 @@ export const es: typeof en = {
     },
     roundAbbr: 'rda',
     circuit: 'CIRCUITO',
+    nextCircuit: 'PRÓXIMO CIRCUITO',
   },
   complete: {
     eyebrow:       'ENTRENAMIENTO COMPLETO',

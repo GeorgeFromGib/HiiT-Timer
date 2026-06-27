@@ -283,11 +283,15 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
           {!isDone && !isPreStart && (
             session.mode === 'circuit' ? (
-              seg.circuitNumber !== undefined && (
+              seg.circuitNumber !== undefined ? (
                 <Text style={[styles.intervalCounter, { color: T.onBg }]}>
                   {t('workout.circuit')} {seg.circuitNumber} / {session.circuits}
                 </Text>
-              )
+              ) : seg.phase === 'circuitRest' && nextSeg?.circuitNumber !== undefined ? (
+                <Text style={[styles.intervalCounter, { color: T.onBg }]}>
+                  {t('workout.nextCircuit')} {nextSeg.circuitNumber} / {session.circuits}
+                </Text>
+              ) : null
             ) : (
               <View style={styles.extendRow}>
                 <View style={styles.extendLeft}>

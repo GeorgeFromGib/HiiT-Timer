@@ -42,6 +42,7 @@ export const en = {
     },
     roundAbbr: 'rnd',
     circuit: 'CIRCUIT',
+    nextCircuit: 'NEXT CIRCUIT',
   },
   complete: {
     eyebrow:       'WORKOUT COMPLETE',

@@ -1,4 +1,16 @@
 import { LogBox } from 'react-native';
+
+// RN new-arch bug: ScrollView's keyboard-scroll calls measureLayout with a non-native ref.
+// LogBox suppresses the in-app overlay; console.error override suppresses Metro terminal output.
+if (__DEV__) {
+  const _origError = console.error.bind(console);
+  console.error = (...args: unknown[]) => {
+    if (typeof args[0] === 'string' && args[0].includes('ref.measureLayout must be called')) return;
+    _origError(...args);
+  };
+}
+LogBox.ignoreLogs(['ref.measureLayout must be called with a ref to a native component']);
+
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
@@ -13,8 +25,6 @@ import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
 import { useEffect, useState, type ReactNode } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import SessionsListScreen from './src/screens/SessionsListScreen';
-
-LogBox.ignoreLogs(['ref.measureLayout must be called with a ref to a native component']);
 import WorkoutScreen from './src/screens/WorkoutScreen';
 import EditSessionScreen from './src/screens/EditSessionScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
