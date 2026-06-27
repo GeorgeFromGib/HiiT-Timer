@@ -347,6 +347,11 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
                 {formatSpeed(nextSeg.speed, settings.speedUnit)}
               </Text>
             )}
+            {nextSeg.resistance !== undefined && (
+              <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
+                {`R${nextSeg.resistance} · ${nextSeg.power}W`}
+              </Text>
+            )}
             {nextSeg.activityLabel !== undefined && (
               <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
                 {nextSeg.activityLabel}
