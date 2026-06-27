@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import * as Haptics from 'expo-haptics';
 import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import { usePreStartCountdown } from './usePreStartCountdown';
@@ -44,14 +45,32 @@ export function useWorkoutSession(
   const onCountdownBeatRef = useRef(onCountdownBeat);
   onCountdownBeatRef.current = onCountdownBeat;
 
+  const hapticBurstRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   const [congratsMsg] = useState(() => {
     const msgs = getCongratsMessages();
     return msgs[Math.floor(Math.random() * msgs.length)];
   });
 
+  function startHapticBurst() {
+    if (hapticBurstRef.current) clearInterval(hapticBurstRef.current);
+    let count = 0;
+    hapticBurstRef.current = setInterval(() => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      count++;
+      if (count >= 14) {
+        clearInterval(hapticBurstRef.current!);
+        hapticBurstRef.current = null;
+      }
+    }, 150);
+  }
+
   const { state, start, pause, resume, reset: engineReset, skip, extend, replaceSegments, getSegments } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
       cues.onTransition(to?.phase ?? null);
+      if (to !== null && settings.hapticFeedback) {
+        startHapticBurst();
+      }
     },
     onCountdown: () => {
       cues.onCountdown();
@@ -84,6 +103,10 @@ export function useWorkoutSession(
   }, [countdown, state.status, pause, resume]);
 
   const reset = useCallback(() => {
+    if (hapticBurstRef.current) {
+      clearInterval(hapticBurstRef.current);
+      hapticBurstRef.current = null;
+    }
     countdown.cancel();
     cues.stopKeepAlive();
     engineReset();
