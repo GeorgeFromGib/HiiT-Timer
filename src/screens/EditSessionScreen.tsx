@@ -215,19 +215,14 @@ export default function EditSessionScreen({ session: existing, activityType, onB
                   ))}
                 </View>
               )}
-              <Text style={styles.previewMeta}>
-                {fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}
-              </Text>
-            </View>
-          </View>
-
-          {/* Activity Type — read-only */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>{t('edit.activityType')}</Text>
-            <View style={styles.activityTypeLabelChip}>
-              <Text style={styles.activityTypeLabelText}>
-                {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : t('edit.general')}
-              </Text>
+              <View style={styles.previewMetaRow}>
+                <Text style={styles.previewMeta}>
+                  {fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}
+                </Text>
+                <Text style={styles.previewMeta}>
+                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : t('edit.general')}
+                </Text>
+              </View>
             </View>
           </View>
 
@@ -474,20 +469,10 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     ...typography.controlLabel,
   },
 
-  activityTypeLabelChip: {
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: T.hairline,
-    backgroundColor: T.ghostBg,
-  },
-  activityTypeLabelText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 13,
-    letterSpacing: 13 * 0.04,
-    color: T.subText,
+  previewMetaRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
   configGrid: {
