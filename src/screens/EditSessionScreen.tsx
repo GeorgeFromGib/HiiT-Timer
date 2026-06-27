@@ -277,6 +277,7 @@ export default function EditSessionScreen({ session: existing, activityType, onB
 
               {/* Circuit interval list */}
               <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>{t('edit.setIntervals')}</Text>
                 {intervals.length === 0 && (
                   <View style={styles.emptyState}>
                     <Text style={styles.emptyStateText}>{t('edit.noIntervals')}</Text>
@@ -285,6 +286,7 @@ export default function EditSessionScreen({ session: existing, activityType, onB
               </View>
 
               <NestableDraggableFlatList
+                style={{ marginTop: -14 }}
                 data={intervals}
                 keyExtractor={iv => iv._key}
                 onDragEnd={({ data }) => reorderIntervals(data)}
@@ -324,7 +326,12 @@ export default function EditSessionScreen({ session: existing, activityType, onB
                 )}
               </View>
 
+              <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>{t('edit.sessionIntervals')}</Text>
+              </View>
+
               <NestableDraggableFlatList
+                style={{ marginTop: -14 }}
                 data={intervals}
                 keyExtractor={iv => iv._key}
                 onDragEnd={({ data }) => reorderIntervals(data)}

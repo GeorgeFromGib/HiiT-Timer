@@ -147,6 +147,8 @@ export const en = {
     circuitWarmup: 'Warmup',
     circuitCooldown: 'Cooldown',
     circuitRest: 'Break',
+    setIntervals: 'Set Intervals',
+    sessionIntervals: 'Session Intervals',
     exercisePlaceholder: 'Exercise name',
     newCircuitTitle: 'New Circuit',
     circuit: 'Circuit',

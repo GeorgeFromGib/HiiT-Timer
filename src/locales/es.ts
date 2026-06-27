@@ -149,6 +149,8 @@ export const es: typeof en = {
     circuitWarmup: 'Calentamiento',
     circuitCooldown: 'Enfriamiento',
     circuitRest: 'Descanso',
+    setIntervals: 'Intervalos del Set',
+    sessionIntervals: 'Intervalos de la Sesión',
     exercisePlaceholder: 'Nombre del ejercicio',
     newCircuitTitle: 'Nuevo Circuito',
     circuit: 'Circuito',
