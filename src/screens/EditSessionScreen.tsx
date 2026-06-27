@@ -229,7 +229,7 @@ export default function EditSessionScreen({ session: existing, activityType, onB
                   {fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}
                 </Text>
                 <Text style={styles.previewMeta}>
-                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : t('edit.general')}
+                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : isSpinning ? t('edit.spinning') : t('edit.general')}
                 </Text>
               </View>
             </View>

@@ -1,18 +1,6 @@
 import { newId, type Session, type RunSpeeds, type SpinValues } from './sessions';
 import { type Interval } from './workout';
 
-export function serializeDraft(
-  name: string,
-  mode: 'easy' | 'advanced' | 'circuit',
-  warmup: number, work: number, rest: number, cooldown: number, rounds: number,
-  intervals: Array<Omit<Interval, never>>,
-  activityType: 'run' | 'spinning' | undefined,
-  runSpeeds: RunSpeeds,
-  circuitData?: { warmup: number; cooldown: number; circuits: number; circuitRest: number },
-): string {
-  return JSON.stringify({ name, mode, warmup, work, rest, cooldown, rounds, intervals, activityType, runSpeeds, circuitData });
-}
-
 export function buildSessionFromDraft(
   mode: 'easy' | 'advanced' | 'circuit',
   name: string,
