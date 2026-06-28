@@ -115,6 +115,8 @@ export const fr: typeof en = {
     soundCuesSub: 'Jouer des tonalités lors des changements de phase',
     finalBeepLabel: 'Bip de fin de compte à rebours',
     finalBeepSub: 'Signal audio dans les 3 dernières secondes',
+    voiceCuesLabel: 'Annonces vocales',
+    voiceCuesSub: 'Énoncer le nom de la phase au lieu du carillon',
     about: 'À propos',
     version: 'Version',
     subscription: 'Abonnement',
@@ -212,6 +214,9 @@ export const fr: typeof en = {
     purchase: 'Acheter',
     notNow: 'Pas maintenant',
     restore: 'Restaurer les achats',
+  },
+  speech: {
+    complete: 'Séance terminée',
   },
   defaultSessions: {
     example1: 'Exemple Standard',

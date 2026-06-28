@@ -113,6 +113,8 @@ export const en = {
     soundCuesSub: 'Play tones on phase changes',
     finalBeepLabel: 'Final countdown beep',
     finalBeepSub: 'Audio cue in last 3 seconds',
+    voiceCuesLabel: 'Voice announcements',
+    voiceCuesSub: 'Speak phase name instead of chime',
     about: 'About',
     version: 'Version',
     subscription: 'Subscription',
@@ -210,6 +212,9 @@ export const en = {
     purchase: 'Purchase',
     notNow: 'Not now',
     restore: 'Restore purchases',
+  },
+  speech: {
+    complete: 'Session Complete',
   },
   defaultSessions: {
     example1: 'Standard Example',

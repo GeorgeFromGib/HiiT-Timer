@@ -115,6 +115,8 @@ export const es: typeof en = {
     soundCuesSub: 'Reproduce tonos al cambiar de fase',
     finalBeepLabel: 'Pitido final',
     finalBeepSub: 'Señal de audio en los últimos 3 segundos',
+    voiceCuesLabel: 'Anuncios de voz',
+    voiceCuesSub: 'Pronunciar el nombre de la fase en lugar del tono',
     about: 'Acerca de',
     version: 'Versión',
     subscription: 'Suscripción',
@@ -212,6 +214,9 @@ export const es: typeof en = {
     purchase: 'Comprar',
     notNow: 'Ahora no',
     restore: 'Restaurar compras',
+  },
+  speech: {
+    complete: 'Sesión completa',
   },
   defaultSessions: {
     example1: 'Ejemplo Estándar',
