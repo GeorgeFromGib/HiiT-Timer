@@ -167,6 +167,12 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             right={<SettingsToggle value={settings.soundCues} onChange={v => updateSettings('soundCues', v)} disabled={settings.soundOff} />}
           />
           <SettingsRow
+            label={t('settings.voiceCuesLabel')}
+            sub={t('settings.voiceCuesSub')}
+            disabled={settings.soundOff || !settings.soundCues}
+            right={<SettingsToggle value={settings.voiceCues} onChange={v => updateSettings('voiceCues', v)} disabled={settings.soundOff || !settings.soundCues} />}
+          />
+          <SettingsRow
             label={t('settings.finalBeepLabel')}
             sub={t('settings.finalBeepSub')}
             disabled={settings.soundOff}
