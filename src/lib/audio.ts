@@ -1,6 +1,8 @@
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
 import { useEffect, useMemo, useRef } from 'react';
 import type { Phase } from './workout';
+import type { Language } from './i18n';
+import { speakPhase, speakComplete } from './speech';
 
 // Static requires let Metro bundle the WAV files and give us asset module
 // numbers that expo-audio accepts on both native (AVFoundation / ExoPlayer)
@@ -21,6 +23,8 @@ export type AudioSettings = {
   soundCues: boolean;
   finalCountdownBeep: boolean;
   soundVolume: number;
+  voiceCues: boolean;
+  language: Language;
 };
 
 export async function configureAudioSession() {
@@ -98,7 +102,12 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
   return useMemo<WorkoutAudioCues>(() => ({
     onTransition(to) {
       const s = settingsRef.current;
-      if (to && !s.soundOff && s.soundCues) playCue('chime', s.soundVolume / 100);
+      if (!to || s.soundOff || !s.soundCues) return;
+      if (s.voiceCues) {
+        speakPhase(to, s.language);
+      } else {
+        playCue('chime', s.soundVolume / 100);
+      }
     },
     onCountdown() {
       const s = settingsRef.current;
@@ -106,7 +115,13 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     },
     onFinish() {
       const s = settingsRef.current;
-      if (!s.soundOff && s.soundCues) playCue('finish', s.soundVolume / 100);
+      if (!s.soundOff && s.soundCues) {
+        if (s.voiceCues) {
+          speakComplete(s.language);
+        } else {
+          playCue('finish', s.soundVolume / 100);
+        }
+      }
       stopKeepAlive();
     },
     onPreStartTick() {
