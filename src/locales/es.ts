@@ -33,7 +33,7 @@ export const es: typeof en = {
     deleteTitle: 'Eliminar sesión',
     deleteMessage: '¿Eliminar "%{name}"?',
     hint: 'Desliza a la derecha para duplicar, a la izquierda para eliminar. Ordena con las asas.',
-    typeMenuHeader: 'Tipo de sesión',
+    typeMenuHeader: 'Añadir tipo de sesión',
   },
   workout: {
     done: 'HECHO',
@@ -222,7 +222,7 @@ export const es: typeof en = {
       work:        'Trabajo',
       rest:        'Recupera',
       cooldown:    'Enfriamiento',
-      circuitRest: 'Descanso',
+      circuitRest: 'Pausa',
     },
   },
   defaultSessions: {

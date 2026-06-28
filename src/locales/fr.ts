@@ -33,7 +33,7 @@ export const fr: typeof en = {
     deleteTitle: 'Supprimer la séance',
     deleteMessage: 'Supprimer « %{name} » ?',
     hint: 'Glissez à droite pour dupliquer, à gauche pour supprimer. Triez via les poignées.',
-    typeMenuHeader: 'Type de séance',
+    typeMenuHeader: 'Ajouter un type de séance',
   },
   workout: {
     done: 'TERMINÉ',
@@ -222,7 +222,7 @@ export const fr: typeof en = {
       work:        'Travail',
       rest:        'Récupération',
       cooldown:    'Retour au calme',
-      circuitRest: 'Repos',
+      circuitRest: 'Pause',
     },
   },
   defaultSessions: {

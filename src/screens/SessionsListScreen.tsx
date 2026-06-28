@@ -1,4 +1,4 @@
-import React, { useRef, useImperativeHandle, useMemo, useState } from 'react';
+import React, { useRef, useImperativeHandle, useMemo, useState, useEffect } from 'react';
 import {
   Animated,
   Pressable,
@@ -31,6 +31,21 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
+  const menuAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (showTypeMenu) {
+      menuAnim.setValue(0);
+      Animated.spring(menuAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        damping: 18,
+        stiffness: 280,
+        mass: 0.8,
+      }).start();
+    }
+  }, [showTypeMenu]);
+
   const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
@@ -124,6 +139,13 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             style={[StyleSheet.absoluteFill, { zIndex: 9 }]}
             onPress={() => setShowTypeMenu(false)}
           />
+          <Animated.View style={[styles.typeMenuWrapper, {
+            opacity: menuAnim,
+            transform: [
+              { translateY: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [-10, 0] }) },
+              { scale: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) },
+            ],
+          }]}>
           <View style={styles.typeMenu}>
             <View style={styles.typeMenuHeader}>
               <Text style={styles.typeMenuHeaderText}>{t('sessions.typeMenuHeader')}</Text>
@@ -161,6 +183,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
               <Text style={styles.typeMenuText}>{t('edit.spinning')}</Text>
             </Pressable>
           </View>
+          </Animated.View>
         </>
       )}
     </LinearGradient>
@@ -209,18 +232,21 @@ function makeStyles(T: ThemeTokens) {
       textAlign: 'center',
     },
 
-    typeMenu: {
+    typeMenuWrapper: {
       position: 'absolute',
       top: 98,
       right: 20,
+      borderRadius: 14,
+      minWidth: 160,
+      zIndex: 10,
+      ...buttonShadow(T),
+    },
+    typeMenu: {
       backgroundColor: T.sheetBg,
       borderWidth: 1.5,
       borderColor: T.hairline,
       borderRadius: 14,
-      minWidth: 160,
-      zIndex: 10,
       overflow: 'hidden',
-      ...buttonShadow(T),
     },
     typeMenuHeader: {
       paddingVertical: 10,

@@ -31,7 +31,7 @@ export const en = {
     deleteTitle: 'Delete Session',
     deleteMessage: 'Remove "%{name}"?',
     hint: 'Swipe right to duplicate, left to delete. Sort via the drag handles.',
-    typeMenuHeader: 'Session type',
+    typeMenuHeader: 'Add session type',
   },
   workout: {
     done: 'DONE',
@@ -220,7 +220,7 @@ export const en = {
       work:        'Work',
       rest:        'Recover',
       cooldown:    'Cool Down',
-      circuitRest: 'Rest',
+      circuitRest: 'Break',
     },
   },
   defaultSessions: {
