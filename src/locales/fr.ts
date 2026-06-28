@@ -217,6 +217,13 @@ export const fr: typeof en = {
   },
   speech: {
     complete: 'Séance terminée',
+    phases: {
+      warmup:      'Échauffement',
+      work:        'Travail',
+      rest:        'Récupération',
+      cooldown:    'Retour au calme',
+      circuitRest: 'Repos',
+    },
   },
   defaultSessions: {
     example1: 'Exemple Standard',

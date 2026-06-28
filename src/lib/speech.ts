@@ -9,17 +9,17 @@ const LANGUAGE_CODES: Record<Language, string> = {
   fr: 'fr-FR',
 };
 
-async function speak(text: string, language: Language): Promise<void> {
+async function speak(text: string, language: Language, onDone?: () => void): Promise<void> {
   await Speech.stop();
-  Speech.speak(text, { language: LANGUAGE_CODES[language] });
+  Speech.speak(text, { language: LANGUAGE_CODES[language], onDone });
 }
 
 export function speakPhase(phase: Phase, language: Language): void {
-  const text = i18n.t(`phases.${phase}`, { locale: language });
+  const text = i18n.t(`speech.phases.${phase}`, { locale: language });
   speak(text, language).catch(() => {});
 }
 
-export function speakComplete(language: Language): void {
+export function speakComplete(language: Language, onDone?: () => void): void {
   const text = i18n.t('speech.complete', { locale: language });
-  speak(text, language).catch(() => {});
+  speak(text, language, onDone).catch(() => {});
 }

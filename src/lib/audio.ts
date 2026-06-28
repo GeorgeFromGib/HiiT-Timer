@@ -117,7 +117,8 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
       const s = settingsRef.current;
       if (!s.soundOff && s.soundCues) {
         if (s.voiceCues) {
-          speakComplete(s.language);
+          speakComplete(s.language, stopKeepAlive);
+          return;
         } else {
           playCue('finish', s.soundVolume / 100);
         }

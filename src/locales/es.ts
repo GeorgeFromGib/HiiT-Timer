@@ -217,6 +217,13 @@ export const es: typeof en = {
   },
   speech: {
     complete: 'Sesión completa',
+    phases: {
+      warmup:      'Calentamiento',
+      work:        'Trabajo',
+      rest:        'Recupera',
+      cooldown:    'Enfriamiento',
+      circuitRest: 'Descanso',
+    },
   },
   defaultSessions: {
     example1: 'Ejemplo Estándar',

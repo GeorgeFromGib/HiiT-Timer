@@ -215,6 +215,13 @@ export const en = {
   },
   speech: {
     complete: 'Session Complete',
+    phases: {
+      warmup:      'Warm Up',
+      work:        'Work',
+      rest:        'Recover',
+      cooldown:    'Cool Down',
+      circuitRest: 'Rest',
+    },
   },
   defaultSessions: {
     example1: 'Standard Example',
