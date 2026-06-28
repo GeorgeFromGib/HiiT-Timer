@@ -37,8 +37,13 @@ yarn-error.*
 *.tsbuildinfo
 
 # generated native folders
-/ios
 /android
+
+# ios - track custom native files, ignore generated artifacts
+/ios/Pods/
+/ios/build/
+/ios/.xcode.env.local
+/ios/DerivedData/
 
 # Claude Code
 .claude/
