@@ -229,8 +229,8 @@ export const es: typeof en = {
     example1: 'Ejemplo Estándar',
     example2: 'Ejemplo Avanzado',
     example3: 'Ejemplo de Carrera',
-    circuit1: 'Circuito de Peso Corporal Ejemplo',
-    spinning1: 'Sesión de Spinning Ejemplo',
+    circuit1: 'Ejemplo de Calistenia',
+    spinning1: 'Ejemplo de Spinning',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },

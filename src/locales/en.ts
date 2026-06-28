@@ -227,8 +227,8 @@ export const en = {
     example1: 'Standard Example',
     example2: 'Advanced Example',
     example3: 'Run Example',
-    circuit1: 'Body Weight Circuit Example',
-    spinning1: 'Spinning Session Example',
+    circuit1: 'Calisthenics Example',
+    spinning1: 'Spinning Example',
   },
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },
