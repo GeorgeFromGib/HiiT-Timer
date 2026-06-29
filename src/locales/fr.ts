@@ -217,6 +217,7 @@ export const fr: typeof en = {
     purchase: 'Acheter',
     notNow: 'Pas maintenant',
     restore: 'Restaurer les achats',
+    purchaseFailed: "L'achat n'a pas pu être finalisé. Veuillez réessayer.",
     noRestoreFound: 'Aucun achat trouvé pour ce compte.',
   },
   speech: {

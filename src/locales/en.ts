@@ -215,6 +215,7 @@ export const en = {
     purchase: 'Purchase',
     notNow: 'Not now',
     restore: 'Restore purchases',
+    purchaseFailed: 'Purchase could not be completed. Please try again.',
     noRestoreFound: 'No purchases found for this account.',
   },
   speech: {

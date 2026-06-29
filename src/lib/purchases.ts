@@ -10,7 +10,7 @@ import {
 import { File, Paths } from 'expo-file-system';
 
 // Replace with real App Store product ID before production release
-const PRODUCT_ID = 'com.yourapp.premium_lifetime';
+const PRODUCT_ID = 'com.georgefromgib.hiittimer';
 
 const TRIAL_DAYS = 30;
 

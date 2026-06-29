@@ -217,6 +217,7 @@ export const es: typeof en = {
     purchase: 'Comprar',
     notNow: 'Ahora no',
     restore: 'Restaurar compras',
+    purchaseFailed: 'No se pudo completar la compra. Inténtalo de nuevo.',
     noRestoreFound: 'No se encontraron compras para esta cuenta.',
   },
   speech: {

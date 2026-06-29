@@ -14,11 +14,17 @@ export default function PaywallModal({ visible, onDismiss }: Props) {
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
   const { purchase, restore, loading } = usePremium();
+  const [purchaseMsg, setPurchaseMsg] = useState<string | null>(null);
   const [restoreMsg, setRestoreMsg] = useState<string | null>(null);
 
   async function handlePurchase() {
+    setPurchaseMsg(null);
     const success = await purchase();
-    if (success) onDismiss();
+    if (success) {
+      onDismiss();
+    } else {
+      setPurchaseMsg(t('paywall.purchaseFailed'));
+    }
   }
 
   async function handleRestore() {
@@ -49,6 +55,9 @@ export default function PaywallModal({ visible, onDismiss }: Props) {
           >
             <Text style={styles.purchaseBtnText}>{t('paywall.purchase')}</Text>
           </Pressable>
+          {purchaseMsg !== null && (
+            <Text style={styles.purchaseMsg}>{purchaseMsg}</Text>
+          )}
           <Pressable
             style={[styles.dismissBtn, loading && styles.disabled]}
             onPress={onDismiss}
@@ -140,6 +149,14 @@ function makeStyles(T: ThemeTokens) {
     },
     disabled: {
       opacity: 0.5,
+    },
+    purchaseMsg: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 12,
+      color: T.subText,
+      marginTop: 8,
+      marginBottom: 4,
+      textAlign: 'center',
     },
     restoreMsg: {
       fontFamily: 'Inter_400Regular',
