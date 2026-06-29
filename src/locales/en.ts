@@ -212,7 +212,7 @@ export const en = {
     sameRestDuration: 'All Rest intervals must have the same duration.',
   },
   paywall: {
-    title: 'Unlock Premium',
+    title: 'Unlock forever',
     body: 'Get unlimited sessions and all features.',
     purchase: 'Purchase',
     notNow: 'Not now',

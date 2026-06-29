@@ -214,7 +214,7 @@ export const fr: typeof en = {
     sameRestDuration: 'Tous les intervalles de Repos doivent avoir la même durée.',
   },
   paywall: {
-    title: 'Débloquer Premium',
+    title: 'Débloquer pour toujours',
     body: 'Obtenez des séances illimitées et toutes les fonctionnalités.',
     purchase: 'Acheter',
     notNow: 'Pas maintenant',
