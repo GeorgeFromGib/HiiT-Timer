@@ -20,6 +20,7 @@ import { SettingsSection } from '../components/SettingsSection';
 import { ThemeCard } from '../components/ThemeCard';
 import Constants from 'expo-constants';
 import { VolumeRow } from '../components/VolumeRow';
+import PaywallModal from '../components/PaywallModal';
 
 // ══════════════════════════════════════════════════════════════
 // SETTINGS SCREEN
@@ -32,6 +33,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
   const { t } = useTranslation();
   const { isPremium, trialDaysRemaining, setMockPremium, expireTrialForTesting, resetTrialForTesting } = usePremium();
   const [forceReview, setForceReview] = React.useState(false);
+  const [showPaywall, setShowPaywall] = React.useState(false);
 
   return (
     <LinearGradient
@@ -218,18 +220,36 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             label={t('settings.version')}
             right={<Text style={styles.versionText}>{Constants.expoConfig?.version ?? '—'} ({Constants.expoConfig?.ios?.buildNumber ?? '—'})</Text>}
           />
-          <SettingsRow
-            label={t('settings.subscription')}
-            right={
-              <Text style={styles.versionText}>
-                {isPremium
-                  ? t('settings.subscriptionPremium')
-                  : trialDaysRemaining > 0
-                    ? t('settings.subscriptionTrial', { days: trialDaysRemaining })
-                    : t('settings.subscriptionExpired')}
-              </Text>
-            }
-          />
+          {isPremium ? (
+            <SettingsRow
+              label={t('settings.subscription')}
+              right={<Text style={styles.versionText}>{t('settings.subscriptionPremium')}</Text>}
+            />
+          ) : (
+            <Pressable onPress={() => setShowPaywall(true)}>
+              <SettingsRow
+                label={t('settings.subscription')}
+                right={
+                  <View style={styles.subscriptionRight}>
+                    <Text style={[styles.versionText, { color: T.accent }]}>
+                      {trialDaysRemaining > 0
+                        ? t('settings.subscriptionTrial', { days: trialDaysRemaining })
+                        : t('settings.subscriptionExpired')}
+                    </Text>
+                    <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+                      <Path
+                        d="M6 12L10 8 6 4"
+                        stroke={T.accent}
+                        strokeWidth={1.8}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </Svg>
+                  </View>
+                }
+              />
+            </Pressable>
+          )}
           <Pressable onPress={async () => {
             // eslint-disable-next-line @typescript-eslint/no-require-imports
             const StoreReview = require('expo-store-review');
@@ -281,6 +301,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
         {/* ── Footer ── */}
         <Text style={styles.footer}>{t('settings.developedBy')}</Text>
       </ScrollView>
+      <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
     </LinearGradient>
   );
 }
@@ -315,6 +336,11 @@ function makeStyles(T: ThemeTokens) {
     },
 
     // About
+    subscriptionRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
     versionText: {
       fontFamily: 'ChakraPetch_700Bold',
       fontSize: 13,

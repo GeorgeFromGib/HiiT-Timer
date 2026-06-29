@@ -199,8 +199,8 @@ export function fmtDuration(s: number): string {
   const m = Math.floor(s / 60);
   const sec = s % 60;
   if (m === 0) return `${sec}s`;
-  if (sec === 0) return `${m}m`;
-  return `${m}m ${sec}s`;
+  if (sec === 0) return `${m}min`;
+  return `${m}min ${sec}s`;
 }
 
 /** Clock-style format for the live timer display: "45", "1:30", "2:05:30". */

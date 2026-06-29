@@ -31,14 +31,26 @@ export function usePremiumState(apiKey?: string): PremiumContextValue {
       .finally(() => setLoading(false));
   }, []);
 
-  async function purchase() {
-    await purchasePremium();
-    await refreshState();
+  async function purchase(): Promise<boolean> {
+    setLoading(true);
+    try {
+      const success = await purchasePremium();
+      await refreshState();
+      return success;
+    } finally {
+      setLoading(false);
+    }
   }
 
-  async function restore() {
-    await restorePurchases();
-    await refreshState();
+  async function restore(): Promise<boolean> {
+    setLoading(true);
+    try {
+      const found = await restorePurchases();
+      await refreshState();
+      return found;
+    } finally {
+      setLoading(false);
+    }
   }
 
   function setMockPremium(val: boolean) {

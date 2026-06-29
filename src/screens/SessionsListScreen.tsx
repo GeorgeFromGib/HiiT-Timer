@@ -12,6 +12,7 @@ import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
 import { useGatedAction } from '../hooks/useGatedAction';
+import { usePremium } from '../lib/premiumContext';
 import PaywallModal from '../components/PaywallModal';
 import { useSettings } from '../lib/settingsContext';
 import { confirmDeleteSession } from '../lib/alerts';
@@ -46,6 +47,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
     }
   }, [showTypeMenu]);
 
+  const { isPremium, trialDaysRemaining } = usePremium();
   const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
@@ -99,6 +101,16 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           </Pressable>
         }
       />
+
+      {!isPremium && (
+        <Pressable style={styles.trialChip} onPress={() => setShowPaywall(true)}>
+          <Text style={styles.trialChipText}>
+            {trialDaysRemaining > 0
+              ? t('sessions.trialBadge', { days: trialDaysRemaining })
+              : t('sessions.trialExpiredBadge')}
+          </Text>
+        </Pressable>
+      )}
 
       <DraggableFlatList
         data={sessions}
@@ -209,6 +221,22 @@ function makeStyles(T: ThemeTokens) {
       ...buttonShadow(T),
       shadowOffset: { width: 0, height: 6 },
       shadowRadius: 11,
+    },
+
+    trialChip: {
+      alignSelf: 'center',
+      paddingHorizontal: 14,
+      paddingVertical: 6,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: T.accent,
+      marginBottom: 14,
+    },
+    trialChipText: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 12,
+      color: T.accent,
+      letterSpacing: 0.2,
     },
 
     list: { flex: 1 },

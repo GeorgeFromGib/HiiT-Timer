@@ -34,6 +34,8 @@ export const fr: typeof en = {
     deleteMessage: 'Supprimer « %{name} » ?',
     hint: 'Glissez à droite pour dupliquer, à gauche pour supprimer. Triez via les poignées.',
     typeMenuHeader: 'Ajouter un type de séance',
+    trialBadge: '%{days} jours restants · Mettre à niveau',
+    trialExpiredBadge: 'Essai terminé · Mettre à niveau',
   },
   workout: {
     done: 'TERMINÉ',
@@ -140,6 +142,7 @@ export const fr: typeof en = {
     easy: 'Facile',
     advanced: 'Avancé',
     intervalPresets: "PRÉRÉGLAGES D'INTERVALLE",
+    intervalSetup: "CONFIGURATION D'INTERVALLE",
     speedPresets: 'PRÉRÉGLAGES DE VITESSE',
     presetEasy: 'Facile',
     presetHard: 'Difficile',
@@ -209,11 +212,12 @@ export const fr: typeof en = {
     sameRestDuration: 'Tous les intervalles de Repos doivent avoir la même durée.',
   },
   paywall: {
-    title: 'Essai terminé',
-    body: 'Votre essai gratuit de 30 jours est terminé. Achetez pour continuer à utiliser toutes les fonctionnalités.',
+    title: 'Débloquer Premium',
+    body: 'Obtenez des séances illimitées et toutes les fonctionnalités.',
     purchase: 'Acheter',
     notNow: 'Pas maintenant',
     restore: 'Restaurer les achats',
+    noRestoreFound: 'Aucun achat trouvé pour ce compte.',
   },
   speech: {
     complete: 'Séance terminée',

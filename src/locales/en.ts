@@ -32,6 +32,8 @@ export const en = {
     deleteMessage: 'Remove "%{name}"?',
     hint: 'Swipe right to duplicate, left to delete. Sort via the drag handles.',
     typeMenuHeader: 'Add session type',
+    trialBadge: '%{days} days left · Upgrade',
+    trialExpiredBadge: 'Trial ended · Upgrade',
   },
   workout: {
     done: 'DONE',
@@ -138,6 +140,7 @@ export const en = {
     easy: 'Easy',
     advanced: 'Advanced',
     intervalPresets: 'INTERVAL PRESETS',
+    intervalSetup: 'INTERVAL SETUP',
     speedPresets: 'SPEED PRESETS',
     presetEasy: 'Easy',
     presetHard: 'Hard',
@@ -207,11 +210,12 @@ export const en = {
     sameRestDuration: 'All Rest intervals must have the same duration.',
   },
   paywall: {
-    title: 'Trial Ended',
-    body: 'Your 30-day free trial has ended. Purchase to keep using all features.',
+    title: 'Unlock Premium',
+    body: 'Get unlimited sessions and all features.',
     purchase: 'Purchase',
     notNow: 'Not now',
     restore: 'Restore purchases',
+    noRestoreFound: 'No purchases found for this account.',
   },
   speech: {
     complete: 'Session Complete',

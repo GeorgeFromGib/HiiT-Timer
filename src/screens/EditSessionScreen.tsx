@@ -388,6 +388,9 @@ export default function EditSessionScreen({ session: existing, activityType, onB
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
                 <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
+                <Text style={[styles.fieldLabel, { marginTop: 8 }]}>
+                  {t('edit.intervalSetup')}{previewTotal > 0 ? <Text style={styles.intervalSetupTotal}>{' '}[{fmtDuration(previewTotal)}]</Text> : null}
+                </Text>
                 <View style={styles.configGrid}>
                   {timeFields.map(({ label, field }) => (
                     <View key={field} style={styles.configCell}>
@@ -553,6 +556,12 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+
+  intervalSetupTotal: {
+    fontFamily: 'ChakraPetch_700Bold',
+    fontSize: 13,
+    color: T.subText,
   },
 
   configGrid: {

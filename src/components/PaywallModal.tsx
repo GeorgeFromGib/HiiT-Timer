@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import { usePremium } from '../lib/premiumContext';
@@ -14,15 +14,21 @@ export default function PaywallModal({ visible, onDismiss }: Props) {
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
   const { purchase, restore, loading } = usePremium();
+  const [restoreMsg, setRestoreMsg] = useState<string | null>(null);
 
   async function handlePurchase() {
-    await purchase();
-    onDismiss();
+    const success = await purchase();
+    if (success) onDismiss();
   }
 
   async function handleRestore() {
-    await restore();
-    onDismiss();
+    setRestoreMsg(null);
+    const found = await restore();
+    if (found) {
+      onDismiss();
+    } else {
+      setRestoreMsg(t('paywall.noRestoreFound'));
+    }
   }
 
   return (
@@ -57,6 +63,9 @@ export default function PaywallModal({ visible, onDismiss }: Props) {
           >
             <Text style={styles.restoreBtnText}>{t('paywall.restore')}</Text>
           </Pressable>
+          {restoreMsg !== null && (
+            <Text style={styles.restoreMsg}>{restoreMsg}</Text>
+          )}
         </Pressable>
       </Pressable>
     </Modal>
@@ -131,6 +140,13 @@ function makeStyles(T: ThemeTokens) {
     },
     disabled: {
       opacity: 0.5,
+    },
+    restoreMsg: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 12,
+      color: T.subText,
+      marginTop: 8,
+      textAlign: 'center',
     },
   });
 }

@@ -5,8 +5,8 @@ export type PremiumContextValue = {
   hasAccess: boolean;
   trialDaysRemaining: number;
   loading: boolean;
-  purchase: () => Promise<void>;
-  restore: () => Promise<void>;
+  purchase: () => Promise<boolean>;
+  restore: () => Promise<boolean>;
   setMockPremium: (val: boolean) => void;
   expireTrialForTesting: () => Promise<void>;
   resetTrialForTesting: () => Promise<void>;
@@ -17,8 +17,8 @@ export const PremiumContext = createContext<PremiumContextValue>({
   hasAccess: false,
   trialDaysRemaining: 0,
   loading: false,
-  purchase: async () => {},
-  restore: async () => {},
+  purchase: async () => false,
+  restore: async () => false,
   setMockPremium: () => {},
   expireTrialForTesting: async () => {},
   resetTrialForTesting: async () => {},

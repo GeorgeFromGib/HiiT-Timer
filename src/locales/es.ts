@@ -34,6 +34,8 @@ export const es: typeof en = {
     deleteMessage: '¿Eliminar "%{name}"?',
     hint: 'Desliza a la derecha para duplicar, a la izquierda para eliminar. Ordena con las asas.',
     typeMenuHeader: 'Añadir tipo de sesión',
+    trialBadge: '%{days} días restantes · Actualizar',
+    trialExpiredBadge: 'Prueba finalizada · Actualizar',
   },
   workout: {
     done: 'HECHO',
@@ -140,6 +142,7 @@ export const es: typeof en = {
     easy: 'Fácil',
     advanced: 'Avanzado',
     intervalPresets: 'PREAJUSTES DE INTERVALO',
+    intervalSetup: 'CONFIGURACIÓN DE INTERVALO',
     speedPresets: 'PREAJUSTES DE VELOCIDAD',
     presetEasy: 'Fácil',
     presetHard: 'Difícil',
@@ -209,11 +212,12 @@ export const es: typeof en = {
     sameRestDuration: 'Todos los intervalos de Descanso deben tener la misma duración.',
   },
   paywall: {
-    title: 'Prueba finalizada',
-    body: 'Tu prueba gratuita de 30 días ha finalizado. Compra para seguir usando todas las funciones.',
+    title: 'Desbloquear Premium',
+    body: 'Obtén sesiones ilimitadas y todas las funciones.',
     purchase: 'Comprar',
     notNow: 'Ahora no',
     restore: 'Restaurar compras',
+    noRestoreFound: 'No se encontraron compras para esta cuenta.',
   },
   speech: {
     complete: 'Sesión completa',
