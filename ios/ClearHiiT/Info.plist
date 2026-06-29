@@ -44,7 +44,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>8</string>
+    <string>10</string>
     <key>ExpoWidgetsAppGroupIdentifier</key>
     <string>group.com.georgefromgib.hiittimer</string>
     <key>ExpoWidgets_EnablePushNotifications</key>
