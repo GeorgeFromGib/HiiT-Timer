@@ -215,7 +215,7 @@ export const es: typeof en = {
   },
   paywall: {
     title: 'Desbloquear para siempre',
-    body: 'Obtén sesiones ilimitadas y todas las funciones.',
+    body: 'Una compra. Sin suscripción.',
     purchase: 'Comprar',
     notNow: 'Ahora no',
     restore: 'Restaurar compras',

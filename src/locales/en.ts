@@ -213,7 +213,7 @@ export const en = {
   },
   paywall: {
     title: 'Unlock forever',
-    body: 'Get unlimited sessions and all features.',
+    body: 'One purchase. No subscription.',
     purchase: 'Purchase',
     notNow: 'Not now',
     restore: 'Restore purchases',

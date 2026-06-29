@@ -215,7 +215,7 @@ export const fr: typeof en = {
   },
   paywall: {
     title: 'Débloquer pour toujours',
-    body: 'Obtenez des séances illimitées et toutes les fonctionnalités.',
+    body: 'Un seul achat. Sans abonnement.',
     purchase: 'Acheter',
     notNow: 'Pas maintenant',
     restore: 'Restaurer les achats',
