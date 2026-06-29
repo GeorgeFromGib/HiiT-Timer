@@ -34,8 +34,10 @@ export const es: typeof en = {
     deleteMessage: '¿Eliminar "%{name}"?',
     hint: 'Desliza a la derecha para duplicar, a la izquierda para eliminar. Ordena con las asas.',
     typeMenuHeader: 'Añadir tipo de sesión',
-    trialBadge: '%{days} días restantes · Actualizar',
-    trialExpiredBadge: 'Prueba finalizada · Actualizar',
+    trialActive: 'Prueba activa',
+    trialBadge: '%{days} días restantes',
+    trialUpgrade: 'Actualizar',
+    trialExpiredBadge: 'Desbloquear para siempre',
   },
   workout: {
     done: 'HECHO',

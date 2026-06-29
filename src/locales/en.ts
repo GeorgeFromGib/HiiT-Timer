@@ -32,8 +32,10 @@ export const en = {
     deleteMessage: 'Remove "%{name}"?',
     hint: 'Swipe right to duplicate, left to delete. Sort via the drag handles.',
     typeMenuHeader: 'Add session type',
-    trialBadge: '%{days} days left · Upgrade',
-    trialExpiredBadge: 'Trial ended · Upgrade',
+    trialActive: 'Trial active',
+    trialBadge: '%{days} days left',
+    trialUpgrade: 'Upgrade',
+    trialExpiredBadge: 'Unlock forever',
   },
   workout: {
     done: 'DONE',

@@ -34,8 +34,10 @@ export const fr: typeof en = {
     deleteMessage: 'Supprimer « %{name} » ?',
     hint: 'Glissez à droite pour dupliquer, à gauche pour supprimer. Triez via les poignées.',
     typeMenuHeader: 'Ajouter un type de séance',
-    trialBadge: '%{days} jours restants · Mettre à niveau',
-    trialExpiredBadge: 'Essai terminé · Mettre à niveau',
+    trialActive: 'Essai actif',
+    trialBadge: '%{days} jours restants',
+    trialUpgrade: 'Mettre à niveau',
+    trialExpiredBadge: 'Débloquer définitivement',
   },
   workout: {
     done: 'TERMINÉ',

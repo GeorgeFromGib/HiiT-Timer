@@ -32,6 +32,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
+  const [trialExpanded, setTrialExpanded] = useState(false);
   const menuAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -103,13 +104,28 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
       />
 
       {!isPremium && (
-        <Pressable style={styles.trialChip} onPress={() => setShowPaywall(true)}>
-          <Text style={styles.trialChipText}>
-            {trialDaysRemaining > 0
-              ? t('sessions.trialBadge', { days: trialDaysRemaining })
-              : t('sessions.trialExpiredBadge')}
-          </Text>
-        </Pressable>
+        trialDaysRemaining > 0 ? (
+          <View style={styles.trialCard}>
+            <Pressable style={styles.trialCardHeader} onPress={() => setTrialExpanded(p => !p)}>
+              <Text style={styles.trialChipText}>{t('sessions.trialActive')}</Text>
+            </Pressable>
+            {trialExpanded && (
+              <>
+                <View style={styles.trialDivider} />
+                <View style={styles.trialExpandedRow}>
+                  <Text style={styles.trialDaysText}>{t('sessions.trialBadge', { days: trialDaysRemaining })}</Text>
+                  <Pressable onPress={() => { setTrialExpanded(false); setShowPaywall(true); }}>
+                    <Text style={styles.trialUpgradeBtn}>{t('sessions.trialUpgrade')}</Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
+        ) : (
+          <Pressable style={styles.trialChip} onPress={() => setShowPaywall(true)}>
+            <Text style={styles.trialChipText}>{t('sessions.trialExpiredBadge')}</Text>
+          </Pressable>
+        )
       )}
 
       <DraggableFlatList
@@ -237,6 +253,44 @@ function makeStyles(T: ThemeTokens) {
       fontSize: 12,
       color: T.accent,
       letterSpacing: 0.2,
+    },
+    trialCard: {
+      alignSelf: 'center',
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: T.accent,
+      marginBottom: 14,
+      minWidth: 140,
+    },
+    trialCardHeader: {
+      paddingHorizontal: 14,
+      paddingVertical: 6,
+      alignItems: 'center',
+    },
+    trialDivider: {
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: T.accent,
+      opacity: 0.4,
+    },
+    trialExpandedRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      gap: 16,
+    },
+    trialDaysText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 12,
+      color: T.subText,
+      letterSpacing: 0.2,
+    },
+    trialUpgradeBtn: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 12,
+      color: T.accent,
+      letterSpacing: 0.3,
     },
 
     list: { flex: 1 },
