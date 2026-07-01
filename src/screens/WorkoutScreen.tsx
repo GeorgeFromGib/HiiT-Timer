@@ -29,7 +29,6 @@ import GhostBtn  from '../components/GhostBtn';
 import SessionCompleteScreen from './SessionCompleteScreen';
 import { checkAndRequestReview } from '../lib/reviewState';
 
-const GOLD = '#C89B20';
 const EXTEND_OPTIONS = [5, 10] as const;
 
 export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
@@ -133,7 +132,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
   const isPlaying        = status === 'running';
   const isIdle           = status === 'idle';
-  const isDone           = status === 'finished';
   const isPreStart       = status === 'preStart';
   const pct              = TOTAL_DUR > 0 ? Math.round((elapsed / TOTAL_DUR) * 100) : 0;
   const displayRemaining      = isIdle ? fmtTimer(TOTAL_DUR) : fmtTimer(remainingTotal);
@@ -149,7 +147,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     outputRange: [segEndPct, segStartPct],
   });
 
-  if (isDone) {
+  if (status === 'finished') {
     return (
       <SessionCompleteScreen
         session={session}
@@ -186,26 +184,24 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         {/* icon + label: anchored to bottom of top half */}
         <View style={styles.phaseTop}>
           <View style={[styles.iconBadge, {
-            backgroundColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x22),
-            borderColor:     withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
+            backgroundColor: withOpacity(isPreStart ? T.accent : phaseColor, 0x22),
+            borderColor:     withOpacity(isPreStart ? T.accent : phaseColor, 0x55),
           }]}>
-            {isDone
-              ? <WorkoutIcon variant="finished" color={GOLD} size={30} />
-              : isPreStart
-                ? <WorkoutIcon variant="ready" color={T.accent} size={30} />
-                : <WorkoutIcon variant="phase" phase={seg.phase} color={phaseColor} size={30} />
+            {isPreStart
+              ? <WorkoutIcon variant="ready" color={T.accent} size={30} />
+              : <WorkoutIcon variant="phase" phase={seg.phase} color={phaseColor} size={30} />
             }
           </View>
 
           {(() => {
-            const label = isDone ? t('workout.done') : isPreStart ? t('workout.getReady') : t('workout.phase.' + seg.phase);
+            const label = isPreStart ? t('workout.getReady') : t('workout.phase.' + seg.phase);
             const labelSize = Math.round((label.length > 9 ? 35 : 44) * uiScale);
             return (
               <Text
                 allowFontScaling={false}
                 style={[styles.phaseLabel, {
-                  color:           isDone ? GOLD : isPreStart ? T.accent : phaseColor,
-                  textShadowColor: withOpacity(isDone ? GOLD : isPreStart ? T.accent : phaseColor, 0x55),
+                  color:           isPreStart ? T.accent : phaseColor,
+                  textShadowColor: withOpacity(isPreStart ? T.accent : phaseColor, 0x55),
                   fontSize:        labelSize,
                   letterSpacing:   labelSize * 0.01,
                 }]}
@@ -215,7 +211,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             );
           })()}
 
-          {seg.speed !== undefined && !isDone && !isPreStart && (
+          {seg.speed !== undefined && !isPreStart && (
             <View style={[styles.speedPill, {
               backgroundColor: withOpacity(phaseColor, 0x21),
               borderColor:     withOpacity(phaseColor, 0x59),
@@ -226,7 +222,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </View>
           )}
 
-          {seg.resistance !== undefined && seg.power !== undefined && !isDone && !isPreStart && (
+          {seg.resistance !== undefined && seg.power !== undefined && !isPreStart && (
             <View style={[styles.spinPill, {
               backgroundColor: withOpacity(phaseColor, 0x21),
               borderColor:     withOpacity(phaseColor, 0x59),
@@ -239,7 +235,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </View>
           )}
 
-          {seg.activityLabel !== undefined && !isDone && !isPreStart && (
+          {seg.activityLabel !== undefined && !isPreStart && (
             <View style={[styles.speedPill, {
               backgroundColor: withOpacity(phaseColor, 0x21),
               borderColor:     withOpacity(phaseColor, 0x59),
@@ -259,7 +255,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               key={i}
               allowFontScaling={false}
               style={[styles.countdown, {
-                opacity: isDone ? 0 : flashing ? 0 : 1,
+                opacity: flashing ? 0 : 1,
                 textShadowColor: withOpacity(isPreStart ? T.accent : phaseColor, 0x3a),
                 fontSize: countdownFontSize,
                 lineHeight: countdownFontSize,
@@ -269,40 +265,34 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               {ch}
             </Text>
           ))}
-          {isDone && (
-            <Text allowFontScaling={false} style={styles.congratsMsg}>{congratsMsg}</Text>
-          )}
+
         </View>
 
         {/* interval text + bar: anchored to top of bottom half */}
         <View style={styles.phaseBottom}>
-          {!isDone && (
-            <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
-              {t('workout.intervalPrefix')}
-              <Text style={{ color: T.onBg }}>{intervalNum}</Text>
-              {t('workout.intervalSuffix', { total: segments.length })}
-            </Text>
-          )}
+          <Text style={[styles.intervalCounter, isPreStart && { opacity: 0 }]}>
+            {t('workout.intervalPrefix')}
+            <Text style={{ color: T.onBg }}>{intervalNum}</Text>
+            {t('workout.intervalSuffix', { total: segments.length })}
+          </Text>
 
-          {!isDone && (
-            <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
-              <Animated.View
-                style={[
-                  styles.progressFill,
-                  {
-                    backgroundColor: phaseColor,
-                    shadowColor:     phaseColor,
-                    width: progressAnim.interpolate({
-                      inputRange:  [0, 1],
-                      outputRange: ['0%', '100%'],
-                    }),
-                  },
-                ]}
-              />
-            </View>
-          )}
+          <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
+            <Animated.View
+              style={[
+                styles.progressFill,
+                {
+                  backgroundColor: phaseColor,
+                  shadowColor:     phaseColor,
+                  width: progressAnim.interpolate({
+                    inputRange:  [0, 1],
+                    outputRange: ['0%', '100%'],
+                  }),
+                },
+              ]}
+            />
+          </View>
 
-          {!isDone && !isPreStart && (
+          {!isPreStart && (
             session.mode === 'circuit' ? (
               seg.circuitNumber !== undefined ? (
                 <Text style={[styles.intervalCounter, { color: T.onBg }]}>
@@ -335,7 +325,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       </View>
 
       {/* ── Next up row ── */}
-      <View style={[styles.nextUpRow, isDone && { opacity: 0 }]}>
+      <View style={styles.nextUpRow}>
         {nextSeg ? (
           <>
             <Text style={styles.nextLabel}>{t('workout.next')}</Text>
@@ -371,8 +361,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           <View style={styles.segmentsClip}>
             {segments.map((s, i) => {
               const widthPct    = (s.duration / TOTAL_DUR) * 100;
-              const isActive    = !isDone && i === currentIndex;
-              const isCompleted = isDone || (currentIndex > 0 && i < currentIndex);
+              const isActive    = i === currentIndex;
+              const isCompleted = currentIndex > 0 && i < currentIndex;
               const phColor     = T.phases[s.phase];
 
               if (isActive) {
@@ -414,7 +404,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               );
             })}
           </View>
-          {!isDone && <Animated.View style={[styles.markerLine, { left: chevronLeft }]} />}
+          <Animated.View style={[styles.markerLine, { left: chevronLeft }]} />
         </View>
 
         <View style={styles.timelineLabels}>
@@ -447,7 +437,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           </View>
         </Pressable>
 
-        <GhostBtn onPress={handleSkip} disabled={isIdle || isDone || isPreStart}>
+        <GhostBtn onPress={handleSkip} disabled={isIdle || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M4 4l9 6-9 6V4z" fill={T.subText} />
             <Rect x="15" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />
@@ -534,18 +524,6 @@ function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
   spinPillValue: {
     fontFamily: 'ChakraPetch_700Bold',
     fontSize: 22,
-  },
-  congratsMsg: {
-    fontFamily: 'Inter_700Bold_Italic',
-    fontSize: Math.round(24 * s),
-    letterSpacing: 24 * 0.05,
-    color: T.onBg,
-    opacity: 0.7,
-    position: 'absolute',
-    top: Math.round(48 * s),
-    left: 0,
-    right: 0,
-    textAlign: 'center',
   },
   countdownRow: {
     flexDirection: 'row',

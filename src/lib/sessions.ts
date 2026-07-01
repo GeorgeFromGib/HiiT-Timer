@@ -101,17 +101,16 @@ export function getSessionSegments(session: Session): Segment[] {
 const sessionsFile = () => new File(Paths.document, 'sessions_v2.json');
 
 export function getDefaultSessions(language: Language = 'en'): Session[] {
-  const locale = language;
   return [
     {
       id: 'default-1',
-      name: i18n.t('defaultSessions.example1', { locale }),
+      name: i18n.t('defaultSessions.example1', { locale: language }),
       mode: 'easy',
       config: { warmup: 45, high: 20, low: 10, rounds: 8, cooldown: 60 },
     },
     {
       id: 'default-2',
-      name: i18n.t('defaultSessions.example2', { locale }),
+      name: i18n.t('defaultSessions.example2', { locale: language }),
       mode: 'advanced',
       intervals: [
         { type: 'warmup',   dur: 20 },
@@ -126,7 +125,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     },
     {
       id: 'default-run-2',
-      name: i18n.t('defaultSessions.example3', { locale }),
+      name: i18n.t('defaultSessions.example3', { locale: language }),
       mode: 'easy',
       activityType: 'run',
       config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
@@ -134,7 +133,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     },
     {
       id: 'default-circuit-1',
-      name: i18n.t('defaultSessions.circuit1', { locale }),
+      name: i18n.t('defaultSessions.circuit1', { locale: language }),
       mode: 'circuit',
       circuits: 3,
       warmup: 60,
@@ -151,7 +150,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     },
     {
       id: 'default-spinning-1',
-      name: i18n.t('defaultSessions.spinning1', { locale }),
+      name: i18n.t('defaultSessions.spinning1', { locale: language }),
       mode: 'easy',
       activityType: 'spinning',
       config: { warmup: 60, high: 30, low: 20, rounds: 6, cooldown: 60 },

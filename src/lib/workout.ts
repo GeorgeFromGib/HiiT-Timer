@@ -2,7 +2,6 @@ export type Phase = 'warmup' | 'work' | 'rest' | 'cooldown' | 'circuitRest';
 
 export interface Segment {
   phase: Phase;
-  label: string;
   duration: number;
   startAt: number;
   endAt: number;
@@ -29,7 +28,6 @@ export interface WorkoutConfig {
   low: number;
   rounds: number;
   cooldown: number;
-  dropLastRecovery?: boolean;
 }
 
 export const PHASE_META: Record<Phase, { word: string; icon: string }> = {
@@ -45,7 +43,6 @@ export function intervalsToSegments(intervals: Interval[]): Segment[] {
   return intervals.map((iv, i) => {
     const seg: Segment = {
       phase: iv.type,
-      label: `Interval ${i + 1}`,
       duration: iv.dur,
       startAt: cursor,
       endAt: cursor + iv.dur,
@@ -57,23 +54,21 @@ export function intervalsToSegments(intervals: Interval[]): Segment[] {
 }
 
 export function expandWorkout(cfg: WorkoutConfig): Segment[] {
-  const raw: Array<Pick<Segment, 'phase' | 'label' | 'duration'>> = [];
+  const raw: Array<Pick<Segment, 'phase' | 'duration'>> = [];
 
   if (cfg.warmup > 0) {
-    raw.push({ phase: 'warmup', label: 'Warm Up', duration: cfg.warmup });
+    raw.push({ phase: 'warmup', duration: cfg.warmup });
   }
 
   for (let r = 0; r < cfg.rounds; r++) {
-    raw.push({ phase: 'work', label: `Work ${r + 1}/${cfg.rounds}`, duration: cfg.high });
-
-    const isLastRound = r === cfg.rounds - 1;
-    if (cfg.low > 0 && !(isLastRound && cfg.dropLastRecovery)) {
-      raw.push({ phase: 'rest', label: `Recover ${r + 1}/${cfg.rounds}`, duration: cfg.low });
+    raw.push({ phase: 'work', duration: cfg.high });
+    if (cfg.low > 0) {
+      raw.push({ phase: 'rest', duration: cfg.low });
     }
   }
 
   if (cfg.cooldown > 0) {
-    raw.push({ phase: 'cooldown', label: 'Cool Down', duration: cfg.cooldown });
+    raw.push({ phase: 'cooldown', duration: cfg.cooldown });
   }
 
   let cursor = 0;
@@ -91,29 +86,28 @@ export function expandCircuit(
   cooldown: number,
   circuitRest: number,
 ): Segment[] {
-  const raw: Array<Pick<Segment, 'phase' | 'label' | 'duration' | 'activityLabel' | 'circuitNumber'>> = [];
+  const raw: Array<Pick<Segment, 'phase' | 'duration' | 'activityLabel' | 'circuitNumber'>> = [];
 
   if (warmup > 0) {
-    raw.push({ phase: 'warmup', label: 'Warm Up', duration: warmup });
+    raw.push({ phase: 'warmup', duration: warmup });
   }
 
   for (let c = 0; c < circuits; c++) {
     for (const iv of intervals) {
       raw.push({
         phase: iv.type,
-        label: `Circuit ${c + 1}/${circuits}`,
         duration: iv.dur,
         activityLabel: iv.activityLabel,
         circuitNumber: c + 1,
       });
     }
     if (c + 1 < circuits && circuitRest > 0) {
-      raw.push({ phase: 'circuitRest', label: PHASE_META['circuitRest'].word, duration: circuitRest });
+      raw.push({ phase: 'circuitRest', duration: circuitRest });
     }
   }
 
   if (cooldown > 0) {
-    raw.push({ phase: 'cooldown', label: 'Cool Down', duration: cooldown });
+    raw.push({ phase: 'cooldown', duration: cooldown });
   }
 
   let cursor = 0;
