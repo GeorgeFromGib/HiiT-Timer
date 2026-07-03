@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Alert,
   Animated,
   PixelRatio,
   Pressable,
@@ -98,6 +99,29 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     setSegments(addRound(toInsert));
   }, [toInsert, addRound]);
 
+  const handleBackPress = useCallback(() => {
+    if (status === 'running' || status === 'paused') {
+      Alert.alert(
+        t('alerts.exitWorkoutTitle'),
+        t('alerts.exitWorkoutMessage'),
+        [
+          {
+            text: t('alerts.continueWorkout'),
+            onPress: () => {},
+            style: 'cancel',
+          },
+          {
+            text: t('alerts.terminate'),
+            onPress: onBack,
+            style: 'destructive',
+          },
+        ]
+      );
+    } else {
+      onBack();
+    }
+  }, [status, onBack, t]);
+
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,7 +191,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
       {/* ── Header ── */}
       <ScreenHeader
-        onBack={onBack}
+        onBack={handleBackPress}
         title={session.name}
         titleStyle={styles.headerTitle}
         right={

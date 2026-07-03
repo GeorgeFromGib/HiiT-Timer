@@ -200,6 +200,10 @@ export const en = {
     noIntervalsMessage: 'Add at least one interval.',
     noWorkIntervalsTitle: 'No work intervals',
     noWorkIntervalsMessage: 'Add at least one work interval.',
+    exitWorkoutTitle: 'Terminate Workout?',
+    exitWorkoutMessage: 'Are you sure you want to end this workout?',
+    terminate: 'Terminate',
+    continueWorkout: 'Continue',
   },
   validation: {
     noWorkIntervals: 'No work intervals found.',

@@ -202,6 +202,10 @@ export const es: typeof en = {
     noIntervalsMessage: 'Añade al menos un intervalo.',
     noWorkIntervalsTitle: 'Sin intervalos de trabajo',
     noWorkIntervalsMessage: 'Añade al menos un intervalo de trabajo.',
+    exitWorkoutTitle: '¿Terminar Entrenamiento?',
+    exitWorkoutMessage: '¿Estás seguro de que quieres terminar este entrenamiento?',
+    terminate: 'Terminar',
+    continueWorkout: 'Continuar',
   },
   validation: {
     noWorkIntervals: 'No se encontraron intervalos de trabajo.',
