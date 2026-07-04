@@ -3,6 +3,17 @@ import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
 
+export interface Folder {
+  id: string;
+  name: string;
+  createdAt: number;
+}
+
+export interface SessionsData {
+  folders: Folder[];
+  sessions: Session[];
+}
+
 export interface RunSpeeds {
   warmupSpeed: number;
   workSpeed: number;
@@ -48,9 +59,9 @@ export function spinValueForPhase(phase: Phase, values: SpinValues): { resistanc
 }
 
 export type Session =
-  | { id: string; name: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
-  | { id: string; name: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
-  | { id: string; name: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number };
+  | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
+  | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
+  | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   const map: Record<Phase, number> = {
@@ -107,12 +118,14 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     {
       id: 'default-1',
       name: i18n.t('defaultSessions.example1', { locale: language }),
+      folderId: 'default',
       mode: 'easy',
       config: { warmup: 45, high: 20, low: 10, rounds: 8, cooldown: 60 },
     },
     {
       id: 'default-2',
       name: i18n.t('defaultSessions.example2', { locale: language }),
+      folderId: 'default',
       mode: 'advanced',
       intervals: [
         { type: 'warmup',   dur: 20 },
@@ -128,6 +141,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     {
       id: 'default-run-2',
       name: i18n.t('defaultSessions.example3', { locale: language }),
+      folderId: 'default',
       mode: 'easy',
       activityType: 'run',
       config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
@@ -136,6 +150,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     {
       id: 'default-circuit-1',
       name: i18n.t('defaultSessions.circuit1', { locale: language }),
+      folderId: 'default',
       mode: 'circuit',
       circuits: 3,
       warmup: 60,
@@ -153,6 +168,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
     {
       id: 'default-spinning-1',
       name: i18n.t('defaultSessions.spinning1', { locale: language }),
+      folderId: 'default',
       mode: 'easy',
       activityType: 'spinning',
       config: { warmup: 60, high: 30, low: 20, rounds: 6, cooldown: 60 },
