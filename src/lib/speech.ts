@@ -19,6 +19,11 @@ export function speakPhase(phase: Phase, language: Language): void {
   speak(text, language).catch(() => {});
 }
 
+export function speakPrepare(phase: Phase, language: Language): void {
+  const text = i18n.t(`speech.prepare.${phase}`, { locale: language });
+  speak(text, language).catch(() => {});
+}
+
 export function speakComplete(language: Language, onDone?: () => void): void {
   const text = i18n.t('speech.complete', { locale: language });
   speak(text, language, onDone).catch(() => {});
