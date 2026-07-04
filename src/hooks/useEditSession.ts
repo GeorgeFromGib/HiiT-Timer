@@ -95,7 +95,10 @@ export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
   initialActivityType?: 'general' | 'run' | 'circuit' | 'spinning',
+  folderId?: string,
 ): EditSessionInterface {
+  const sessionFolderId = existing?.folderId ?? folderId ?? 'default';
+
   const [name, setName] = useState(existing?.name ?? '');
   const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(() => {
     if (existing) return existing.mode;
@@ -226,8 +229,8 @@ export function useEditSession(
       return expandCircuit(cleanIntervals, circuitEdit.circuitCount, circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitRest);
     }
     const draft: Session = mode === 'easy'
-      ? { id: '', name: '', mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds, spinValues }
-      : { id: '', name: '', mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds, spinValues };
+      ? { id: '', name: '', folderId: sessionFolderId, mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds, spinValues }
+      : { id: '', name: '', folderId: sessionFolderId, mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds, spinValues };
     return getSessionSegments(draft);
   }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervals, activityType, runSpeeds, spinValues,
       circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitCount, circuitEdit.circuitRest]);
@@ -410,6 +413,7 @@ export function useEditSession(
       const session: Session = {
         id: existing?.id ?? newId(),
         name: name.trim(),
+        folderId: sessionFolderId,
         mode: 'circuit',
         intervals: cleanIntervals,
         circuits:    circuitEdit.circuitCount,
@@ -426,7 +430,7 @@ export function useEditSession(
     const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     const session = buildSessionFromDraft(
       mode, name.trim(), easyEdit.easyConfig, cleanIntervals, activityType, runSpeeds, existing?.id,
-      undefined, spinValues,
+      undefined, spinValues, sessionFolderId,
     );
     return { ok: true, session, isNew: !existing };
   }

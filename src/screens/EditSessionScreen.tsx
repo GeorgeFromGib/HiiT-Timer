@@ -36,10 +36,11 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 interface Props {
   session?: Session;
   activityType?: 'general' | 'run' | 'circuit' | 'spinning';
+  folderId?: string;
   onBack: () => void;
 }
 
-export default function EditSessionScreen({ session: existing, activityType, onBack }: Props) {
+export default function EditSessionScreen({ session: existing, activityType, folderId, onBack }: Props) {
   const { T } = useTheme();
   const { settings } = useSettings();
   const { t } = useTranslation();
@@ -62,7 +63,7 @@ export default function EditSessionScreen({ session: existing, activityType, onB
     applyDurationPreset, applySpeedPreset, applySpinPreset,
     setActivityLabel,
     buildSavePayload,
-  } = useEditSession(existing, onBack, activityType);
+  } = useEditSession(existing, onBack, activityType, folderId);
 
   const {
     name, isAdvanced, isCircuit, isSpinning, fieldValues, rounds, intervals,
@@ -106,11 +107,11 @@ export default function EditSessionScreen({ session: existing, activityType, onB
       Alert.alert(i18n.t(payload.titleKey), i18n.t(payload.messageKey));
       return;
     }
-    const sessions = await loadSessions(i18n.locale as Language);
-    const next = payload.isNew
-      ? [...sessions, payload.session]
-      : sessions.map(s => (s.id === payload.session.id ? payload.session : s));
-    await saveSessions(next);
+    const data = await loadSessions(i18n.locale as Language);
+    const nextSessions = payload.isNew
+      ? [...data.sessions, payload.session]
+      : data.sessions.map(s => (s.id === payload.session.id ? payload.session : s));
+    await saveSessions({ ...data, sessions: nextSessions });
     onBack();
   }
 

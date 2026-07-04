@@ -9,10 +9,11 @@ export function buildSessionFromDraft(
   activityType: 'run' | 'spinning' | undefined,
   runSpeeds: RunSpeeds,
   existingId: string | undefined,
-  circuitData?: { warmup: number; cooldown: number; circuits: number; circuitRest: number },
-  spinValues?: SpinValues,
+  circuitData: { warmup: number; cooldown: number; circuits: number; circuitRest: number } | undefined,
+  spinValues: SpinValues | undefined,
+  folderId: string,
 ): Session {
-  const base = { id: existingId ?? newId(), name };
+  const base = { id: existingId ?? newId(), name, folderId };
   if (mode === 'circuit') {
     return {
       ...base,

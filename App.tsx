@@ -124,6 +124,7 @@ export default function App() {
           <EditSessionScreen
             session={route.session}
             activityType={route.activityType}
+            folderId={route.folderId}
             onBack={goBack}
           />
         </RouteScreen>
