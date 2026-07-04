@@ -177,20 +177,59 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
   ];
 }
 
-export async function loadSessions(language: Language = 'en'): Promise<Session[]> {
+function createDefaultFolder(): Folder {
+  return {
+    id: 'default',
+    name: 'Default',
+    createdAt: Date.now(),
+  };
+}
+
+function migrateSessionsToFolders(oldSessions: Session[]): SessionsData {
+  // If sessions don't have folderId, they're from old format
+  const needsMigration = oldSessions.some(s => !('folderId' in s));
+
+  if (!needsMigration) {
+    // Already migrated or new install
+    return {
+      folders: [createDefaultFolder()],
+      sessions: oldSessions,
+    };
+  }
+
+  // Old format: migrate to new
+  const defaultFolder = createDefaultFolder();
+  const migratedSessions = oldSessions.map(s => ({
+    ...s,
+    folderId: 'default',
+  })) as Session[];
+
+  return {
+    folders: [defaultFolder],
+    sessions: migratedSessions,
+  };
+}
+
+export async function loadSessions(language: Language = 'en'): Promise<SessionsData> {
   try {
     const f = sessionsFile();
-    if (!f.exists) return getDefaultSessions(language);
+    if (!f.exists) {
+      return { folders: [createDefaultFolder()], sessions: getDefaultSessions(language) };
+    }
     const raw = await f.text();
-    return JSON.parse(raw) as Session[];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return migrateSessionsToFolders(parsed as Session[]);
+    }
+    return parsed as SessionsData;
   } catch {
-    return getDefaultSessions(language);
+    return { folders: [createDefaultFolder()], sessions: getDefaultSessions(language) };
   }
 }
 
-export async function saveSessions(sessions: Session[]): Promise<void> {
+export async function saveSessions(data: SessionsData): Promise<void> {
   try {
-    sessionsFile().write(JSON.stringify(sessions));
+    sessionsFile().write(JSON.stringify(data));
   } catch {}
 }
 
@@ -198,9 +237,9 @@ export function newId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
 
-export async function deleteSessionById(id: string): Promise<Session[]> {
-  const sessions = await loadSessions();
-  const next = sessions.filter(s => s.id !== id);
+export async function deleteSessionById(id: string): Promise<SessionsData> {
+  const data = await loadSessions();
+  const next: SessionsData = { ...data, sessions: data.sessions.filter(s => s.id !== id) };
   await saveSessions(next);
   return next;
 }
