@@ -278,6 +278,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                         styles={styles}
                         drag={() => {}}
                         isActive={false}
+                        draggable={false}
                         selectedId={selectedSessionId}
                         onDuplicate={gate(() => handleDuplicate(session))}
                         onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
@@ -687,14 +688,20 @@ const SwipeDuplicateAction = React.forwardRef<
 });
 
 function SessionSwipeRow({
-  session, styles, drag, isActive, selectedId,
+  session, styles, drag, isActive, selectedId, draggable = true,
   onDuplicate, onDelete, onSelect, onEdit, onStart, onMove,
 }: {
   session:    Session;
   styles:     ReturnType<typeof makeStyles>;
-  drag:       () => void;
+  drag?:      () => void;
   isActive:   boolean;
   selectedId: string | null;
+  // ScaleDecorator (and the drag handle) rely on react-native-draggable-flatlist's
+  // CellProvider, which only exists inside an actual DraggableFlatList. The
+  // accordion (per-folder) list renders rows in a plain ScrollView, so it must
+  // opt out of drag behavior entirely to avoid "useIsActive must be called
+  // from within CellProvider!".
+  draggable?: boolean;
   onDuplicate: () => void;
   onDelete:    (swipeable: { close: () => void }) => void;
   onSelect:    () => void;
@@ -705,48 +712,48 @@ function SessionSwipeRow({
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
 
-  return (
-    <ScaleDecorator>
-      <ReanimatedSwipeable
-        containerStyle={styles.swipeContainer}
-        onSwipeableClose={() => duplicateRef.current?.reset()}
-        renderLeftActions={(_p, _d, swipeable) => (
-          <SwipeDuplicateAction
-            ref={duplicateRef}
-            styles={styles}
-            onDuplicate={onDuplicate}
-            swipeable={swipeable}
-          />
-        )}
-        renderRightActions={(_p, _d, swipeable) => (
-          <View style={styles.rightActionsContainer}>
-            <Pressable onPress={() => { onMove(); swipeable.close(); }} style={styles.swipeMoveAction}>
-              <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-                <Path d="M5 9l7-7 7 7M5 15l7 7 7-7" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-              </Svg>
-              <Text style={styles.swipeMoveText}>{t('common.move')}</Text>
-            </Pressable>
-            <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction}>
-              <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-                <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
-              </Svg>
-              <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
-            </Pressable>
-          </View>
-        )}
-      >
-        <SessionCard
-          session={session}
-          selected={selectedId === session.id}
-          isActive={isActive}
-          onDrag={drag}
-          onPress={onSelect}
-          onLongPress={() => onDelete({ close: () => {} })}
-          onEdit={onEdit}
-          onStart={onStart}
+  const content = (
+    <ReanimatedSwipeable
+      containerStyle={styles.swipeContainer}
+      onSwipeableClose={() => duplicateRef.current?.reset()}
+      renderLeftActions={(_p, _d, swipeable) => (
+        <SwipeDuplicateAction
+          ref={duplicateRef}
+          styles={styles}
+          onDuplicate={onDuplicate}
+          swipeable={swipeable}
         />
-      </ReanimatedSwipeable>
-    </ScaleDecorator>
+      )}
+      renderRightActions={(_p, _d, swipeable) => (
+        <View style={styles.rightActionsContainer}>
+          <Pressable onPress={() => { onMove(); swipeable.close(); }} style={styles.swipeMoveAction}>
+            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+              <Path d="M5 9l7-7 7 7M5 15l7 7 7-7" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+            <Text style={styles.swipeMoveText}>{t('common.move')}</Text>
+          </Pressable>
+          <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction}>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+              <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
+            </Svg>
+            <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
+          </Pressable>
+        </View>
+      )}
+    >
+      <SessionCard
+        session={session}
+        selected={selectedId === session.id}
+        isActive={isActive}
+        onDrag={draggable ? drag : undefined}
+        onPress={onSelect}
+        onLongPress={() => onDelete({ close: () => {} })}
+        onEdit={onEdit}
+        onStart={onStart}
+      />
+    </ReanimatedSwipeable>
   );
+
+  return draggable ? <ScaleDecorator>{content}</ScaleDecorator> : content;
 }
