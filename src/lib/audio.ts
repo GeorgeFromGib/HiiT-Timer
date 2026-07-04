@@ -2,7 +2,7 @@ import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-aud
 import { useEffect, useMemo, useRef } from 'react';
 import type { Phase } from './workout';
 import type { Language } from './i18n';
-import { speakPhase, speakComplete } from './speech';
+import { speakPhase, speakComplete, speakPrepare } from './speech';
 
 // Static requires let Metro bundle the WAV files and give us asset module
 // numbers that expo-audio accepts on both native (AVFoundation / ExoPlayer)
@@ -38,6 +38,7 @@ export async function configureAudioSession() {
 export interface WorkoutAudioCues {
   onTransition(to: Phase | null): void;
   onCountdown(): void;
+  onPrepare(nextPhase: Phase): void;
   onFinish(): void;
   onPreStartTick(): void;
   startKeepAlive(): void;
@@ -112,6 +113,11 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     onCountdown() {
       const s = settingsRef.current;
       if (!s.soundOff && s.finalCountdownBeep) playCue('tick', s.soundVolume / 100);
+    },
+    onPrepare(nextPhase) {
+      const s = settingsRef.current;
+      if (!s.voiceCues || s.soundOff) return;
+      speakPrepare(nextPhase, s.language);
     },
     onFinish() {
       const s = settingsRef.current;
