@@ -1,5 +1,6 @@
 import React, { useRef, useImperativeHandle, useMemo, useState, useEffect } from 'react';
 import {
+  Alert,
   Animated,
   Pressable,
   ScrollView,
@@ -16,6 +17,10 @@ import {
   saveSessions,
   deleteSessionById,
   newId,
+  createFolder,
+  renameFolder,
+  deleteFolder,
+  moveSessionToFolder,
   type Session,
   type SessionsData,
   type Folder,
@@ -31,6 +36,10 @@ import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import FolderHeader from '../components/FolderHeader';
+import FolderCreateModal from '../components/FolderCreateModal';
+import FolderRenameModal from '../components/FolderRenameModal';
+import DeleteFolderModal from '../components/DeleteFolderModal';
+import MoveToFolderSheet from '../components/MoveToFolderSheet';
 import { useTranslation } from '../lib/i18n';
 
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
@@ -45,7 +54,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [trialExpanded, setTrialExpanded] = useState(false);
 
-  // Folder modals — visibility state only; wiring lands in a follow-up task.
+  // Folder modals — state, handlers, and rendering.
   const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
   const [showRenameFolderModal, setShowRenameFolderModal] = useState(false);
   const [renamingFolder, setRenamingFolder] = useState<Folder | null>(null);
@@ -102,6 +111,60 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
       },
       () => swipeable.close(),
     );
+  };
+
+  const handleCreateFolder = (folderName: string) => {
+    const folder = createFolder(folderName);
+    const newData = {
+      ...data,
+      folders: [...data.folders, folder],
+    };
+    setData(newData);
+    saveSessions(newData);
+    setShowCreateFolderModal(false);
+  };
+
+  const handleRenameFolder = (newName: string) => {
+    if (!renamingFolder) return;
+
+    const result = renameFolder(renamingFolder.id, newName, data.folders);
+    if (!result.success) {
+      Alert.alert(t('folders.error'), result.error);
+      return;
+    }
+
+    const newData = {
+      ...data,
+      folders: result.folders!,
+    };
+    setData(newData);
+    saveSessions(newData);
+    setShowRenameFolderModal(false);
+    setRenamingFolder(null);
+  };
+
+  const handleDeleteFolder = (moveToFolderId: string | null) => {
+    if (!deletingFolder) return;
+
+    try {
+      const newData = deleteFolder(deletingFolder.id, moveToFolderId, data);
+      setData(newData);
+      saveSessions(newData);
+      setShowDeleteFolderModal(false);
+      setDeletingFolder(null);
+    } catch (e: any) {
+      Alert.alert(t('folders.error'), e.message);
+    }
+  };
+
+  const handleMoveSessionToFolder = (folderId: string) => {
+    if (!movingSession) return;
+
+    const newData = moveSessionToFolder(movingSession.id, folderId, data);
+    setData(newData);
+    saveSessions(newData);
+    setShowMoveSheet(false);
+    setMovingSession(null);
   };
 
   return (
@@ -263,6 +326,48 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         <Text style={styles.emptyText}>{t('sessions.empty')}</Text>
       )}
       <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
+
+      <FolderCreateModal
+        visible={showCreateFolderModal}
+        allFolders={data.folders}
+        onDismiss={() => setShowCreateFolderModal(false)}
+        onSubmit={handleCreateFolder}
+      />
+
+      <FolderRenameModal
+        visible={showRenameFolderModal}
+        folder={renamingFolder}
+        allFolders={data.folders}
+        onDismiss={() => {
+          setShowRenameFolderModal(false);
+          setRenamingFolder(null);
+        }}
+        onSubmit={handleRenameFolder}
+      />
+
+      <DeleteFolderModal
+        visible={showDeleteFolderModal}
+        folder={deletingFolder}
+        sessionCount={deletingFolder ? sessionsInFolder(deletingFolder.id).length : 0}
+        otherFolders={deletingFolder ? data.folders.filter(f => f.id !== deletingFolder.id) : []}
+        onDismiss={() => {
+          setShowDeleteFolderModal(false);
+          setDeletingFolder(null);
+        }}
+        onDeleteWithMove={handleDeleteFolder}
+        onDeleteAll={() => handleDeleteFolder(null)}
+      />
+
+      <MoveToFolderSheet
+        visible={showMoveSheet}
+        session={movingSession}
+        allFolders={data.folders}
+        onDismiss={() => {
+          setShowMoveSheet(false);
+          setMovingSession(null);
+        }}
+        onSelectFolder={handleMoveSessionToFolder}
+      />
 
       {showTypeMenu && (
         <>
