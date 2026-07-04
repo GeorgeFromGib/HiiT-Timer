@@ -1,4 +1,4 @@
-export type Phase = 'warmup' | 'work' | 'rest' | 'cooldown' | 'circuitRest';
+export type Phase = 'warmup' | 'work' | 'rest' | 'cooldown' | 'circuitRest' | 'finish';
 
 export interface Segment {
   phase: Phase;
@@ -36,6 +36,7 @@ export const PHASE_META: Record<Phase, { word: string; icon: string }> = {
   rest:        { word: 'RECOVER',   icon: 'pause' },
   cooldown:    { word: 'COOL DOWN', icon: 'sun'   },
   circuitRest: { word: 'BREAK',     icon: 'time'  },
+  finish:      { word: '',          icon: ''      },
 };
 
 export function intervalsToSegments(intervals: Interval[]): Segment[] {

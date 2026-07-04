@@ -42,6 +42,7 @@ export function spinValueForPhase(phase: Phase, values: SpinValues): { resistanc
     rest:        { resistance: values.restResistance,     power: values.restPower     },
     cooldown:    { resistance: values.cooldownResistance, power: values.cooldownPower },
     circuitRest: { resistance: values.restResistance,     power: values.restPower     },
+    finish:      { resistance: values.restResistance,     power: values.restPower     },
   };
   return map[phase];
 }
@@ -58,6 +59,7 @@ export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
     rest:        speeds.restSpeed,
     cooldown:    speeds.cooldownSpeed,
     circuitRest: speeds.restSpeed,
+    finish:      speeds.restSpeed,
   };
   return map[phase];
 }
