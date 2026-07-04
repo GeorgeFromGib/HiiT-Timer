@@ -65,12 +65,23 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
 
   const playCue = async (key: CueKey, volume = 1) => {
     try {
-      const p = getPlayer(key);
+      let p = getPlayer(key);
       p.volume = volume;
       await p.seekTo(0);
       p.play();
     } catch (e) {
       console.warn('cue failed', key, e);
+      // Attempt recovery: recreate the player and retry once
+      try {
+        playersRef.current[key]?.remove();
+        delete playersRef.current[key];
+        const p = getPlayer(key);
+        p.volume = volume;
+        await p.seekTo(0);
+        p.play();
+      } catch (retryError) {
+        console.warn('cue retry failed', key, retryError);
+      }
     }
   };
 
