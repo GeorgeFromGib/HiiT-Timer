@@ -17,6 +17,7 @@ export interface Settings {
   speedUnitIsManuallySet: boolean;
   language: 'en' | 'es' | 'fr';
   languageIsManuallySet: boolean;
+  hideFolders: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -34,6 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
   speedUnitIsManuallySet: false,
   language: 'en',
   languageIsManuallySet: false,
+  hideFolders: false,
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');

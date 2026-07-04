@@ -65,6 +65,16 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
           </View>
         </View>
 
+        {/* ── Display ── */}
+        <SettingsSection title={t('settings.display')}>
+          <SettingsRow
+            label={t('settings.hideFoldersLabel')}
+            sub={t('settings.hideFoldersSub')}
+            right={<SettingsToggle value={settings.hideFolders} onChange={v => updateSettings('hideFolders', v)} />}
+            last
+          />
+        </SettingsSection>
+
         {/* ── Workout ── */}
         <SettingsSection title={t('settings.sectionWorkout')}>
           <SettingsRow
