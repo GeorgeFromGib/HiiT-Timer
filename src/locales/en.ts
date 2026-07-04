@@ -5,6 +5,7 @@ export const en = {
     done: 'Done',
     delete: 'Delete',
     duplicate: 'Duplicate',
+    move: 'Move',
     apply: 'Apply',
     intervals: 'intervals',
     intervalsAbbr: 'Int.',

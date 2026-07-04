@@ -7,6 +7,7 @@ export const es: typeof en = {
     done: 'Listo',
     delete: 'Eliminar',
     duplicate: 'Duplicar',
+    move: 'Mover',
     apply: 'Aplicar',
     intervals: 'intervalos',
     intervalsAbbr: 'Int.',

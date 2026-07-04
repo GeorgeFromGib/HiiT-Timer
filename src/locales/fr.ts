@@ -7,6 +7,7 @@ export const fr: typeof en = {
     done: 'Terminé',
     delete: 'Supprimer',
     duplicate: 'Dupliquer',
+    move: 'Déplacer',
     apply: 'Appliquer',
     intervals: 'intervalles',
     intervalsAbbr: 'Int.',

@@ -15,7 +15,6 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import {
   loadSessions,
   saveSessions,
-  deleteSessionById,
   newId,
   createFolder,
   renameFolder,
@@ -91,6 +90,16 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
     loadSessions(settings.language).then(setData);
   }, [settings.language]);
 
+  const handleCreateSession = (activityType?: string) => {
+    const defaultFolderId = data.folders[0]?.id || 'default';
+    setShowTypeMenu(false);
+    onNavigate({
+      name: 'EditSession',
+      activityType: activityType as any,
+      folderId: defaultFolderId,
+    });
+  };
+
   const handleDuplicate = (session: Session) => {
     const idx = data.sessions.findIndex(s => s.id === session.id);
     const copy: Session = { ...session, id: newId(), name: t('sessions.copyOf', { name: session.name }) };
@@ -100,13 +109,17 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
     saveSessions(next);
   };
 
-  const handleDelete = (session: Session, swipeable: { close: () => void }) => {
+  const handleDeleteSession = (session: Session, swipeable: { close: () => void }) => {
     confirmDeleteSession(
       session.name,
       async () => {
         swipeable.close();
-        const next = await deleteSessionById(session.id);
-        setData(next);
+        const newData = {
+          ...data,
+          sessions: data.sessions.filter(s => s.id !== session.id),
+        };
+        setData(newData);
+        await saveSessions(newData);
         if (selectedSessionId === session.id) setSelectedSessionId(null);
       },
       () => swipeable.close(),
@@ -267,10 +280,14 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                         isActive={false}
                         selectedId={selectedSessionId}
                         onDuplicate={gate(() => handleDuplicate(session))}
-                        onDelete={(swipeable) => handleDelete(session, swipeable)}
+                        onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
                         onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
                         onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
                         onStart={gate(() => onNavigate({ name: 'Workout', session }))}
+                        onMove={() => {
+                          setMovingSession(session);
+                          setShowMoveSheet(true);
+                        }}
                       />
                     ))}
                   </View>
@@ -315,10 +332,14 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
               isActive={isActive}
               selectedId={selectedSessionId}
               onDuplicate={gate(() => handleDuplicate(session))}
-              onDelete={(swipeable) => handleDelete(session, swipeable)}
+              onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
               onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
               onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
               onStart={gate(() => onNavigate({ name: 'Workout', session }))}
+              onMove={() => {
+                setMovingSession(session);
+                setShowMoveSheet(true);
+              }}
             />
           )}
         />
@@ -389,7 +410,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             <View style={styles.typeMenuSeparator} />
             <Pressable
               style={styles.typeMenuRow}
-              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'general' }); }}
+              onPress={() => handleCreateSession('general')}
             >
               <ActivityTypeIcon mode="easy" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.general')}</Text>
@@ -397,7 +418,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             <View style={styles.typeMenuSeparator} />
             <Pressable
               style={styles.typeMenuRow}
-              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'run' }); }}
+              onPress={() => handleCreateSession('run')}
             >
               <ActivityTypeIcon mode="easy" activityType="run" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.run')}</Text>
@@ -405,7 +426,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             <View style={styles.typeMenuSeparator} />
             <Pressable
               style={styles.typeMenuRow}
-              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'circuit' }); }}
+              onPress={() => handleCreateSession('circuit')}
             >
               <ActivityTypeIcon mode="circuit" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.circuit')}</Text>
@@ -413,7 +434,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             <View style={styles.typeMenuSeparator} />
             <Pressable
               style={styles.typeMenuRow}
-              onPress={() => { setShowTypeMenu(false); onNavigate({ name: 'EditSession', activityType: 'spinning' }); }}
+              onPress={() => handleCreateSession('spinning')}
             >
               <ActivityTypeIcon mode="easy" activityType="spinning" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.spinning')}</Text>
@@ -614,6 +635,25 @@ function makeStyles(T: ThemeTokens) {
       letterSpacing: 0.5,
       color: '#fff',
     },
+    rightActionsContainer: {
+      flexDirection: 'row',
+      gap: 0,
+    },
+    swipeMoveAction: {
+      backgroundColor: '#8b5cf6',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      width: 80,
+      borderRadius: 20,
+      marginRight: 8,
+    },
+    swipeMoveText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 11,
+      letterSpacing: 0.3,
+      color: '#fff',
+    },
   });
 }
 
@@ -648,7 +688,7 @@ const SwipeDuplicateAction = React.forwardRef<
 
 function SessionSwipeRow({
   session, styles, drag, isActive, selectedId,
-  onDuplicate, onDelete, onSelect, onEdit, onStart,
+  onDuplicate, onDelete, onSelect, onEdit, onStart, onMove,
 }: {
   session:    Session;
   styles:     ReturnType<typeof makeStyles>;
@@ -660,6 +700,7 @@ function SessionSwipeRow({
   onSelect:    () => void;
   onEdit:      () => void;
   onStart:     () => void;
+  onMove:      () => void;
 }) {
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
@@ -678,13 +719,21 @@ function SessionSwipeRow({
           />
         )}
         renderRightActions={(_p, _d, swipeable) => (
-          <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction}>
-            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-              <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-              <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
-            </Svg>
-            <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
-          </Pressable>
+          <View style={styles.rightActionsContainer}>
+            <Pressable onPress={() => { onMove(); swipeable.close(); }} style={styles.swipeMoveAction}>
+              <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+                <Path d="M5 9l7-7 7 7M5 15l7 7 7-7" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              </Svg>
+              <Text style={styles.swipeMoveText}>{t('common.move')}</Text>
+            </Pressable>
+            <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction}>
+              <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+                <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
+              </Svg>
+              <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
+            </Pressable>
+          </View>
         )}
       >
         <SessionCard
