@@ -243,3 +243,88 @@ export async function deleteSessionById(id: string): Promise<SessionsData> {
   await saveSessions(next);
   return next;
 }
+
+export function validateFolderName(
+  name: string,
+  allFolders: Folder[],
+  excludeFolderId?: string
+): boolean {
+  const trimmed = name.trim();
+  if (trimmed.length === 0) return false;
+
+  const isDuplicate = allFolders.some(
+    f => f.name.toLowerCase() === trimmed.toLowerCase() &&
+         (!excludeFolderId || f.id !== excludeFolderId)
+  );
+
+  return !isDuplicate;
+}
+
+export function createFolder(name: string): Folder {
+  return {
+    id: newId(),
+    name: name.trim(),
+    createdAt: Date.now(),
+  };
+}
+
+export function renameFolder(
+  folderId: string,
+  newName: string,
+  currentFolders: Folder[]
+): { success: boolean; error?: string; folders?: Folder[] } {
+  if (!validateFolderName(newName, currentFolders, folderId)) {
+    return {
+      success: false,
+      error: 'Folder name is empty or already exists',
+    };
+  }
+
+  const updated = currentFolders.map(f =>
+    f.id === folderId ? { ...f, name: newName.trim() } : f
+  );
+
+  return { success: true, folders: updated };
+}
+
+export function moveSessionToFolder(
+  sessionId: string,
+  folderId: string,
+  data: SessionsData
+): SessionsData {
+  return {
+    ...data,
+    sessions: data.sessions.map(s =>
+      s.id === sessionId ? { ...s, folderId } : s
+    ),
+  };
+}
+
+export function deleteFolder(
+  folderId: string,
+  moveSessionsToFolderId: string | null,
+  data: SessionsData
+): SessionsData {
+  // Prevent deleting the last folder
+  if (data.folders.length === 1) {
+    throw new Error('Cannot delete the last folder');
+  }
+
+  const updatedFolders = data.folders.filter(f => f.id !== folderId);
+
+  let updatedSessions = data.sessions;
+  if (moveSessionsToFolderId) {
+    // Move sessions to another folder
+    updatedSessions = data.sessions.map(s =>
+      s.folderId === folderId ? { ...s, folderId: moveSessionsToFolderId } : s
+    );
+  } else {
+    // Delete sessions in this folder
+    updatedSessions = data.sessions.filter(s => s.folderId !== folderId);
+  }
+
+  return {
+    folders: updatedFolders,
+    sessions: updatedSessions,
+  };
+}
