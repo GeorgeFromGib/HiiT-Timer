@@ -30,6 +30,9 @@ export interface TimerState {
 interface Callbacks {
   // Fired once when crossing a boundary. `to` is null on the final finish.
   onTransition?: (from: Segment | null, to: Segment | null) => void;
+  // Fired once when a segment has 5 seconds remaining. Receives the next segment
+  // (or a synthetic 'finish' segment for the last segment).
+  onPrepare?: (nextSegment: Segment) => void;
   // Fired once per second for the last 3 seconds of each segment (3, 2, 1).
   onCountdown?: (secondsLeft: number, segment: Segment) => void;
   // Fired once when the whole workout completes.
@@ -81,11 +84,36 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     beatTimeoutsRef.current = [];
   };
 
-  // Schedule precise setTimeout for each countdown beat (3, 2, 1) still in the
-  // future. Using setTimeout instead of polling eliminates the ±200ms jitter
+  // Schedule precise setTimeout for the prepare callback and countdown beats (3, 2, 1)
+  // still in the future. Using setTimeout instead of polling eliminates the ±200ms jitter
   // that comes from detecting beats inside the 200ms tick interval.
   const scheduleBeats = (segIndex: number, remainingSeconds: number) => {
     clearBeats();
+
+    // Schedule prepare callback at 5 seconds before segment end
+    if (remainingSeconds > 5) {
+      const delayMs = (remainingSeconds - 5) * 1000;
+      beatTimeoutsRef.current.push(
+        setTimeout(() => {
+          if (statusRef.current === 'running') {
+            const segs = segmentsRef.current;
+            let nextSeg: Segment;
+
+            if (segIndex === segs.length - 1) {
+              // Last segment - create synthetic 'finish' segment
+              nextSeg = { ...segs[segIndex], phase: 'finish', index: segs.length };
+            } else {
+              // Normal case - get next segment
+              nextSeg = segs[segIndex + 1];
+            }
+
+            if (nextSeg) cbRef.current.onPrepare?.(nextSeg);
+          }
+        }, delayMs),
+      );
+    }
+
+    // Schedule countdown beats (3, 2, 1)
     [3, 2, 1].forEach((beat) => {
       const delayMs = (remainingSeconds - beat) * 1000;
       if (delayMs >= 0) {
