@@ -2,6 +2,7 @@ import React, { useRef, useImperativeHandle, useMemo, useState, useEffect } from
 import {
   Animated,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -10,7 +11,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { loadSessions, saveSessions, deleteSessionById, newId, type Session } from '../lib/sessions';
+import {
+  loadSessions,
+  saveSessions,
+  deleteSessionById,
+  newId,
+  type Session,
+  type SessionsData,
+  type Folder,
+} from '../lib/sessions';
 import { useGatedAction } from '../hooks/useGatedAction';
 import { usePremium } from '../lib/premiumContext';
 import PaywallModal from '../components/PaywallModal';
@@ -21,6 +30,7 @@ import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../them
 import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
+import FolderHeader from '../components/FolderHeader';
 import { useTranslation } from '../lib/i18n';
 
 export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
@@ -28,12 +38,29 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const { t } = useTranslation();
   const { settings } = useSettings();
   const styles = useMemo(() => makeStyles(T), [T]);
-  const [sessions, setSessions]     = useState<Session[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [data, setData] = useState<SessionsData>({ folders: [], sessions: [] });
+  const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(new Set());
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [trialExpanded, setTrialExpanded] = useState(false);
+
+  // Folder modals — visibility state only; wiring lands in a follow-up task.
+  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
+  const [showRenameFolderModal, setShowRenameFolderModal] = useState(false);
+  const [renamingFolder, setRenamingFolder] = useState<Folder | null>(null);
+  const [showDeleteFolderModal, setShowDeleteFolderModal] = useState(false);
+  const [deletingFolder, setDeletingFolder] = useState<Folder | null>(null);
+  const [showMoveSheet, setShowMoveSheet] = useState(false);
+  const [movingSession, setMovingSession] = useState<Session | null>(null);
+
   const menuAnim = useRef(new Animated.Value(0)).current;
+
+  // TODO(6b): settings.hideFolders is added to the Settings type in a later task.
+  const shouldHideFolders =
+    Boolean((settings as { hideFolders?: boolean }).hideFolders) && data.folders.length === 1;
+
+  const sessionsInFolder = (folderId: string) => data.sessions.filter(s => s.folderId === folderId);
 
   useEffect(() => {
     if (showTypeMenu) {
@@ -52,14 +79,15 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
-    loadSessions(settings.language).then(setSessions);
+    loadSessions(settings.language).then(setData);
   }, [settings.language]);
 
   const handleDuplicate = (session: Session) => {
-    const idx = sessions.findIndex(s => s.id === session.id);
+    const idx = data.sessions.findIndex(s => s.id === session.id);
     const copy: Session = { ...session, id: newId(), name: t('sessions.copyOf', { name: session.name }) };
-    const next = [...sessions.slice(0, idx + 1), copy, ...sessions.slice(idx + 1)];
-    setSessions(next);
+    const nextSessions = [...data.sessions.slice(0, idx + 1), copy, ...data.sessions.slice(idx + 1)];
+    const next = { ...data, sessions: nextSessions };
+    setData(next);
     saveSessions(next);
   };
 
@@ -69,8 +97,8 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
       async () => {
         swipeable.close();
         const next = await deleteSessionById(session.id);
-        setSessions(next);
-        if (selectedId === session.id) setSelectedId(null);
+        setData(next);
+        if (selectedSessionId === session.id) setSelectedSessionId(null);
       },
       () => swipeable.close(),
     );
@@ -95,7 +123,13 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
           </Pressable>
         }
         right={
-          <Pressable style={styles.addBtn} onPress={gate(() => setShowTypeMenu(true))}>
+          <Pressable style={styles.addBtn} onPress={gate(() => {
+            if (shouldHideFolders) {
+              setShowTypeMenu(true);
+            } else {
+              setShowCreateFolderModal(true);
+            }
+          })}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
             </Svg>
@@ -128,37 +162,106 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         )
       )}
 
-      <DraggableFlatList
-        data={sessions}
-        keyExtractor={s => s.id}
-        containerStyle={styles.list}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        onDragEnd={({ data }) => {
-          setSessions(data);
-          saveSessions(data);
-        }}
-        ListHeaderComponent={
-          sessions.length > 0
-            ? <Text style={styles.hintText}>{t('sessions.hint')}</Text>
-            : null
-        }
-        ListEmptyComponent={<Text style={styles.emptyText}>{t('sessions.empty')}</Text>}
-        renderItem={({ item: session, drag, isActive }: RenderItemParams<Session>) => (
-          <SessionSwipeRow
-            session={session}
-            styles={styles}
-            drag={drag}
-            isActive={isActive}
-            selectedId={selectedId}
-            onDuplicate={gate(() => handleDuplicate(session))}
-            onDelete={(swipeable) => handleDelete(session, swipeable)}
-            onSelect={() => setSelectedId(prev => prev === session.id ? null : session.id)}
-            onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
-            onStart={gate(() => onNavigate({ name: 'Workout', session }))}
-          />
-        )}
-      />
+      {!shouldHideFolders && data.folders.length > 0 ? (
+        <ScrollView style={styles.list} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
+          {data.folders.map(folder => {
+            const isExpanded = expandedFolderIds.has(folder.id);
+            const sessionsInThisFolder = sessionsInFolder(folder.id);
+
+            return (
+              <View key={folder.id}>
+                <FolderHeader
+                  folder={folder}
+                  isExpanded={isExpanded}
+                  sessionCount={sessionsInThisFolder.length}
+                  onToggleExpand={() => {
+                    const next = new Set(expandedFolderIds);
+                    if (isExpanded) {
+                      next.delete(folder.id);
+                    } else {
+                      next.add(folder.id);
+                    }
+                    setExpandedFolderIds(next);
+                  }}
+                  onRename={() => {
+                    setRenamingFolder(folder);
+                    setShowRenameFolderModal(true);
+                  }}
+                  onDelete={() => {
+                    setDeletingFolder(folder);
+                    setShowDeleteFolderModal(true);
+                  }}
+                />
+
+                {isExpanded && sessionsInThisFolder.length > 0 && (
+                  <View style={styles.sessionsList}>
+                    {sessionsInThisFolder.map(session => (
+                      <SessionSwipeRow
+                        key={session.id}
+                        session={session}
+                        styles={styles}
+                        drag={() => {}}
+                        isActive={false}
+                        selectedId={selectedSessionId}
+                        onDuplicate={gate(() => handleDuplicate(session))}
+                        onDelete={(swipeable) => handleDelete(session, swipeable)}
+                        onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
+                        onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
+                        onStart={gate(() => onNavigate({ name: 'Workout', session }))}
+                      />
+                    ))}
+                  </View>
+                )}
+
+                {isExpanded && sessionsInThisFolder.length === 0 && (
+                  <Text style={styles.emptyFolderText}>{t('sessions.empty')}</Text>
+                )}
+              </View>
+            );
+          })}
+        </ScrollView>
+      ) : shouldHideFolders && data.sessions.length > 0 ? (
+        <DraggableFlatList
+          data={data.sessions.filter(s => s.folderId === data.folders[0]?.id)}
+          keyExtractor={s => s.id}
+          containerStyle={styles.list}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          onDragEnd={({ data: reorderedSessions }) => {
+            const next = {
+              ...data,
+              sessions: [
+                ...data.sessions.filter(s => s.folderId !== data.folders[0]?.id),
+                ...reorderedSessions,
+              ],
+            };
+            setData(next);
+            saveSessions(next);
+          }}
+          ListHeaderComponent={
+            data.sessions.length > 0
+              ? <Text style={styles.hintText}>{t('sessions.hint')}</Text>
+              : null
+          }
+          ListEmptyComponent={<Text style={styles.emptyText}>{t('sessions.empty')}</Text>}
+          renderItem={({ item: session, drag, isActive }: RenderItemParams<Session>) => (
+            <SessionSwipeRow
+              session={session}
+              styles={styles}
+              drag={drag}
+              isActive={isActive}
+              selectedId={selectedSessionId}
+              onDuplicate={gate(() => handleDuplicate(session))}
+              onDelete={(swipeable) => handleDelete(session, swipeable)}
+              onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
+              onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
+              onStart={gate(() => onNavigate({ name: 'Workout', session }))}
+            />
+          )}
+        />
+      ) : (
+        <Text style={styles.emptyText}>{t('sessions.empty')}</Text>
+      )}
       <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
 
       {showTypeMenu && (
@@ -297,6 +400,20 @@ function makeStyles(T: ThemeTokens) {
     listContent: {
       paddingBottom: 28,
       gap: 12,
+    },
+
+    sessionsList: {
+      gap: 8,
+      marginLeft: 16,
+      marginRight: 16,
+      marginBottom: 8,
+    },
+    emptyFolderText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 12,
+      color: T.faintText,
+      textAlign: 'center',
+      paddingVertical: 12,
     },
 
     emptyText: {
