@@ -91,7 +91,7 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     clearBeats();
 
     // Schedule prepare callback at 5 seconds before segment end
-    if (remainingSeconds > 5) {
+    if (remainingSeconds >= 5) {
       const delayMs = (remainingSeconds - 5) * 1000;
       beatTimeoutsRef.current.push(
         setTimeout(() => {
