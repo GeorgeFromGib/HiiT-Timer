@@ -233,6 +233,14 @@ export const en = {
       cooldown:    'Cool Down',
       circuitRest: 'Break',
     },
+    prepare: {
+      warmup:      'Prepare for warmup',
+      work:        'Prepare for work',
+      rest:        'Prepare for recovery',
+      cooldown:    'Prepare for cooldown',
+      circuitRest: 'Prepare for break',
+      finish:      'Get ready to finish',
+    },
   },
   defaultSessions: {
     example1: 'Standard Example',

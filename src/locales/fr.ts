@@ -235,6 +235,14 @@ export const fr: typeof en = {
       cooldown:    'Retour au calme',
       circuitRest: 'Pause',
     },
+    prepare: {
+      warmup:      'Préparez-vous pour l\'échauffement',
+      work:        'Préparez-vous pour l\'effort',
+      rest:        'Préparez-vous pour la récupération',
+      cooldown:    'Préparez-vous pour le refroidissement',
+      circuitRest: 'Préparez-vous pour la pause',
+      finish:      'Préparez-vous à terminer',
+    },
   },
   defaultSessions: {
     example1: 'Exemple Standard',
