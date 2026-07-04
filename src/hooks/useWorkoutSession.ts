@@ -83,6 +83,12 @@ export function useWorkoutSession(
       cues.onCountdown();
       onCountdownBeatRef.current?.();
     },
+    onPrepare: (nextSeg) => {
+      const totalSegments = segments.length;
+      const isLastSegment = nextSeg.index === totalSegments - 1;
+      const phase = isLastSegment ? 'finish' : nextSeg.phase;
+      cues.onPrepare(phase);
+    },
     onFinish: () => {
       cues.onFinish();
       if (settings.hapticFeedback) startHapticBurst();
