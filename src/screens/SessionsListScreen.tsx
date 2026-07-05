@@ -259,14 +259,6 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                     }
                     setExpandedFolderIds(next);
                   }}
-                  onRename={() => {
-                    setRenamingFolder(folder);
-                    setShowRenameFolderModal(true);
-                  }}
-                  onDelete={() => {
-                    setDeletingFolder(folder);
-                    setShowDeleteFolderModal(true);
-                  }}
                 />
 
                 {isExpanded && sessionsInThisFolder.length > 0 && (
