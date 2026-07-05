@@ -69,6 +69,8 @@ export default function FoldersListScreen({ onNavigate }: { onNavigate: (route: 
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
+        <Text style={{ fontSize: 20, color: T.text, marginBottom: 20 }}>FOLDERS SCREEN TEST</Text>
+
         {/* Folders */}
         {data.folders.filter(f => f.name !== 'Unfiled').map((folder) => (
           <FolderRow
