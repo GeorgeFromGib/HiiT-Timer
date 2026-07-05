@@ -351,20 +351,22 @@ function FolderRow({
 
       {/* Expandable Body */}
       {expanded && (
-        <View style={styles.body}>
-          {sessions.length === 0 ? (
-            <Text style={styles.emptyText}>No sessions yet</Text>
-          ) : (
-            sessions.map(session => (
-              <SessionRow
-                key={session.id}
-                session={session}
-                isUnfiled={isUnfiled}
-                onRemove={onRemoveSession}
-                theme={theme}
-              />
-            ))
-          )}
+        <View style={styles.bodyWrapper}>
+          <View style={styles.bodyContent}>
+            {sessions.length === 0 ? (
+              <Text style={styles.emptyText}>No sessions yet</Text>
+            ) : (
+              sessions.map(session => (
+                <SessionRow
+                  key={session.id}
+                  session={session}
+                  isUnfiled={isUnfiled}
+                  onRemove={onRemoveSession}
+                  theme={theme}
+                />
+              ))
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -600,16 +602,16 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       alignItems: 'center',
       marginLeft: 4,
     },
-    body: {
+    bodyWrapper: {
       paddingTop: 0,
+      paddingHorizontal: 14,
       paddingBottom: 12,
+    },
+    bodyContent: {
       paddingLeft: 14,
-      paddingRight: 14,
-      marginLeft: 0,
       borderLeftWidth: 2,
       borderLeftColor: T.hairline,
       gap: 8,
-      backgroundColor: isUnfiled ? 'transparent' : T.card,
     },
     emptyText: {
       fontSize: 12.5,
