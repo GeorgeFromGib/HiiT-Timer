@@ -42,8 +42,12 @@ export const es: typeof en = {
     trialExpiredBadge: 'Desbloquear para siempre',
   },
   folders: {
+    title: 'Carpetas',
+    organize: 'Organizar',
     createNew: 'Crear carpeta',
-    folderNamePlaceholder: 'Nombre de la carpeta',
+    newFolder: 'Nueva carpeta',
+    folderNamePlaceholder: 'Ej. Sesiones de fin de semana',
+    unfiledSessions: 'Sesiones sin clasificar',
     rename: 'Renombrar carpeta',
     deleteFolder: '¿Eliminar carpeta?',
     deleteWithSessions: '¿Eliminar esta carpeta y %{count} sesión(es)?',
@@ -54,6 +58,7 @@ export const es: typeof en = {
     invalidName: 'Nombre de carpeta no válido',
     nameExists: 'Ya existe una carpeta con este nombre.',
     error: 'Error',
+    deleteFolderConfirm: '¿Eliminar esta carpeta? Las sesiones se moverán a Sin clasificar.',
   },
   workout: {
     done: 'HECHO',

@@ -40,8 +40,12 @@ export const en = {
     trialExpiredBadge: 'Unlock forever',
   },
   folders: {
+    title: 'Folders',
+    organize: 'Organize',
     createNew: 'Create Folder',
-    folderNamePlaceholder: 'Folder name',
+    newFolder: 'New Folder',
+    folderNamePlaceholder: 'e.g. Weekend Sessions',
+    unfiledSessions: 'Unfiled Sessions',
     rename: 'Rename Folder',
     deleteFolder: 'Delete Folder?',
     deleteWithSessions: 'Delete this folder and %{count} session(s)?',
@@ -52,6 +56,7 @@ export const en = {
     invalidName: 'Invalid Folder Name',
     nameExists: 'A folder with this name already exists.',
     error: 'Error',
+    deleteFolderConfirm: 'Delete this folder? Sessions will move to Unfiled.',
   },
   workout: {
     done: 'DONE',

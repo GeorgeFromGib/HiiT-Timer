@@ -42,8 +42,12 @@ export const fr: typeof en = {
     trialExpiredBadge: 'Débloquer définitivement',
   },
   folders: {
+    title: 'Dossiers',
+    organize: 'Organiser',
     createNew: 'Créer un dossier',
-    folderNamePlaceholder: 'Nom du dossier',
+    newFolder: 'Nouveau dossier',
+    folderNamePlaceholder: 'Ex. Séances du week-end',
+    unfiledSessions: 'Séances non classées',
     rename: 'Renommer le dossier',
     deleteFolder: 'Supprimer le dossier ?',
     deleteWithSessions: 'Supprimer ce dossier et %{count} séance(s) ?',
@@ -54,6 +58,7 @@ export const fr: typeof en = {
     invalidName: 'Nom de dossier invalide',
     nameExists: 'Un dossier avec ce nom existe déjà.',
     error: 'Erreur',
+    deleteFolderConfirm: 'Supprimer ce dossier ? Les séances seront déplacées vers Non classées.',
   },
   workout: {
     done: 'TERMINÉ',

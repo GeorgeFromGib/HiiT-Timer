@@ -25,6 +25,7 @@ import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
 import { useEffect, useState, type ReactNode } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import SessionsListScreen from './src/screens/SessionsListScreen';
+import FoldersListScreen from './src/screens/FoldersListScreen';
 import WorkoutScreen from './src/screens/WorkoutScreen';
 import EditSessionScreen from './src/screens/EditSessionScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
@@ -144,6 +145,9 @@ export default function App() {
       )}
       {route.name === 'Sessions' && (
         <RouteScreen><SessionsListScreen onNavigate={setRoute} /></RouteScreen>
+      )}
+      {route.name === 'Folders' && (
+        <RouteScreen><FoldersListScreen onNavigate={setRoute} /></RouteScreen>
       )}
     </ThemeContext.Provider>
     </SettingsContext.Provider>
