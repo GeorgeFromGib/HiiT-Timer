@@ -288,15 +288,7 @@ function FolderRow({
   return (
     <View style={styles.folderCard}>
       {/* Header Row */}
-      <View style={styles.header}>
-        <Pressable onPress={onToggle} style={styles.chevronBtn}>
-          <Chevron open={expanded} color={theme.faintText} />
-        </Pressable>
-
-        <View style={styles.iconBadge}>
-          <FolderIcon color={isUnfiled ? theme.faintText : color} />
-        </View>
-
+      <Pressable onPress={onToggle} style={styles.header}>
         <Text
           style={[
             styles.folderName,
@@ -309,7 +301,7 @@ function FolderRow({
         <Text style={styles.sessionCount}>
           {sessions.length} {sessions.length === 1 ? 'session' : 'sessions'}
         </Text>
-      </View>
+      </Pressable>
 
       {/* Expandable Body */}
       {expanded && (
