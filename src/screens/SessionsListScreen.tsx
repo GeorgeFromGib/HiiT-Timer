@@ -262,15 +262,35 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                 />
 
                 {isExpanded && sessionsInThisFolder.length > 0 && (
-                  <View style={styles.sessionsList}>
-                    {sessionsInThisFolder.map(session => (
+                  <DraggableFlatList
+                    data={sessionsInThisFolder}
+                    keyExtractor={(item) => item.id}
+                    scrollEnabled={false}
+                    containerStyle={styles.sessionsList}
+                    onDragEnd={({ data: reorderedSessions }) => {
+                      const updatedData = {
+                        ...data,
+                        sessions: data.sessions.map(s => {
+                          const reorderedSession = reorderedSessions.find(rs => rs.id === s.id);
+                          return reorderedSession || s;
+                        }).sort((a, b) => {
+                          const aIndex = reorderedSessions.findIndex(s => s.id === a.id);
+                          const bIndex = reorderedSessions.findIndex(s => s.id === b.id);
+                          return aIndex - bIndex;
+                        }).filter(s => s.folderId === folder.id)
+                          .concat(data.sessions.filter(s => s.folderId !== folder.id))
+                      };
+                      setData(updatedData);
+                      saveSessions(updatedData);
+                    }}
+                    renderItem={({ item: session, drag, isActive }) => (
                       <SessionSwipeRow
                         key={session.id}
                         session={session}
                         styles={styles}
-                        drag={() => {}}
-                        isActive={false}
-                        draggable={false}
+                        drag={drag}
+                        isActive={isActive}
+                        draggable={true}
                         selectedId={selectedSessionId}
                         onDuplicate={gate(() => handleDuplicate(session))}
                         onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
@@ -282,8 +302,8 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                           setShowMoveSheet(true);
                         }}
                       />
-                    ))}
-                  </View>
+                    )}
+                  />
                 )}
 
                 {isExpanded && sessionsInThisFolder.length === 0 && (
