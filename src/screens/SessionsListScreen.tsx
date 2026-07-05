@@ -87,7 +87,13 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
-    loadSessions(settings.language).then(setData);
+    loadSessions(settings.language).then((loadedData) => {
+      setData(loadedData);
+      // Expand the first folder by default
+      if (loadedData.folders.length > 0) {
+        setExpandedFolderIds(new Set([loadedData.folders[0].id]));
+      }
+    });
   }, [settings.language]);
 
   const handleCreateSession = (activityType?: string) => {
@@ -253,7 +259,10 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                   onToggleExpand={() => {
                     const next = new Set(expandedFolderIds);
                     if (isExpanded) {
-                      next.delete(folder.id);
+                      // Don't collapse if it's the last expanded folder
+                      if (next.size > 1) {
+                        next.delete(folder.id);
+                      }
                     } else {
                       next.add(folder.id);
                     }
