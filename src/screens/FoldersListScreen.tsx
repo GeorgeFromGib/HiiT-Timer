@@ -60,7 +60,8 @@ export default function FoldersListScreen({ onNavigate }: { onNavigate: (route: 
       <ScreenHeader
         title={t('folders.title')}
         subtitle={t('folders.organize')}
-        onBack={() => onNavigate({ name: 'Sessions' })}
+        left={<View style={{ width: 36 }} />}
+        right={<View style={{ width: 36 }} />}
       />
 
       <ScrollView
