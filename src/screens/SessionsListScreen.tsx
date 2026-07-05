@@ -284,24 +284,25 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                       saveSessions(updatedData);
                     }}
                     renderItem={({ item: session, drag, isActive }) => (
-                      <SessionSwipeRow
-                        key={session.id}
-                        session={session}
-                        styles={styles}
-                        drag={drag}
-                        isActive={isActive}
-                        draggable={true}
-                        selectedId={selectedSessionId}
-                        onDuplicate={gate(() => handleDuplicate(session))}
-                        onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
-                        onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
-                        onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
-                        onStart={gate(() => onNavigate({ name: 'Workout', session }))}
-                        onMove={() => {
-                          setMovingSession(session);
-                          setShowMoveSheet(true);
-                        }}
-                      />
+                      <View key={session.id} style={{ marginBottom: 10 }}>
+                        <SessionSwipeRow
+                          session={session}
+                          styles={styles}
+                          drag={drag}
+                          isActive={isActive}
+                          draggable={true}
+                          selectedId={selectedSessionId}
+                          onDuplicate={gate(() => handleDuplicate(session))}
+                          onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
+                          onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
+                          onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
+                          onStart={gate(() => onNavigate({ name: 'Workout', session }))}
+                          onMove={() => {
+                            setMovingSession(session);
+                            setShowMoveSheet(true);
+                          }}
+                        />
+                      </View>
                     )}
                   />
                 )}
