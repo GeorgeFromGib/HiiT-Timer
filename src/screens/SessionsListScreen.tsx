@@ -551,7 +551,7 @@ function makeStyles(T: ThemeTokens) {
     },
 
     sessionsList: {
-      gap: 8,
+      gap: 10,
       paddingHorizontal: 16,
       paddingVertical: 8,
     },
