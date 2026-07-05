@@ -545,6 +545,7 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       borderStyle: isUnfiled ? ('dashed' as any) : ('solid' as any),
       marginBottom: 10,
       flexDirection: 'column',
+      width: '100%',
     },
     header: {
       flexDirection: 'row',
@@ -604,7 +605,7 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       marginLeft: 4,
     },
     bodyWrapper: {
-      paddingTop: 0,
+      width: '100%',
       paddingHorizontal: 14,
       paddingBottom: 12,
     },
@@ -613,6 +614,7 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       borderLeftWidth: 2,
       borderLeftColor: T.hairline,
       gap: 8,
+      flexDirection: 'column',
     },
     emptyText: {
       fontSize: 12.5,
