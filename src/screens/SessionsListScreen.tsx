@@ -259,10 +259,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                   onToggleExpand={() => {
                     const next = new Set(expandedFolderIds);
                     if (isExpanded) {
-                      // Don't collapse if it's the last expanded folder
-                      if (next.size > 1) {
-                        next.delete(folder.id);
-                      }
+                      next.delete(folder.id);
                     } else {
                       next.add(folder.id);
                     }
