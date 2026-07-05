@@ -49,10 +49,6 @@ function makeStyles(T: ThemeTokens) {
       justifyContent: 'space-between',
       paddingVertical: 12,
       paddingHorizontal: 16,
-      borderRadius: 12,
-      backgroundColor: T.card,
-      marginVertical: 8,
-      marginHorizontal: 0,
     },
     leftContent: {
       flexDirection: 'row',

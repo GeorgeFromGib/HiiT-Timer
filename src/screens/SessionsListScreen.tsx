@@ -245,7 +245,7 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             const sessionsInThisFolder = sessionsInFolder(folder.id);
 
             return (
-              <View key={folder.id}>
+              <View key={folder.id} style={styles.folderCard}>
                 <FolderHeader
                   folder={folder}
                   isExpanded={isExpanded}
@@ -521,11 +521,21 @@ function makeStyles(T: ThemeTokens) {
       gap: 12,
     },
 
+    folderCard: {
+      borderRadius: 18,
+      borderWidth: 1.5,
+      borderColor: T.hairline,
+      backgroundColor: T.card,
+      overflow: 'hidden',
+    },
+
     sessionsList: {
       gap: 8,
-      marginLeft: 16,
-      marginRight: 16,
-      marginBottom: 8,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      paddingLeft: 28,
+      borderLeftWidth: 2,
+      borderLeftColor: T.hairline,
     },
     emptyFolderText: {
       fontFamily: 'Inter_400Regular',
