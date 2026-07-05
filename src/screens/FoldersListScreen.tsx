@@ -545,7 +545,8 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       borderStyle: isUnfiled ? ('dashed' as any) : ('solid' as any),
       marginBottom: 10,
       flexDirection: 'column',
-      width: '100%',
+      justifyContent: 'flex-start',
+      alignItems: 'stretch',
     },
     header: {
       flexDirection: 'row',
