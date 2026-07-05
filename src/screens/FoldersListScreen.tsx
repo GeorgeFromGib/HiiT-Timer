@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Path, Line } from 'react-native-svg';
 import {
   loadSessions,
   saveSessions,
@@ -179,7 +179,7 @@ export default function FoldersListScreen({ onNavigate }: { onNavigate: (route: 
       >
         {/* Create folder panel */}
         {creating && (
-          <View style={[styles.panel, styles.createPanel]}>
+          <View style={styles.createPanel}>
             <Text style={styles.panelLabel}>{t('folders.newFolder')}</Text>
             <TextInput
               autoFocus
@@ -283,14 +283,10 @@ function FolderRow({
   theme,
 }: FolderRowProps) {
   const [localEditName, setLocalEditName] = useState(editingName || folder.name);
-
-  const styles = useMemo(() => makeFolderRowStyles(theme, color), [theme, color]);
+  const styles = useMemo(() => makeFolderRowStyles(theme, color, isUnfiled), [theme, color, isUnfiled]);
 
   return (
-    <View style={[
-      styles.folderCard,
-      isUnfiled && styles.unfiledCard,
-    ]}>
+    <View style={styles.folderCard}>
       {/* Header Row */}
       <View style={styles.header}>
         <Pressable onPress={onToggle} style={styles.chevronBtn}>
@@ -443,6 +439,29 @@ function Chevron({ open, color }: { open: boolean; color: string }) {
   );
 }
 
+// Dashed border component for unfiled folders
+function DashedBorder({ color, borderRadius }: { color: string; borderRadius: number }) {
+  const dashSize = 4;
+  const circumference = borderRadius * 2 * Math.PI;
+
+  return (
+    <View
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        borderRadius,
+        borderWidth: 1.5,
+        borderColor: color,
+        borderStyle: 'dashed',
+        pointerEvents: 'none',
+      }}
+    />
+  );
+}
+
 const makeStyles = (T: ThemeTokens) =>
   StyleSheet.create({
     container: {
@@ -456,15 +475,13 @@ const makeStyles = (T: ThemeTokens) =>
       paddingBottom: 28,
       gap: 10,
     },
-    panel: {
+    createPanel: {
       borderRadius: 16,
       borderWidth: 1.5,
       borderColor: `${T.accent}55`,
       backgroundColor: `${T.accent}0e`,
       padding: 14,
       gap: 10,
-    },
-    createPanel: {
       marginTop: 12,
     },
     panelLabel: {
@@ -508,7 +525,6 @@ const makeStyles = (T: ThemeTokens) =>
       paddingHorizontal: 16,
       paddingVertical: 8,
       borderRadius: 999,
-      borderWidth: 0,
       backgroundColor: T.accent,
     },
     createBtnText: {
@@ -518,18 +534,16 @@ const makeStyles = (T: ThemeTokens) =>
     },
   });
 
-const makeFolderRowStyles = (T: ThemeTokens, color: string) =>
+const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean) =>
   StyleSheet.create({
     folderCard: {
       borderRadius: 18,
       borderWidth: 1.5,
       borderColor: T.hairline,
-      backgroundColor: T.card,
+      backgroundColor: isUnfiled ? 'transparent' : T.card,
       padding: 13,
-    },
-    unfiledCard: {
-      borderStyle: 'dashed',
-      backgroundColor: 'transparent',
+      paddingHorizontal: 14,
+      borderStyle: isUnfiled ? ('dashed' as any) : ('solid' as any),
     },
     header: {
       flexDirection: 'row',
@@ -538,6 +552,7 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string) =>
     },
     chevronBtn: {
       padding: 4,
+      marginLeft: -4,
     },
     iconBadge: {
       width: 30,
@@ -572,7 +587,6 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string) =>
       fontSize: 11.5,
       fontWeight: '700',
       color: T.faintText,
-      marginRight: 8,
     },
     deleteBtn: {
       width: 26,
@@ -583,6 +597,7 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string) =>
       backgroundColor: T.ghostBg,
       justifyContent: 'center',
       alignItems: 'center',
+      marginLeft: 4,
     },
     body: {
       marginTop: 12,
@@ -610,7 +625,8 @@ const makeSessionRowStyles = (T: ThemeTokens) =>
       borderWidth: 1,
       borderColor: T.hairline,
       borderRadius: 14,
-      padding: 11,
+      paddingHorizontal: 12,
+      paddingVertical: 11,
     },
     sessionContent: {
       flex: 1,
