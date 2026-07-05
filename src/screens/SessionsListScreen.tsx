@@ -213,21 +213,6 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         }
       />
 
-      <Pressable
-        style={{
-          marginHorizontal: 20,
-          marginTop: 12,
-          paddingVertical: 8,
-          paddingHorizontal: 12,
-          backgroundColor: T.accent,
-          borderRadius: 8,
-          alignItems: 'center'
-        }}
-        onPress={() => onNavigate({ name: 'Folders' })}
-      >
-        <Text style={{ color: T.btnGlyph, fontWeight: '700', fontSize: 13 }}>View Folders</Text>
-      </Pressable>
-
       {!isPremium && (
         trialDaysRemaining > 0 ? (
           <View style={styles.trialCard}>
