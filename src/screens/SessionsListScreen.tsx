@@ -289,6 +289,24 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                       setData(updatedData);
                       saveSessions(updatedData);
                     }}
+                    ListFooterComponent={
+                      <Pressable
+                        onPress={gate(() => onNavigate({ name: 'EditSession', folderId: folder.id }))}
+                        style={{
+                          marginTop: 10,
+                          paddingVertical: 10,
+                          paddingHorizontal: 16,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}
+                      >
+                        <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+                          <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.5} strokeLinecap="round" />
+                        </Svg>
+                        <Text style={{ fontSize: 13, fontWeight: '700', color: T.accent }}>Add session</Text>
+                      </Pressable>
+                    }
                     renderItem={({ item: session, drag, isActive }) => (
                       <View key={session.id} style={{ marginBottom: 10 }}>
                         <SessionSwipeRow
@@ -314,7 +332,29 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
                 )}
 
                 {isExpanded && sessionsInThisFolder.length === 0 && (
-                  <Text style={styles.emptyFolderText}>{t('sessions.empty')}</Text>
+                  <View style={{ paddingHorizontal: 16, paddingVertical: 12, gap: 10 }}>
+                    <Text style={styles.emptyFolderText}>{t('sessions.empty')}</Text>
+                    <Pressable
+                      onPress={gate(() => onNavigate({ name: 'EditSession', folderId: folder.id }))}
+                      style={{
+                        paddingVertical: 10,
+                        paddingHorizontal: 16,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        borderRadius: 12,
+                        borderWidth: 1.5,
+                        borderColor: T.accent,
+                        backgroundColor: `${T.accent}0e`,
+                      }}
+                    >
+                      <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+                        <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.5} strokeLinecap="round" />
+                      </Svg>
+                      <Text style={{ fontSize: 13, fontWeight: '700', color: T.accent }}>Add session</Text>
+                    </Pressable>
+                  </View>
                 )}
               </View>
             );
