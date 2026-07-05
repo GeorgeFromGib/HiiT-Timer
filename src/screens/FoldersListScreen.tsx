@@ -350,8 +350,9 @@ function FolderRow({
       </View>
 
       {/* Expandable Body */}
-      <View style={[styles.bodyWrapper, !expanded && styles.bodyWrapperCollapsed]}>
-        <View style={styles.bodyContent}>
+      {expanded && (
+        <View style={styles.bodyWrapper}>
+          <View style={styles.bodyContent}>
           {sessions.length === 0 ? (
             <Text style={styles.emptyText}>No sessions yet</Text>
           ) : (
@@ -366,7 +367,8 @@ function FolderRow({
             ))
           )}
         </View>
-      </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -542,6 +544,7 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       backgroundColor: isUnfiled ? 'transparent' : T.card,
       borderStyle: isUnfiled ? ('dashed' as any) : ('solid' as any),
       marginBottom: 10,
+      flexDirection: 'column',
     },
     header: {
       flexDirection: 'row',
@@ -604,12 +607,6 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       paddingTop: 0,
       paddingHorizontal: 14,
       paddingBottom: 12,
-      maxHeight: 10000,
-    },
-    bodyWrapperCollapsed: {
-      maxHeight: 0,
-      overflow: 'hidden',
-      paddingBottom: 0,
     },
     bodyContent: {
       paddingLeft: 14,
