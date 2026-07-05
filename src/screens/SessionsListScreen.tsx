@@ -547,15 +547,13 @@ function makeStyles(T: ThemeTokens) {
       borderColor: T.hairline,
       backgroundColor: T.card,
       overflow: 'hidden',
+      marginBottom: 12,
     },
 
     sessionsList: {
       gap: 8,
       paddingHorizontal: 16,
       paddingVertical: 8,
-      paddingLeft: 28,
-      borderLeftWidth: 2,
-      borderLeftColor: T.hairline,
     },
     emptyFolderText: {
       fontFamily: 'Inter_400Regular',
