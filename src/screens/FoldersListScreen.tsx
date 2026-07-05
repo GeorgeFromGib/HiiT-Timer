@@ -475,7 +475,6 @@ const makeStyles = (T: ThemeTokens) =>
     contentContainer: {
       paddingHorizontal: 20,
       paddingBottom: 28,
-      gap: 10,
     },
     createPanel: {
       borderRadius: 16,
@@ -543,8 +542,8 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       borderWidth: 1.5,
       borderColor: T.hairline,
       backgroundColor: isUnfiled ? 'transparent' : T.card,
-      overflow: 'hidden',
       borderStyle: isUnfiled ? ('dashed' as any) : ('solid' as any),
+      marginBottom: 10,
     },
     header: {
       flexDirection: 'row',
@@ -552,6 +551,7 @@ const makeFolderRowStyles = (T: ThemeTokens, color: string, isUnfiled?: boolean)
       gap: 10,
       paddingVertical: 13,
       paddingHorizontal: 14,
+      backgroundColor: isUnfiled ? 'transparent' : T.card,
     },
     chevronBtn: {
       padding: 4,
