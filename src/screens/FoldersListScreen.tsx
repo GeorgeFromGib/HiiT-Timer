@@ -297,56 +297,18 @@ function FolderRow({
           <FolderIcon color={isUnfiled ? theme.faintText : color} />
         </View>
 
-        {isEditing ? (
-          <TextInput
-            autoFocus
-            value={localEditName}
-            onChangeText={setLocalEditName}
-            onBlur={() => {
-              if (onCommitEdit) onCommitEdit(localEditName);
-            }}
-            onSubmitEditing={() => {
-              if (onCommitEdit) onCommitEdit(localEditName);
-            }}
-            style={styles.editInput}
-          />
-        ) : (
-          <Pressable
-            onPress={() => {
-              if (!isUnfiled && onStartEdit) {
-                onStartEdit(folder.name);
-              }
-            }}
-            style={{ flex: 1 }}
-          >
-            <Text
-              style={[
-                styles.folderName,
-                isUnfiled && styles.unfiledName,
-              ]}
-            >
-              {folder.name}
-            </Text>
-          </Pressable>
-        )}
+        <Text
+          style={[
+            styles.folderName,
+            isUnfiled && styles.unfiledName,
+          ]}
+        >
+          {folder.name}
+        </Text>
 
         <Text style={styles.sessionCount}>
           {sessions.length} {sessions.length === 1 ? 'session' : 'sessions'}
         </Text>
-
-        {!isUnfiled && (
-          <Pressable onPress={onDelete} style={styles.deleteBtn}>
-            <Svg width={12} height={12} viewBox="0 0 16 16" fill="none">
-              <Path
-                d="M3 4h10M6.5 4V2.8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V4M4.5 4l.6 9a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-9"
-                stroke={theme.faintText}
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </Svg>
-          </Pressable>
-        )}
       </View>
 
       {/* Expandable Body */}
