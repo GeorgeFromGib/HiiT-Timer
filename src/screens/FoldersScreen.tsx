@@ -17,7 +17,10 @@ import {
   newId,
   type SessionsData,
   type Folder,
+  type FolderIconName,
 } from '../lib/sessions';
+import { DEFAULT_FOLDER_ICON, resolveFolderIconColor } from '../lib/folderIcons';
+import FolderIcon from '../components/FolderIcon';
 import FolderCreateModal from '../components/FolderCreateModal';
 import FolderRenameModal from '../components/FolderRenameModal';
 import DeleteFolderModal from '../components/DeleteFolderModal';
@@ -48,8 +51,8 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
     });
   }, [settings.language]);
 
-  const handleCreateFolder = (folderName: string) => {
-    const folder = createFolder(folderName);
+  const handleCreateFolder = (folderName: string, icon: FolderIconName) => {
+    const folder = createFolder(folderName, icon);
     const newData = { ...data, folders: [...data.folders, folder] };
     setData(newData);
     setSessionCounts(prev => ({ ...prev, [folder.id]: 0 }));
@@ -57,10 +60,10 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
     setShowCreateFolderModal(false);
   };
 
-  const handleRenameFolder = (newName: string) => {
+  const handleRenameFolder = (newName: string, icon: FolderIconName) => {
     if (!renamingFolder) return;
 
-    const result = renameFolder(renamingFolder.id, newName, data.folders);
+    const result = renameFolder(renamingFolder.id, newName, icon, data.folders);
     if (!result.success) {
       Alert.alert(t('folders.error'), result.error);
       return;
@@ -79,6 +82,7 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
       id: newId(),
       name: t('sessions.copyOf', { name: folder.name }),
       createdAt: Date.now(),
+      icon: folder.icon ?? DEFAULT_FOLDER_ICON,
     };
     const duplicatedSessions = data.sessions
       .filter(s => s.folderId === folder.id)
@@ -253,6 +257,8 @@ function FolderSwipeRow({
   const { T } = useTheme();
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
+  const iconName = folder.icon ?? DEFAULT_FOLDER_ICON;
+  const iconColor = resolveFolderIconColor(T, iconName);
 
   return (
     <ReanimatedSwipeable
@@ -291,6 +297,9 @@ function FolderSwipeRow({
         <Pressable onLongPress={drag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
           <DragHandle color={T.subText} />
         </Pressable>
+        <View style={[styles.folderIconChip, { backgroundColor: iconColor + '1e' }]}>
+          <FolderIcon name={iconName} color={iconColor} size={17} />
+        </View>
         <Text style={styles.folderName}>{folder.name}</Text>
         <Text style={styles.sessionCount}>
           {sessionCount} {t('common.intervals')}
@@ -338,6 +347,14 @@ function makeStyles(T: ThemeTokens) {
     },
     dragHandle: {
       paddingRight: 12,
+    },
+    folderIconChip: {
+      width: 30,
+      height: 30,
+      borderRadius: 9,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 12,
     },
     folderName: {
       fontFamily: 'Inter_600SemiBold',
