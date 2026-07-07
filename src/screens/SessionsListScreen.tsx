@@ -1,6 +1,5 @@
 import React, { useRef, useImperativeHandle, useMemo, useState, useEffect } from 'react';
 import {
-  Alert,
   Animated,
   Dimensions,
   FlatList,
@@ -18,13 +17,9 @@ import {
   loadSessions,
   saveSessions,
   newId,
-  createFolder,
-  renameFolder,
-  deleteFolder,
   moveSessionToFolder,
   type Session,
   type SessionsData,
-  type Folder,
 } from '../lib/sessions';
 import { useGatedAction } from '../hooks/useGatedAction';
 import { usePremium } from '../lib/premiumContext';
@@ -36,10 +31,6 @@ import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../them
 import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
-import FolderHeader from '../components/FolderHeader';
-import FolderCreateModal from '../components/FolderCreateModal';
-import FolderRenameModal from '../components/FolderRenameModal';
-import DeleteFolderModal from '../components/DeleteFolderModal';
 import MoveToFolderSheet from '../components/MoveToFolderSheet';
 import { useTranslation } from '../lib/i18n';
 
@@ -49,18 +40,11 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   const { settings } = useSettings();
   const styles = useMemo(() => makeStyles(T), [T]);
   const [data, setData] = useState<SessionsData>({ folders: [], sessions: [] });
-  const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(new Set());
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [trialExpanded, setTrialExpanded] = useState(false);
 
-  // Folder modals — state, handlers, and rendering.
-  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
-  const [showRenameFolderModal, setShowRenameFolderModal] = useState(false);
-  const [renamingFolder, setRenamingFolder] = useState<Folder | null>(null);
-  const [showDeleteFolderModal, setShowDeleteFolderModal] = useState(false);
-  const [deletingFolder, setDeletingFolder] = useState<Folder | null>(null);
   const [showMoveSheet, setShowMoveSheet] = useState(false);
   const [movingSession, setMovingSession] = useState<Session | null>(null);
   const [selectedFolderForSession, setSelectedFolderForSession] = useState<string | null>(null);
@@ -86,8 +70,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   const shouldHideFolders =
     Boolean(folderId) || Boolean((settings as { hideFolders?: boolean }).hideFolders) || data.folders.length === 1;
 
-  const sessionsInFolder = (folderId: string) => data.sessions.filter(s => s.folderId === folderId);
-
   useEffect(() => {
     if (showTypeMenu) {
       menuAnim.setValue(0);
@@ -107,10 +89,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   React.useEffect(() => {
     loadSessions(settings.language).then((loadedData) => {
       setData(loadedData);
-      // Expand the first folder by default
-      if (loadedData.folders.length > 0) {
-        setExpandedFolderIds(new Set([loadedData.folders[0].id]));
-      }
     });
   }, [settings.language]);
 
@@ -149,50 +127,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
       },
       () => swipeable.close(),
     );
-  };
-
-  const handleCreateFolder = (folderName: string) => {
-    const folder = createFolder(folderName);
-    const newData = {
-      ...data,
-      folders: [...data.folders, folder],
-    };
-    setData(newData);
-    saveSessions(newData);
-    setShowCreateFolderModal(false);
-  };
-
-  const handleRenameFolder = (newName: string) => {
-    if (!renamingFolder) return;
-
-    const result = renameFolder(renamingFolder.id, newName, data.folders);
-    if (!result.success) {
-      Alert.alert(t('folders.error'), result.error);
-      return;
-    }
-
-    const newData = {
-      ...data,
-      folders: result.folders!,
-    };
-    setData(newData);
-    saveSessions(newData);
-    setShowRenameFolderModal(false);
-    setRenamingFolder(null);
-  };
-
-  const handleDeleteFolder = (moveToFolderId: string | null) => {
-    if (!deletingFolder) return;
-
-    try {
-      const newData = deleteFolder(deletingFolder.id, moveToFolderId, data);
-      setData(newData);
-      saveSessions(newData);
-      setShowDeleteFolderModal(false);
-      setDeletingFolder(null);
-    } catch (e: any) {
-      Alert.alert(t('folders.error'), e.message);
-    }
   };
 
   const handleMoveSessionToFolder = (folderId: string) => {
@@ -336,37 +270,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
         <Text style={styles.emptyText}>{t('sessions.empty')}</Text>
       )}
       <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
-
-      <FolderCreateModal
-        visible={showCreateFolderModal}
-        allFolders={data.folders}
-        onDismiss={() => setShowCreateFolderModal(false)}
-        onSubmit={handleCreateFolder}
-      />
-
-      <FolderRenameModal
-        visible={showRenameFolderModal}
-        folder={renamingFolder}
-        allFolders={data.folders}
-        onDismiss={() => {
-          setShowRenameFolderModal(false);
-          setRenamingFolder(null);
-        }}
-        onSubmit={handleRenameFolder}
-      />
-
-      <DeleteFolderModal
-        visible={showDeleteFolderModal}
-        folder={deletingFolder}
-        sessionCount={deletingFolder ? sessionsInFolder(deletingFolder.id).length : 0}
-        otherFolders={deletingFolder ? data.folders.filter(f => f.id !== deletingFolder.id) : []}
-        onDismiss={() => {
-          setShowDeleteFolderModal(false);
-          setDeletingFolder(null);
-        }}
-        onDeleteWithMove={handleDeleteFolder}
-        onDeleteAll={() => handleDeleteFolder(null)}
-      />
 
       <MoveToFolderSheet
         visible={showMoveSheet}
