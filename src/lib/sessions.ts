@@ -180,7 +180,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
 function createDefaultFolder(): Folder {
   return {
     id: 'default',
-    name: 'Default',
+    name: 'My Sessions',
     createdAt: Date.now(),
   };
 }

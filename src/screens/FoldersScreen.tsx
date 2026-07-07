@@ -1,11 +1,26 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo, useState, useEffect, useRef, useImperativeHandle } from 'react';
+import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
 import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
+import DragHandle from '../components/DragHandle';
 import { useSettings } from '../lib/settingsContext';
 import { useTranslation } from '../lib/i18n';
-import { loadSessions } from '../lib/sessions';
+import {
+  loadSessions,
+  saveSessions,
+  createFolder,
+  renameFolder,
+  deleteFolder,
+  newId,
+  type SessionsData,
+  type Folder,
+} from '../lib/sessions';
+import FolderCreateModal from '../components/FolderCreateModal';
+import FolderRenameModal from '../components/FolderRenameModal';
+import DeleteFolderModal from '../components/DeleteFolderModal';
 import type { Route } from '../navigation';
 import Svg, { Path } from 'react-native-svg';
 
@@ -14,19 +29,86 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
   const { t } = useTranslation();
   const { settings } = useSettings();
   const styles = useMemo(() => makeStyles(T), [T]);
-  const [folders, setFolders] = useState<any[]>([]);
+  const [data, setData] = useState<SessionsData>({ folders: [], sessions: [] });
   const [sessionCounts, setSessionCounts] = useState<Record<string, number>>({});
+  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
+  const [showRenameFolderModal, setShowRenameFolderModal] = useState(false);
+  const [renamingFolder, setRenamingFolder] = useState<Folder | null>(null);
+  const [showDeleteFolderModal, setShowDeleteFolderModal] = useState(false);
+  const [deletingFolder, setDeletingFolder] = useState<Folder | null>(null);
 
   useEffect(() => {
-    loadSessions(settings.language).then(data => {
-      setFolders(data.folders);
+    loadSessions(settings.language).then(loadedData => {
+      setData(loadedData);
       const counts: Record<string, number> = {};
-      data.folders.forEach(folder => {
-        counts[folder.id] = data.sessions.filter(s => s.folderId === folder.id).length;
+      loadedData.folders.forEach(folder => {
+        counts[folder.id] = loadedData.sessions.filter(s => s.folderId === folder.id).length;
       });
       setSessionCounts(counts);
     });
   }, [settings.language]);
+
+  const handleCreateFolder = (folderName: string) => {
+    const folder = createFolder(folderName);
+    const newData = { ...data, folders: [...data.folders, folder] };
+    setData(newData);
+    setSessionCounts(prev => ({ ...prev, [folder.id]: 0 }));
+    saveSessions(newData);
+    setShowCreateFolderModal(false);
+  };
+
+  const handleRenameFolder = (newName: string) => {
+    if (!renamingFolder) return;
+
+    const result = renameFolder(renamingFolder.id, newName, data.folders);
+    if (!result.success) {
+      Alert.alert(t('folders.error'), result.error);
+      return;
+    }
+
+    const newData = { ...data, folders: result.folders! };
+    setData(newData);
+    saveSessions(newData);
+    setShowRenameFolderModal(false);
+    setRenamingFolder(null);
+  };
+
+  const handleDuplicateFolder = (folder: Folder) => {
+    const idx = data.folders.findIndex(f => f.id === folder.id);
+    const newFolder: Folder = {
+      id: newId(),
+      name: t('sessions.copyOf', { name: folder.name }),
+      createdAt: Date.now(),
+    };
+    const duplicatedSessions = data.sessions
+      .filter(s => s.folderId === folder.id)
+      .map(s => ({ ...s, id: newId(), folderId: newFolder.id }));
+
+    const newData = {
+      folders: [...data.folders.slice(0, idx + 1), newFolder, ...data.folders.slice(idx + 1)],
+      sessions: [...data.sessions, ...duplicatedSessions],
+    };
+    setData(newData);
+    setSessionCounts(prev => ({ ...prev, [newFolder.id]: duplicatedSessions.length }));
+    saveSessions(newData);
+  };
+
+  const handleDeleteFolder = (moveToFolderId: string | null) => {
+    if (!deletingFolder) return;
+
+    try {
+      const newData = deleteFolder(deletingFolder.id, moveToFolderId, data);
+      setData(newData);
+      const counts = { ...sessionCounts };
+      delete counts[deletingFolder.id];
+      setSessionCounts(counts);
+      saveSessions(newData);
+      setShowDeleteFolderModal(false);
+      setDeletingFolder(null);
+    } catch (e: any) {
+      Alert.alert(t('folders.error'), e.message);
+    }
+  };
 
   return (
     <LinearGradient
@@ -47,7 +129,7 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
           </Pressable>
         }
         right={
-          <Pressable style={styles.addBtn} onPress={() => onNavigate({ name: 'Sessions' })}>
+          <Pressable style={styles.addBtn} onPress={() => setShowCreateFolderModal(true)}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
             </Svg>
@@ -55,25 +137,166 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
         }
       />
 
-      <FlatList
-        style={styles.list}
+      <DraggableFlatList
+        data={data.folders}
+        keyExtractor={(folder) => folder.id}
+        containerStyle={styles.list}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        data={folders}
-        keyExtractor={(folder) => folder.id}
-        renderItem={({ item: folder }) => (
-          <Pressable
-            style={styles.folderCard}
-            onPress={() => onNavigate({ name: 'Sessions', folderId: folder.id })}
-          >
-            <Text style={styles.folderName}>{folder.name}</Text>
-            <Text style={styles.sessionCount}>
-              {sessionCounts[folder.id] || 0} {t('common.intervals')}
-            </Text>
-          </Pressable>
+        onDragEnd={({ data: reorderedFolders }) => {
+          const newData = { ...data, folders: reorderedFolders };
+          setData(newData);
+          saveSessions(newData);
+        }}
+        ListHeaderComponent={
+          data.folders.length > 0
+            ? <Text style={styles.hintText}>{t('folders.hint')}</Text>
+            : null
+        }
+        renderItem={({ item: folder, drag, isActive }: RenderItemParams<Folder>) => (
+          <ScaleDecorator>
+            <FolderSwipeRow
+              folder={folder}
+              sessionCount={sessionCounts[folder.id] || 0}
+              styles={styles}
+              drag={drag}
+              isActive={isActive}
+              onPress={() => onNavigate({ name: 'Sessions', folderId: folder.id })}
+              onDuplicate={() => handleDuplicateFolder(folder)}
+              onRename={() => {
+                setRenamingFolder(folder);
+                setShowRenameFolderModal(true);
+              }}
+              onDelete={() => {
+                setDeletingFolder(folder);
+                setShowDeleteFolderModal(true);
+              }}
+            />
+          </ScaleDecorator>
         )}
       />
+
+      <FolderCreateModal
+        visible={showCreateFolderModal}
+        allFolders={data.folders}
+        onDismiss={() => setShowCreateFolderModal(false)}
+        onSubmit={handleCreateFolder}
+      />
+
+      <FolderRenameModal
+        visible={showRenameFolderModal}
+        folder={renamingFolder}
+        allFolders={data.folders}
+        onDismiss={() => {
+          setShowRenameFolderModal(false);
+          setRenamingFolder(null);
+        }}
+        onSubmit={handleRenameFolder}
+      />
+
+      <DeleteFolderModal
+        visible={showDeleteFolderModal}
+        folder={deletingFolder}
+        sessionCount={deletingFolder ? sessionCounts[deletingFolder.id] || 0 : 0}
+        otherFolders={deletingFolder ? data.folders.filter(f => f.id !== deletingFolder.id) : []}
+        onDismiss={() => {
+          setShowDeleteFolderModal(false);
+          setDeletingFolder(null);
+        }}
+        onDeleteWithMove={handleDeleteFolder}
+        onDeleteAll={() => handleDeleteFolder(null)}
+      />
     </LinearGradient>
+  );
+}
+
+const SwipeDuplicateAction = React.forwardRef<
+  { reset: () => void },
+  { styles: ReturnType<typeof makeStyles>; onDuplicate: () => void; swipeable: { close: () => void } }
+>(function SwipeDuplicateAction({ styles, onDuplicate, swipeable }, ref) {
+  const { t } = useTranslation();
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useImperativeHandle(ref, () => ({ reset: () => opacity.setValue(1) }));
+
+  const handlePress = () => {
+    onDuplicate();
+    swipeable.close();
+  };
+
+  return (
+    <Animated.View style={{ opacity, alignSelf: 'stretch' }}>
+      <Pressable onPress={handlePress} style={[styles.swipeDuplicateAction, { flex: 1 }]}>
+        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+          <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+        <Text style={styles.swipeDuplicateText}>{t('common.duplicate')}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+});
+
+function FolderSwipeRow({
+  folder, sessionCount, styles, drag, isActive, onPress, onDuplicate, onRename, onDelete,
+}: {
+  folder: Folder;
+  sessionCount: number;
+  styles: ReturnType<typeof makeStyles>;
+  drag: () => void;
+  isActive: boolean;
+  onPress: () => void;
+  onDuplicate: () => void;
+  onRename: () => void;
+  onDelete: () => void;
+}) {
+  const { T } = useTheme();
+  const { t } = useTranslation();
+  const duplicateRef = useRef<{ reset: () => void } | null>(null);
+
+  return (
+    <ReanimatedSwipeable
+      containerStyle={styles.swipeContainer}
+      onSwipeableClose={() => duplicateRef.current?.reset()}
+      renderLeftActions={(_p, _d, swipeable) => (
+        <SwipeDuplicateAction
+          ref={duplicateRef}
+          styles={styles}
+          onDuplicate={onDuplicate}
+          swipeable={swipeable}
+        />
+      )}
+      renderRightActions={(_p, _d, swipeable) => (
+        <View style={styles.rightActionsContainer}>
+          <Pressable onPress={() => { onRename(); swipeable.close(); }} style={styles.swipeEditAction}>
+            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+              <Path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+            <Text style={styles.swipeEditText}>{t('common.edit')}</Text>
+          </Pressable>
+          <Pressable onPress={() => { onDelete(); swipeable.close(); }} style={styles.swipeDeleteAction}>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+              <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
+            </Svg>
+            <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
+          </Pressable>
+        </View>
+      )}
+    >
+      <Pressable
+        style={[styles.folderCard, isActive && styles.folderCardActive]}
+        onPress={onPress}
+      >
+        <Pressable onLongPress={drag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
+          <DragHandle color={T.subText} />
+        </Pressable>
+        <Text style={styles.folderName}>{folder.name}</Text>
+        <Text style={styles.sessionCount}>
+          {sessionCount} {t('common.intervals')}
+        </Text>
+      </Pressable>
+    </ReanimatedSwipeable>
   );
 }
 
@@ -110,6 +333,12 @@ function makeStyles(T: ThemeTokens) {
       alignItems: 'center',
       justifyContent: 'space-between',
     },
+    folderCardActive: {
+      borderColor: T.accent,
+    },
+    dragHandle: {
+      paddingRight: 12,
+    },
     folderName: {
       fontFamily: 'Inter_600SemiBold',
       fontSize: 16,
@@ -120,6 +349,65 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_400Regular',
       fontSize: 13,
       color: T.subText,
+    },
+    hintText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 11,
+      color: T.faintText,
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    swipeContainer: {
+      borderRadius: 18,
+    },
+    swipeDuplicateAction: {
+      backgroundColor: '#3b82f6',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      width: 88,
+      borderRadius: 18,
+      marginRight: 8,
+    },
+    swipeDuplicateText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 13,
+      letterSpacing: 0.5,
+      color: '#fff',
+    },
+    rightActionsContainer: {
+      flexDirection: 'row',
+      gap: 0,
+    },
+    swipeEditAction: {
+      backgroundColor: '#3b82f6',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      width: 80,
+      borderRadius: 18,
+      marginRight: 8,
+    },
+    swipeEditText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 11,
+      letterSpacing: 0.3,
+      color: '#fff',
+    },
+    swipeDeleteAction: {
+      backgroundColor: '#ff5a5f',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      width: 88,
+      borderRadius: 18,
+      marginLeft: 8,
+    },
+    swipeDeleteText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 13,
+      letterSpacing: 0.5,
+      color: '#fff',
     },
   });
 }

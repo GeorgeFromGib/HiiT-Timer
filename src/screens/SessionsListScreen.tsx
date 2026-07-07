@@ -84,7 +84,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
 
   // Show flat list if: viewing a specific folder, hideFolders is enabled, or only 1 folder exists
   const shouldHideFolders =
-    Boolean(folderId) || Boolean((settings as { hideFolders?: boolean }).hideFolders) && data.folders.length === 1;
+    Boolean(folderId) || Boolean((settings as { hideFolders?: boolean }).hideFolders) || data.folders.length === 1;
 
   const sessionsInFolder = (folderId: string) => data.sessions.filter(s => s.folderId === folderId);
 
@@ -284,7 +284,9 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
 
       {!shouldHideFolders && data.folders.length > 1 && !folderId ? (
         <View style={styles.list}>
-          <Text style={styles.emptyText}>Click + to select a folder</Text>
+          <Pressable style={styles.viewFoldersBtn} onPress={() => onNavigate({ name: 'Folders' })}>
+            <Text style={styles.viewFoldersBtnText}>{t('sessions.viewFolders')}</Text>
+          </Pressable>
         </View>
       ) : shouldHideFolders && data.sessions.length > 0 ? (
         <DraggableFlatList
@@ -549,6 +551,21 @@ function makeStyles(T: ThemeTokens) {
       color: T.faintText,
       textAlign: 'center',
       marginTop: 48,
+    },
+
+    viewFoldersBtn: {
+      alignSelf: 'center',
+      marginTop: 48,
+      paddingVertical: 12,
+      paddingHorizontal: 24,
+      borderRadius: 24,
+      backgroundColor: T.accent,
+      ...buttonShadow(T),
+    },
+    viewFoldersBtnText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 14,
+      color: T.btnGlyph,
     },
 
     hintText: {

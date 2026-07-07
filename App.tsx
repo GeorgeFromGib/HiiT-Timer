@@ -33,7 +33,6 @@ import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { DEFAULT_SETTINGS, detectSpeedUnit, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
-import { loadSessions } from './src/lib/sessions';
 import { SettingsContext } from './src/lib/settingsContext';
 import { detectLanguage, i18n } from './src/lib/i18n';
 import { PremiumContext } from './src/lib/premiumContext';
@@ -95,14 +94,8 @@ export default function App() {
       if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
 
       // Set initial route based on folder settings
-      const hideFolders = (resolved as { hideFolders?: boolean }).hideFolders;
-      if (!hideFolders) {
-        // If folders are enabled, start with Folders screen
-        loadSessions(resolved.language).then(data => {
-          if (data.folders.length > 1) {
-            setRouteState({ name: 'Folders' });
-          }
-        });
+      if (!resolved.hideFolders) {
+        setRouteState({ name: 'Folders' });
       }
     });
   }, []);
@@ -154,7 +147,7 @@ export default function App() {
       {route.name === 'Settings' && (
         <RouteScreen>
           <SettingsScreen
-            onBack={goBack}
+            onBack={() => setRoute(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
             onPrivacyPolicy={() => setRoute({ name: 'PrivacyPolicy' })}
           />
         </RouteScreen>

@@ -35,7 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
   speedUnitIsManuallySet: false,
   language: 'en',
   languageIsManuallySet: false,
-  hideFolders: false,
+  hideFolders: true,
 };
 
 const settingsFile = () => new File(Paths.document, 'settings_v1.json');

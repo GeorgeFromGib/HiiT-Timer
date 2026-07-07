@@ -7,6 +7,7 @@ export const fr: typeof en = {
     done: 'Terminé',
     delete: 'Supprimer',
     duplicate: 'Dupliquer',
+    edit: 'Modifier',
     create: 'Créer',
     move: 'Déplacer',
     apply: 'Appliquer',
@@ -40,6 +41,7 @@ export const fr: typeof en = {
     trialBadge: '%{days} jours restants',
     trialUpgrade: 'Mettre à niveau',
     trialExpiredBadge: 'Débloquer définitivement',
+    viewFolders: 'Voir les dossiers',
   },
   folders: {
     title: 'Dossiers',
@@ -60,6 +62,7 @@ export const fr: typeof en = {
     nameExists: 'Un dossier avec ce nom existe déjà.',
     error: 'Erreur',
     deleteFolderConfirm: 'Supprimer ce dossier ? Les séances seront déplacées vers Non classées.',
+    hint: 'Glissez à droite pour dupliquer, à gauche pour modifier ou supprimer. Triez via les poignées.',
   },
   workout: {
     done: 'TERMINÉ',

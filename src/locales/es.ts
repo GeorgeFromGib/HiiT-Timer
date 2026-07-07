@@ -7,6 +7,7 @@ export const es: typeof en = {
     done: 'Listo',
     delete: 'Eliminar',
     duplicate: 'Duplicar',
+    edit: 'Editar',
     create: 'Crear',
     move: 'Mover',
     apply: 'Aplicar',
@@ -40,6 +41,7 @@ export const es: typeof en = {
     trialBadge: '%{days} días restantes',
     trialUpgrade: 'Actualizar',
     trialExpiredBadge: 'Desbloquear para siempre',
+    viewFolders: 'Ver carpetas',
   },
   folders: {
     title: 'Carpetas',
@@ -60,6 +62,7 @@ export const es: typeof en = {
     nameExists: 'Ya existe una carpeta con este nombre.',
     error: 'Error',
     deleteFolderConfirm: '¿Eliminar esta carpeta? Las sesiones se moverán a Sin clasificar.',
+    hint: 'Desliza a la derecha para duplicar, a la izquierda para editar o eliminar. Ordena con las asas.',
   },
   workout: {
     done: 'HECHO',

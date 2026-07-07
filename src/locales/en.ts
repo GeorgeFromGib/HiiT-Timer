@@ -5,6 +5,7 @@ export const en = {
     done: 'Done',
     delete: 'Delete',
     duplicate: 'Duplicate',
+    edit: 'Edit',
     create: 'Create',
     move: 'Move',
     apply: 'Apply',
@@ -38,6 +39,7 @@ export const en = {
     trialBadge: '%{days} days left',
     trialUpgrade: 'Upgrade',
     trialExpiredBadge: 'Unlock forever',
+    viewFolders: 'View Folders',
   },
   folders: {
     title: 'Folders',
@@ -58,6 +60,7 @@ export const en = {
     nameExists: 'A folder with this name already exists.',
     error: 'Error',
     deleteFolderConfirm: 'Delete this folder? Sessions will move to Unfiled.',
+    hint: 'Swipe right to duplicate, left to edit or delete. Sort via the drag handles.',
   },
   workout: {
     done: 'DONE',
