@@ -65,6 +65,7 @@ export const en = {
     error: 'Error',
     deleteFolderConfirm: 'Delete this folder? Sessions will move to Unfiled.',
     hint: 'Swipe right to duplicate, left to edit or delete. Sort via the drag handles.',
+    icon: 'Icon',
   },
   workout: {
     done: 'DONE',

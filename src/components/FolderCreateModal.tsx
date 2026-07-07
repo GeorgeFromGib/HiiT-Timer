@@ -10,13 +10,15 @@ import {
 } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import { useTranslation } from '../lib/i18n';
-import { validateFolderName, type Folder } from '../lib/sessions';
+import { validateFolderName, type Folder, type FolderIconName } from '../lib/sessions';
+import { DEFAULT_FOLDER_ICON } from '../lib/folderIcons';
+import FolderIconPicker from './FolderIconPicker';
 
 interface FolderCreateModalProps {
   visible: boolean;
   allFolders: Folder[];
   onDismiss: () => void;
-  onSubmit: (folderName: string) => void;
+  onSubmit: (folderName: string, icon: FolderIconName) => void;
 }
 
 export default function FolderCreateModal({
@@ -29,14 +31,16 @@ export default function FolderCreateModal({
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
   const [name, setName] = useState('');
+  const [icon, setIcon] = useState<FolderIconName>(DEFAULT_FOLDER_ICON);
 
   const handleSubmit = () => {
     if (!validateFolderName(name, allFolders)) {
       Alert.alert(t('folders.invalidName'), t('folders.nameExists'));
       return;
     }
-    onSubmit(name);
+    onSubmit(name, icon);
     setName('');
+    setIcon(DEFAULT_FOLDER_ICON);
   };
 
   return (
@@ -52,6 +56,8 @@ export default function FolderCreateModal({
             onChangeText={setName}
             autoFocus
           />
+          <Text style={styles.sectionLabel}>{t('folders.icon')}</Text>
+          <FolderIconPicker value={icon} onChange={setIcon} />
           <View style={styles.buttonRow}>
             <Pressable style={styles.cancelBtn} onPress={onDismiss}>
               <Text style={styles.cancelText}>{t('common.cancel')}</Text>
@@ -97,6 +103,14 @@ function makeStyles(T: ThemeTokens) {
       fontSize: 14,
       color: T.text,
       marginBottom: 16,
+    },
+    sectionLabel: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 11,
+      letterSpacing: 0.4,
+      textTransform: 'uppercase',
+      color: T.subText,
+      marginBottom: 8,
     },
     buttonRow: {
       flexDirection: 'row',

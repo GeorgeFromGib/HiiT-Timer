@@ -67,6 +67,7 @@ export const fr: typeof en = {
     error: 'Erreur',
     deleteFolderConfirm: 'Supprimer ce dossier ? Les séances seront déplacées vers Non classées.',
     hint: 'Glissez à droite pour dupliquer, à gauche pour modifier ou supprimer. Triez via les poignées.',
+    icon: 'Icône',
   },
   workout: {
     done: 'TERMINÉ',

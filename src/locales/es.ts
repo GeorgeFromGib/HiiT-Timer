@@ -67,6 +67,7 @@ export const es: typeof en = {
     error: 'Error',
     deleteFolderConfirm: '¿Eliminar esta carpeta? Las sesiones se moverán a Sin clasificar.',
     hint: 'Desliza a la derecha para duplicar, a la izquierda para editar o eliminar. Ordena con las asas.',
+    icon: 'Icono',
   },
   workout: {
     done: 'HECHO',
