@@ -1,0 +1,12 @@
+.git/
+node_modules/
+dist/
+build/
+coverage/
+.next/
+.nuxt/
+.env
+.env.*
+*.log
+*.zip
+
