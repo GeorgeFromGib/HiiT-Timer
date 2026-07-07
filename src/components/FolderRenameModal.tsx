@@ -10,14 +10,16 @@ import {
 } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import { useTranslation } from '../lib/i18n';
-import { validateFolderName, type Folder } from '../lib/sessions';
+import { validateFolderName, type Folder, type FolderIconName } from '../lib/sessions';
+import { DEFAULT_FOLDER_ICON } from '../lib/folderIcons';
+import FolderIconPicker from './FolderIconPicker';
 
 interface FolderRenameModalProps {
   visible: boolean;
   folder: Folder | null;
   allFolders: Folder[];
   onDismiss: () => void;
-  onSubmit: (newName: string) => void;
+  onSubmit: (newName: string, icon: FolderIconName) => void;
 }
 
 export default function FolderRenameModal({
@@ -31,10 +33,12 @@ export default function FolderRenameModal({
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
   const [name, setName] = useState('');
+  const [icon, setIcon] = useState<FolderIconName>(DEFAULT_FOLDER_ICON);
 
   useEffect(() => {
     if (visible && folder) {
       setName(folder.name);
+      setIcon(folder.icon ?? DEFAULT_FOLDER_ICON);
     }
   }, [visible, folder]);
 
@@ -43,7 +47,7 @@ export default function FolderRenameModal({
       Alert.alert(t('folders.invalidName'), t('folders.nameExists'));
       return;
     }
-    onSubmit(name);
+    onSubmit(name, icon);
     setName('');
   };
 
@@ -60,6 +64,8 @@ export default function FolderRenameModal({
             onChangeText={setName}
             autoFocus
           />
+          <Text style={styles.sectionLabel}>{t('folders.icon')}</Text>
+          <FolderIconPicker value={icon} onChange={setIcon} />
           <View style={styles.buttonRow}>
             <Pressable style={styles.cancelBtn} onPress={onDismiss}>
               <Text style={styles.cancelText}>{t('common.cancel')}</Text>
@@ -105,6 +111,14 @@ function makeStyles(T: ThemeTokens) {
       fontSize: 14,
       color: T.text,
       marginBottom: 16,
+    },
+    sectionLabel: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 11,
+      letterSpacing: 0.4,
+      textTransform: 'uppercase',
+      color: T.subText,
+      marginBottom: 8,
     },
     buttonRow: {
       flexDirection: 'row',
