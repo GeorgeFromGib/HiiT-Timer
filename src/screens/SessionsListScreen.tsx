@@ -22,7 +22,6 @@ import {
   type SessionsData,
 } from '../lib/sessions';
 import { useGatedAction } from '../hooks/useGatedAction';
-import { usePremium } from '../lib/premiumContext';
 import PaywallModal from '../components/PaywallModal';
 import { useSettings } from '../lib/settingsContext';
 import { confirmDeleteSession } from '../lib/alerts';
@@ -32,6 +31,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import MoveToFolderSheet from '../components/MoveToFolderSheet';
+import TrialStatusPill from '../components/TrialStatusPill';
 import { useTranslation } from '../lib/i18n';
 
 export default function SessionsListScreen({ folderId, onNavigate }: { folderId?: string; onNavigate: (route: Route) => void }) {
@@ -43,7 +43,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
-  const [trialExpanded, setTrialExpanded] = useState(false);
 
   const [showMoveSheet, setShowMoveSheet] = useState(false);
   const [movingSession, setMovingSession] = useState<Session | null>(null);
@@ -83,7 +82,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
     }
   }, [showTypeMenu]);
 
-  const { isPremium, trialDaysRemaining } = usePremium();
   const gate = useGatedAction(() => setShowPaywall(true));
 
   React.useEffect(() => {
@@ -191,30 +189,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
         }
       />
 
-      {!isPremium && (
-        trialDaysRemaining > 0 ? (
-          <View style={styles.trialCard}>
-            <Pressable style={styles.trialCardHeader} onPress={() => setTrialExpanded(p => !p)}>
-              <Text style={styles.trialChipText}>{t('sessions.trialActive')}</Text>
-            </Pressable>
-            {trialExpanded && (
-              <>
-                <View style={styles.trialDivider} />
-                <View style={styles.trialExpandedRow}>
-                  <Text style={styles.trialDaysText}>{t('sessions.trialBadge', { days: trialDaysRemaining })}</Text>
-                  <Pressable onPress={() => { setTrialExpanded(false); setShowPaywall(true); }}>
-                    <Text style={styles.trialUpgradeBtn}>{t('sessions.trialUpgrade')}</Text>
-                  </Pressable>
-                </View>
-              </>
-            )}
-          </View>
-        ) : (
-          <Pressable style={styles.trialChip} onPress={() => setShowPaywall(true)}>
-            <Text style={styles.trialChipText}>{t('sessions.trialExpiredBadge')}</Text>
-          </Pressable>
-        )
-      )}
+      <TrialStatusPill onUpgrade={() => setShowPaywall(true)} />
 
       {!shouldHideFolders && data.folders.length > 1 && !folderId ? (
         <View style={styles.list}>
@@ -362,60 +337,6 @@ function makeStyles(T: ThemeTokens) {
       ...buttonShadow(T),
       shadowOffset: { width: 0, height: 6 },
       shadowRadius: 11,
-    },
-
-    trialChip: {
-      alignSelf: 'center',
-      paddingHorizontal: 14,
-      paddingVertical: 6,
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: T.accent,
-      marginBottom: 14,
-    },
-    trialChipText: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 12,
-      color: T.accent,
-      letterSpacing: 0.2,
-    },
-    trialCard: {
-      alignSelf: 'center',
-      borderRadius: 14,
-      borderWidth: 1,
-      borderColor: T.accent,
-      marginBottom: 14,
-      minWidth: 140,
-    },
-    trialCardHeader: {
-      paddingHorizontal: 14,
-      paddingVertical: 6,
-      alignItems: 'center',
-    },
-    trialDivider: {
-      height: StyleSheet.hairlineWidth,
-      backgroundColor: T.accent,
-      opacity: 0.4,
-    },
-    trialExpandedRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 14,
-      paddingVertical: 8,
-      gap: 16,
-    },
-    trialDaysText: {
-      fontFamily: 'Inter_400Regular',
-      fontSize: 12,
-      color: T.subText,
-      letterSpacing: 0.2,
-    },
-    trialUpgradeBtn: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 12,
-      color: T.accent,
-      letterSpacing: 0.3,
     },
 
     list: { flex: 1 },

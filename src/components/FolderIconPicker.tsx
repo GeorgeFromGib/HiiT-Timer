@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
-import { useTranslation } from '../lib/i18n';
 import type { FolderIconName } from '../lib/sessions';
 import { FOLDER_ICON_GROUPS, resolveFolderIconColor, folderIconTint } from '../lib/folderIcons';
 import FolderIcon from './FolderIcon';
@@ -11,36 +10,32 @@ interface FolderIconPickerProps {
   onChange: (icon: FolderIconName) => void;
 }
 
+const ICONS: FolderIconName[] = FOLDER_ICON_GROUPS.flatMap(group => group.icons);
+
 export default function FolderIconPicker({ value, onChange }: FolderIconPickerProps) {
   const { T } = useTheme();
-  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
 
   return (
     <ScrollView style={styles.scroll} nestedScrollEnabled showsVerticalScrollIndicator={false}>
-      {FOLDER_ICON_GROUPS.map(group => (
-        <View key={group.labelKey} style={styles.group}>
-          <Text style={styles.groupLabel}>{t(group.labelKey)}</Text>
-          <View style={styles.row}>
-            {group.icons.map(icon => {
-              const color = resolveFolderIconColor(T, icon);
-              const selected = icon === value;
-              return (
-                <Pressable
-                  key={icon}
-                  onPress={() => onChange(icon)}
-                  style={[
-                    styles.swatch,
-                    { backgroundColor: folderIconTint(color), borderColor: selected ? color : T.hairline },
-                  ]}
-                >
-                  <FolderIcon name={icon} color={color} size={20} />
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-      ))}
+      <View style={styles.row}>
+        {ICONS.map(icon => {
+          const color = resolveFolderIconColor(T, icon);
+          const selected = icon === value;
+          return (
+            <Pressable
+              key={icon}
+              onPress={() => onChange(icon)}
+              style={[
+                styles.swatch,
+                { backgroundColor: folderIconTint(color), borderColor: selected ? color : T.hairline },
+              ]}
+            >
+              <FolderIcon name={icon} color={color} size={20} />
+            </Pressable>
+          );
+        })}
+      </View>
     </ScrollView>
   );
 }
@@ -50,17 +45,6 @@ function makeStyles(T: ThemeTokens) {
     scroll: {
       maxHeight: 240,
       marginBottom: 16,
-    },
-    group: {
-      marginBottom: 12,
-    },
-    groupLabel: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 10,
-      letterSpacing: 0.6,
-      textTransform: 'uppercase',
-      color: T.faintText,
-      marginBottom: 6,
     },
     row: {
       flexDirection: 'row',

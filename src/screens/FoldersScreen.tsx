@@ -24,6 +24,8 @@ import FolderIcon from '../components/FolderIcon';
 import FolderCreateModal from '../components/FolderCreateModal';
 import FolderRenameModal from '../components/FolderRenameModal';
 import DeleteFolderModal from '../components/DeleteFolderModal';
+import PaywallModal from '../components/PaywallModal';
+import TrialStatusPill from '../components/TrialStatusPill';
 import type { Route } from '../navigation';
 import Svg, { Path } from 'react-native-svg';
 
@@ -39,6 +41,7 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
   const [renamingFolder, setRenamingFolder] = useState<Folder | null>(null);
   const [showDeleteFolderModal, setShowDeleteFolderModal] = useState(false);
   const [deletingFolder, setDeletingFolder] = useState<Folder | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   useEffect(() => {
     loadSessions(settings.language).then(loadedData => {
@@ -141,6 +144,8 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
         }
       />
 
+      <TrialStatusPill onUpgrade={() => setShowPaywall(true)} />
+
       <DraggableFlatList
         data={data.folders}
         keyExtractor={(folder) => folder.id}
@@ -210,6 +215,8 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
         onDeleteWithMove={handleDeleteFolder}
         onDeleteAll={() => handleDeleteFolder(null)}
       />
+
+      <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
     </LinearGradient>
   );
 }
@@ -403,7 +410,6 @@ function makeStyles(T: ThemeTokens) {
       gap: 4,
       width: 80,
       borderRadius: 18,
-      marginRight: 8,
     },
     swipeEditText: {
       fontFamily: 'Inter_700Bold',
@@ -418,7 +424,6 @@ function makeStyles(T: ThemeTokens) {
       gap: 4,
       width: 88,
       borderRadius: 18,
-      marginLeft: 8,
     },
     swipeDeleteText: {
       fontFamily: 'Inter_700Bold',

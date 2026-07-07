@@ -11,7 +11,8 @@ import {
 import { useTheme, type ThemeTokens } from '../theme';
 import { useTranslation } from '../lib/i18n';
 import { validateFolderName, type Folder, type FolderIconName } from '../lib/sessions';
-import { DEFAULT_FOLDER_ICON } from '../lib/folderIcons';
+import { DEFAULT_FOLDER_ICON, resolveFolderIconColor, folderIconTint } from '../lib/folderIcons';
+import FolderIcon from './FolderIcon';
 import FolderIconPicker from './FolderIconPicker';
 
 interface FolderRenameModalProps {
@@ -34,6 +35,7 @@ export default function FolderRenameModal({
   const styles = useMemo(() => makeStyles(T), [T]);
   const [name, setName] = useState('');
   const [icon, setIcon] = useState<FolderIconName>(DEFAULT_FOLDER_ICON);
+  const iconColor = resolveFolderIconColor(T, icon);
 
   useEffect(() => {
     if (visible && folder) {
@@ -54,16 +56,21 @@ export default function FolderRenameModal({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <Pressable style={styles.overlay} onPress={onDismiss}>
-        <View style={styles.modalContent}>
+        <Pressable style={styles.modalContent} onPress={() => {}}>
           <Text style={styles.title}>{t('folders.rename')}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={t('folders.folderNamePlaceholder')}
-            placeholderTextColor={T.faintText}
-            value={name}
-            onChangeText={setName}
-            autoFocus
-          />
+          <View style={styles.nameRow}>
+            <View style={[styles.iconBtn, { backgroundColor: folderIconTint(iconColor), borderColor: T.hairline }]}>
+              <FolderIcon name={icon} color={iconColor} size={20} />
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder={t('folders.folderNamePlaceholder')}
+              placeholderTextColor={T.faintText}
+              value={name}
+              onChangeText={setName}
+              autoFocus
+            />
+          </View>
           <Text style={styles.sectionLabel}>{t('folders.icon')}</Text>
           <FolderIconPicker value={icon} onChange={setIcon} />
           <View style={styles.buttonRow}>
@@ -74,7 +81,7 @@ export default function FolderRenameModal({
               <Text style={styles.submitText}>{t('common.save')}</Text>
             </Pressable>
           </View>
-        </View>
+        </Pressable>
       </Pressable>
     </Modal>
   );
@@ -101,7 +108,22 @@ function makeStyles(T: ThemeTokens) {
       color: T.text,
       marginBottom: 16,
     },
+    nameRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 16,
+    },
+    iconBtn: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      borderWidth: 2,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     input: {
+      flex: 1,
       borderWidth: 1,
       borderColor: T.hairline,
       borderRadius: 8,
@@ -110,7 +132,6 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_400Regular',
       fontSize: 14,
       color: T.text,
-      marginBottom: 16,
     },
     sectionLabel: {
       fontFamily: 'Inter_600SemiBold',
