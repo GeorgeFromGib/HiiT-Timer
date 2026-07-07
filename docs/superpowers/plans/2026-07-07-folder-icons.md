@@ -1231,6 +1231,196 @@ git commit -m "feat: thread folder icon through create/rename/duplicate and rend
 
 ---
 
+---
+
+### Task 8: Remove dead folder-CRUD code from `SessionsListScreen.tsx`
+
+**Context (discovered during Task 1's typecheck, confirmed with the user):** `SessionsListScreen.tsx` still imports and renders `FolderHeader`, `FolderCreateModal`, `FolderRenameModal`, and `DeleteFolderModal`, with their own `handleCreateFolder`/`handleRenameFolder`/`handleDeleteFolder` and state — left over from before the "refactor folders to separate screen" commit. None of it is reachable: `FolderHeader` is imported but never rendered in JSX; `setShowCreateFolderModal(true)`, `setShowRenameFolderModal(true)`/`setRenamingFolder(folder)`, and `setShowDeleteFolderModal(true)`/`setDeletingFolder(folder)` are never called anywhere in the file (only reset to `false`/`null`). The live multi-folder path (line ~260) only renders a "View Folders" button that navigates to `FoldersScreen`. User confirmed: remove this dead code now rather than also update it for icons.
+
+`MoveToFolderSheet` (and its `showMoveSheet`/`movingSession` state) is genuinely live — `onMove` on `SessionSwipeRow` calls `setMovingSession(session); setShowMoveSheet(true);` — do not touch it.
+
+`selectedFolderForSession` state is unrelated to this dead code (it's about which folder a new session is created into) and is left alone even though it looks similarly unused — out of scope for this task.
+
+**Files:**
+- Modify: `src/screens/SessionsListScreen.tsx`
+
+- [ ] **Step 1: Remove the now-unused imports**
+
+Remove these 4 lines (currently around lines 38-41):
+```ts
+import FolderHeader from '../components/FolderHeader';
+import FolderCreateModal from '../components/FolderCreateModal';
+import FolderRenameModal from '../components/FolderRenameModal';
+import DeleteFolderModal from '../components/DeleteFolderModal';
+```
+
+In the `react-native` import block, remove `Alert,` (it's only used inside the handlers this task removes).
+
+In the `../lib/sessions` import block, remove `createFolder,`, `renameFolder,`, `deleteFolder,`, and `type Folder,` (all only used by the code this task removes) — keep `loadSessions`, `saveSessions`, `newId`, `moveSessionToFolder`, `type Session`, `type SessionsData`.
+
+- [ ] **Step 2: Remove the now-unused state**
+
+Remove the `expandedFolderIds`/`setExpandedFolderIds` state (was only read by the now-unrendered `FolderHeader`) and the comment above it:
+```ts
+  const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(new Set());
+```
+
+Remove the folder-modal state block and its comment:
+```ts
+  // Folder modals — state, handlers, and rendering.
+  const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
+  const [showRenameFolderModal, setShowRenameFolderModal] = useState(false);
+  const [renamingFolder, setRenamingFolder] = useState<Folder | null>(null);
+  const [showDeleteFolderModal, setShowDeleteFolderModal] = useState(false);
+  const [deletingFolder, setDeletingFolder] = useState<Folder | null>(null);
+```
+Keep `showMoveSheet`, `movingSession`, and `selectedFolderForSession` exactly as they are.
+
+- [ ] **Step 3: Remove the now-unused `sessionsInFolder` helper**
+
+Remove this line (it was only used by the removed `DeleteFolderModal`'s `sessionCount` prop):
+```ts
+  const sessionsInFolder = (folderId: string) => data.sessions.filter(s => s.folderId === folderId);
+```
+
+- [ ] **Step 4: Simplify the load effect**
+
+Replace:
+```ts
+  React.useEffect(() => {
+    loadSessions(settings.language).then((loadedData) => {
+      setData(loadedData);
+      // Expand the first folder by default
+      if (loadedData.folders.length > 0) {
+        setExpandedFolderIds(new Set([loadedData.folders[0].id]));
+      }
+    });
+  }, [settings.language]);
+```
+with:
+```ts
+  React.useEffect(() => {
+    loadSessions(settings.language).then((loadedData) => {
+      setData(loadedData);
+    });
+  }, [settings.language]);
+```
+
+- [ ] **Step 5: Remove the three dead handlers**
+
+Remove `handleCreateFolder`, `handleRenameFolder`, and `handleDeleteFolder` in their entirety:
+```ts
+  const handleCreateFolder = (folderName: string) => {
+    const folder = createFolder(folderName);
+    const newData = {
+      ...data,
+      folders: [...data.folders, folder],
+    };
+    setData(newData);
+    saveSessions(newData);
+    setShowCreateFolderModal(false);
+  };
+
+  const handleRenameFolder = (newName: string) => {
+    if (!renamingFolder) return;
+
+    const result = renameFolder(renamingFolder.id, newName, data.folders);
+    if (!result.success) {
+      Alert.alert(t('folders.error'), result.error);
+      return;
+    }
+
+    const newData = {
+      ...data,
+      folders: result.folders!,
+    };
+    setData(newData);
+    saveSessions(newData);
+    setShowRenameFolderModal(false);
+    setRenamingFolder(null);
+  };
+
+  const handleDeleteFolder = (moveToFolderId: string | null) => {
+    if (!deletingFolder) return;
+
+    try {
+      const newData = deleteFolder(deletingFolder.id, moveToFolderId, data);
+      setData(newData);
+      saveSessions(newData);
+      setShowDeleteFolderModal(false);
+      setDeletingFolder(null);
+    } catch (e: any) {
+      Alert.alert(t('folders.error'), e.message);
+    }
+  };
+```
+Keep `handleMoveSessionToFolder` exactly as it is.
+
+- [ ] **Step 6: Remove the three dead modal JSX blocks**
+
+Remove:
+```tsx
+      <FolderCreateModal
+        visible={showCreateFolderModal}
+        allFolders={data.folders}
+        onDismiss={() => setShowCreateFolderModal(false)}
+        onSubmit={handleCreateFolder}
+      />
+
+      <FolderRenameModal
+        visible={showRenameFolderModal}
+        folder={renamingFolder}
+        allFolders={data.folders}
+        onDismiss={() => {
+          setShowRenameFolderModal(false);
+          setRenamingFolder(null);
+        }}
+        onSubmit={handleRenameFolder}
+      />
+
+      <DeleteFolderModal
+        visible={showDeleteFolderModal}
+        folder={deletingFolder}
+        sessionCount={deletingFolder ? sessionsInFolder(deletingFolder.id).length : 0}
+        otherFolders={deletingFolder ? data.folders.filter(f => f.id !== deletingFolder.id) : []}
+        onDismiss={() => {
+          setShowDeleteFolderModal(false);
+          setDeletingFolder(null);
+        }}
+        onDeleteWithMove={handleDeleteFolder}
+        onDeleteAll={() => handleDeleteFolder(null)}
+      />
+```
+Keep the `<MoveToFolderSheet ... />` block immediately after it exactly as it is.
+
+- [ ] **Step 7: Typecheck**
+
+Run: `npx tsc --noEmit`
+Expected: No errors anywhere in the project (this task removes the last remaining call sites of the old 3-argument `renameFolder`/2-argument `createFolder` signatures).
+
+- [ ] **Step 8: Manual verification**
+
+Run: `npx expo start --ios`
+
+1. Open the Sessions list with more than one folder existing. Confirm the "View Folders" button still appears and still navigates to `FoldersScreen` correctly.
+2. Open a single folder's session list (via `FoldersScreen` → tap a folder). Confirm sessions still list, drag-reorder, swipe-to-delete/duplicate, and "move to folder" (via swipe → move) all still work exactly as before.
+3. Confirm nothing on this screen looks different — this task removes unreachable code only, no visible behavior should change.
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add src/screens/SessionsListScreen.tsx
+git commit -m "chore: remove unreachable folder create/rename/delete UI from SessionsListScreen
+
+This screen's own folder CRUD modals (FolderHeader, FolderCreateModal,
+FolderRenameModal, DeleteFolderModal) were superseded by the dedicated
+FoldersScreen and had become unreachable — no code path ever set them
+visible. Removing them here rather than updating them for the new
+folder-icon feature."
+```
+
+---
+
 ## Self-Review Notes
 
 - **Spec coverage:** Data model (Task 1), color mapping (Task 2), `FolderIcon` render component (Task 3), `FolderIconPicker` grid (Task 4), Create modal integration (Task 5), Rename modal integration (Task 6), FoldersScreen wiring + card chip + duplicate carry-over (Task 7), manual verification checklist (Task 7 Step 8, matches the spec's Verification section) — every section of `2026-07-07-folder-icons-design.md` has a corresponding task.
