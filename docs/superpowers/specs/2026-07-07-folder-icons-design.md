@@ -10,12 +10,14 @@ Let users pick an icon for each folder (from the icon set catalogued in `design/
 
 28 icons across the 4 categories from the design file's `ICON_GROUPS`, ported 1:1 (same SVG paths, 24×24 viewBox):
 
+Picker display order (Folder Classification first — most relevant to a folder icon; the rest are borrowed from other screens):
+
 | Group | Icons |
 |---|---|
+| Folder Classification | `folder`, `folderOpen`, `star`, `heart`, `tag`, `bookmark`, `flag`, `target`, `calendar`, `pin`, `archive`, `grid`, `list`, `bell`, `lock`, `share`, `home` |
 | Phase | `sun`, `flame`, `bolt`, `pauseIcon`, `snow` |
 | Session Types | `standard`, `run`, `circuit`, `spinning` |
 | People | `user`, `users` |
-| Folder Classification | `folder`, `folderOpen`, `star`, `heart`, `tag`, `bookmark`, `flag`, `target`, `calendar`, `pin`, `archive`, `grid`, `list`, `bell`, `lock`, `share`, `home` |
 
 ## Data Model
 
@@ -76,7 +78,7 @@ Notes on the mapping:
 - `bolt` ("All Out") has no matching phase in this app's `Phase` type, so it falls back to `accent`.
 - Several icons share a token (e.g. `sun`/`circuit`/`star`/`flag`/`pin`/`bell` all resolve to `warmup`/orange) — that's expected; the goal is theme-consistent legibility, not 28 unique hues.
 
-Also export **`FOLDER_ICON_GROUPS`** from `folderIcons.ts` — the same 4 groups (with display labels) as the table above — for the picker UI to render section headers.
+Also export **`FOLDER_ICON_GROUPS`** from `folderIcons.ts` — the 4 groups above, in picker display order (Folder Classification, Phase, Session Types, People), with display labels — for the picker UI to render section headers.
 
 ## Components
 
