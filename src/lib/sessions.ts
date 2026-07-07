@@ -3,10 +3,18 @@ import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
 
+export type FolderIconName =
+  | 'sun' | 'flame' | 'bolt' | 'pauseIcon' | 'snow'
+  | 'standard' | 'run' | 'circuit' | 'spinning'
+  | 'user' | 'users'
+  | 'folder' | 'folderOpen' | 'star' | 'heart' | 'tag' | 'bookmark' | 'flag'
+  | 'target' | 'calendar' | 'pin' | 'archive' | 'grid' | 'list' | 'bell' | 'lock' | 'share' | 'home';
+
 export interface Folder {
   id: string;
   name: string;
   createdAt: number;
+  icon?: FolderIconName;
 }
 
 export interface SessionsData {
@@ -182,6 +190,7 @@ function createDefaultFolder(): Folder {
     id: 'default',
     name: 'My Sessions',
     createdAt: Date.now(),
+    icon: 'home',
   };
 }
 
@@ -260,17 +269,19 @@ export function validateFolderName(
   return !isDuplicate;
 }
 
-export function createFolder(name: string): Folder {
+export function createFolder(name: string, icon: FolderIconName = 'folder'): Folder {
   return {
     id: newId(),
     name: name.trim(),
     createdAt: Date.now(),
+    icon,
   };
 }
 
 export function renameFolder(
   folderId: string,
   newName: string,
+  icon: FolderIconName,
   currentFolders: Folder[]
 ): { success: boolean; error?: string; folders?: Folder[] } {
   if (!validateFolderName(newName, currentFolders, folderId)) {
@@ -281,7 +292,7 @@ export function renameFolder(
   }
 
   const updated = currentFolders.map(f =>
-    f.id === folderId ? { ...f, name: newName.trim() } : f
+    f.id === folderId ? { ...f, name: newName.trim(), icon } : f
   );
 
   return { success: true, folders: updated };
