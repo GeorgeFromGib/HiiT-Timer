@@ -24,6 +24,7 @@ export function SettingsToggle({ value, onChange, disabled = false }: {
   return (
     <Pressable
       onPress={() => { if (!disabled) onChange(!value); }}
+      disabled={disabled}
       style={[
         styles.toggleTrack,
         {
@@ -33,6 +34,7 @@ export function SettingsToggle({ value, onChange, disabled = false }: {
           shadowOpacity: (value && !disabled) ? 0.33 : 0,
           shadowOffset: { width: 0, height: 3 },
           shadowRadius: 5,
+          opacity: disabled ? 0.5 : 1,
         },
       ]}
     >

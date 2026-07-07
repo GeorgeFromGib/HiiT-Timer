@@ -36,36 +36,63 @@ export default function DeleteFolderModal({
 
   if (!folder) return null;
 
+  const isLastFolder = otherFolders.length === 0;
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <Pressable style={styles.overlay} onPress={onDismiss}>
         <View style={styles.modalContent}>
           <Text style={styles.title}>{t('folders.deleteFolder')}</Text>
-          <Text style={styles.message}>
-            {sessionCount > 0
-              ? t('folders.deleteWithSessions', { count: sessionCount })
-              : t('folders.deleteEmpty')}
-          </Text>
 
-          {sessionCount > 0 && otherFolders.length > 0 && (
+          {isLastFolder ? (
+            <Text style={styles.message}>
+              {t('folders.cannotDeleteLastFolder')}
+            </Text>
+          ) : (
             <>
-              <Text style={styles.subheader}>{t('folders.moveSessionsTo')}</Text>
-              <ScrollView style={styles.folderList}>
-                {otherFolders.map(f => (
-                  <Pressable
-                    key={f.id}
-                    style={styles.folderOption}
-                    onPress={() => onDeleteWithMove(f.id)}
-                  >
-                    <Text style={styles.folderOptionText}>{f.name}</Text>
+              <Text style={styles.message}>
+                {sessionCount > 0
+                  ? t('folders.deleteWithSessions', { count: sessionCount })
+                  : t('folders.deleteEmpty')}
+              </Text>
+
+              {sessionCount > 0 && otherFolders.length > 0 && (
+                <>
+                  <Text style={styles.subheader}>{t('folders.moveSessionsTo')}</Text>
+                  <ScrollView style={styles.folderList}>
+                    {otherFolders.map(f => (
+                      <Pressable
+                        key={f.id}
+                        style={styles.folderOption}
+                        onPress={() => onDeleteWithMove(f.id)}
+                      >
+                        <Text style={styles.folderOptionText}>{f.name}</Text>
+                      </Pressable>
+                    ))}
+                  </ScrollView>
+                  <Pressable style={styles.deleteAllBtn} onPress={onDeleteAll}>
+                    <Text style={styles.deleteAllText}>
+                      {t('folders.deleteWithoutMove')}
+                    </Text>
                   </Pressable>
-                ))}
-              </ScrollView>
-              <Pressable style={styles.deleteAllBtn} onPress={onDeleteAll}>
-                <Text style={styles.deleteAllText}>
-                  {t('folders.deleteWithoutMove')}
-                </Text>
-              </Pressable>
+                </>
+              )}
+
+              {sessionCount > 0 && otherFolders.length === 0 && (
+                <Pressable style={styles.deleteAllBtn} onPress={onDeleteAll}>
+                  <Text style={styles.deleteAllText}>
+                    {t('common.delete')}
+                  </Text>
+                </Pressable>
+              )}
+
+              {sessionCount === 0 && (
+                <Pressable style={styles.deleteAllBtn} onPress={onDeleteAll}>
+                  <Text style={styles.deleteAllText}>
+                    {t('common.delete')}
+                  </Text>
+                </Pressable>
+              )}
             </>
           )}
 

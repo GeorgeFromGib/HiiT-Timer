@@ -21,6 +21,7 @@ import { ThemeCard } from '../components/ThemeCard';
 import Constants from 'expo-constants';
 import { VolumeRow } from '../components/VolumeRow';
 import PaywallModal from '../components/PaywallModal';
+import { loadSessions, type SessionsData } from '../lib/sessions';
 
 // ══════════════════════════════════════════════════════════════
 // SETTINGS SCREEN
@@ -34,6 +35,13 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
   const { isPremium, trialDaysRemaining, setMockPremium, expireTrialForTesting, resetTrialForTesting } = usePremium();
   const [forceReview, setForceReview] = React.useState(false);
   const [showPaywall, setShowPaywall] = React.useState(false);
+  const [data, setData] = React.useState<SessionsData>({ folders: [], sessions: [] });
+
+  React.useEffect(() => {
+    loadSessions(settings.language).then(setData);
+  }, [settings.language]);
+
+  const canHideFolders = data.folders.length <= 1;
 
   return (
     <LinearGradient
@@ -69,8 +77,14 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
         <SettingsSection title={t('settings.display')}>
           <SettingsRow
             label={t('settings.hideFoldersLabel')}
-            sub={t('settings.hideFoldersSub')}
-            right={<SettingsToggle value={settings.hideFolders} onChange={v => updateSettings('hideFolders', v)} />}
+            sub={canHideFolders ? t('settings.hideFoldersSub') : t('settings.hideFoldersDisabledSub')}
+            right={
+              <SettingsToggle
+                value={settings.hideFolders}
+                onChange={v => canHideFolders && updateSettings('hideFolders', v)}
+                disabled={!canHideFolders}
+              />
+            }
             last
           />
         </SettingsSection>

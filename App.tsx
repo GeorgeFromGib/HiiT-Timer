@@ -24,6 +24,7 @@ import {
 import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
 import { useEffect, useState, type ReactNode } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import FoldersScreen from './src/screens/FoldersScreen';
 import SessionsListScreen from './src/screens/SessionsListScreen';
 import WorkoutScreen from './src/screens/WorkoutScreen';
 import EditSessionScreen from './src/screens/EditSessionScreen';
@@ -32,6 +33,7 @@ import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { DEFAULT_SETTINGS, detectSpeedUnit, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
+import { loadSessions } from './src/lib/sessions';
 import { SettingsContext } from './src/lib/settingsContext';
 import { detectLanguage, i18n } from './src/lib/i18n';
 import { PremiumContext } from './src/lib/premiumContext';
@@ -59,13 +61,22 @@ export default function App() {
   });
 
   const [audioReady, setAudioReady] = useState(false);
-  const [route, setRoute] = useState<Route>({ name: 'Sessions' });
+  const [route, setRouteState] = useState<Route>({ name: 'Sessions' });
+  const [previousRoute, setPreviousRoute] = useState<Route>({ name: 'Sessions' });
   const [themeKey, setThemeKey] = useState<ThemeKey>('daybreak');
   const [settings, setSettings] = useState<Settings>({
     ...DEFAULT_SETTINGS,
     language: detectLanguage(),
   });
   const premiumState = usePremiumState();
+
+  const setRoute = (newRoute: Route) => {
+    // Don't update previous route when navigating back to it
+    if (newRoute.name !== previousRoute.name) {
+      setPreviousRoute(route);
+    }
+    setRouteState(newRoute);
+  };
 
   useEffect(() => {
     configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));
@@ -82,6 +93,17 @@ export default function App() {
       setSettings(resolved);
       setThemeKey(resolved.theme);
       if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
+
+      // Set initial route based on folder settings
+      const hideFolders = (resolved as { hideFolders?: boolean }).hideFolders;
+      if (!hideFolders) {
+        // If folders are enabled, start with Folders screen
+        loadSessions(resolved.language).then(data => {
+          if (data.folders.length > 1) {
+            setRouteState({ name: 'Folders' });
+          }
+        });
+      }
     });
   }, []);
 
@@ -108,7 +130,7 @@ export default function App() {
 
   if (!fontsLoaded || !audioReady) return null;
 
-  const goBack = () => setRoute({ name: 'Sessions' });
+  const goBack = () => setRoute(previousRoute);
   const T = THEME_TOKENS[themeKey];
 
   return (
@@ -142,8 +164,11 @@ export default function App() {
           <PrivacyPolicyScreen onBack={() => setRoute({ name: 'Settings' })} />
         </RouteScreen>
       )}
+      {route.name === 'Folders' && (
+        <RouteScreen><FoldersScreen onNavigate={setRoute} /></RouteScreen>
+      )}
       {route.name === 'Sessions' && (
-        <RouteScreen><SessionsListScreen onNavigate={setRoute} /></RouteScreen>
+        <RouteScreen><SessionsListScreen folderId={route.folderId} onNavigate={setRoute} /></RouteScreen>
       )}
     </ThemeContext.Provider>
     </SettingsContext.Provider>

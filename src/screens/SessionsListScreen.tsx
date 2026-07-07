@@ -2,6 +2,8 @@ import React, { useRef, useImperativeHandle, useMemo, useState, useEffect } from
 import {
   Alert,
   Animated,
+  Dimensions,
+  FlatList,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -41,7 +43,7 @@ import DeleteFolderModal from '../components/DeleteFolderModal';
 import MoveToFolderSheet from '../components/MoveToFolderSheet';
 import { useTranslation } from '../lib/i18n';
 
-export default function SessionsListScreen({ onNavigate }: { onNavigate: (route: Route) => void }) {
+export default function SessionsListScreen({ folderId, onNavigate }: { folderId?: string; onNavigate: (route: Route) => void }) {
   const { T } = useTheme();
   const { t } = useTranslation();
   const { settings } = useSettings();
@@ -61,12 +63,28 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   const [deletingFolder, setDeletingFolder] = useState<Folder | null>(null);
   const [showMoveSheet, setShowMoveSheet] = useState(false);
   const [movingSession, setMovingSession] = useState<Session | null>(null);
+  const [selectedFolderForSession, setSelectedFolderForSession] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 98, right: 20 });
+  const addBtnRef = useRef<View>(null);
+  const [menuHeight, setMenuHeight] = useState(300); // Approximate height
 
   const menuAnim = useRef(new Animated.Value(0)).current;
 
-  // TODO(6b): settings.hideFolders is added to the Settings type in a later task.
+  const calculateMenuPosition = (buttonY: number, buttonHeight: number) => {
+    const screenHeight = Dimensions.get('window').height;
+    const overlap = buttonHeight / 2;
+
+    // Check if menu fits below the button (accounting for overlap)
+    if (buttonY + buttonHeight - overlap + menuHeight < screenHeight) {
+      return { top: buttonY + buttonHeight - overlap, right: 20, bottom: 'auto' as const };
+    }
+    // Otherwise show above the button
+    return { top: buttonY - menuHeight + overlap, right: 20, bottom: 'auto' as const };
+  };
+
+  // Show flat list if: viewing a specific folder, hideFolders is enabled, or only 1 folder exists
   const shouldHideFolders =
-    Boolean((settings as { hideFolders?: boolean }).hideFolders) && data.folders.length === 1;
+    Boolean(folderId) || Boolean((settings as { hideFolders?: boolean }).hideFolders) && data.folders.length === 1;
 
   const sessionsInFolder = (folderId: string) => data.sessions.filter(s => s.folderId === folderId);
 
@@ -97,12 +115,13 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
   }, [settings.language]);
 
   const handleCreateSession = (activityType?: string) => {
-    const defaultFolderId = data.folders[0]?.id || 'default';
+    const folderId = selectedFolderForSession || data.folders[0]?.id || 'default';
     setShowTypeMenu(false);
+    setSelectedFolderForSession(null);
     onNavigate({
       name: 'EditSession',
       activityType: activityType as any,
-      folderId: defaultFolderId,
+      folderId: folderId,
     });
   };
 
@@ -194,24 +213,43 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
       style={styles.root}
     >
       <ScreenHeader
-        title={t('sessions.title')}
+        title={folderId ? data.folders.find(f => f.id === folderId)?.name || t('sessions.title') : t('sessions.title')}
         style={styles.header}
         left={
-          <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })}>
-            <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
-              <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
-              <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-            </Svg>
-          </Pressable>
+          folderId ? (
+            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Folders' })}>
+              <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
+                <Path d="M19 12H5M12 19l-7-7 7-7" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              </Svg>
+            </Pressable>
+          ) : (
+            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })}>
+              <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
+                <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              </Svg>
+            </Pressable>
+          )
         }
         right={
-          <Pressable style={styles.addBtn} onPress={gate(() => {
-            if (shouldHideFolders) {
-              setShowTypeMenu(true);
-            } else {
-              setShowCreateFolderModal(true);
-            }
-          })}>
+          <Pressable
+            ref={addBtnRef}
+            style={styles.addBtn}
+            onPress={gate(() => {
+              // Measure button position for dropdown menu
+              addBtnRef.current?.measure((x, y, width, height, pageX, pageY) => {
+                const pos = calculateMenuPosition(pageY, height);
+                setMenuPosition(pos);
+              });
+
+              if (folderId || shouldHideFolders) {
+                setShowTypeMenu(true);
+              } else if (!folderId && !shouldHideFolders && data.folders.length > 0) {
+                onNavigate({ name: 'Folders' });
+              } else {
+                setShowTypeMenu(true);
+              }
+            })}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
             </Svg>
@@ -244,134 +282,23 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
         )
       )}
 
-      {!shouldHideFolders && data.folders.length > 0 ? (
-        <ScrollView style={styles.list} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
-          {data.folders.map(folder => {
-            const isExpanded = expandedFolderIds.has(folder.id);
-            const sessionsInThisFolder = sessionsInFolder(folder.id);
-
-            return (
-              <View key={folder.id} style={styles.folderCard}>
-                <FolderHeader
-                  folder={folder}
-                  isExpanded={isExpanded}
-                  sessionCount={sessionsInThisFolder.length}
-                  onToggleExpand={() => {
-                    const next = new Set(expandedFolderIds);
-                    if (isExpanded) {
-                      next.delete(folder.id);
-                    } else {
-                      next.add(folder.id);
-                    }
-                    setExpandedFolderIds(next);
-                  }}
-                />
-
-                {isExpanded && sessionsInThisFolder.length > 0 && (
-                  <DraggableFlatList
-                    data={sessionsInThisFolder}
-                    keyExtractor={(item) => item.id}
-                    scrollEnabled={false}
-                    containerStyle={styles.sessionsList}
-                    onDragEnd={({ data: reorderedSessions }) => {
-                      const updatedData = {
-                        ...data,
-                        sessions: data.sessions.map(s => {
-                          const reorderedSession = reorderedSessions.find(rs => rs.id === s.id);
-                          return reorderedSession || s;
-                        }).sort((a, b) => {
-                          const aIndex = reorderedSessions.findIndex(s => s.id === a.id);
-                          const bIndex = reorderedSessions.findIndex(s => s.id === b.id);
-                          return aIndex - bIndex;
-                        }).filter(s => s.folderId === folder.id)
-                          .concat(data.sessions.filter(s => s.folderId !== folder.id))
-                      };
-                      setData(updatedData);
-                      saveSessions(updatedData);
-                    }}
-                    ListFooterComponent={
-                      <Pressable
-                        onPress={gate(() => onNavigate({ name: 'EditSession', folderId: folder.id }))}
-                        style={{
-                          marginTop: 10,
-                          paddingVertical: 10,
-                          paddingHorizontal: 16,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 8,
-                        }}
-                      >
-                        <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-                          <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.5} strokeLinecap="round" />
-                        </Svg>
-                        <Text style={{ fontSize: 13, fontWeight: '700', color: T.accent }}>Add session</Text>
-                      </Pressable>
-                    }
-                    renderItem={({ item: session, drag, isActive }) => (
-                      <View key={session.id} style={{ marginBottom: 10 }}>
-                        <SessionSwipeRow
-                          session={session}
-                          styles={styles}
-                          drag={drag}
-                          isActive={isActive}
-                          draggable={true}
-                          selectedId={selectedSessionId}
-                          onDuplicate={gate(() => handleDuplicate(session))}
-                          onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
-                          onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
-                          onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
-                          onStart={gate(() => onNavigate({ name: 'Workout', session }))}
-                          onMove={() => {
-                            setMovingSession(session);
-                            setShowMoveSheet(true);
-                          }}
-                        />
-                      </View>
-                    )}
-                  />
-                )}
-
-                {isExpanded && sessionsInThisFolder.length === 0 && (
-                  <View style={{ paddingHorizontal: 16, paddingVertical: 12, gap: 10 }}>
-                    <Text style={styles.emptyFolderText}>{t('sessions.empty')}</Text>
-                    <Pressable
-                      onPress={gate(() => onNavigate({ name: 'EditSession', folderId: folder.id }))}
-                      style={{
-                        paddingVertical: 10,
-                        paddingHorizontal: 16,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 8,
-                        borderRadius: 12,
-                        borderWidth: 1.5,
-                        borderColor: T.accent,
-                        backgroundColor: `${T.accent}0e`,
-                      }}
-                    >
-                      <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-                        <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.5} strokeLinecap="round" />
-                      </Svg>
-                      <Text style={{ fontSize: 13, fontWeight: '700', color: T.accent }}>Add session</Text>
-                    </Pressable>
-                  </View>
-                )}
-              </View>
-            );
-          })}
-        </ScrollView>
+      {!shouldHideFolders && data.folders.length > 1 && !folderId ? (
+        <View style={styles.list}>
+          <Text style={styles.emptyText}>Click + to select a folder</Text>
+        </View>
       ) : shouldHideFolders && data.sessions.length > 0 ? (
         <DraggableFlatList
-          data={data.sessions.filter(s => s.folderId === data.folders[0]?.id)}
+          data={data.sessions.filter(s => s.folderId === (folderId || data.folders[0]?.id))}
           keyExtractor={s => s.id}
           containerStyle={styles.list}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           onDragEnd={({ data: reorderedSessions }) => {
+            const targetFolderId = folderId || data.folders[0]?.id;
             const next = {
               ...data,
               sessions: [
-                ...data.sessions.filter(s => s.folderId !== data.folders[0]?.id),
+                ...data.sessions.filter(s => s.folderId !== targetFolderId),
                 ...reorderedSessions,
               ],
             };
@@ -456,14 +383,18 @@ export default function SessionsListScreen({ onNavigate }: { onNavigate: (route:
             style={[StyleSheet.absoluteFill, { zIndex: 9 }]}
             onPress={() => setShowTypeMenu(false)}
           />
-          <Animated.View style={[styles.typeMenuWrapper, {
+          <Animated.View style={[styles.typeMenuWrapper, menuPosition, {
             opacity: menuAnim,
             transform: [
               { translateY: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [-10, 0] }) },
               { scale: menuAnim.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) },
             ],
           }]}>
-          <View style={styles.typeMenu}>
+          <View
+            style={styles.typeMenu}
+            onLayout={(e) => {
+              setMenuHeight(e.nativeEvent.layout.height);
+            }}>
             <View style={styles.typeMenuHeader}>
               <Text style={styles.typeMenuHeaderText}>{t('sessions.typeMenuHeader')}</Text>
             </View>
@@ -584,8 +515,10 @@ function makeStyles(T: ThemeTokens) {
 
     list: { flex: 1 },
     listContent: {
+      paddingHorizontal: 0,
+      paddingTop: 0,
       paddingBottom: 28,
-      gap: 12,
+      gap: 8,
     },
 
     folderCard: {
@@ -594,7 +527,7 @@ function makeStyles(T: ThemeTokens) {
       borderColor: T.hairline,
       backgroundColor: T.card,
       overflow: 'hidden',
-      marginBottom: 12,
+      marginBottom: 2,
     },
 
     sessionsList: {
