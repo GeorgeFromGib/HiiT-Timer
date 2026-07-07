@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import { useTranslation } from '../lib/i18n';
 import type { FolderIconName } from '../lib/sessions';
-import { FOLDER_ICON_GROUPS, resolveFolderIconColor } from '../lib/folderIcons';
+import { FOLDER_ICON_GROUPS, resolveFolderIconColor, folderIconTint } from '../lib/folderIcons';
 import FolderIcon from './FolderIcon';
 
 interface FolderIconPickerProps {
@@ -31,7 +31,7 @@ export default function FolderIconPicker({ value, onChange }: FolderIconPickerPr
                   onPress={() => onChange(icon)}
                   style={[
                     styles.swatch,
-                    { backgroundColor: color + '1e', borderColor: selected ? color : T.hairline },
+                    { backgroundColor: folderIconTint(color), borderColor: selected ? color : T.hairline },
                   ]}
                 >
                   <FolderIcon name={icon} color={color} size={20} />

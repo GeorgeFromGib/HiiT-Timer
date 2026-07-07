@@ -27,6 +27,14 @@ export function resolveFolderIconColor(T: ThemeTokens, icon: FolderIconName): st
   return T.phases[token];
 }
 
+/** Produces a translucent chip background from a resolved icon color, whether hex or rgba(...). */
+export function folderIconTint(color: string): string {
+  if (color.startsWith('rgba')) {
+    return color.replace(/rgba\(([^,]+,[^,]+,[^,]+),\s*[\d.]+\)/, 'rgba($1, 0.12)');
+  }
+  return color + '1e';
+}
+
 export interface FolderIconGroup {
   labelKey: string;
   icons: FolderIconName[];

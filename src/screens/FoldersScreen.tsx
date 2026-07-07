@@ -19,7 +19,7 @@ import {
   type Folder,
   type FolderIconName,
 } from '../lib/sessions';
-import { DEFAULT_FOLDER_ICON, resolveFolderIconColor } from '../lib/folderIcons';
+import { DEFAULT_FOLDER_ICON, resolveFolderIconColor, folderIconTint } from '../lib/folderIcons';
 import FolderIcon from '../components/FolderIcon';
 import FolderCreateModal from '../components/FolderCreateModal';
 import FolderRenameModal from '../components/FolderRenameModal';
@@ -297,7 +297,7 @@ function FolderSwipeRow({
         <Pressable onLongPress={drag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
           <DragHandle color={T.subText} />
         </Pressable>
-        <View style={[styles.folderIconChip, { backgroundColor: iconColor + '1e' }]}>
+        <View style={[styles.folderIconChip, { backgroundColor: folderIconTint(iconColor) }]}>
           <FolderIcon name={iconName} color={iconColor} size={17} />
         </View>
         <Text style={styles.folderName}>{folder.name}</Text>
