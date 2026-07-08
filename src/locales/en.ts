@@ -173,7 +173,7 @@ export const en = {
     preview: 'PREVIEW',
     activityType: 'ACTIVITY TYPE',
     general: 'Standard',
-    run: 'Run',
+    run: 'Treadmill',
     setupMode: 'SETUP MODE',
     easy: 'Easy',
     advanced: 'Advanced',

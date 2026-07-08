@@ -175,7 +175,7 @@ export const es: typeof en = {
     preview: 'VISTA PREVIA',
     activityType: 'TIPO DE ACTIVIDAD',
     general: 'Estándar',
-    run: 'Correr',
+    run: 'Cinta de correr',
     setupMode: 'MODO DE CONFIGURACIÓN',
     easy: 'Fácil',
     advanced: 'Avanzado',

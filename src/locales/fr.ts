@@ -175,7 +175,7 @@ export const fr: typeof en = {
     preview: 'APERÇU',
     activityType: "TYPE D'ACTIVITÉ",
     general: 'Standard',
-    run: 'Course',
+    run: 'Tapis de course',
     setupMode: 'MODE DE CONFIGURATION',
     easy: 'Facile',
     advanced: 'Avancé',
