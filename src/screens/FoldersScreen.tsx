@@ -106,8 +106,10 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
     try {
       const newData = deleteFolder(deletingFolder.id, moveToFolderId, data);
       setData(newData);
-      const counts = { ...sessionCounts };
-      delete counts[deletingFolder.id];
+      const counts: Record<string, number> = {};
+      newData.folders.forEach(folder => {
+        counts[folder.id] = newData.sessions.filter(s => s.folderId === folder.id).length;
+      });
       setSessionCounts(counts);
       saveSessions(newData);
       setShowDeleteFolderModal(false);
@@ -239,8 +241,8 @@ const SwipeDuplicateAction = React.forwardRef<
     <Animated.View style={{ opacity, alignSelf: 'stretch' }}>
       <Pressable onPress={handlePress} style={[styles.swipeDuplicateAction, { flex: 1 }]}>
         <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-          <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke={styles.swipeDuplicateText.color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke={styles.swipeDuplicateText.color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </Svg>
         <Text style={styles.swipeDuplicateText}>{t('common.duplicate')}</Text>
       </Pressable>
@@ -309,7 +311,7 @@ function FolderSwipeRow({
         </View>
         <Text style={styles.folderName}>{folder.name}</Text>
         <Text style={styles.sessionCount}>
-          {sessionCount} {t('common.intervals')}
+          {sessionCount} {t('common.intervalsAbbr')}
         </Text>
       </Pressable>
     </ReanimatedSwipeable>
@@ -385,7 +387,9 @@ function makeStyles(T: ThemeTokens) {
       borderRadius: 18,
     },
     swipeDuplicateAction: {
-      backgroundColor: '#3b82f6',
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      borderColor: '#3b82f6',
       justifyContent: 'center',
       alignItems: 'center',
       gap: 4,
@@ -397,7 +401,7 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_700Bold',
       fontSize: 13,
       letterSpacing: 0.5,
-      color: '#fff',
+      color: '#3b82f6',
     },
     rightActionsContainer: {
       flexDirection: 'row',

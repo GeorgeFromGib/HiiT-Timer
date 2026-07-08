@@ -59,10 +59,12 @@ export default function IntervalRow({
 
       {displaySpeed !== undefined && onOpenSpeedPicker && (
         <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8} style={styles.intervalSpeed}>
-          <Text style={styles.intervalDurationText}>
-            {displaySpeed.value}
-            <Text style={styles.intervalSpeedUnit}>{' '}{displaySpeed.unit}</Text>
-          </Text>
+          <View style={[styles.settingChip, { borderColor: T.hairline }]}>
+            <Text style={styles.intervalDurationText}>
+              {displaySpeed.value}
+              <Text style={styles.intervalSpeedUnit}>{' '}{displaySpeed.unit}</Text>
+            </Text>
+          </View>
         </Pressable>
       )}
 
@@ -74,7 +76,9 @@ export default function IntervalRow({
           hitSlop={8}
           style={styles.spinChip}
         >
-          <Text style={styles.intervalDurationText}>{displayResistance}<Text style={styles.spinChipUnit}>R</Text></Text>
+          <View style={[styles.settingChip, { borderColor: T.hairline }]}>
+            <Text style={styles.intervalDurationText}>{displayResistance}<Text style={styles.spinChipUnit}>R</Text></Text>
+          </View>
         </Pressable>
       )}
 
@@ -86,9 +90,11 @@ export default function IntervalRow({
           hitSlop={8}
           style={styles.spinChip}
         >
-          <Text style={styles.intervalDurationText}>
-            {displayPower}<Text style={styles.spinChipUnit}>W</Text>
-          </Text>
+          <View style={[styles.settingChip, { borderColor: T.hairline }]}>
+            <Text style={styles.intervalDurationText}>
+              {displayPower}<Text style={styles.spinChipUnit}>W</Text>
+            </Text>
+          </View>
         </Pressable>
       )}
 
@@ -102,7 +108,9 @@ export default function IntervalRow({
           displayResistance !== undefined && { flex: 1, alignItems: 'center', paddingRight: 0 },
         ]}
       >
-        <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
+        <View style={[styles.settingChip, { borderColor: T.hairline }]}>
+          <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
+        </View>
       </Pressable>
     </View>
   );
@@ -145,6 +153,12 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_700Bold',
       fontSize: 11,
       letterSpacing: 11 * 0.06,
+    },
+    settingChip: {
+      borderWidth: 1.5,
+      borderRadius: 8,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
     },
     labelInput: {
       flex: 1,

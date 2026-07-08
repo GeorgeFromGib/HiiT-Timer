@@ -352,6 +352,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
 
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.sessionIntervals')}</Text>
+                <Text style={styles.intervalsHint}>{t('edit.intervalsHint')}</Text>
               </View>
 
               <NestableDraggableFlatList
@@ -529,6 +530,11 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   fieldGroup: { gap: 8 },
   fieldLabel: {
     ...typography.sectionLabel,
+    color: T.faintText,
+  },
+  intervalsHint: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 11,
     color: T.faintText,
   },
 

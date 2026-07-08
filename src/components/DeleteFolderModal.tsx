@@ -58,7 +58,6 @@ export default function DeleteFolderModal({
 
               {sessionCount > 0 && otherFolders.length > 0 && (
                 <>
-                  <Text style={styles.subheader}>{t('folders.moveSessionsTo')}</Text>
                   <ScrollView style={styles.folderList}>
                     {otherFolders.map(f => (
                       <Pressable
@@ -133,14 +132,6 @@ function makeStyles(T: ThemeTokens) {
       color: T.subText,
       marginBottom: 16,
       lineHeight: 18,
-    },
-    subheader: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 12,
-      color: T.faintText,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-      marginBottom: 8,
     },
     folderList: {
       maxHeight: 150,

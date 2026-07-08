@@ -49,8 +49,8 @@ const IntervalSwipeDuplicateAction = React.forwardRef<
     <Animated.View style={{ opacity, alignSelf: 'stretch' }}>
       <Pressable onPress={handlePress} style={[styles.swipeDuplicateAction, { flex: 1 }]}>
         <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-          <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#3b82f6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+          <Path d="M10 2h8a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" stroke="#3b82f6" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </Svg>
         <Text style={styles.swipeDuplicateText}>{t('common.duplicate')}</Text>
       </Pressable>
@@ -120,7 +120,9 @@ export default function IntervalSwipeRow({
 const styles = StyleSheet.create({
   intervalSwipeContainer: { marginBottom: 6 },
   swipeDuplicateAction: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: '#3b82f6',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 4,
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
   },
   swipeDuplicateText: {
     ...typography.controlLabel,
-    color: '#fff',
+    color: '#3b82f6',
   },
   swipeDeleteAction: {
     backgroundColor: '#ff5a5f',

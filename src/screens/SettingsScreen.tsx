@@ -80,8 +80,8 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             sub={canHideFolders ? t('settings.hideFoldersSub') : t('settings.hideFoldersDisabledSub')}
             right={
               <SettingsToggle
-                value={settings.hideFolders}
-                onChange={v => canHideFolders && updateSettings('hideFolders', v)}
+                value={!settings.hideFolders}
+                onChange={v => canHideFolders && updateSettings('hideFolders', !v)}
                 disabled={!canHideFolders}
               />
             }
