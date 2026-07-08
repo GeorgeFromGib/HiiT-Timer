@@ -281,18 +281,18 @@ function FolderSwipeRow({
       )}
       renderRightActions={(_p, _d, swipeable) => (
         <View style={styles.rightActionsContainer}>
-          <Pressable onPress={() => { onRename(); swipeable.close(); }} style={styles.swipeEditAction}>
-            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-              <Path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-            </Svg>
-            <Text style={styles.swipeEditText}>{t('common.edit')}</Text>
-          </Pressable>
           <Pressable onPress={() => { onDelete(); swipeable.close(); }} style={styles.swipeDeleteAction}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
             </Svg>
             <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
+          </Pressable>
+          <Pressable onPress={() => { onRename(); swipeable.close(); }} style={styles.swipeEditAction}>
+            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+              <Path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+            <Text style={styles.swipeEditText}>{t('common.edit')}</Text>
           </Pressable>
         </View>
       )}
@@ -353,7 +353,7 @@ function makeStyles(T: ThemeTokens) {
       borderColor: T.accent,
     },
     dragHandle: {
-      paddingRight: 12,
+      paddingRight: 8,
     },
     folderIconChip: {
       width: 30,
@@ -361,7 +361,7 @@ function makeStyles(T: ThemeTokens) {
       borderRadius: 9,
       alignItems: 'center',
       justifyContent: 'center',
-      marginRight: 12,
+      marginRight: 8,
     },
     folderName: {
       fontFamily: 'Inter_600SemiBold',

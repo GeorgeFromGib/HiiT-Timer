@@ -61,6 +61,7 @@ export default function FolderCreateModal({
               value={name}
               onChangeText={setName}
               autoFocus
+              maxLength={20}
             />
           </View>
           <Text style={styles.sectionLabel}>{t('folders.icon')}</Text>

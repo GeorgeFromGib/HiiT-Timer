@@ -225,6 +225,19 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     tick();
   }, [tick]);
 
+  // Jump to the start of the previous segment (or the start of the workout).
+  const skipBack = useCallback(() => {
+    if (statusRef.current === 'idle' || statusRef.current === 'finished') return;
+    clearBeats();
+    const elapsed = computeElapsed();
+    const idx = segmentIndexAt(segmentsRef.current, elapsed);
+    if (idx < 0) return;
+    const prevSeg = segmentsRef.current[idx - 1];
+    accumulatedRef.current = prevSeg ? prevSeg.startAt : 0;
+    resumeEpochRef.current = Date.now();
+    tick();
+  }, [tick]);
+
   useEffect(() => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -255,5 +268,5 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
 
   const getSegments = useCallback((): Segment[] => segmentsRef.current, []);
 
-  return { state, start, pause, resume, reset, skip, extend, replaceSegments, getSegments, sync: tick };
+  return { state, start, pause, resume, reset, skip, skipBack, extend, replaceSegments, getSegments, sync: tick };
 }

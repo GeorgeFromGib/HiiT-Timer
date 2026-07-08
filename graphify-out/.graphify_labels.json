@@ -129,5 +129,7 @@
   "127": "useEditSession.ts",
   "128": "SessionCard.tsx",
   "129": "i18n.ts",
+  "130": "speedUnit.ts",
+  "131": "PresetStrip.tsx",
   "132": "folderIcons.ts"
 }

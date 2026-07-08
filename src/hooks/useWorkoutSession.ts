@@ -20,6 +20,7 @@ export interface WorkoutSession {
   handlePlayPause: () => void;
   reset: () => void;
   skip: () => void;
+  skipBack: () => void;
   extend: (seconds: number) => Segment[];
   addRound: (segsToInsert: Segment[]) => Segment[];
 }
@@ -72,7 +73,7 @@ export function useWorkoutSession(
     }, 150);
   }
 
-  const { state, start, pause, resume, reset: engineReset, skip, extend, replaceSegments, getSegments } = useTimerEngine(segments, {
+  const { state, start, pause, resume, reset: engineReset, skip, skipBack, extend, replaceSegments, getSegments } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
       cues.onTransition(to?.phase ?? null);
       if (to !== null && settings.hapticFeedback) {
@@ -153,6 +154,7 @@ export function useWorkoutSession(
     handlePlayPause,
     reset,
     skip,
+    skipBack,
     extend,
     addRound,
   };

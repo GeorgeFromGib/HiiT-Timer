@@ -17,7 +17,6 @@ import {
   loadSessions,
   saveSessions,
   newId,
-  moveSessionToFolder,
   type Session,
   type SessionsData,
 } from '../lib/sessions';
@@ -30,7 +29,6 @@ import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../them
 import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
-import MoveToFolderSheet from '../components/MoveToFolderSheet';
 import TrialStatusPill from '../components/TrialStatusPill';
 import { useTranslation } from '../lib/i18n';
 
@@ -44,8 +42,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
 
-  const [showMoveSheet, setShowMoveSheet] = useState(false);
-  const [movingSession, setMovingSession] = useState<Session | null>(null);
   const [selectedFolderForSession, setSelectedFolderForSession] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 98, right: 20 });
   const addBtnRef = useRef<View>(null);
@@ -125,16 +121,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
       },
       () => swipeable.close(),
     );
-  };
-
-  const handleMoveSessionToFolder = (folderId: string) => {
-    if (!movingSession) return;
-
-    const newData = moveSessionToFolder(movingSession.id, folderId, data);
-    setData(newData);
-    saveSessions(newData);
-    setShowMoveSheet(false);
-    setMovingSession(null);
   };
 
   return (
@@ -234,10 +220,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
               onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
               onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
               onStart={gate(() => onNavigate({ name: 'Workout', session }))}
-              onMove={() => {
-                setMovingSession(session);
-                setShowMoveSheet(true);
-              }}
             />
           )}
         />
@@ -245,17 +227,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
         <Text style={styles.emptyText}>{t('sessions.empty')}</Text>
       )}
       <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
-
-      <MoveToFolderSheet
-        visible={showMoveSheet}
-        session={movingSession}
-        allFolders={data.folders}
-        onDismiss={() => {
-          setShowMoveSheet(false);
-          setMovingSession(null);
-        }}
-        onSelectFolder={handleMoveSessionToFolder}
-      />
 
       {showTypeMenu && (
         <>
@@ -469,7 +440,6 @@ function makeStyles(T: ThemeTokens) {
       gap: 4,
       width: 88,
       borderRadius: 20,
-      marginLeft: 8,
     },
     swipeDeleteText: {
       fontFamily: 'Inter_700Bold',
@@ -481,16 +451,15 @@ function makeStyles(T: ThemeTokens) {
       flexDirection: 'row',
       gap: 0,
     },
-    swipeMoveAction: {
-      backgroundColor: '#8b5cf6',
+    swipeEditAction: {
+      backgroundColor: '#3b82f6',
       justifyContent: 'center',
       alignItems: 'center',
       gap: 4,
       width: 80,
       borderRadius: 20,
-      marginRight: 8,
     },
-    swipeMoveText: {
+    swipeEditText: {
       fontFamily: 'Inter_700Bold',
       fontSize: 11,
       letterSpacing: 0.3,
@@ -530,7 +499,7 @@ const SwipeDuplicateAction = React.forwardRef<
 
 function SessionSwipeRow({
   session, styles, drag, isActive, selectedId, draggable = true,
-  onDuplicate, onDelete, onSelect, onEdit, onStart, onMove,
+  onDuplicate, onDelete, onSelect, onEdit, onStart,
 }: {
   session:    Session;
   styles:     ReturnType<typeof makeStyles>;
@@ -548,7 +517,6 @@ function SessionSwipeRow({
   onSelect:    () => void;
   onEdit:      () => void;
   onStart:     () => void;
-  onMove:      () => void;
 }) {
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
@@ -567,18 +535,25 @@ function SessionSwipeRow({
       )}
       renderRightActions={(_p, _d, swipeable) => (
         <View style={styles.rightActionsContainer}>
-          <Pressable onPress={() => { onMove(); swipeable.close(); }} style={styles.swipeMoveAction}>
-            <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-              <Path d="M5 9l7-7 7 7M5 15l7 7 7-7" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-            </Svg>
-            <Text style={styles.swipeMoveText}>{t('common.move')}</Text>
-          </Pressable>
           <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
             </Svg>
             <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
+          </Pressable>
+          <Pressable onPress={() => { onEdit(); swipeable.close(); }} style={styles.swipeEditAction}>
+            <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+              />
+              <Path
+                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+              />
+            </Svg>
+            <Text style={styles.swipeEditText}>{t('common.edit')}</Text>
           </Pressable>
         </View>
       )}
@@ -590,7 +565,6 @@ function SessionSwipeRow({
         onDrag={draggable ? drag : undefined}
         onPress={onSelect}
         onLongPress={() => onDelete({ close: () => {} })}
-        onEdit={onEdit}
         onStart={onStart}
       />
     </ReanimatedSwipeable>

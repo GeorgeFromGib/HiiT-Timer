@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 import { totalDuration, fmtDuration } from '../lib/workout';
 import DragHandle from './DragHandle';
 import { getSessionSegments } from '../lib/sessions';
@@ -17,13 +16,12 @@ interface Props {
   selected:    boolean;
   onPress:     () => void;
   onLongPress: () => void;
-  onEdit:      () => void;
   onStart:     () => void;
   onDrag?:     () => void;
   isActive?:   boolean;
 }
 
-export default function SessionCard({ session, selected, onPress, onLongPress, onEdit, onStart, onDrag, isActive }: Props) {
+export default function SessionCard({ session, selected, onPress, onLongPress, onStart, onDrag, isActive }: Props) {
   const { T } = useTheme();
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
@@ -55,18 +53,6 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
               <Text style={styles.title}>{session.name}</Text>
             </View>
           </View>
-          <Pressable onPress={onEdit} style={styles.editBtn} hitSlop={8}>
-            <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
-              <Path
-                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-                stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-              />
-              <Path
-                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
-              />
-            </Svg>
-          </Pressable>
         </View>
 
         <PhaseStrip segments={segments} />
@@ -143,17 +129,6 @@ function makeStyles(T: ThemeTokens) {
       fontSize: 18,
       letterSpacing: 18 * -0.01,
       color: T.text,
-    },
-    editBtn: {
-      width: 34,
-      height: 34,
-      borderRadius: 17,
-      backgroundColor: T.ghostBg,
-      borderWidth: 1,
-      borderColor: T.hairline,
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginLeft: 8,
     },
     statsRow: {
       flexDirection: 'row',

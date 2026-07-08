@@ -69,6 +69,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     handlePlayPause,
     reset: resetEngine,
     skip,
+    skipBack,
     extend,
     addRound,
   } = useWorkoutSession(segments, settings, () => {
@@ -80,22 +81,58 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
   const [skippedCount, setSkippedCount] = useState(0);
   const [skippedSecs,  setSkippedSecs]  = useState(0);
+  const [skippedWorkSecs,  setSkippedWorkSecs]  = useState(0);
+  const [extendedSecs, setExtendedSecs] = useState(0);
+  const [addedRoundSecs, setAddedRoundSecs] = useState(0);
+  const [skipBackSecs, setSkipBackSecs] = useState(0);
+  const [skipBackWorkSecs, setSkipBackWorkSecs] = useState(0);
+  const [skipBackWorkCount, setSkipBackWorkCount] = useState(0);
 
   const reset = useCallback(() => {
     resetEngine();
     setSegments(initialSegments);
     setSkippedCount(0);
     setSkippedSecs(0);
+    setSkippedWorkSecs(0);
+    setExtendedSecs(0);
+    setAddedRoundSecs(0);
+    setSkipBackSecs(0);
+    setSkipBackWorkSecs(0);
+    setSkipBackWorkCount(0);
   }, [resetEngine, initialSegments]);
 
   const handleSkip = useCallback(() => {
     setSkippedCount(c => c + 1);
     setSkippedSecs(s => s + Math.ceil(remainingInSegment));
+    const seg = segments[currentIndex];
+    if (seg && seg.phase === 'work') {
+      setSkippedWorkSecs(s => s + Math.ceil(remainingInSegment));
+    }
     skip();
-  }, [skip, remainingInSegment]);
+  }, [skip, remainingInSegment, segments, currentIndex]);
+
+  const handleSkipBack = useCallback(() => {
+    const seg = segments[currentIndex];
+    if (seg) {
+      const prevSeg = segments[currentIndex - 1];
+      const backSecs = Math.ceil(elapsed - (prevSeg ? prevSeg.startAt : 0));
+      setSkipBackSecs(s => s + backSecs);
+      if (seg.phase === 'work') {
+        setSkipBackWorkSecs(s => s + backSecs);
+        setSkipBackWorkCount(c => c + 1);
+      }
+    }
+    skipBack();
+  }, [skipBack, segments, currentIndex, elapsed]);
+
+  const handleExtend = useCallback((secs: number) => {
+    setExtendedSecs(s => s + secs);
+    setSegments(extend(secs));
+  }, [extend]);
 
   const appendLastTwo = useCallback(() => {
     if (!toInsert.length) return;
+    setAddedRoundSecs(s => s + toInsert.reduce((sum, seg) => sum + seg.duration, 0));
     setSegments(addRound(toInsert));
   }, [toInsert, addRound]);
 
@@ -180,6 +217,12 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
         congratsMsg={congratsMsg}
         skippedCount={skippedCount}
         skippedSecs={skippedSecs}
+        skippedWorkSecs={skippedWorkSecs}
+        extendedSecs={extendedSecs}
+        addedRoundSecs={addedRoundSecs}
+        skipBackSecs={skipBackSecs}
+        skipBackWorkSecs={skipBackWorkSecs}
+        skipBackWorkCount={skipBackWorkCount}
         showConfetti={settings.congratsMessage}
         onDone={onBack}
         onRepeat={reset}
@@ -331,7 +374,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               <View style={styles.extendRow}>
                 <View style={styles.extendLeft}>
                   {EXTEND_OPTIONS.map((secs) => (
-                    <GhostBtn key={secs} onPress={() => setSegments(extend(secs))} disabled={isIdle} color={phaseColor} size={68}>
+                    <GhostBtn key={secs} onPress={() => handleExtend(secs)} disabled={isIdle} color={phaseColor} size={68}>
                       <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
                     </GhostBtn>
                   ))}
@@ -439,12 +482,21 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
       {/* ── Controls row ── */}
       <View style={styles.controls}>
-        <GhostBtn onPress={reset} disabled={isIdle || isPreStart}>
-          <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
-            <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
-            <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-        </GhostBtn>
+        {isPlaying ? (
+          <GhostBtn onPress={handleSkipBack}>
+            <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
+              <Rect x="2.5" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />
+              <Path d="M16 4l-9 6 9 6V4z" fill={T.subText} />
+            </Svg>
+          </GhostBtn>
+        ) : (
+          <GhostBtn onPress={reset} disabled={isIdle || isPreStart}>
+            <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
+              <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
+              <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+            </Svg>
+          </GhostBtn>
+        )}
 
         <Pressable onPress={handlePlayPause} style={styles.playBtn}>
           <View style={styles.playBtnInner}>

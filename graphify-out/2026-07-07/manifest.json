@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "src/components/FolderCreateModal.tsx": {
-    "mtime": 1783451066.2210836,
-    "ast_hash": "2cb4e0b93c0d48603105a6c21eeee780",
+    "mtime": 1783451488.1742878,
+    "ast_hash": "e1791af25087239d4f04af373fecee29",
     "semantic_hash": ""
   },
   "src/components/FolderHeader.tsx": {
@@ -105,8 +105,8 @@
     "semantic_hash": ""
   },
   "src/components/FolderRenameModal.tsx": {
-    "mtime": 1783451051.6227584,
-    "ast_hash": "9697da27d5f8c12ed865a2c07a068bda",
+    "mtime": 1783451496.9656355,
+    "ast_hash": "49764e1ebfda0d7ae486e15b3f70dfda",
     "semantic_hash": ""
   },
   "src/components/GhostBtn.tsx": {
@@ -325,18 +325,18 @@
     "semantic_hash": ""
   },
   "src/locales/en.ts": {
-    "mtime": 1783447615.975268,
-    "ast_hash": "01f439315997ea6ee0efea000804c829",
+    "mtime": 1783451372.5187743,
+    "ast_hash": "a230eb7d50e99891a27e70f532455437",
     "semantic_hash": ""
   },
   "src/locales/es.ts": {
-    "mtime": 1783447617.715416,
-    "ast_hash": "f4980a157155c6263c45a1f05d05c0f1",
+    "mtime": 1783451376.6424038,
+    "ast_hash": "6700d6d7a45995e3a9d5efe9d5301525",
     "semantic_hash": ""
   },
   "src/locales/fr.ts": {
-    "mtime": 1783447619.3705575,
-    "ast_hash": "3dcc7bf79812bab16e98115dd659795c",
+    "mtime": 1783451377.6688385,
+    "ast_hash": "ae684ebf5ced6b537b4c04c8dd0bf9b1",
     "semantic_hash": ""
   },
   "src/navigation.ts": {
@@ -1075,8 +1075,8 @@
     "semantic_hash": ""
   },
   "src/components/FolderIconPicker.tsx": {
-    "mtime": 1783451192.6928747,
-    "ast_hash": "c88671cf364253a3571619bdc29f4cad",
+    "mtime": 1783451290.4306288,
+    "ast_hash": "4d605b31abfef1f2b924e7e723b6bace",
     "semantic_hash": ""
   },
   ".superpowers/sdd/final-review-fix-report.md": {

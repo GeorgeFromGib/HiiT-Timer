@@ -8,16 +8,28 @@ import PhaseStrip from '../components/PhaseStrip';
 import { fmtTimer, type Segment } from '../lib/workout';
 import type { Session } from '../lib/sessions';
 
+/** Stat-card time format: always mm:ss (or h:mm:ss), never bare seconds. */
+function fmtStatTime(s: number): string {
+  s = Math.max(0, Math.ceil(s));
+  return s < 60 ? `00:${String(s).padStart(2, '0')}` : fmtTimer(s);
+}
+
 interface Props {
-  session:      Session;
-  segments:     Segment[];
-  totalDur:     number;
-  congratsMsg:  string;
-  skippedCount: number;
-  skippedSecs:  number;
-  showConfetti: boolean;
-  onDone:       () => void;
-  onRepeat:     () => void;
+  session:           Session;
+  segments:          Segment[];
+  totalDur:          number;
+  congratsMsg:       string;
+  skippedCount:      number;
+  skippedSecs:       number;
+  skippedWorkSecs:   number;
+  extendedSecs:      number;
+  addedRoundSecs:    number;
+  skipBackSecs:      number;
+  skipBackWorkSecs:  number;
+  skipBackWorkCount: number;
+  showConfetti:      boolean;
+  onDone:            () => void;
+  onRepeat:          () => void;
 }
 
 function StatCard({ label, value, accent, T, uiScale }: { label: string; value: string; accent?: string; T: ThemeTokens; uiScale: number }) {
@@ -30,7 +42,7 @@ function StatCard({ label, value, accent, T, uiScale }: { label: string; value: 
   );
 }
 
-export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, skippedCount, skippedSecs, showConfetti, onDone, onRepeat }: Props) {
+export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, skippedCount, skippedSecs, skippedWorkSecs, extendedSecs, addedRoundSecs, skipBackSecs, skipBackWorkSecs, skipBackWorkCount, showConfetti, onDone, onRepeat }: Props) {
   const { T } = useTheme();
   const { t } = useTranslation();
   const { height: screenHeight } = useWindowDimensions();
@@ -39,7 +51,9 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
 
   const workSecs = segments
     .filter(s => s.phase === 'work')
-    .reduce((sum, s) => sum + s.duration, 0);
+    .reduce((sum, s) => sum + s.duration, 0) - skippedWorkSecs + skipBackWorkSecs;
+  const displayTotalDur = totalDur - skippedSecs + skipBackSecs;
+  const intervalsCount  = segments.length - skippedCount + skipBackWorkCount;
 
   const checkAnim    = useRef(new Animated.Value(0)).current;
   const eyebrowAnim  = useRef(new Animated.Value(0)).current;
@@ -151,16 +165,31 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
 
       {/* Stats */}
       <Animated.View style={[styles.statsRow, { opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
-        <StatCard label={t('complete.totalTime')} value={fmtTimer(totalDur)} accent={T.accent} T={T} uiScale={uiScale} />
-        <StatCard label={t('complete.intervals')} value={String(segments.length)} T={T} uiScale={uiScale} />
-        <StatCard label={t('complete.workTime')} value={fmtTimer(workSecs)} T={T} uiScale={uiScale} />
+        <StatCard label={t('complete.totalTime')} value={fmtStatTime(displayTotalDur)} accent={T.accent} T={T} uiScale={uiScale} />
+        <StatCard label={t('complete.intervals')} value={String(intervalsCount)} T={T} uiScale={uiScale} />
+        <StatCard label={t('complete.workTime')} value={fmtStatTime(workSecs)} T={T} uiScale={uiScale} />
       </Animated.View>
 
       {/* Skipped stats */}
       {skippedCount > 0 && (
         <Animated.View style={[styles.statsRow, { marginTop: 9, opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
           <StatCard label={t('complete.skippedIntervals')} value={String(skippedCount)} T={T} uiScale={uiScale} />
-          <StatCard label={t('complete.skippedTime')} value={fmtTimer(skippedSecs)} T={T} uiScale={uiScale} />
+          <StatCard label={t('complete.skippedTime')} value={fmtStatTime(skippedSecs)} T={T} uiScale={uiScale} />
+        </Animated.View>
+      )}
+
+      {/* Extras added stats */}
+      {(extendedSecs > 0 || addedRoundSecs > 0 || skipBackSecs > 0) && (
+        <Animated.View style={[styles.statsRow, { marginTop: 9, opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
+          {extendedSecs > 0 && (
+            <StatCard label={t('complete.extendedTime')} value={fmtStatTime(extendedSecs)} T={T} uiScale={uiScale} />
+          )}
+          {addedRoundSecs > 0 && (
+            <StatCard label={t('complete.addedRoundTime')} value={fmtStatTime(addedRoundSecs)} T={T} uiScale={uiScale} />
+          )}
+          {skipBackSecs > 0 && (
+            <StatCard label={t('complete.skipBackTime')} value={fmtStatTime(skipBackSecs)} T={T} uiScale={uiScale} />
+          )}
         </Animated.View>
       )}
 
