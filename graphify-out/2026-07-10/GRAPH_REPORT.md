@@ -1,16 +1,16 @@
-# Graph Report - hiit-timer  (2026-07-08)
+# Graph Report - hiit-timer  (2026-07-10)
 
 ## Corpus Check
-- 189 files · ~185,099 words
+- 190 files · ~185,844 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1498 nodes · 1786 edges · 144 communities (128 shown, 16 thin omitted)
+- 1508 nodes · 1795 edges · 142 communities (127 shown, 15 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e27a7510`
+- Built from commit: `acee8e2c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -141,7 +141,6 @@
 - [[_COMMUNITY_useEditSession.ts|useEditSession.ts]]
 - [[_COMMUNITY_SessionCard.tsx|SessionCard.tsx]]
 - [[_COMMUNITY_i18n.ts|i18n.ts]]
-- [[_COMMUNITY_speedUnit.ts|speedUnit.ts]]
 - [[_COMMUNITY_PresetStrip.tsx|PresetStrip.tsx]]
 - [[_COMMUNITY_folderIcons.ts|folderIcons.ts]]
 - [[_COMMUNITY_useTheme|useTheme]]
@@ -153,7 +152,6 @@
 - [[_COMMUNITY_TrialStatusPill.tsx|TrialStatusPill.tsx]]
 - [[_COMMUNITY_SessionCard.tsx|SessionCard.tsx]]
 - [[_COMMUNITY_DragHandle.tsx|DragHandle.tsx]]
-- [[_COMMUNITY_SettingsScreen.tsx|SettingsScreen.tsx]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `useTheme()` - 36 edges
@@ -170,27 +168,27 @@
 ## Surprising Connections (you probably didn't know these)
 - `RouteScreen()` --calls--> `useTheme()`  [EXTRACTED]
   App.tsx → src/theme.ts
-- `App()` --calls--> `usePremiumState()`  [EXTRACTED]
-  App.tsx → src/hooks/usePremiumState.ts
-- `useTheme()` --references--> `react`  [EXTRACTED]
-  src/theme.ts → package.json
 - `App()` --calls--> `configureAudioSession()`  [EXTRACTED]
   App.tsx → src/lib/audio.ts
+- `useTheme()` --references--> `react`  [EXTRACTED]
+  src/theme.ts → package.json
+- `App()` --calls--> `usePremiumState()`  [EXTRACTED]
+  App.tsx → src/hooks/usePremiumState.ts
 - `App()` --calls--> `detectLanguage()`  [EXTRACTED]
   App.tsx → src/lib/i18n.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (144 total, 16 thin omitted)
+## Communities (142 total, 15 thin omitted)
 
 ### Community 0 - "useEditSession.ts"
 Cohesion: 0.05
 Nodes (81): Props, LocalInterval, SavePayload, TimeField, toLocal(), AdvancedModeEdit, EasyConfig, useAdvancedModeEdit() (+73 more)
 
 ### Community 1 - "useWorkoutSession.ts"
-Cohesion: 0.15
-Nodes (12): AudioSettings, CueKey, CUES, useWorkoutAudio(), WorkoutAudioCues, Language, LANGUAGE_CODES, speak() (+4 more)
+Cohesion: 0.14
+Nodes (13): AudioSettings, configureAudioSession(), CueKey, CUES, useWorkoutAudio(), WorkoutAudioCues, Language, LANGUAGE_CODES (+5 more)
 
 ### Community 2 - "dependencies"
 Cohesion: 0.07
@@ -206,15 +204,15 @@ Nodes (34): backgroundColor, backgroundImage, foregroundImage, monochromeImage, 
 
 ### Community 5 - "EditSessionScreen.tsx"
 Cohesion: 0.22
-Nodes (11): makeStyles(), PRESET_LEVELS, PresetStrip(), Props, makeStyles(), PaywallModal(), Props, useGatedAction() (+3 more)
+Nodes (11): makeStyles(), MoveToFolderSheet(), MoveToFolderSheetProps, makeStyles(), PaywallModal(), Props, useGatedAction(), useTranslation() (+3 more)
 
 ### Community 6 - "useTranslation"
 Cohesion: 0.18
 Nodes (10): Concerns, Files changed, Fix, Fix: Icon chip tinting for rgba-based theme tokens, Isolating the commit from pre-existing unrelated WIP, `npx tsc --noEmit`, Regex/logic check (throwaway Node script, deleted after use), Simulator check (+2 more)
 
 ### Community 7 - "sessions.ts"
-Cohesion: 0.16
-Nodes (8): Props, BASE_SVG_STROKE, WorkoutIconProps, ColorToken, FOLDER_ICON_COLOR_TOKEN, FOLDER_ICON_GROUPS, FolderIconGroup, FolderIconName
+Cohesion: 0.13
+Nodes (10): ActivityTypeIcon(), Props, Props, BASE_SVG_STROKE, WorkoutIconProps, ColorToken, FOLDER_ICON_COLOR_TOKEN, FOLDER_ICON_GROUPS (+2 more)
 
 ### Community 8 - "1. `src/hooks/useEditSession.ts`"
 Cohesion: 0.08
@@ -237,8 +235,8 @@ Cohesion: 0.09
 Nodes (21): File Structure, Final verification, IAP — Premium Unlock (Unlimited Sessions) Implementation Plan, Notes / decisions carried from the spec, Phase 1 — Pure session-limit logic, Phase 2 — Purchases module, Phase 3 — Context, state hook, and app wiring, Phase 4 — Paywall and gate enforcement (+13 more)
 
 ### Community 13 - "purchases.ts"
-Cohesion: 0.22
-Nodes (19): usePremiumState(), expireTrialForTesting(), FlowState, getHasAccess(), getIsPremium(), getTrialDaysRemaining(), initPurchases(), isWithinTrial() (+11 more)
+Cohesion: 0.09
+Nodes (37): App(), usePremiumState(), detectLanguage(), PremiumContext, PremiumContextValue, expireTrialForTesting(), FlowState, getHasAccess() (+29 more)
 
 ### Community 14 - "2026-06-12-paywall-design.md"
 Cohesion: 0.10
@@ -261,8 +259,8 @@ Cohesion: 0.10
 Nodes (19): `activeTimingPreset` in the parent, `buildSavePayload`, Design: Split `useEditSession` by Mode, File layout, `hasChanges` in the parent, Key data flows, Mode switching, Module interfaces (+11 more)
 
 ### Community 19 - "IntervalSwipeRow.tsx"
-Cohesion: 0.17
-Nodes (17): App(), RouteScreen(), configureAudioSession(), detectLanguage(), PremiumContext, PremiumContextValue, DEFAULT_SETTINGS, detectSpeedUnit() (+9 more)
+Cohesion: 0.20
+Nodes (9): Component: `src/components/OnboardingModal.tsx`, Data model, i18n, Onboarding Modal Design, Out of scope, Purpose, Testing, Version constant (+1 more)
 
 ### Community 20 - "SDD Progress — Sessions Folder System"
 Cohesion: 0.08
@@ -461,8 +459,8 @@ Cohesion: 0.25
 Nodes (7): Design, Implementation, Problem, Scope, Solution, Spinning: Combine R and W into One Pill, Visual
 
 ### Community 69 - "useEditSession.ts"
-Cohesion: 0.20
-Nodes (11): PhaseStrip(), styles, ThemeKey, daybreak, selectedBorder(), THEME_PREVIEWS, THEME_TOKENS, ThemeContextValue (+3 more)
+Cohesion: 0.18
+Nodes (12): PhaseStrip(), styles, ThemeKey, daybreak, selectedBorder(), THEME_PREVIEWS, THEME_TOKENS, ThemeContext (+4 more)
 
 ### Community 70 - "Sound Off Setting Implementation Plan"
 Cohesion: 0.29
@@ -617,8 +615,8 @@ Cohesion: 0.36
 Nodes (3): en, es, fr
 
 ### Community 126 - "workout.ts"
-Cohesion: 0.60
-Nodes (4): makeStyles(), MoveToFolderSheet(), MoveToFolderSheetProps, Folder
+Cohesion: 0.47
+Nodes (5): makeStyles(), PRESET_LEVELS, PresetStrip(), Props, selectedBg()
 
 ### Community 127 - "useEditSession.ts"
 Cohesion: 0.60
@@ -632,10 +630,6 @@ Nodes (15): Callbacks, TimerState, useTimerEngine(), reindexFrom(), useWorkoutSe
 Cohesion: 0.33
 Nodes (7): checkAndRequestReview(), DEFAULT, loadReviewState(), reviewFile(), ReviewState, saveReviewState(), THRESHOLDS
 
-### Community 130 - "speedUnit.ts"
-Cohesion: 0.50
-Nodes (3): makeStyles(), SessionsListScreen(), SwipeDuplicateAction
-
 ### Community 131 - "PresetStrip.tsx"
 Cohesion: 0.67
 Nodes (3): FolderCreateModal(), FolderCreateModalProps, makeStyles()
@@ -645,8 +639,8 @@ Cohesion: 0.28
 Nodes (6): DeleteFolderModal(), DeleteFolderModalProps, makeStyles(), FoldersScreen(), makeStyles(), SwipeDuplicateAction
 
 ### Community 133 - "useTheme"
-Cohesion: 0.15
-Nodes (16): ActivityTypeIcon(), Props, GhostBtn(), Props, makeStyles(), SettingsRow(), makeStyles(), SettingsSection() (+8 more)
+Cohesion: 0.17
+Nodes (15): RouteScreen(), GhostBtn(), Props, makeStyles(), SettingsRow(), makeStyles(), SettingsSection(), makeStyles() (+7 more)
 
 ### Community 134 - "package.json"
 Cohesion: 0.22
@@ -677,24 +671,24 @@ Cohesion: 0.67
 Nodes (3): makeStyles(), Props, SessionCard()
 
 ## Knowledge Gaps
-- **873 isolated node(s):** `DeleteFolderModalProps`, `Props`, `IntervalSwipeDuplicateAction`, `styles`, `IntervalRowProps` (+868 more)
+- **881 isolated node(s):** `Purpose`, `Data model`, `Version constant`, `Component: `src/components/OnboardingModal.tsx``, `Wiring in `App.tsx`` (+876 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **16 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useTheme()` connect `useTheme` to `useTheme`, `useEditSession.ts`, `EditSessionScreen.tsx`, `AppDelegate.swift`, `PickerModal.tsx`, `IntervalSwipeRow.tsx`, `workout.ts`, `useEditSession.ts`?**
+- **Why does `useTheme()` connect `useTheme` to `useTheme`, `EditSessionScreen.tsx`, `useEditSession.ts`, `sessions.ts`, `AppDelegate.swift`, `PickerModal.tsx`, `purchases.ts`, `workout.ts`, `useEditSession.ts`?**
   _High betweenness centrality (0.032) - this node is a cross-community bridge._
 - **Why does `react` connect `AppDelegate.swift` to `dependencies`, `useTheme`?**
-  _High betweenness centrality (0.023) - this node is a cross-community bridge._
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `AppDelegate.swift`, `package.json`?**
-  _High betweenness centrality (0.021) - this node is a cross-community bridge._
-- **What connects `DeleteFolderModalProps`, `Props`, `IntervalSwipeDuplicateAction` to the rest of the system?**
-  _873 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.020) - this node is a cross-community bridge._
+- **What connects `Purpose`, `Data model`, `Version constant` to the rest of the system?**
+  _881 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `useEditSession.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.05256648113790971 - nodes in this community are weakly interconnected._
 - **Should `useWorkoutSession.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.14761904761904762 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.14285714285714285 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._

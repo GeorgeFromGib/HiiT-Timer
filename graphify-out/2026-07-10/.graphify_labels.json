@@ -129,7 +129,6 @@
   "127": "useEditSession.ts",
   "128": "SessionCard.tsx",
   "129": "i18n.ts",
-  "130": "speedUnit.ts",
   "131": "PresetStrip.tsx",
   "132": "folderIcons.ts",
   "133": "useTheme",
@@ -141,6 +140,5 @@
   "139": "TrialStatusPill.tsx",
   "140": "usePreStartCountdown.ts",
   "141": "SessionCard.tsx",
-  "142": "DragHandle.tsx",
-  "143": "SettingsScreen.tsx"
+  "142": "DragHandle.tsx"
 }

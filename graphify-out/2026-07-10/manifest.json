@@ -1083,5 +1083,10 @@
     "mtime": 1783449661.8170464,
     "ast_hash": "e9e771bd0fe65cccf2e63ecf75b95f85",
     "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md": {
+    "mtime": 1783702124.742901,
+    "ast_hash": "457947b2fd88d8b0298bba2171a79209",
+    "semantic_hash": ""
   }
 }
