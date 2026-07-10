@@ -1,7 +1,7 @@
 {
   "App.tsx": {
-    "mtime": 1783702453.7821467,
-    "ast_hash": "fcbc4275dc2073bb46937161d53ad81d",
+    "mtime": 1783706668.499761,
+    "ast_hash": "d4ae0e1b69fa46f6546ee597c6e71793",
     "semantic_hash": ""
   },
   "app.json": {
@@ -25,7 +25,7 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/AppDelegate.swift": {
-    "mtime": 1783450563.9644146,
+    "mtime": 1783706961.290496,
     "ast_hash": "7b4732bf9de8da05ae1ebcf616bdb672",
     "semantic_hash": ""
   },
@@ -35,7 +35,7 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/Contents.json": {
-    "mtime": 1783450563.9103084,
+    "mtime": 1783706961.1466851,
     "ast_hash": "e753dae9a3ae1e8aeb8f44742ea0614b",
     "semantic_hash": ""
   },
@@ -45,17 +45,17 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenBackground.colorset/Contents.json": {
-    "mtime": 1783450563.9112651,
+    "mtime": 1783706961.1484342,
     "ast_hash": "f6f8bf5ba47b872d1c259aed54d7735e",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/Contents.json": {
-    "mtime": 1783450563.9121215,
+    "mtime": 1783706961.1501257,
     "ast_hash": "a84d44e2229df0082c16210906e94575",
     "semantic_hash": ""
   },
   "ios/Podfile.properties.json": {
-    "mtime": 1783450563.9734762,
+    "mtime": 1783706961.3138075,
     "ast_hash": "955f7192d4f15f1636684369fcec97ee",
     "semantic_hash": ""
   },
@@ -70,8 +70,8 @@
     "semantic_hash": ""
   },
   "src/components/ActivityTypeIcon.tsx": {
-    "mtime": 1782582897.4593387,
-    "ast_hash": "52fb14dd0cbdad28c4eb9ccd643b050e",
+    "mtime": 1783709266.0516448,
+    "ast_hash": "652e6979282fd161abd108c1fcadfd8e",
     "semantic_hash": ""
   },
   "src/components/DeleteFolderModal.tsx": {
@@ -94,19 +94,9 @@
     "ast_hash": "ee881c58669d91d99fbc447dc4c8461e",
     "semantic_hash": ""
   },
-  "src/components/FolderCreateModal.tsx": {
-    "mtime": 1783702454.205339,
-    "ast_hash": "d7d4645b5ce3e1c48bfc2c8d8e1f2a48",
-    "semantic_hash": ""
-  },
   "src/components/FolderHeader.tsx": {
     "mtime": 1783702454.206188,
     "ast_hash": "22c764bd8c8815204e45255c98f46f55",
-    "semantic_hash": ""
-  },
-  "src/components/FolderRenameModal.tsx": {
-    "mtime": 1783702454.2077408,
-    "ast_hash": "c61e6ca3b2e78eb586c4d74c94adc4c5",
     "semantic_hash": ""
   },
   "src/components/GhostBtn.tsx": {
@@ -194,11 +184,6 @@
     "ast_hash": "a623342177f02fae3bdacc4461b00d0e",
     "semantic_hash": ""
   },
-  "src/hooks/useAdvancedModeEdit.ts": {
-    "mtime": 1782561183.4447336,
-    "ast_hash": "fc8732076b814c4fd2784c8f7f577450",
-    "semantic_hash": ""
-  },
   "src/hooks/useCircuitModeEdit.ts": {
     "mtime": 1782561183.4451282,
     "ast_hash": "9a1b6330db3d06c6408633a5d3231aae",
@@ -215,8 +200,8 @@
     "semantic_hash": ""
   },
   "src/hooks/useEditSession.ts": {
-    "mtime": 1783702454.2099104,
-    "ast_hash": "e3853227d6bdd3aaab690eb74e85d869",
+    "mtime": 1783708900.4722373,
+    "ast_hash": "7347d61298358d525622fcd68e9f4199",
     "semantic_hash": ""
   },
   "src/hooks/useGatedAction.ts": {
@@ -245,8 +230,8 @@
     "semantic_hash": ""
   },
   "src/hooks/useWorkoutSession.ts": {
-    "mtime": 1783702454.2109997,
-    "ast_hash": "152107ab277b7477b14efee0bdd19131",
+    "mtime": 1783709201.7230356,
+    "ast_hash": "a04a40818ecec6d8c19a75735db2cc6b",
     "semantic_hash": ""
   },
   "src/lib/alerts.ts": {
@@ -275,8 +260,8 @@
     "semantic_hash": ""
   },
   "src/lib/purchases.ts": {
-    "mtime": 1783156540.140604,
-    "ast_hash": "b17063b7a335d0533bd944f87f750077",
+    "mtime": 1783708983.7955785,
+    "ast_hash": "5f7000627f232e7c860b56f65e622d7d",
     "semantic_hash": ""
   },
   "src/lib/reviewState.ts": {
@@ -290,13 +275,13 @@
     "semantic_hash": ""
   },
   "src/lib/sessions.ts": {
-    "mtime": 1783702454.2118804,
-    "ast_hash": "ee9addc7a51156d22827c91aa402cdfc",
+    "mtime": 1783709017.2189398,
+    "ast_hash": "7a5c11fd47ea51c091fb1cba358f8ebb",
     "semantic_hash": ""
   },
   "src/lib/settings.ts": {
-    "mtime": 1783702454.2121122,
-    "ast_hash": "797b8c7db9b58c8b36dae194ae4bc109",
+    "mtime": 1783708965.9002962,
+    "ast_hash": "25f7818d48a9e8815183fe173e1a95b6",
     "semantic_hash": ""
   },
   "src/lib/settingsContext.tsx": {
@@ -320,23 +305,23 @@
     "semantic_hash": ""
   },
   "src/lib/workout.ts": {
-    "mtime": 1783432056.3524532,
-    "ast_hash": "144eef21ae2ab82007d139f8a8827411",
+    "mtime": 1783709158.4185293,
+    "ast_hash": "56f94bda4088aad144f6c24e6fd0831c",
     "semantic_hash": ""
   },
   "src/locales/en.ts": {
-    "mtime": 1783702454.2123964,
-    "ast_hash": "73c50b8793c5b10f8b95305e4f632869",
+    "mtime": 1783706322.6105044,
+    "ast_hash": "e54e6dee321533ba7b39c11b55a81a7c",
     "semantic_hash": ""
   },
   "src/locales/es.ts": {
-    "mtime": 1783702454.212693,
-    "ast_hash": "5918cb3d98da6a8b987327245c6dd54a",
+    "mtime": 1783706326.9728086,
+    "ast_hash": "618b81b708e5f786cca5a077a293eaa8",
     "semantic_hash": ""
   },
   "src/locales/fr.ts": {
-    "mtime": 1783702454.2131948,
-    "ast_hash": "a920ea01cc000f75bd6b8b62fc8f7741",
+    "mtime": 1783706338.1126544,
+    "ast_hash": "bc0af49a12dc93cf49620cd64f4113e1",
     "semantic_hash": ""
   },
   "src/navigation.ts": {
@@ -350,8 +335,8 @@
     "semantic_hash": ""
   },
   "src/screens/FoldersScreen.tsx": {
-    "mtime": 1783702454.214284,
-    "ast_hash": "de03deda2ff03cd89467dacf413591fb",
+    "mtime": 1783709110.8105378,
+    "ast_hash": "1212b5caea9477b8c84d7d31786785f3",
     "semantic_hash": ""
   },
   "src/screens/PrivacyPolicyScreen.tsx": {
@@ -370,8 +355,8 @@
     "semantic_hash": ""
   },
   "src/screens/SettingsScreen.tsx": {
-    "mtime": 1783702454.2156723,
-    "ast_hash": "1d2e1a97fe2ee983a7b3f89485d03241",
+    "mtime": 1783705460.8452172,
+    "ast_hash": "e609df36767941dea14522980167a733",
     "semantic_hash": ""
   },
   "src/screens/WorkoutScreen.tsx": {
@@ -1000,22 +985,22 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png": {
-    "mtime": 1783450563.9098036,
+    "mtime": 1783706961.1457438,
     "ast_hash": "2dd2b6b54a7c5286ffeea0f3ece700eb",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image.png": {
-    "mtime": 1783450563.9131997,
+    "mtime": 1783706961.152193,
     "ast_hash": "6f87b0a871a1756a75db60656668ff29",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@2x.png": {
-    "mtime": 1783450563.9132051,
+    "mtime": 1783706961.1528826,
     "ast_hash": "8633af12c656bf5c5bb1df971a874053",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@3x.png": {
-    "mtime": 1783450563.9133272,
+    "mtime": 1783706961.1528623,
     "ast_hash": "283870fcb8877b6b15b06517bbd4c89b",
     "semantic_hash": ""
   },
@@ -1070,8 +1055,8 @@
     "semantic_hash": ""
   },
   "src/components/FolderIcon.tsx": {
-    "mtime": 1783702454.2067575,
-    "ast_hash": "bc1210a4b89ab39ffbe4fe502b44ec02",
+    "mtime": 1783709282.991331,
+    "ast_hash": "496ed71058a64095b389b6ec0c4294fa",
     "semantic_hash": ""
   },
   "src/components/FolderIconPicker.tsx": {
@@ -1085,8 +1070,43 @@
     "semantic_hash": ""
   },
   "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md": {
-    "mtime": 1783702454.1319609,
-    "ast_hash": "457947b2fd88d8b0298bba2171a79209",
+    "mtime": 1783706697.5284905,
+    "ast_hash": "4b2c0a00ce4266d8da997c8c8dcb738c",
+    "semantic_hash": ""
+  },
+  "src/components/FolderEditModal.tsx": {
+    "mtime": 1783709093.6711223,
+    "ast_hash": "5ab6e533715c1e983ab1838bfb764661",
+    "semantic_hash": ""
+  },
+  "src/components/OnboardingModal.tsx": {
+    "mtime": 1783706661.8949397,
+    "ast_hash": "d57e35739b9cda9f02af4201b5c4417a",
+    "semantic_hash": ""
+  },
+  "src/components/activityIconShapes.ts": {
+    "mtime": 1783709249.8495831,
+    "ast_hash": "ca23da9b20c6d99a3ecafd80f744eae8",
+    "semantic_hash": ""
+  },
+  "src/hooks/useHapticBurst.ts": {
+    "mtime": 1783709152.9189582,
+    "ast_hash": "681e456928ba5797497f9c18ad37921a",
+    "semantic_hash": ""
+  },
+  "src/hooks/useIntervalListEdit.ts": {
+    "mtime": 1783708838.1046028,
+    "ast_hash": "6e295904bda643c43c1fdfc760103119",
+    "semantic_hash": ""
+  },
+  "src/hooks/useSpeedAndSpinEdit.ts": {
+    "mtime": 1783708852.5197954,
+    "ast_hash": "db6fe59b3e873c9aceaf5c6fb248b308",
+    "semantic_hash": ""
+  },
+  "src/lib/jsonFile.ts": {
+    "mtime": 1783708950.7029047,
+    "ast_hash": "7ea347c8230a6fa66f69d7bf0a3e4e29",
     "semantic_hash": ""
   }
 }
