@@ -128,17 +128,7 @@
   "126": "workout.ts",
   "127": "useEditSession.ts",
   "128": "SessionCard.tsx",
-  "129": "i18n.ts",
-  "131": "PresetStrip.tsx",
   "132": "folderIcons.ts",
   "133": "useTheme",
-  "134": "package.json",
-  "135": "ThemeTokens",
-  "136": "AppDelegate.swift",
-  "137": "scripts",
-  "138": "FolderIconPicker.tsx",
-  "139": "TrialStatusPill.tsx",
-  "140": "usePreStartCountdown.ts",
-  "141": "SessionCard.tsx",
-  "142": "DragHandle.tsx"
+  "141": "SessionCard.tsx"
 }

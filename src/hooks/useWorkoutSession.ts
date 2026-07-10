@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import * as Haptics from 'expo-haptics';
 import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import { usePreStartCountdown } from './usePreStartCountdown';
-import { Segment } from '../lib/workout';
+import { useHapticBurst } from './useHapticBurst';
+import { reindexSegments, Segment } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
 import { getCongratsMessages } from '../lib/i18n';
 
@@ -25,17 +25,6 @@ export interface WorkoutSession {
   addRound: (segsToInsert: Segment[]) => Segment[];
 }
 
-function reindexFrom(segs: Segment[], startCursor: number, startIdx: number): Segment[] {
-  let cursor = startCursor;
-  let idx = startIdx;
-  return segs.map(s => {
-    const seg = { ...s, startAt: cursor, endAt: cursor + s.duration, index: idx };
-    cursor += s.duration;
-    idx++;
-    return seg;
-  });
-}
-
 export function useWorkoutSession(
   segments: Segment[],
   settings: Settings = DEFAULT_SETTINGS,
@@ -46,38 +35,18 @@ export function useWorkoutSession(
   const onCountdownBeatRef = useRef(onCountdownBeat);
   onCountdownBeatRef.current = onCountdownBeat;
 
-  const hapticBurstRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const [congratsMsg] = useState(() => {
     const msgs = getCongratsMessages();
     return msgs[Math.floor(Math.random() * msgs.length)];
   });
 
-  function cancelHapticBurst() {
-    if (hapticBurstRef.current) {
-      clearInterval(hapticBurstRef.current);
-      hapticBurstRef.current = null;
-    }
-  }
-
-  function startHapticBurst() {
-    cancelHapticBurst();
-    let count = 0;
-    hapticBurstRef.current = setInterval(() => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      count++;
-      if (count >= 14) {
-        clearInterval(hapticBurstRef.current!);
-        hapticBurstRef.current = null;
-      }
-    }, 150);
-  }
+  const hapticBurst = useHapticBurst();
 
   const { state, start, pause, resume, reset: engineReset, skip, skipBack, extend, replaceSegments, getSegments } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
       cues.onTransition(to?.phase ?? null);
       if (to !== null && settings.hapticFeedback) {
-        startHapticBurst();
+        hapticBurst.start();
       }
     },
     onCountdown: () => {
@@ -92,17 +61,11 @@ export function useWorkoutSession(
     },
     onFinish: () => {
       cues.onFinish();
-      if (settings.hapticFeedback) startHapticBurst();
+      if (settings.hapticFeedback) hapticBurst.start();
     },
   });
 
   useEffect(() => { configureAudioSession(); }, []);
-
-  useEffect(() => {
-    return () => {
-      cancelHapticBurst();
-    };
-  }, []);
 
   const countdown = usePreStartCountdown({
     onTick: () => cues.onPreStartTick(),
@@ -117,19 +80,19 @@ export function useWorkoutSession(
     if (state.status === 'idle' || state.status === 'finished') {
       countdown.begin();
     } else if (state.status === 'running') {
-      cancelHapticBurst();
+      hapticBurst.cancel();
       pause();
     } else {
       resume();
     }
-  }, [countdown, state.status, pause, resume]);
+  }, [countdown, state.status, pause, resume, hapticBurst]);
 
   const reset = useCallback(() => {
-    cancelHapticBurst();
+    hapticBurst.cancel();
     countdown.cancel();
     cues.stopKeepAlive();
     engineReset();
-  }, [countdown, cues, engineReset]);
+  }, [countdown, cues, engineReset, hapticBurst]);
 
   const addRound = useCallback((segsToInsert: Segment[]): Segment[] => {
     const live = getSegments();
@@ -137,9 +100,9 @@ export function useWorkoutSession(
     const before = live.slice(0, insertAt);
     const after  = live.slice(insertAt);
     const insertionCursor = before.length ? before[before.length - 1].endAt : 0;
-    const inserted = reindexFrom(segsToInsert, insertionCursor, before.length);
+    const inserted = reindexSegments(segsToInsert, insertionCursor, before.length);
     const afterCursor = inserted.length ? inserted[inserted.length - 1].endAt : insertionCursor;
-    const recalcAfter = reindexFrom(after, afterCursor, before.length + inserted.length);
+    const recalcAfter = reindexSegments(after, afterCursor, before.length + inserted.length);
     return replaceSegments([...before, ...inserted, ...recalcAfter]);
   }, [getSegments, replaceSegments]);
 

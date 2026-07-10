@@ -30,6 +30,7 @@ import WorkoutScreen from './src/screens/WorkoutScreen';
 import EditSessionScreen from './src/screens/EditSessionScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
+import OnboardingModal, { CURRENT_ONBOARDING_VERSION } from './src/components/OnboardingModal';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { DEFAULT_SETTINGS, detectSpeedUnit, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
@@ -60,6 +61,7 @@ export default function App() {
   });
 
   const [audioReady, setAudioReady] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [route, setRouteState] = useState<Route>({ name: 'Sessions' });
   const [previousRoute, setPreviousRoute] = useState<Route>({ name: 'Sessions' });
   const [themeKey, setThemeKey] = useState<ThemeKey>('daybreak');
@@ -91,6 +93,7 @@ export default function App() {
       i18n.locale = resolved.language;
       setSettings(resolved);
       setThemeKey(resolved.theme);
+      setShowOnboarding(resolved.onboardingVersion < CURRENT_ONBOARDING_VERSION);
       if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
 
       // Set initial route based on folder settings
@@ -107,16 +110,18 @@ export default function App() {
   }, [fontsLoaded, audioReady]);
 
   function updateSettings<K extends keyof Settings>(key: K, value: Settings[K]) {
-    const next: Settings =
-      key === ('speedUnit' satisfies keyof Settings)
-        ? { ...settings, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
-        : key === ('language' satisfies keyof Settings)
-          ? { ...settings, language: value as 'en' | 'es', languageIsManuallySet: true }
-          : { ...settings, [key]: value };
     if (key === ('language' satisfies keyof Settings)) i18n.locale = value as 'en' | 'es';
-    setSettings(next);
-    saveSettings(next);
     if (key === ('theme' satisfies keyof Settings)) setThemeKey(value as ThemeKey);
+    setSettings(prev => {
+      const next: Settings =
+        key === ('speedUnit' satisfies keyof Settings)
+          ? { ...prev, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
+          : key === ('language' satisfies keyof Settings)
+            ? { ...prev, language: value as 'en' | 'es', languageIsManuallySet: true }
+            : { ...prev, [key]: value };
+      saveSettings(next);
+      return next;
+    });
   }
 
   const setTheme = (key: ThemeKey) => setThemeKey(key);
@@ -163,6 +168,15 @@ export default function App() {
       {route.name === 'Sessions' && (
         <RouteScreen><SessionsListScreen folderId={route.folderId} onNavigate={setRoute} /></RouteScreen>
       )}
+      <OnboardingModal
+        visible={showOnboarding}
+        onConfirm={showFolders => {
+          setShowOnboarding(false);
+          if (typeof showFolders === 'boolean') {
+            setRoute(showFolders ? { name: 'Folders' } : { name: 'Sessions' });
+          }
+        }}
+      />
     </ThemeContext.Provider>
     </SettingsContext.Provider>
     </PremiumContext.Provider>

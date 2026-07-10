@@ -1,6 +1,6 @@
 {
   "App.tsx": {
-    "mtime": 1783438032.2727273,
+    "mtime": 1783702453.7821467,
     "ast_hash": "fcbc4275dc2073bb46937161d53ad81d",
     "semantic_hash": ""
   },
@@ -75,7 +75,7 @@
     "semantic_hash": ""
   },
   "src/components/DeleteFolderModal.tsx": {
-    "mtime": 1783485221.5159595,
+    "mtime": 1783702454.2036357,
     "ast_hash": "b37777206996040a409a0c1d4205372a",
     "semantic_hash": ""
   },
@@ -85,7 +85,7 @@
     "semantic_hash": ""
   },
   "src/components/EditSession/IntervalSwipeRow.tsx": {
-    "mtime": 1783483871.1005218,
+    "mtime": 1783702454.2040625,
     "ast_hash": "781f54ec80f28d700b9fc0300ae00fbb",
     "semantic_hash": ""
   },
@@ -95,17 +95,17 @@
     "semantic_hash": ""
   },
   "src/components/FolderCreateModal.tsx": {
-    "mtime": 1783479750.32854,
+    "mtime": 1783702454.205339,
     "ast_hash": "d7d4645b5ce3e1c48bfc2c8d8e1f2a48",
     "semantic_hash": ""
   },
   "src/components/FolderHeader.tsx": {
-    "mtime": 1783432056.3465106,
+    "mtime": 1783702454.206188,
     "ast_hash": "22c764bd8c8815204e45255c98f46f55",
     "semantic_hash": ""
   },
   "src/components/FolderRenameModal.tsx": {
-    "mtime": 1783479753.9053974,
+    "mtime": 1783702454.2077408,
     "ast_hash": "c61e6ca3b2e78eb586c4d74c94adc4c5",
     "semantic_hash": ""
   },
@@ -115,12 +115,12 @@
     "semantic_hash": ""
   },
   "src/components/IntervalRow.tsx": {
-    "mtime": 1783484209.7932677,
+    "mtime": 1783702454.2079809,
     "ast_hash": "a98930665777076dd11773c0d81958dc",
     "semantic_hash": ""
   },
   "src/components/MoveToFolderSheet.tsx": {
-    "mtime": 1783432056.3472543,
+    "mtime": 1783702454.2081442,
     "ast_hash": "5de84618edf3d9c4d5e97e7541cb3dfe",
     "semantic_hash": ""
   },
@@ -145,7 +145,7 @@
     "semantic_hash": ""
   },
   "src/components/SessionCard.tsx": {
-    "mtime": 1783479997.9857304,
+    "mtime": 1783702454.2083812,
     "ast_hash": "7d3ae49900d96637509b71bfcf5598a8",
     "semantic_hash": ""
   },
@@ -160,7 +160,7 @@
     "semantic_hash": ""
   },
   "src/components/SettingsToggle.tsx": {
-    "mtime": 1783432056.3488026,
+    "mtime": 1783702454.2090006,
     "ast_hash": "630a4ddedb792d62acf15e358f06201b",
     "semantic_hash": ""
   },
@@ -215,7 +215,7 @@
     "semantic_hash": ""
   },
   "src/hooks/useEditSession.ts": {
-    "mtime": 1783432056.3495731,
+    "mtime": 1783702454.2099104,
     "ast_hash": "e3853227d6bdd3aaab690eb74e85d869",
     "semantic_hash": ""
   },
@@ -240,12 +240,12 @@
     "semantic_hash": ""
   },
   "src/hooks/useTimerEngine.ts": {
-    "mtime": 1783480913.0512938,
+    "mtime": 1783702454.2105517,
     "ast_hash": "7997a6199580cf7fc5f895a351833625",
     "semantic_hash": ""
   },
   "src/hooks/useWorkoutSession.ts": {
-    "mtime": 1783480924.89105,
+    "mtime": 1783702454.2109997,
     "ast_hash": "152107ab277b7477b14efee0bdd19131",
     "semantic_hash": ""
   },
@@ -285,17 +285,17 @@
     "semantic_hash": ""
   },
   "src/lib/sessionDraft.ts": {
-    "mtime": 1783432056.3512042,
+    "mtime": 1783702454.2115848,
     "ast_hash": "a3b9130374bbf96d0690b0be8b732278",
     "semantic_hash": ""
   },
   "src/lib/sessions.ts": {
-    "mtime": 1783446485.035823,
+    "mtime": 1783702454.2118804,
     "ast_hash": "ee9addc7a51156d22827c91aa402cdfc",
     "semantic_hash": ""
   },
   "src/lib/settings.ts": {
-    "mtime": 1783437223.3983312,
+    "mtime": 1783702454.2121122,
     "ast_hash": "797b8c7db9b58c8b36dae194ae4bc109",
     "semantic_hash": ""
   },
@@ -325,32 +325,32 @@
     "semantic_hash": ""
   },
   "src/locales/en.ts": {
-    "mtime": 1783545687.045686,
+    "mtime": 1783702454.2123964,
     "ast_hash": "73c50b8793c5b10f8b95305e4f632869",
     "semantic_hash": ""
   },
   "src/locales/es.ts": {
-    "mtime": 1783545726.6246376,
+    "mtime": 1783702454.212693,
     "ast_hash": "5918cb3d98da6a8b987327245c6dd54a",
     "semantic_hash": ""
   },
   "src/locales/fr.ts": {
-    "mtime": 1783545732.9326808,
+    "mtime": 1783702454.2131948,
     "ast_hash": "a920ea01cc000f75bd6b8b62fc8f7741",
     "semantic_hash": ""
   },
   "src/navigation.ts": {
-    "mtime": 1783432056.3540695,
+    "mtime": 1783702454.2135053,
     "ast_hash": "5e28707428bb1f2956ea577ce845a25d",
     "semantic_hash": ""
   },
   "src/screens/EditSessionScreen.tsx": {
-    "mtime": 1783484007.0603895,
+    "mtime": 1783702454.214032,
     "ast_hash": "bcdee0be6ab348c5018dc7629b95c282",
     "semantic_hash": ""
   },
   "src/screens/FoldersScreen.tsx": {
-    "mtime": 1783485339.5696185,
+    "mtime": 1783702454.214284,
     "ast_hash": "de03deda2ff03cd89467dacf413591fb",
     "semantic_hash": ""
   },
@@ -360,22 +360,22 @@
     "semantic_hash": ""
   },
   "src/screens/SessionCompleteScreen.tsx": {
-    "mtime": 1783483339.2177777,
+    "mtime": 1783702454.214902,
     "ast_hash": "01eb8feba580b47734cf9a291ee2d133",
     "semantic_hash": ""
   },
   "src/screens/SessionsListScreen.tsx": {
-    "mtime": 1783483843.5101457,
+    "mtime": 1783702454.21541,
     "ast_hash": "c3ca4e08123405d0db8ae4ba559019ef",
     "semantic_hash": ""
   },
   "src/screens/SettingsScreen.tsx": {
-    "mtime": 1783484437.0564268,
+    "mtime": 1783702454.2156723,
     "ast_hash": "1d2e1a97fe2ee983a7b3f89485d03241",
     "semantic_hash": ""
   },
   "src/screens/WorkoutScreen.tsx": {
-    "mtime": 1783483149.3025932,
+    "mtime": 1783702454.2159066,
     "ast_hash": "03bd37e9c27cde6ef80f50c3e754ce73",
     "semantic_hash": ""
   },
@@ -550,7 +550,7 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1783435803.8365698,
+    "mtime": 1783702453.7823753,
     "ast_hash": "ff2146eef0e960b455c74782ddc8508c",
     "semantic_hash": ""
   },
@@ -560,7 +560,7 @@
     "semantic_hash": ""
   },
   "apple store assets/STORE_DESCRIPTION.md": {
-    "mtime": 1783432056.114467,
+    "mtime": 1783702453.7825055,
     "ast_hash": "f2aff0a8eda3082e04e6f55c7264503c",
     "semantic_hash": ""
   },
@@ -735,7 +735,7 @@
     "semantic_hash": ""
   },
   "docs/superpowers/plans/2026-07-04-sessions-folder-system.md": {
-    "mtime": 1783432056.343408,
+    "mtime": 1783702454.1283827,
     "ast_hash": "0317dcbe6c6d0ccf4a699ebc777f6548",
     "semantic_hash": ""
   },
@@ -1050,32 +1050,32 @@
     "semantic_hash": ""
   },
   "src/components/TrialStatusPill.tsx": {
-    "mtime": 1783439887.4983127,
+    "mtime": 1783702454.2095788,
     "ast_hash": "510a966f2450e7a2c1cc056f7d355ac5",
     "semantic_hash": ""
   },
   "docs/superpowers/specs/2026-07-07-folder-icons-design.md": {
-    "mtime": 1783445997.962848,
+    "mtime": 1783702454.1313884,
     "ast_hash": "c60c2fd17fd188b4c9199ad423ccf70e",
     "semantic_hash": ""
   },
   "docs/superpowers/plans/2026-07-07-folder-icons.md": {
-    "mtime": 1783446808.5877945,
+    "mtime": 1783702454.1300082,
     "ast_hash": "b40f77b1d91ee58b9cd7ad29194dbbca",
     "semantic_hash": ""
   },
   "src/lib/folderIcons.ts": {
-    "mtime": 1783449536.0165694,
+    "mtime": 1783702454.2113783,
     "ast_hash": "2adea01d536a7582ab094e17bd68d50d",
     "semantic_hash": ""
   },
   "src/components/FolderIcon.tsx": {
-    "mtime": 1783447177.7750766,
+    "mtime": 1783702454.2067575,
     "ast_hash": "bc1210a4b89ab39ffbe4fe502b44ec02",
     "semantic_hash": ""
   },
   "src/components/FolderIconPicker.tsx": {
-    "mtime": 1783451290.4306288,
+    "mtime": 1783702454.2073114,
     "ast_hash": "4d605b31abfef1f2b924e7e723b6bace",
     "semantic_hash": ""
   },
@@ -1085,7 +1085,7 @@
     "semantic_hash": ""
   },
   "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md": {
-    "mtime": 1783702124.742901,
+    "mtime": 1783702454.1319609,
     "ast_hash": "457947b2fd88d8b0298bba2171a79209",
     "semantic_hash": ""
   }

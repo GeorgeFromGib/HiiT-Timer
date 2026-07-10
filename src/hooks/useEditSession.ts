@@ -1,16 +1,15 @@
 import { useMemo, useRef, useState } from 'react';
-import { useDraft } from './useDraft';
 import { i18n } from '../lib/i18n';
 import { Alert } from 'react-native';
 import {
   getSessionSegments, speedForPhase, spinValueForPhase,
   type Session, type RunSpeeds, type SpinValues,
-  DEFAULT_RUN_SPEEDS, DEFAULT_SPIN_VALUES, newId,
+  newId,
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import {
-  type PresetLevel, DURATION_PRESETS, SPEED_PRESETS, SPIN_PRESETS,
-  findMatchingDurationPresetForIntervals, findMatchingSpeedPreset, findMatchingSpinPreset,
+  type PresetLevel, DURATION_PRESETS,
+  findMatchingDurationPresetForIntervals,
 } from '../lib/presets';
 import {
   totalDuration, expandCircuit,
@@ -21,7 +20,8 @@ import { toDisplay } from '../lib/speedUnit';
 import { type LocalInterval, toLocal, type TimeField, type SavePayload } from './editSessionTypes';
 import { useEasyModeEdit } from './useEasyModeEdit';
 import { useCircuitModeEdit } from './useCircuitModeEdit';
-import { useAdvancedModeEdit } from './useAdvancedModeEdit';
+import { useIntervalListEdit } from './useIntervalListEdit';
+import { useSpeedAndSpinEdit } from './useSpeedAndSpinEdit';
 import { usePickerState, type EditSessionPicker, type PickerValues } from './usePickerState';
 
 // Re-export shared types — EditSessionScreen imports these from here
@@ -106,62 +106,30 @@ export function useEditSession(
     return 'easy';
   });
 
-  const [intervals, setIntervals] = useState<LocalInterval[]>(
-    existing?.mode === 'advanced' || existing?.mode === 'circuit'
-      ? existing.intervals.map(toLocal) : []
-  );
   const [activityType] = useState<'run' | 'spinning' | undefined>(() => {
     if (existing && existing.mode !== 'circuit') return existing.activityType;
     if (!existing && initialActivityType === 'run') return 'run';
     if (!existing && initialActivityType === 'spinning') return 'spinning';
     return undefined;
   });
-  const [spinValues, setSpinValues] = useState<SpinValues>(
-    existing && existing.mode !== 'circuit' && existing.activityType === 'spinning'
-      ? (existing.spinValues ?? DEFAULT_SPIN_VALUES)
-      : DEFAULT_SPIN_VALUES
-  );
-  const [runSpeeds, setRunSpeeds] = useState<RunSpeeds>(
-    existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS
-  );
   const [timingDirty, setTimingDirty] = useState(false);
-  const [speedsDirty, setSpeedsDirty] = useState(false);
-  const [spinDirty,   setSpinDirty]   = useState(false);
-  const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
-    existing && existing.mode !== 'circuit' && existing.runSpeeds
-      ? findMatchingSpeedPreset(existing.runSpeeds) : null
-  );
-  const [activeSpinPreset, setActiveSpinPreset] = useState<PresetLevel | null>(() =>
-    existing && existing.mode !== 'circuit' && existing.activityType === 'spinning' && existing.spinValues
-      ? findMatchingSpinPreset(existing.spinValues) : null
-  );
 
   // Change tracking for coordinator-owned state
-  const initialName         = useRef(existing?.name ?? '').current;
+  const initialName            = useRef(existing?.name ?? '').current;
   const initialActivityTypeRef = useRef<'run' | 'spinning' | undefined>(
     existing && existing.mode !== 'circuit'
       ? existing.activityType
       : (initialActivityType === 'run' ? 'run' : initialActivityType === 'spinning' ? 'spinning' : undefined)
   ).current;
-  const intervalsDraft      = useDraft<Interval[]>(
-    existing?.mode === 'advanced' || existing?.mode === 'circuit' ? existing.intervals : []
-  );
-  const runSpeedsDraft      = useDraft(
-    existing && existing.mode !== 'circuit' ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS
-  );
-  const spinValuesDraft     = useDraft(
-    existing && existing.mode !== 'circuit' && existing.activityType === 'spinning'
-      ? (existing.spinValues ?? DEFAULT_SPIN_VALUES)
-      : DEFAULT_SPIN_VALUES
-  );
 
   // Mode sub-hooks
-  const easyEdit    = useEasyModeEdit(existing);
-  const circuitEdit = useCircuitModeEdit(existing);
-  const advanced    = useAdvancedModeEdit();
+  const easyEdit     = useEasyModeEdit(existing);
+  const circuitEdit  = useCircuitModeEdit(existing);
+  const intervalEdit = useIntervalListEdit(existing);
+  const speedSpinEdit = useSpeedAndSpinEdit(existing);
 
   const pickerState = usePickerState(
-    intervals,
+    intervalEdit.intervals,
     easyEdit.fieldValues,
     {
       warmup:   circuitEdit.circuitWarmup,
@@ -177,25 +145,17 @@ export function useEditSession(
         easyEdit.setField(result.field, result.secs);
         setTimingDirty(true);
       } else if (result.type === 'speed') {
-        setRunSpeed(result.field, result.kmh);
+        speedSpinEdit.setRunSpeed(result.field, result.kmh);
       } else if (result.type === 'intervalSpeed') {
-        setIntervals(ivs =>
-          ivs.map(iv => iv._key === result.key ? { ...iv, speed: result.kmh } : iv)
-        );
+        intervalEdit.setIntervalSpeed(result.key, result.kmh);
       } else if (result.type === 'spinResistance') {
-        setSpinValues(prev => ({ ...prev, [result.field]: result.value }));
-        setSpinDirty(true); setActiveSpinPreset(null);
+        speedSpinEdit.setSpinValue(result.field, result.value);
       } else if (result.type === 'spinPower') {
-        setSpinValues(prev => ({ ...prev, [result.field]: result.value }));
-        setSpinDirty(true); setActiveSpinPreset(null);
+        speedSpinEdit.setSpinValue(result.field, result.value);
       } else if (result.type === 'intervalResistance') {
-        setIntervals(ivs =>
-          ivs.map(iv => iv._key === result.key ? { ...iv, resistance: result.value } : iv)
-        );
+        intervalEdit.setIntervalResistance(result.key, result.value);
       } else if (result.type === 'intervalPower') {
-        setIntervals(ivs =>
-          ivs.map(iv => iv._key === result.key ? { ...iv, power: result.value } : iv)
-        );
+        intervalEdit.setIntervalPower(result.key, result.value);
       } else if (result.type === 'circuitWarmup') {
         circuitEdit.set('warmup', result.secs);
         setTimingDirty(true);
@@ -209,40 +169,36 @@ export function useEditSession(
         circuitEdit.set('count', result.value);
         setTimingDirty(true);
       } else if (result.type === 'interval') {
-        setIntervals(ivs =>
-          ivs.map(iv => iv._key === result.key ? { ...iv, dur: result.secs } : iv)
-        );
+        intervalEdit.setIntervalDuration(result.key, result.secs);
         setTimingDirty(true);
       }
     },
   );
 
   function setRunSpeed(field: keyof RunSpeeds, value: number) {
-    setRunSpeeds(prev => ({ ...prev, [field]: value }));
-    setSpeedsDirty(true);
-    setActiveSpeedPreset(null);
+    speedSpinEdit.setRunSpeed(field, value);
   }
 
   const previewSegments = useMemo(() => {
-    const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+    const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
     if (mode === 'circuit') {
       return expandCircuit(cleanIntervals, circuitEdit.circuitCount, circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitRest);
     }
     const draft: Session = mode === 'easy'
-      ? { id: '', name: '', folderId: sessionFolderId, mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds, spinValues }
-      : { id: '', name: '', folderId: sessionFolderId, mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds, spinValues };
+      ? { id: '', name: '', folderId: sessionFolderId, mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds: speedSpinEdit.runSpeeds, spinValues: speedSpinEdit.spinValues }
+      : { id: '', name: '', folderId: sessionFolderId, mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds: speedSpinEdit.runSpeeds, spinValues: speedSpinEdit.spinValues };
     return getSessionSegments(draft);
-  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervals, activityType, runSpeeds, spinValues,
+  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervalEdit.intervals, activityType, speedSpinEdit.runSpeeds, speedSpinEdit.spinValues,
       circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitCount, circuitEdit.circuitRest]);
 
-  function toggleMode(advanced_: boolean) {
-    if (advanced_) {
-      if (intervals.length === 0) {
-        setIntervals(advanced.buildFromEasy(easyEdit.easyConfig));
+  function toggleMode(advanced: boolean) {
+    if (advanced) {
+      if (intervalEdit.intervals.length === 0) {
+        intervalEdit.buildFromEasy(easyEdit.easyConfig);
       }
       setMode('advanced');
     } else {
-      const result = advanced.tryConvertToEasy(intervals);
+      const result = intervalEdit.tryConvertToEasy(intervalEdit.intervals);
       if (!result.ok) {
         Alert.alert(
           i18n.t('alerts.cannotSwitchEasyTitle'),
@@ -264,39 +220,22 @@ export function useEditSession(
   function cyclePhase(key: string) {
     setTimingDirty(true);
     const phases = mode === 'circuit' ? CIRCUIT_PHASES : PHASES;
-    setIntervals(ivs => ivs.map(iv => {
-      if (iv._key !== key) return iv;
-      const currentIdx = phases.indexOf(iv.type);
-      const nextType = currentIdx >= 0
-        ? phases[(currentIdx + 1) % phases.length]
-        : phases[0];
-      return { ...iv, type: nextType };
-    }));
+    intervalEdit.cyclePhase(key, phases);
   }
 
   function addInterval(type: Phase) {
     setTimingDirty(true);
-    const last = [...intervals].reverse().find(iv => iv.type === type);
-    setIntervals(ivs => [...ivs, toLocal({
-      type,
-      dur:           last?.dur ?? 30,
-      activityLabel: last?.activityLabel,
-    })]);
+    intervalEdit.addInterval(type);
   }
 
   function duplicateInterval(key: string) {
     setTimingDirty(true);
-    setIntervals(ivs => {
-      const idx = ivs.findIndex(iv => iv._key === key);
-      if (idx === -1) return ivs;
-      const copy = toLocal(ivs[idx]);
-      return [...ivs.slice(0, idx + 1), copy, ...ivs.slice(idx + 1)];
-    });
+    intervalEdit.duplicateInterval(key);
   }
 
   function removeInterval(key: string) {
     setTimingDirty(true);
-    setIntervals(ivs => ivs.filter(iv => iv._key !== key));
+    intervalEdit.removeInterval(key);
   }
 
   function applyDurationPreset(level: PresetLevel) {
@@ -306,7 +245,7 @@ export function useEditSession(
       setTimingDirty(false);
       if (mode === 'advanced') {
         const config = { warmup: p.warmup, high: Math.max(1, p.work), low: p.rest, rounds: Math.max(1, p.rounds), cooldown: p.cooldown };
-        setIntervals(advanced.buildFromEasy(config));
+        intervalEdit.buildFromEasy(config);
       }
     };
     if (timingDirty) {
@@ -320,84 +259,26 @@ export function useEditSession(
     }
   }
 
-  function applySpeedPreset(level: PresetLevel) {
-    const doApply = () => {
-      setRunSpeeds(SPEED_PRESETS[level]);
-      setSpeedsDirty(false);
-      setActiveSpeedPreset(level);
-    };
-    if (speedsDirty) {
-      Alert.alert(
-        i18n.t('alerts.overwriteTitle'),
-        i18n.t('alerts.overwriteSpeedMessage'),
-        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
-      );
-    } else {
-      doApply();
-    }
-  }
-
-  function applySpinPreset(level: PresetLevel) {
-    const doApply = () => {
-      setSpinValues(SPIN_PRESETS[level]);
-      setSpinDirty(false);
-      setActiveSpinPreset(level);
-    };
-    if (spinDirty) {
-      Alert.alert(
-        i18n.t('alerts.overwriteTitle'),
-        i18n.t('alerts.overwriteSpinMessage'),
-        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
-      );
-    } else {
-      doApply();
-    }
-  }
-
   function openIntervalSpeedPicker(key: string, isMiles: boolean) {
-    const iv = intervals.find(i => i._key === key);
+    const iv = intervalEdit.intervals.find(i => i._key === key);
     if (!iv) return;
-    const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
+    const kmh = iv.speed ?? speedForPhase(iv.type, speedSpinEdit.runSpeeds);
     const displayVal = toDisplay(kmh, isMiles ? 'miles' : 'km');
     pickerState.openIntervalSpeedPicker(key, displayVal, isMiles);
   }
 
-  function clearIntervalSpeed(key: string) {
-    setIntervals(ivs =>
-      ivs.map(iv => iv._key === key ? { ...iv, speed: undefined } : iv)
-    );
-  }
-
   function openIntervalResistancePicker(key: string) {
-    const iv = intervals.find(i => i._key === key);
+    const iv = intervalEdit.intervals.find(i => i._key === key);
     if (!iv) return;
-    const current = iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance;
+    const current = iv.resistance ?? spinValueForPhase(iv.type, speedSpinEdit.spinValues).resistance;
     pickerState.openIntervalResistancePicker(key, current);
   }
 
   function openIntervalPowerPicker(key: string) {
-    const iv = intervals.find(i => i._key === key);
+    const iv = intervalEdit.intervals.find(i => i._key === key);
     if (!iv) return;
-    const current = iv.power ?? spinValueForPhase(iv.type, spinValues).power;
+    const current = iv.power ?? spinValueForPhase(iv.type, speedSpinEdit.spinValues).power;
     pickerState.openIntervalPowerPicker(key, current);
-  }
-
-  function clearIntervalResistance(key: string) {
-    setIntervals(ivs =>
-      ivs.map(iv => iv._key === key ? { ...iv, resistance: undefined } : iv)
-    );
-  }
-
-  function clearIntervalPower(key: string) {
-    setIntervals(ivs =>
-      ivs.map(iv => iv._key === key ? { ...iv, power: undefined } : iv)
-    );
-  }
-
-  function setActivityLabel(key: string, label: string) {
-    setIntervals(ivs => ivs.map(iv =>
-      iv._key === key ? { ...iv, activityLabel: label } : iv
-    ));
   }
 
   function buildSavePayload(): SavePayload {
@@ -405,11 +286,11 @@ export function useEditSession(
       if (!name.trim()) {
         return { ok: false, titleKey: 'alerts.nameRequiredTitle', messageKey: 'alerts.nameRequiredMessage' };
       }
-      const hasWork = intervals.some(iv => iv.type === 'work');
+      const hasWork = intervalEdit.intervals.some(iv => iv.type === 'work');
       if (!hasWork) {
         return { ok: false, titleKey: 'alerts.noWorkIntervalsTitle', messageKey: 'alerts.noWorkIntervalsMessage' };
       }
-      const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+      const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
       const session: Session = {
         id: existing?.id ?? newId(),
         name: name.trim(),
@@ -423,39 +304,37 @@ export function useEditSession(
       };
       return { ok: true, session, isNew: !existing };
     }
-    const validation = validateDraft(name, mode, intervals);
+    const validation = validateDraft(name, mode, intervalEdit.intervals);
     if (!validation.ok) {
       return { ok: false, titleKey: validation.titleKey, messageKey: validation.messageKey };
     }
-    const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
+    const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
     const session = buildSessionFromDraft(
-      mode, name.trim(), easyEdit.easyConfig, cleanIntervals, activityType, runSpeeds, existing?.id,
-      undefined, spinValues, sessionFolderId,
+      mode, name.trim(), easyEdit.easyConfig, cleanIntervals, activityType, speedSpinEdit.runSpeeds, existing?.id,
+      undefined, speedSpinEdit.spinValues, sessionFolderId,
     );
     return { ok: true, session, isNew: !existing };
   }
 
   const hasChanges = useMemo(() => {
-    const cleanIntervals: Interval[] = intervals.map(({ _key, ...iv }) => iv);
     if (mode === 'circuit') {
       return circuitEdit.hasChanges
         || name !== initialName
-        || intervalsDraft.isDirty(cleanIntervals);
+        || intervalEdit.hasChanges;
     }
     return easyEdit.hasChanges
       || name !== initialName
-      || intervalsDraft.isDirty(cleanIntervals)
+      || intervalEdit.hasChanges
       || activityType !== initialActivityTypeRef
-      || runSpeedsDraft.isDirty(runSpeeds)
-      || spinValuesDraft.isDirty(spinValues);
+      || speedSpinEdit.hasChanges;
   }, [
-    mode, name, intervals, activityType, runSpeeds, spinValues,
+    mode, name, intervalEdit.hasChanges, activityType, speedSpinEdit.hasChanges,
     easyEdit.hasChanges, circuitEdit.hasChanges,
     initialName, initialActivityTypeRef,
   ]);
 
   const activeTimingPreset: PresetLevel | null = mode === 'advanced'
-    ? findMatchingDurationPresetForIntervals(intervals.map(({ _key, ...iv }) => iv))
+    ? findMatchingDurationPresetForIntervals(intervalEdit.intervals.map(({ _key, ...iv }) => iv))
     : easyEdit.activeTimingPreset;
 
   const draft: EditSessionDraft = {
@@ -465,15 +344,15 @@ export function useEditSession(
     isSpinning:  activityType === 'spinning',
     fieldValues: easyEdit.fieldValues,
     rounds:      easyEdit.rounds,
-    intervals,
+    intervals: intervalEdit.intervals,
     previewSegments,
     previewTotal: totalDuration(previewSegments),
     activityType,
-    runSpeeds,
-    spinValues,
+    runSpeeds:  speedSpinEdit.runSpeeds,
+    spinValues: speedSpinEdit.spinValues,
     activeTimingPreset,
-    activeSpeedPreset,
-    activeSpinPreset,
+    activeSpeedPreset: speedSpinEdit.activeSpeedPreset,
+    activeSpinPreset:  speedSpinEdit.activeSpinPreset,
     hasChanges,
     circuitWarmup:   circuitEdit.circuitWarmup,
     circuitCooldown: circuitEdit.circuitCooldown,
@@ -491,30 +370,30 @@ export function useEditSession(
     addInterval,
     duplicateInterval,
     removeInterval,
-    clearIntervals:   () => { setTimingDirty(true); setIntervals([]); },
-    reorderIntervals: (data: LocalInterval[]) => { setTimingDirty(true); setIntervals(data); },
+    clearIntervals:   () => { setTimingDirty(true); intervalEdit.clearIntervals(); },
+    reorderIntervals: (data: LocalInterval[]) => { setTimingDirty(true); intervalEdit.reorderIntervals(data); },
     openFieldPicker:  pickerState.openFieldPicker,
     openRoundsPicker: () => pickerState.openRoundsPicker(easyEdit.rounds),
     openIntervalPicker: pickerState.openIntervalPicker,
     openSpeedPicker:    pickerState.openSpeedPicker,
     openIntervalSpeedPicker,
-    clearIntervalSpeed,
+    clearIntervalSpeed: intervalEdit.clearIntervalSpeed,
     commitPicker:    pickerState.commitPicker,
     dismissPicker:   pickerState.dismissPicker,
     applyDurationPreset,
-    applySpeedPreset,
-    applySpinPreset,
-    setActivityLabel,
+    applySpeedPreset: speedSpinEdit.applySpeedPreset,
+    applySpinPreset:  speedSpinEdit.applySpinPreset,
+    setActivityLabel: intervalEdit.setActivityLabel,
     openCircuitWarmupPicker:   pickerState.openCircuitWarmupPicker,
     openCircuitCooldownPicker: pickerState.openCircuitCooldownPicker,
     openCircuitRestPicker:     pickerState.openCircuitRestPicker,
     openCircuitsPicker:        pickerState.openCircuitCountPicker,
-    openSpinResistancePicker:    (field) => pickerState.openSpinResistancePicker(field, spinValues[field]),
-    openSpinPowerPicker:         (field) => pickerState.openSpinPowerPicker(field, spinValues[field]),
+    openSpinResistancePicker:    (field) => pickerState.openSpinResistancePicker(field, speedSpinEdit.spinValues[field]),
+    openSpinPowerPicker:         (field) => pickerState.openSpinPowerPicker(field, speedSpinEdit.spinValues[field]),
     openIntervalResistancePicker,
     openIntervalPowerPicker,
-    clearIntervalResistance,
-    clearIntervalPower,
+    clearIntervalResistance: intervalEdit.clearIntervalResistance,
+    clearIntervalPower:      intervalEdit.clearIntervalPower,
     buildSavePayload,
   };
 }

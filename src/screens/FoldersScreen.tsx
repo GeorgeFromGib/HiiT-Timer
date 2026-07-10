@@ -21,8 +21,7 @@ import {
 } from '../lib/sessions';
 import { DEFAULT_FOLDER_ICON, resolveFolderIconColor, folderIconTint } from '../lib/folderIcons';
 import FolderIcon from '../components/FolderIcon';
-import FolderCreateModal from '../components/FolderCreateModal';
-import FolderRenameModal from '../components/FolderRenameModal';
+import FolderEditModal from '../components/FolderEditModal';
 import DeleteFolderModal from '../components/DeleteFolderModal';
 import PaywallModal from '../components/PaywallModal';
 import TrialStatusPill from '../components/TrialStatusPill';
@@ -187,14 +186,15 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
         )}
       />
 
-      <FolderCreateModal
+      <FolderEditModal
         visible={showCreateFolderModal}
+        folder={null}
         allFolders={data.folders}
         onDismiss={() => setShowCreateFolderModal(false)}
         onSubmit={handleCreateFolder}
       />
 
-      <FolderRenameModal
+      <FolderEditModal
         visible={showRenameFolderModal}
         folder={renamingFolder}
         allFolders={data.folders}

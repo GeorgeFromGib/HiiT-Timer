@@ -7,7 +7,7 @@ import {
   purchaseUpdatedListener,
   purchaseErrorListener,
 } from 'expo-iap';
-import { File, Paths } from 'expo-file-system';
+import { readJsonFile, writeJsonFile } from './jsonFile';
 
 // Replace with real App Store product ID before production release
 const PRODUCT_ID = 'com.georgefromgib.hiittimer.premium_lifetime';
@@ -23,30 +23,20 @@ const state = {
   pendingResolve: null as ((success: boolean) => void) | null,
 };
 
-const trialFile = () => new File(Paths.document, 'trial_v1.json');
-const premiumFile = () => new File(Paths.document, 'premium_v1.json');
+const TRIAL_FILE = 'trial_v1.json';
+const PREMIUM_FILE = 'premium_v1.json';
 
 async function loadPremium(): Promise<boolean> {
-  try {
-    const f = premiumFile();
-    if (f.exists) {
-      const raw = await f.text();
-      return (JSON.parse(raw) as { isPremium: boolean }).isPremium === true;
-    }
-  } catch {}
-  return false;
+  const parsed = await readJsonFile<{ isPremium: boolean }>(PREMIUM_FILE);
+  return parsed?.isPremium === true;
 }
 
 function savePremium(): void {
-  try {
-    premiumFile().write(JSON.stringify({ isPremium: true }));
-  } catch {}
+  writeJsonFile(PREMIUM_FILE, { isPremium: true });
 }
 
 async function saveTrialStart(iso: string): Promise<void> {
-  try {
-    trialFile().write(JSON.stringify({ startedAt: iso }));
-  } catch {}
+  writeJsonFile(TRIAL_FILE, { startedAt: iso });
 }
 
 function isWithinTrial(): boolean {
@@ -66,18 +56,12 @@ function settlePurchase(success: boolean): void {
 export async function initPurchases(_apiKey?: string): Promise<void> {
   state.isPremium = await loadPremium();
 
-  try {
-    const f = trialFile();
-    if (f.exists) {
-      const raw = await f.text();
-      const data = JSON.parse(raw) as { startedAt: string };
-      state.trialStartedAt = data.startedAt;
-    } else {
-      state.trialStartedAt = new Date().toISOString();
-      await saveTrialStart(state.trialStartedAt);
-    }
-  } catch {
+  const trial = await readJsonFile<{ startedAt: string }>(TRIAL_FILE);
+  if (trial) {
+    state.trialStartedAt = trial.startedAt;
+  } else {
     state.trialStartedAt = new Date().toISOString();
+    await saveTrialStart(state.trialStartedAt);
   }
 
   try {

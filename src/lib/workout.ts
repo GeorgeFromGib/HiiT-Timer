@@ -119,6 +119,17 @@ export function expandCircuit(
   });
 }
 
+export function reindexSegments(segs: Segment[], startCursor: number, startIdx: number): Segment[] {
+  let cursor = startCursor;
+  let idx = startIdx;
+  return segs.map(s => {
+    const seg = { ...s, startAt: cursor, endAt: cursor + s.duration, index: idx };
+    cursor += s.duration;
+    idx++;
+    return seg;
+  });
+}
+
 export function totalDuration(segments: Segment[]): number {
   return segments.length ? segments[segments.length - 1].endAt : 0;
 }

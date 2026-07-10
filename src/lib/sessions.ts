@@ -1,4 +1,4 @@
-import { File, Paths } from 'expo-file-system';
+import { readJsonFile, writeJsonFile } from './jsonFile';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
@@ -119,7 +119,7 @@ export function getSessionSegments(session: Session): Segment[] {
   return base;
 }
 
-const sessionsFile = () => new File(Paths.document, 'sessions_v2.json');
+const SESSIONS_FILE = 'sessions_v2.json';
 
 export function getDefaultSessions(language: Language = 'en'): Session[] {
   return [
@@ -220,26 +220,18 @@ function migrateSessionsToFolders(oldSessions: Session[]): SessionsData {
 }
 
 export async function loadSessions(language: Language = 'en'): Promise<SessionsData> {
-  try {
-    const f = sessionsFile();
-    if (!f.exists) {
-      return { folders: [createDefaultFolder()], sessions: getDefaultSessions(language) };
-    }
-    const raw = await f.text();
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      return migrateSessionsToFolders(parsed as Session[]);
-    }
-    return parsed as SessionsData;
-  } catch {
+  const parsed = await readJsonFile<Session[] | SessionsData>(SESSIONS_FILE);
+  if (!parsed) {
     return { folders: [createDefaultFolder()], sessions: getDefaultSessions(language) };
   }
+  if (Array.isArray(parsed)) {
+    return migrateSessionsToFolders(parsed);
+  }
+  return parsed;
 }
 
 export async function saveSessions(data: SessionsData): Promise<void> {
-  try {
-    sessionsFile().write(JSON.stringify(data));
-  } catch {}
+  writeJsonFile(SESSIONS_FILE, data);
 }
 
 export function newId(): string {

@@ -21,6 +21,7 @@ import { ThemeCard } from '../components/ThemeCard';
 import Constants from 'expo-constants';
 import { VolumeRow } from '../components/VolumeRow';
 import PaywallModal from '../components/PaywallModal';
+import { CURRENT_ONBOARDING_VERSION } from '../components/OnboardingModal';
 import { loadSessions, type SessionsData } from '../lib/sessions';
 
 // ══════════════════════════════════════════════════════════════
@@ -233,6 +234,16 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
               label="Trigger review prompt"
               sub="Show review dialog after next workout"
               right={<SettingsToggle value={forceReview} onChange={v => { setForceReview(v); setForceNextReview(v); }} />}
+            />
+            <SettingsRow
+              label="Show onboarding on next launch"
+              sub="Resets the onboarding modal to unseen for testing"
+              right={
+                <SettingsToggle
+                  value={settings.onboardingVersion < CURRENT_ONBOARDING_VERSION}
+                  onChange={v => updateSettings('onboardingVersion', v ? 0 : CURRENT_ONBOARDING_VERSION)}
+                />
+              }
               last
             />
           </SettingsSection>

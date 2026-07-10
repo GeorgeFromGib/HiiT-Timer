@@ -1,4 +1,4 @@
-import { File, Paths } from 'expo-file-system';
+import { readJsonFile, writeJsonFile } from './jsonFile';
 
 export type ThemeKey = 'tidal' | 'daybreak';
 
@@ -18,6 +18,7 @@ export interface Settings {
   language: 'en' | 'es' | 'fr';
   languageIsManuallySet: boolean;
   hideFolders: boolean;
+  onboardingVersion: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -36,9 +37,10 @@ export const DEFAULT_SETTINGS: Settings = {
   language: 'en',
   languageIsManuallySet: false,
   hideFolders: true,
+  onboardingVersion: 0,
 };
 
-const settingsFile = () => new File(Paths.document, 'settings_v1.json');
+const SETTINGS_FILE = 'settings_v1.json';
 
 export function detectSpeedUnit(): 'km' | 'miles' {
   try {
@@ -52,18 +54,10 @@ export function detectSpeedUnit(): 'km' | 'miles' {
 }
 
 export async function loadSettings(): Promise<Settings> {
-  try {
-    const f = settingsFile();
-    if (!f.exists) return DEFAULT_SETTINGS;
-    const raw = await f.text();
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
-  } catch {
-    return DEFAULT_SETTINGS;
-  }
+  const parsed = await readJsonFile<Partial<Settings>>(SETTINGS_FILE);
+  return parsed ? { ...DEFAULT_SETTINGS, ...parsed } : DEFAULT_SETTINGS;
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
-  try {
-    settingsFile().write(JSON.stringify(settings));
-  } catch {}
+  writeJsonFile(SETTINGS_FILE, settings);
 }

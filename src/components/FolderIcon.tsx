@@ -2,6 +2,7 @@ import React from 'react';
 import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
 import type { FolderIconName } from '../lib/sessions';
 import { BASE_SVG_STROKE } from './svgStroke';
+import { ACTIVITY_ICON_SHAPES } from './activityIconShapes';
 
 interface Props {
   name: FolderIconName;
@@ -69,11 +70,8 @@ export default function FolderIcon({ name, color, size = 20 }: Props) {
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24">
           <G {...p}>
-            <Circle cx="15.5" cy="4.6" r="2.1" />
-            <Path d="M14.2 8.3 10 13.4l3.6 1.9.5 5" />
-            <Path d="M10 13.4 6.2 16.8 4 18.4" />
-            <Path d="M13.6 9.6l3.3 1.7 2.7-.6" />
-            <Path d="M16.9 11.3l-.4 3" />
+            {ACTIVITY_ICON_SHAPES.run.circles!.map(c => <Circle key={`${c.cx},${c.cy}`} {...c} />)}
+            {ACTIVITY_ICON_SHAPES.run.paths.map(d => <Path key={d} d={d} />)}
           </G>
         </Svg>
       );
@@ -81,11 +79,7 @@ export default function FolderIcon({ name, color, size = 20 }: Props) {
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24">
           <G {...p}>
-            <Path d="M3.2 9.5v5" />
-            <Path d="M6.4 7.2v9.6" />
-            <Path d="M6.4 12h11.2" />
-            <Path d="M17.6 7.2v9.6" />
-            <Path d="M20.8 9.5v5" />
+            {ACTIVITY_ICON_SHAPES.circuit.paths.map(d => <Path key={d} d={d} />)}
           </G>
         </Svg>
       );
@@ -93,11 +87,8 @@ export default function FolderIcon({ name, color, size = 20 }: Props) {
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24">
           <G {...p}>
-            <Circle cx="6" cy="16.4" r="3.5" />
-            <Circle cx="18" cy="16.4" r="3.5" />
-            <Path d="M11 16.4 9 8.2M11 16.4 16 8.2M9 8.2h7M11 16.4H6M16 8.2l2 8.2" />
-            <Path d="M7.9 7.7h2.4" />
-            <Path d="M16 8.2V6.4M14.7 6.4h2.6" />
+            {ACTIVITY_ICON_SHAPES.spinning.circles!.map(c => <Circle key={`${c.cx},${c.cy}`} {...c} />)}
+            {ACTIVITY_ICON_SHAPES.spinning.paths.map(d => <Path key={d} d={d} />)}
           </G>
         </Svg>
       );
