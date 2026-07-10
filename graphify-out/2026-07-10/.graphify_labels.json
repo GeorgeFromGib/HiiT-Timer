@@ -139,5 +139,8 @@
   "137": "scripts",
   "138": "FolderIconPicker.tsx",
   "139": "TrialStatusPill.tsx",
-  "140": "usePreStartCountdown.ts"
+  "140": "usePreStartCountdown.ts",
+  "141": "SessionCard.tsx",
+  "142": "DragHandle.tsx",
+  "143": "SettingsScreen.tsx"
 }

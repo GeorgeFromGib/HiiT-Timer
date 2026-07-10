@@ -4,114 +4,14 @@
   "graph": {},
   "nodes": [
     {
-      "label": "2026-07-10-onboarding-modal-design.md",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design",
-      "community": 19,
-      "norm_label": "2026-07-10-onboarding-modal-design.md"
-    },
-    {
-      "label": "Onboarding Modal Design",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "community": 19,
-      "norm_label": "onboarding modal design"
-    },
-    {
-      "label": "Purpose",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_purpose",
-      "community": 19,
-      "norm_label": "purpose"
-    },
-    {
-      "label": "Data model",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L9",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_data_model",
-      "community": 19,
-      "norm_label": "data model"
-    },
-    {
-      "label": "Version constant",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L17",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_version_constant",
-      "community": 19,
-      "norm_label": "version constant"
-    },
-    {
-      "label": "Component: `src/components/OnboardingModal.tsx`",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_component_src_components_onboardingmodal_tsx",
-      "community": 19,
-      "norm_label": "component: `src/components/onboardingmodal.tsx`"
-    },
-    {
-      "label": "Wiring in `App.tsx`",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L41",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_wiring_in_app_tsx",
-      "community": 19,
-      "norm_label": "wiring in `app.tsx`"
-    },
-    {
-      "label": "i18n",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L47",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_i18n",
-      "community": 19,
-      "norm_label": "i18n"
-    },
-    {
-      "label": "Testing",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L59",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_testing",
-      "community": 19,
-      "norm_label": "testing"
-    },
-    {
-      "label": "Out of scope",
-      "file_type": "document",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L68",
-      "_origin": "ast",
-      "id": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_out_of_scope",
-      "community": 19,
-      "norm_label": "out of scope"
-    },
-    {
       "label": "DeleteFolderModal.tsx",
       "file_type": "code",
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_components_deletefoldermodal",
       "community": 132,
-      "norm_label": "deletefoldermodal.tsx",
-      "id": "src_components_deletefoldermodal"
+      "norm_label": "deletefoldermodal.tsx"
     },
     {
       "label": "DeleteFolderModalProps",
@@ -119,9 +19,9 @@
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L14",
       "_origin": "ast",
+      "id": "src_components_deletefoldermodal_deletefoldermodalprops",
       "community": 132,
-      "norm_label": "deletefoldermodalprops",
-      "id": "src_components_deletefoldermodal_deletefoldermodalprops"
+      "norm_label": "deletefoldermodalprops"
     },
     {
       "label": "DeleteFolderModal()",
@@ -129,9 +29,9 @@
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L24",
       "_origin": "ast",
+      "id": "src_components_deletefoldermodal_deletefoldermodal",
       "community": 132,
-      "norm_label": "deletefoldermodal()",
-      "id": "src_components_deletefoldermodal_deletefoldermodal"
+      "norm_label": "deletefoldermodal()"
     },
     {
       "label": "makeStyles()",
@@ -139,9 +39,9 @@
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L107",
       "_origin": "ast",
+      "id": "src_components_deletefoldermodal_makestyles",
       "community": 132,
-      "norm_label": "makestyles()",
-      "id": "src_components_deletefoldermodal_makestyles"
+      "norm_label": "makestyles()"
     },
     {
       "label": "IntervalSwipeRow.tsx",
@@ -149,9 +49,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_components_editsession_intervalswiperow",
       "community": 123,
-      "norm_label": "intervalswiperow.tsx",
-      "id": "src_components_editsession_intervalswiperow"
+      "norm_label": "intervalswiperow.tsx"
     },
     {
       "label": "Props",
@@ -159,9 +59,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L11",
       "_origin": "ast",
+      "id": "src_components_editsession_intervalswiperow_props",
       "community": 123,
-      "norm_label": "props",
-      "id": "src_components_editsession_intervalswiperow_props"
+      "norm_label": "props"
     },
     {
       "label": "IntervalSwipeDuplicateAction",
@@ -169,9 +69,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L32",
       "_origin": "ast",
+      "id": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction",
       "community": 123,
-      "norm_label": "intervalswipeduplicateaction",
-      "id": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction"
+      "norm_label": "intervalswipeduplicateaction"
     },
     {
       "label": "IntervalSwipeRow()",
@@ -179,9 +79,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L61",
       "_origin": "ast",
+      "id": "src_components_editsession_intervalswiperow_intervalswiperow",
       "community": 123,
-      "norm_label": "intervalswiperow()",
-      "id": "src_components_editsession_intervalswiperow_intervalswiperow"
+      "norm_label": "intervalswiperow()"
     },
     {
       "label": "styles",
@@ -189,9 +89,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L120",
       "_origin": "ast",
+      "id": "src_components_editsession_intervalswiperow_styles",
       "community": 123,
-      "norm_label": "styles",
-      "id": "src_components_editsession_intervalswiperow_styles"
+      "norm_label": "styles"
     },
     {
       "label": "IntervalRow.tsx",
@@ -199,9 +99,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_components_intervalrow",
       "community": 123,
-      "norm_label": "intervalrow.tsx",
-      "id": "src_components_intervalrow"
+      "norm_label": "intervalrow.tsx"
     },
     {
       "label": "IntervalRowProps",
@@ -209,9 +109,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L7",
       "_origin": "ast",
+      "id": "src_components_intervalrow_intervalrowprops",
       "community": 123,
-      "norm_label": "intervalrowprops",
-      "id": "src_components_intervalrow_intervalrowprops"
+      "norm_label": "intervalrowprops"
     },
     {
       "label": "IntervalRow()",
@@ -219,9 +119,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L26",
       "_origin": "ast",
+      "id": "src_components_intervalrow_intervalrow",
       "community": 123,
-      "norm_label": "intervalrow()",
-      "id": "src_components_intervalrow_intervalrow"
+      "norm_label": "intervalrow()"
     },
     {
       "label": "makeStyles()",
@@ -229,9 +129,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L119",
       "_origin": "ast",
+      "id": "src_components_intervalrow_makestyles",
       "community": 123,
-      "norm_label": "makestyles()",
-      "id": "src_components_intervalrow_makestyles"
+      "norm_label": "makestyles()"
     },
     {
       "label": "en.ts",
@@ -239,9 +139,9 @@
       "source_file": "src/locales/en.ts",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_locales_en",
       "community": 124,
-      "norm_label": "en.ts",
-      "id": "src_locales_en"
+      "norm_label": "en.ts"
     },
     {
       "label": "en",
@@ -249,9 +149,9 @@
       "source_file": "src/locales/en.ts",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_locales_en_en",
       "community": 124,
-      "norm_label": "en",
-      "id": "src_locales_en_en"
+      "norm_label": "en"
     },
     {
       "label": "es.ts",
@@ -259,9 +159,9 @@
       "source_file": "src/locales/es.ts",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_locales_es",
       "community": 124,
-      "norm_label": "es.ts",
-      "id": "src_locales_es"
+      "norm_label": "es.ts"
     },
     {
       "label": "es",
@@ -269,9 +169,9 @@
       "source_file": "src/locales/es.ts",
       "source_location": "L3",
       "_origin": "ast",
+      "id": "src_locales_es_es",
       "community": 124,
-      "norm_label": "es",
-      "id": "src_locales_es_es"
+      "norm_label": "es"
     },
     {
       "label": "fr.ts",
@@ -279,9 +179,9 @@
       "source_file": "src/locales/fr.ts",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_locales_fr",
       "community": 124,
-      "norm_label": "fr.ts",
-      "id": "src_locales_fr"
+      "norm_label": "fr.ts"
     },
     {
       "label": "fr",
@@ -289,9 +189,9 @@
       "source_file": "src/locales/fr.ts",
       "source_location": "L3",
       "_origin": "ast",
+      "id": "src_locales_fr_fr",
       "community": 124,
-      "norm_label": "fr",
-      "id": "src_locales_fr_fr"
+      "norm_label": "fr"
     },
     {
       "label": "EditSessionScreen.tsx",
@@ -299,9 +199,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_screens_editsessionscreen",
       "community": 123,
-      "norm_label": "editsessionscreen.tsx",
-      "id": "src_screens_editsessionscreen"
+      "norm_label": "editsessionscreen.tsx"
     },
     {
       "label": "getIntervalDisplaySpeed()",
@@ -309,9 +209,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L30",
       "_origin": "ast",
+      "id": "src_screens_editsessionscreen_getintervaldisplayspeed",
       "community": 123,
-      "norm_label": "getintervaldisplayspeed()",
-      "id": "src_screens_editsessionscreen_getintervaldisplayspeed"
+      "norm_label": "getintervaldisplayspeed()"
     },
     {
       "label": "Props",
@@ -319,9 +219,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L36",
       "_origin": "ast",
+      "id": "src_screens_editsessionscreen_props",
       "community": 123,
-      "norm_label": "props",
-      "id": "src_screens_editsessionscreen_props"
+      "norm_label": "props"
     },
     {
       "label": "EditSessionScreen()",
@@ -329,9 +229,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L43",
       "_origin": "ast",
+      "id": "src_screens_editsessionscreen_editsessionscreen",
       "community": 123,
-      "norm_label": "editsessionscreen()",
-      "id": "src_screens_editsessionscreen_editsessionscreen"
+      "norm_label": "editsessionscreen()"
     },
     {
       "label": "makeStyles()",
@@ -339,9 +239,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L513",
       "_origin": "ast",
+      "id": "src_screens_editsessionscreen_makestyles",
       "community": 123,
-      "norm_label": "makestyles()",
-      "id": "src_screens_editsessionscreen_makestyles"
+      "norm_label": "makestyles()"
     },
     {
       "label": "FoldersScreen.tsx",
@@ -349,9 +249,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
+      "id": "src_screens_foldersscreen",
       "community": 132,
-      "norm_label": "foldersscreen.tsx",
-      "id": "src_screens_foldersscreen"
+      "norm_label": "foldersscreen.tsx"
     },
     {
       "label": "FoldersScreen()",
@@ -359,9 +259,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L32",
       "_origin": "ast",
+      "id": "src_screens_foldersscreen_foldersscreen",
       "community": 132,
-      "norm_label": "foldersscreen()",
-      "id": "src_screens_foldersscreen_foldersscreen"
+      "norm_label": "foldersscreen()"
     },
     {
       "label": "SwipeDuplicateAction",
@@ -369,9 +269,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L226",
       "_origin": "ast",
+      "id": "src_screens_foldersscreen_swipeduplicateaction",
       "community": 132,
-      "norm_label": "swipeduplicateaction",
-      "id": "src_screens_foldersscreen_swipeduplicateaction"
+      "norm_label": "swipeduplicateaction"
     },
     {
       "label": "FolderSwipeRow()",
@@ -379,9 +279,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L253",
       "_origin": "ast",
+      "id": "src_screens_foldersscreen_folderswiperow",
       "community": 132,
-      "norm_label": "folderswiperow()",
-      "id": "src_screens_foldersscreen_folderswiperow"
+      "norm_label": "folderswiperow()"
     },
     {
       "label": "makeStyles()",
@@ -389,9 +289,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L321",
       "_origin": "ast",
+      "id": "src_screens_foldersscreen_makestyles",
       "community": 132,
-      "norm_label": "makestyles()",
-      "id": "src_screens_foldersscreen_makestyles"
+      "norm_label": "makestyles()"
     },
     {
       "label": "SessionsListScreen.tsx",
@@ -399,9 +299,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "sessionslistscreen.tsx",
-      "id": "src_screens_sessionslistscreen"
+      "id": "src_screens_sessionslistscreen",
+      "community": 130,
+      "norm_label": "sessionslistscreen.tsx"
     },
     {
       "label": "SessionsListScreen()",
@@ -409,9 +309,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L35",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "sessionslistscreen()",
-      "id": "src_screens_sessionslistscreen_sessionslistscreen"
+      "id": "src_screens_sessionslistscreen_sessionslistscreen",
+      "community": 130,
+      "norm_label": "sessionslistscreen()"
     },
     {
       "label": "makeStyles()",
@@ -419,9 +319,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L292",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "makestyles()",
-      "id": "src_screens_sessionslistscreen_makestyles"
+      "id": "src_screens_sessionslistscreen_makestyles",
+      "community": 130,
+      "norm_label": "makestyles()"
     },
     {
       "label": "SwipeDuplicateAction",
@@ -429,9 +329,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L473",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "swipeduplicateaction",
-      "id": "src_screens_sessionslistscreen_swipeduplicateaction"
+      "id": "src_screens_sessionslistscreen_swipeduplicateaction",
+      "community": 130,
+      "norm_label": "swipeduplicateaction"
     },
     {
       "label": "SessionSwipeRow()",
@@ -439,9 +339,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L502",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "sessionswiperow()",
-      "id": "src_screens_sessionslistscreen_sessionswiperow"
+      "id": "src_screens_sessionslistscreen_sessionswiperow",
+      "community": 130,
+      "norm_label": "sessionswiperow()"
     },
     {
       "label": "SettingsScreen.tsx",
@@ -449,9 +349,9 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "settingsscreen.tsx",
-      "id": "src_screens_settingsscreen"
+      "id": "src_screens_settingsscreen",
+      "community": 143,
+      "norm_label": "settingsscreen.tsx"
     },
     {
       "label": "SettingsScreen()",
@@ -459,9 +359,9 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L29",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "settingsscreen()",
-      "id": "src_screens_settingsscreen_settingsscreen"
+      "id": "src_screens_settingsscreen_settingsscreen",
+      "community": 143,
+      "norm_label": "settingsscreen()"
     },
     {
       "label": "makeStyles()",
@@ -469,9 +369,9 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L333",
       "_origin": "ast",
-      "community": 13,
-      "norm_label": "makestyles()",
-      "id": "src_screens_settingsscreen_makestyles"
+      "id": "src_screens_settingsscreen_makestyles",
+      "community": 143,
+      "norm_label": "makestyles()"
     },
     {
       "label": "FolderCreateModal.tsx",
@@ -879,7 +779,7 @@
       "source_file": "App.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "app.tsx",
       "id": "app_tsx_app"
     },
@@ -889,7 +789,7 @@
       "source_file": "App.tsx",
       "source_location": "L42",
       "_origin": "ast",
-      "community": 133,
+      "community": 19,
       "norm_label": "routescreen()",
       "id": "app_routescreen"
     },
@@ -899,7 +799,7 @@
       "source_file": "App.tsx",
       "source_location": "L52",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "app()",
       "id": "app_app"
     },
@@ -2072,7 +1972,7 @@
       "source_file": "src/components/ActivityTypeIcon.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 7,
+      "community": 133,
       "norm_label": "activitytypeicon.tsx",
       "id": "src_components_activitytypeicon"
     },
@@ -2082,7 +1982,7 @@
       "source_file": "src/components/ActivityTypeIcon.tsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 7,
+      "community": 133,
       "norm_label": "props",
       "id": "src_components_activitytypeicon_props"
     },
@@ -2092,7 +1992,7 @@
       "source_file": "src/components/ActivityTypeIcon.tsx",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 7,
+      "community": 133,
       "norm_label": "activitytypeicon()",
       "id": "src_components_activitytypeicon_activitytypeicon"
     },
@@ -2132,7 +2032,7 @@
       "source_file": "src/components/EditSession/PresetStrip.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 126,
+      "community": 5,
       "norm_label": "presetstrip.tsx",
       "id": "src_components_editsession_presetstrip"
     },
@@ -2142,7 +2042,7 @@
       "source_file": "src/components/EditSession/PresetStrip.tsx",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 126,
+      "community": 5,
       "norm_label": "preset_levels",
       "id": "src_components_editsession_presetstrip_preset_levels"
     },
@@ -2152,7 +2052,7 @@
       "source_file": "src/components/EditSession/PresetStrip.tsx",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 126,
+      "community": 5,
       "norm_label": "props",
       "id": "src_components_editsession_presetstrip_props"
     },
@@ -2162,7 +2062,7 @@
       "source_file": "src/components/EditSession/PresetStrip.tsx",
       "source_location": "L21",
       "_origin": "ast",
-      "community": 126,
+      "community": 5,
       "norm_label": "presetstrip()",
       "id": "src_components_editsession_presetstrip_presetstrip"
     },
@@ -2172,7 +2072,7 @@
       "source_file": "src/components/EditSession/PresetStrip.tsx",
       "source_location": "L53",
       "_origin": "ast",
-      "community": 126,
+      "community": 5,
       "norm_label": "makestyles()",
       "id": "src_components_editsession_presetstrip_makestyles"
     },
@@ -2282,7 +2182,7 @@
       "source_file": "src/components/MoveToFolderSheet.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 5,
+      "community": 126,
       "norm_label": "movetofoldersheet.tsx",
       "id": "src_components_movetofoldersheet"
     },
@@ -2292,7 +2192,7 @@
       "source_file": "src/components/MoveToFolderSheet.tsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 5,
+      "community": 126,
       "norm_label": "movetofoldersheetprops",
       "id": "src_components_movetofoldersheet_movetofoldersheetprops"
     },
@@ -2302,7 +2202,7 @@
       "source_file": "src/components/MoveToFolderSheet.tsx",
       "source_location": "L22",
       "_origin": "ast",
-      "community": 5,
+      "community": 126,
       "norm_label": "movetofoldersheet()",
       "id": "src_components_movetofoldersheet_movetofoldersheet"
     },
@@ -2312,7 +2212,7 @@
       "source_file": "src/components/MoveToFolderSheet.tsx",
       "source_location": "L69",
       "_origin": "ast",
-      "community": 5,
+      "community": 126,
       "norm_label": "makestyles()",
       "id": "src_components_movetofoldersheet_makestyles"
     },
@@ -3242,7 +3142,7 @@
       "source_file": "src/lib/audio.ts",
       "source_location": "L30",
       "_origin": "ast",
-      "community": 1,
+      "community": 19,
       "norm_label": "configureaudiosession()",
       "id": "src_lib_audio_configureaudiosession"
     },
@@ -3442,7 +3342,7 @@
       "source_file": "src/lib/i18n.ts",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "detectlanguage()",
       "id": "src_lib_i18n_detectlanguage"
     },
@@ -3472,7 +3372,7 @@
       "source_file": "src/lib/premiumContext.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "premiumcontext.ts",
       "id": "src_lib_premiumcontext"
     },
@@ -3482,7 +3382,7 @@
       "source_file": "src/lib/premiumContext.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "premiumcontextvalue",
       "id": "src_lib_premiumcontext_premiumcontextvalue"
     },
@@ -3492,7 +3392,7 @@
       "source_file": "src/lib/premiumContext.ts",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "premiumcontext",
       "id": "src_lib_premiumcontext_premiumcontext"
     },
@@ -3972,7 +3872,7 @@
       "source_file": "src/lib/sessions.ts",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 5,
+      "community": 126,
       "norm_label": "folder",
       "id": "src_lib_sessions_folder"
     },
@@ -4202,7 +4102,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "settings.ts",
       "id": "src_lib_settings"
     },
@@ -4222,7 +4122,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "settings",
       "id": "src_lib_settings_settings"
     },
@@ -4232,7 +4132,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L23",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "default_settings",
       "id": "src_lib_settings_default_settings"
     },
@@ -4242,7 +4142,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "settingsfile()",
       "id": "src_lib_settings_settingsfile"
     },
@@ -4252,7 +4152,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L43",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "detectspeedunit()",
       "id": "src_lib_settings_detectspeedunit"
     },
@@ -4262,7 +4162,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L54",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "loadsettings()",
       "id": "src_lib_settings_loadsettings"
     },
@@ -4272,7 +4172,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "savesettings()",
       "id": "src_lib_settings_savesettings"
     },
@@ -4282,7 +4182,7 @@
       "source_file": "src/lib/settingsContext.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "settingscontext.tsx",
       "id": "src_lib_settingscontext"
     },
@@ -4292,7 +4192,7 @@
       "source_file": "src/lib/settingsContext.tsx",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "settingscontextvalue",
       "id": "src_lib_settingscontext_settingscontextvalue"
     },
@@ -4302,7 +4202,7 @@
       "source_file": "src/lib/settingsContext.tsx",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "settingscontext",
       "id": "src_lib_settingscontext_settingscontext"
     },
@@ -4312,7 +4212,7 @@
       "source_file": "src/lib/settingsContext.tsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 5,
+      "community": 19,
       "norm_label": "usesettings()",
       "id": "src_lib_settingscontext_usesettings"
     },
@@ -4652,7 +4552,7 @@
       "source_file": "src/navigation.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "navigation.ts",
       "id": "src_navigation"
     },
@@ -4662,7 +4562,7 @@
       "source_file": "src/navigation.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 13,
+      "community": 19,
       "norm_label": "route",
       "id": "src_navigation_route"
     },
@@ -4792,7 +4692,7 @@
       "source_file": "src/theme.ts",
       "source_location": "L112",
       "_origin": "ast",
-      "community": 69,
+      "community": 19,
       "norm_label": "themecontext",
       "id": "src_theme_themecontext"
     },
@@ -4822,7 +4722,7 @@
       "source_file": "src/theme.ts",
       "source_location": "L126",
       "_origin": "ast",
-      "community": 126,
+      "community": 5,
       "norm_label": "selectedbg()",
       "id": "src_theme_selectedbg"
     },
@@ -15091,102 +14991,12 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L27",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_component_src_components_onboardingmodal_tsx",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L9",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_data_model",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L47",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_i18n",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L68",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_out_of_scope",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_purpose",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L59",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_testing",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L17",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_version_constant",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md",
-      "source_location": "L41",
-      "weight": 1.0,
-      "source": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_onboarding_modal_design",
-      "target": "docs_superpowers_specs_2026_07_10_onboarding_modal_design_wiring_in_app_tsx",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L24",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_deletefoldermodal",
-      "target": "src_components_deletefoldermodal_deletefoldermodal"
+      "target": "src_components_deletefoldermodal_deletefoldermodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15194,9 +15004,9 @@
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L14",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_deletefoldermodal",
-      "target": "src_components_deletefoldermodal_deletefoldermodalprops"
+      "target": "src_components_deletefoldermodal_deletefoldermodalprops",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15204,9 +15014,9 @@
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L107",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_deletefoldermodal",
-      "target": "src_components_deletefoldermodal_makestyles"
+      "target": "src_components_deletefoldermodal_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15215,9 +15025,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L26",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_foldersscreen",
-      "target": "src_components_deletefoldermodal"
+      "target": "src_components_deletefoldermodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -15226,9 +15036,9 @@
       "source_file": "src/components/DeleteFolderModal.tsx",
       "source_location": "L35",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_deletefoldermodal_deletefoldermodal",
-      "target": "src_components_deletefoldermodal_makestyles"
+      "target": "src_components_deletefoldermodal_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15236,9 +15046,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L32",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_editsession_intervalswiperow",
-      "target": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction"
+      "target": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15246,9 +15056,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L61",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_editsession_intervalswiperow",
-      "target": "src_components_editsession_intervalswiperow_intervalswiperow"
+      "target": "src_components_editsession_intervalswiperow_intervalswiperow",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15256,9 +15066,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L11",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_editsession_intervalswiperow",
-      "target": "src_components_editsession_intervalswiperow_props"
+      "target": "src_components_editsession_intervalswiperow_props",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15266,9 +15076,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L120",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_editsession_intervalswiperow",
-      "target": "src_components_editsession_intervalswiperow_styles"
+      "target": "src_components_editsession_intervalswiperow_styles",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15277,9 +15087,9 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L8",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_editsession_intervalswiperow",
-      "target": "src_components_intervalrow"
+      "target": "src_components_intervalrow",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15288,9 +15098,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L27",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen",
-      "target": "src_components_editsession_intervalswiperow"
+      "target": "src_components_editsession_intervalswiperow",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15298,9 +15108,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L26",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_intervalrow",
-      "target": "src_components_intervalrow_intervalrow"
+      "target": "src_components_intervalrow_intervalrow",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15308,9 +15118,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L7",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_intervalrow",
-      "target": "src_components_intervalrow_intervalrowprops"
+      "target": "src_components_intervalrow_intervalrowprops",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15318,9 +15128,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L119",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_intervalrow",
-      "target": "src_components_intervalrow_makestyles"
+      "target": "src_components_intervalrow_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -15329,9 +15139,9 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L36",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_components_intervalrow_intervalrow",
-      "target": "src_components_intervalrow_makestyles"
+      "target": "src_components_intervalrow_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15350,9 +15160,9 @@
       "source_file": "src/locales/en.ts",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_locales_en",
-      "target": "src_locales_en_en"
+      "target": "src_locales_en_en",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15361,9 +15171,9 @@
       "source_file": "src/locales/es.ts",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_locales_es",
-      "target": "src_locales_en"
+      "target": "src_locales_en",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15372,9 +15182,9 @@
       "source_file": "src/locales/fr.ts",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_locales_fr",
-      "target": "src_locales_en"
+      "target": "src_locales_en",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -15394,9 +15204,9 @@
       "source_file": "src/locales/es.ts",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_locales_es",
-      "target": "src_locales_en_en"
+      "target": "src_locales_en_en",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -15405,9 +15215,9 @@
       "source_file": "src/locales/fr.ts",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_locales_fr",
-      "target": "src_locales_en_en"
+      "target": "src_locales_en_en",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15426,9 +15236,9 @@
       "source_file": "src/locales/es.ts",
       "source_location": "L3",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_locales_es",
-      "target": "src_locales_es_es"
+      "target": "src_locales_es_es",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -15458,9 +15268,9 @@
       "source_file": "src/locales/fr.ts",
       "source_location": "L3",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_locales_fr",
-      "target": "src_locales_fr_fr"
+      "target": "src_locales_fr_fr",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -15490,9 +15300,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L43",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen",
-      "target": "src_screens_editsessionscreen_editsessionscreen"
+      "target": "src_screens_editsessionscreen_editsessionscreen",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15500,9 +15310,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L30",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen",
-      "target": "src_screens_editsessionscreen_getintervaldisplayspeed"
+      "target": "src_screens_editsessionscreen_getintervaldisplayspeed",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15510,9 +15320,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L513",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen",
-      "target": "src_screens_editsessionscreen_makestyles"
+      "target": "src_screens_editsessionscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15520,9 +15330,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L36",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen",
-      "target": "src_screens_editsessionscreen_props"
+      "target": "src_screens_editsessionscreen_props",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -15531,9 +15341,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L372",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
-      "target": "src_screens_editsessionscreen_getintervaldisplayspeed"
+      "target": "src_screens_editsessionscreen_getintervaldisplayspeed",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -15542,9 +15352,9 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L48",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
-      "target": "src_screens_editsessionscreen_makestyles"
+      "target": "src_screens_editsessionscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15563,9 +15373,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L32",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_foldersscreen",
-      "target": "src_screens_foldersscreen_foldersscreen"
+      "target": "src_screens_foldersscreen_foldersscreen",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15573,9 +15383,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L253",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_foldersscreen",
-      "target": "src_screens_foldersscreen_folderswiperow"
+      "target": "src_screens_foldersscreen_folderswiperow",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15583,9 +15393,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L321",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_foldersscreen",
-      "target": "src_screens_foldersscreen_makestyles"
+      "target": "src_screens_foldersscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15593,9 +15403,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L226",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_foldersscreen",
-      "target": "src_screens_foldersscreen_swipeduplicateaction"
+      "target": "src_screens_foldersscreen_swipeduplicateaction",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -15604,9 +15414,9 @@
       "source_file": "src/screens/FoldersScreen.tsx",
       "source_location": "L36",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_foldersscreen_foldersscreen",
-      "target": "src_screens_foldersscreen_makestyles"
+      "target": "src_screens_foldersscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15625,9 +15435,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L292",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_sessionslistscreen",
-      "target": "src_screens_sessionslistscreen_makestyles"
+      "target": "src_screens_sessionslistscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15635,9 +15445,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L35",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_sessionslistscreen",
-      "target": "src_screens_sessionslistscreen_sessionslistscreen"
+      "target": "src_screens_sessionslistscreen_sessionslistscreen",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15645,9 +15455,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L502",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_sessionslistscreen",
-      "target": "src_screens_sessionslistscreen_sessionswiperow"
+      "target": "src_screens_sessionslistscreen_sessionswiperow",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15655,9 +15465,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L473",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_sessionslistscreen",
-      "target": "src_screens_sessionslistscreen_swipeduplicateaction"
+      "target": "src_screens_sessionslistscreen_swipeduplicateaction",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -15677,9 +15487,9 @@
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L39",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_sessionslistscreen_sessionslistscreen",
-      "target": "src_screens_sessionslistscreen_makestyles"
+      "target": "src_screens_sessionslistscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -15698,9 +15508,9 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L333",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_settingsscreen",
-      "target": "src_screens_settingsscreen_makestyles"
+      "target": "src_screens_settingsscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -15708,9 +15518,9 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L29",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_settingsscreen",
-      "target": "src_screens_settingsscreen_settingsscreen"
+      "target": "src_screens_settingsscreen_settingsscreen",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -15719,9 +15529,9 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L31",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_settingsscreen_settingsscreen",
-      "target": "src_screens_settingsscreen_makestyles"
+      "target": "src_screens_settingsscreen_makestyles",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -33524,5 +33334,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "acee8e2cd82779a802827a6ccfc614b6d15eb434"
+  "built_at_commit": "e27a751073cb5bbeda2d86fed1ca46e04de6b442"
 }

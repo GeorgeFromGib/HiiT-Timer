@@ -37,59 +37,9 @@
       "label": "makeStyles()",
       "file_type": "code",
       "source_file": "src/components/FolderCreateModal.tsx",
-      "source_location": "L82",
+      "source_location": "L83",
       "_origin": "ast",
       "id": "src_components_foldercreatemodal_makestyles",
-      "community": 132,
-      "norm_label": "makestyles()"
-    },
-    {
-      "label": "FolderIconPicker.tsx",
-      "file_type": "code",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "src_components_foldericonpicker",
-      "community": 132,
-      "norm_label": "foldericonpicker.tsx"
-    },
-    {
-      "label": "FolderIconPickerProps",
-      "file_type": "code",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L8",
-      "_origin": "ast",
-      "id": "src_components_foldericonpicker_foldericonpickerprops",
-      "community": 132,
-      "norm_label": "foldericonpickerprops"
-    },
-    {
-      "label": "ICONS",
-      "file_type": "code",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L13",
-      "_origin": "ast",
-      "id": "src_components_foldericonpicker_icons",
-      "community": 132,
-      "norm_label": "icons"
-    },
-    {
-      "label": "FolderIconPicker()",
-      "file_type": "code",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L15",
-      "_origin": "ast",
-      "id": "src_components_foldericonpicker_foldericonpicker",
-      "community": 132,
-      "norm_label": "foldericonpicker()"
-    },
-    {
-      "label": "makeStyles()",
-      "file_type": "code",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L43",
-      "_origin": "ast",
-      "id": "src_components_foldericonpicker_makestyles",
       "community": 132,
       "norm_label": "makestyles()"
     },
@@ -127,51 +77,141 @@
       "label": "makeStyles()",
       "file_type": "code",
       "source_file": "src/components/FolderRenameModal.tsx",
-      "source_location": "L90",
+      "source_location": "L91",
       "_origin": "ast",
       "id": "src_components_folderrenamemodal_makestyles",
       "community": 132,
       "norm_label": "makestyles()"
     },
     {
-      "label": "TrialStatusPill.tsx",
+      "label": "SessionCard.tsx",
       "file_type": "code",
-      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_file": "src/components/SessionCard.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "src_components_trialstatuspill",
-      "community": 132,
-      "norm_label": "trialstatuspill.tsx"
+      "id": "src_components_sessioncard",
+      "community": 1,
+      "norm_label": "sessioncard.tsx"
     },
     {
-      "label": "TrialStatusPillProps",
+      "label": "Props",
       "file_type": "code",
-      "source_file": "src/components/TrialStatusPill.tsx",
-      "source_location": "L7",
+      "source_file": "src/components/SessionCard.tsx",
+      "source_location": "L14",
       "_origin": "ast",
-      "id": "src_components_trialstatuspill_trialstatuspillprops",
-      "community": 132,
-      "norm_label": "trialstatuspillprops"
+      "id": "src_components_sessioncard_props",
+      "community": 1,
+      "norm_label": "props"
     },
     {
-      "label": "TrialStatusPill()",
+      "label": "SessionCard()",
       "file_type": "code",
-      "source_file": "src/components/TrialStatusPill.tsx",
-      "source_location": "L11",
+      "source_file": "src/components/SessionCard.tsx",
+      "source_location": "L24",
       "_origin": "ast",
-      "id": "src_components_trialstatuspill_trialstatuspill",
-      "community": 132,
-      "norm_label": "trialstatuspill()"
+      "id": "src_components_sessioncard_sessioncard",
+      "community": 1,
+      "norm_label": "sessioncard()"
     },
     {
       "label": "makeStyles()",
       "file_type": "code",
-      "source_file": "src/components/TrialStatusPill.tsx",
-      "source_location": "L48",
+      "source_file": "src/components/SessionCard.tsx",
+      "source_location": "L78",
       "_origin": "ast",
-      "id": "src_components_trialstatuspill_makestyles",
-      "community": 132,
+      "id": "src_components_sessioncard_makestyles",
+      "community": 1,
       "norm_label": "makestyles()"
+    },
+    {
+      "label": "useTimerEngine.ts",
+      "file_type": "code",
+      "source_file": "src/hooks/useTimerEngine.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_hooks_usetimerengine",
+      "community": 128,
+      "norm_label": "usetimerengine.ts"
+    },
+    {
+      "label": "TimerState",
+      "file_type": "code",
+      "source_file": "src/hooks/useTimerEngine.ts",
+      "source_location": "L22",
+      "_origin": "ast",
+      "id": "src_hooks_usetimerengine_timerstate",
+      "community": 128,
+      "norm_label": "timerstate"
+    },
+    {
+      "label": "Callbacks",
+      "file_type": "code",
+      "source_file": "src/hooks/useTimerEngine.ts",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "src_hooks_usetimerengine_callbacks",
+      "community": 128,
+      "norm_label": "callbacks"
+    },
+    {
+      "label": "useTimerEngine()",
+      "file_type": "code",
+      "source_file": "src/hooks/useTimerEngine.ts",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "src_hooks_usetimerengine_usetimerengine",
+      "community": 128,
+      "norm_label": "usetimerengine()"
+    },
+    {
+      "label": "useWorkoutSession.ts",
+      "file_type": "code",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_hooks_useworkoutsession",
+      "community": 128,
+      "norm_label": "useworkoutsession.ts"
+    },
+    {
+      "label": "WorkoutStatus",
+      "file_type": "code",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "src_hooks_useworkoutsession_workoutstatus",
+      "community": 128,
+      "norm_label": "workoutstatus"
+    },
+    {
+      "label": "WorkoutSession",
+      "file_type": "code",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_hooks_useworkoutsession_workoutsession",
+      "community": 128,
+      "norm_label": "workoutsession"
+    },
+    {
+      "label": "reindexFrom()",
+      "file_type": "code",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "src_hooks_useworkoutsession_reindexfrom",
+      "community": 128,
+      "norm_label": "reindexfrom()"
+    },
+    {
+      "label": "useWorkoutSession()",
+      "file_type": "code",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "src_hooks_useworkoutsession_useworkoutsession",
+      "community": 128,
+      "norm_label": "useworkoutsession()"
     },
     {
       "label": "en.ts",
@@ -284,54 +324,244 @@
       "norm_label": "makestyles()"
     },
     {
+      "label": "SessionCompleteScreen.tsx",
+      "file_type": "code",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_screens_sessioncompletescreen",
+      "community": 128,
+      "norm_label": "sessioncompletescreen.tsx"
+    },
+    {
+      "label": "fmtStatTime()",
+      "file_type": "code",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_screens_sessioncompletescreen_fmtstattime",
+      "community": 128,
+      "norm_label": "fmtstattime()"
+    },
+    {
+      "label": "Props",
+      "file_type": "code",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L17",
+      "_origin": "ast",
+      "id": "src_screens_sessioncompletescreen_props",
+      "community": 128,
+      "norm_label": "props"
+    },
+    {
+      "label": "StatCard()",
+      "file_type": "code",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "src_screens_sessioncompletescreen_statcard",
+      "community": 128,
+      "norm_label": "statcard()"
+    },
+    {
+      "label": "SessionCompleteScreen()",
+      "file_type": "code",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L45",
+      "_origin": "ast",
+      "id": "src_screens_sessioncompletescreen_sessioncompletescreen",
+      "community": 128,
+      "norm_label": "sessioncompletescreen()"
+    },
+    {
+      "label": "makeStyles()",
+      "file_type": "code",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L219",
+      "_origin": "ast",
+      "id": "src_screens_sessioncompletescreen_makestyles",
+      "community": 128,
+      "norm_label": "makestyles()"
+    },
+    {
       "label": "SessionsListScreen.tsx",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen",
-      "community": 132,
+      "community": 1,
       "norm_label": "sessionslistscreen.tsx"
     },
     {
       "label": "SessionsListScreen()",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L37",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_sessionslistscreen",
-      "community": 132,
+      "community": 1,
       "norm_label": "sessionslistscreen()"
     },
     {
       "label": "makeStyles()",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L321",
+      "source_location": "L292",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_makestyles",
-      "community": 132,
+      "community": 1,
       "norm_label": "makestyles()"
     },
     {
       "label": "SwipeDuplicateAction",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L502",
+      "source_location": "L471",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_swipeduplicateaction",
-      "community": 132,
+      "community": 1,
       "norm_label": "swipeduplicateaction"
     },
     {
       "label": "SessionSwipeRow()",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L531",
+      "source_location": "L500",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_sessionswiperow",
-      "community": 132,
+      "community": 1,
       "norm_label": "sessionswiperow()"
+    },
+    {
+      "label": "WorkoutScreen.tsx",
+      "file_type": "code",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_screens_workoutscreen",
+      "community": 128,
+      "norm_label": "workoutscreen.tsx"
+    },
+    {
+      "label": "EXTEND_OPTIONS",
+      "file_type": "code",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "src_screens_workoutscreen_extend_options",
+      "community": 128,
+      "norm_label": "extend_options"
+    },
+    {
+      "label": "WorkoutScreen()",
+      "file_type": "code",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "src_screens_workoutscreen_workoutscreen",
+      "community": 128,
+      "norm_label": "workoutscreen()"
+    },
+    {
+      "label": "makeStyles()",
+      "file_type": "code",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L527",
+      "_origin": "ast",
+      "id": "src_screens_workoutscreen_makestyles",
+      "community": 128,
+      "norm_label": "makestyles()"
+    },
+    {
+      "label": "FolderIconPicker.tsx",
+      "file_type": "code",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 138,
+      "norm_label": "foldericonpicker.tsx",
+      "id": "src_components_foldericonpicker"
+    },
+    {
+      "label": "FolderIconPickerProps",
+      "file_type": "code",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L8",
+      "_origin": "ast",
+      "community": 138,
+      "norm_label": "foldericonpickerprops",
+      "id": "src_components_foldericonpicker_foldericonpickerprops"
+    },
+    {
+      "label": "ICONS",
+      "file_type": "code",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L13",
+      "_origin": "ast",
+      "community": 138,
+      "norm_label": "icons",
+      "id": "src_components_foldericonpicker_icons"
+    },
+    {
+      "label": "FolderIconPicker()",
+      "file_type": "code",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L15",
+      "_origin": "ast",
+      "community": 138,
+      "norm_label": "foldericonpicker()",
+      "id": "src_components_foldericonpicker_foldericonpicker"
+    },
+    {
+      "label": "makeStyles()",
+      "file_type": "code",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L43",
+      "_origin": "ast",
+      "community": 138,
+      "norm_label": "makestyles()",
+      "id": "src_components_foldericonpicker_makestyles"
+    },
+    {
+      "label": "TrialStatusPill.tsx",
+      "file_type": "code",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 139,
+      "norm_label": "trialstatuspill.tsx",
+      "id": "src_components_trialstatuspill"
+    },
+    {
+      "label": "TrialStatusPillProps",
+      "file_type": "code",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L7",
+      "_origin": "ast",
+      "community": 139,
+      "norm_label": "trialstatuspillprops",
+      "id": "src_components_trialstatuspill_trialstatuspillprops"
+    },
+    {
+      "label": "TrialStatusPill()",
+      "file_type": "code",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "community": 139,
+      "norm_label": "trialstatuspill()",
+      "id": "src_components_trialstatuspill_trialstatuspill"
+    },
+    {
+      "label": "makeStyles()",
+      "file_type": "code",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L48",
+      "_origin": "ast",
+      "community": 139,
+      "norm_label": "makestyles()",
+      "id": "src_components_trialstatuspill_makestyles"
     },
     {
       "label": "App.tsx",
@@ -349,7 +579,7 @@
       "source_file": "App.tsx",
       "source_location": "L42",
       "_origin": "ast",
-      "community": 1,
+      "community": 133,
       "norm_label": "routescreen()",
       "id": "app_routescreen"
     },
@@ -739,7 +969,7 @@
       "source_file": "ios/ClearHiiT/AppDelegate.swift",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 11,
+      "community": 136,
       "norm_label": "appdelegate.swift",
       "id": "ios_clearhiit_appdelegate"
     },
@@ -750,7 +980,7 @@
       "source_file": "ios/ClearHiiT/AppDelegate.swift",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 11,
+      "community": 136,
       "norm_label": "expo",
       "id": "expo"
     },
@@ -761,7 +991,7 @@
       "source_file": "ios/ClearHiiT/AppDelegate.swift",
       "source_location": "L2",
       "_origin": "ast",
-      "community": 11,
+      "community": 136,
       "norm_label": "react",
       "id": "react"
     },
@@ -772,7 +1002,7 @@
       "source_file": "ios/ClearHiiT/AppDelegate.swift",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 11,
+      "community": 136,
       "norm_label": "reactappdependencyprovider",
       "id": "reactappdependencyprovider"
     },
@@ -962,7 +1192,7 @@
       "source_file": "package.json",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "package.json",
       "id": "package"
     },
@@ -972,7 +1202,7 @@
       "source_file": "package.json",
       "source_location": "L2",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "name",
       "id": "package_name"
     },
@@ -982,7 +1212,7 @@
       "source_file": "package.json",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "version",
       "id": "package_version"
     },
@@ -992,7 +1222,7 @@
       "source_file": "package.json",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "main",
       "id": "package_main"
     },
@@ -1082,7 +1312,7 @@
       "source_file": "package.json",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 11,
+      "community": 136,
       "norm_label": "expo",
       "id": "package_dependencies_expo"
     },
@@ -1232,7 +1462,7 @@
       "source_file": "package.json",
       "source_location": "L28",
       "_origin": "ast",
-      "community": 129,
+      "community": 136,
       "norm_label": "react",
       "id": "package_dependencies_react"
     },
@@ -1322,7 +1552,7 @@
       "source_file": "package.json",
       "source_location": "L38",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "devdependencies",
       "id": "package_devdependencies"
     },
@@ -1332,7 +1562,7 @@
       "source_file": "package.json",
       "source_location": "L39",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "@types/react",
       "id": "package_devdependencies_types_react"
     },
@@ -1342,7 +1572,7 @@
       "source_file": "package.json",
       "source_location": "L40",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "babel-preset-expo",
       "id": "package_devdependencies_babel_preset_expo"
     },
@@ -1352,7 +1582,7 @@
       "source_file": "package.json",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "typescript",
       "id": "package_devdependencies_typescript"
     },
@@ -1362,7 +1592,7 @@
       "source_file": "package.json",
       "source_location": "L43",
       "_origin": "ast",
-      "community": 2,
+      "community": 137,
       "norm_label": "scripts",
       "id": "package_scripts"
     },
@@ -1372,7 +1602,7 @@
       "source_file": "package.json",
       "source_location": "L44",
       "_origin": "ast",
-      "community": 2,
+      "community": 137,
       "norm_label": "start",
       "id": "package_scripts_start"
     },
@@ -1382,7 +1612,7 @@
       "source_file": "package.json",
       "source_location": "L45",
       "_origin": "ast",
-      "community": 2,
+      "community": 137,
       "norm_label": "android",
       "id": "package_scripts_android"
     },
@@ -1392,7 +1622,7 @@
       "source_file": "package.json",
       "source_location": "L46",
       "_origin": "ast",
-      "community": 2,
+      "community": 137,
       "norm_label": "ios",
       "id": "package_scripts_ios"
     },
@@ -1402,7 +1632,7 @@
       "source_file": "package.json",
       "source_location": "L47",
       "_origin": "ast",
-      "community": 2,
+      "community": 137,
       "norm_label": "web",
       "id": "package_scripts_web"
     },
@@ -1412,7 +1642,7 @@
       "source_file": "package.json",
       "source_location": "L49",
       "_origin": "ast",
-      "community": 2,
+      "community": 134,
       "norm_label": "private",
       "id": "package_private"
     },
@@ -1532,7 +1762,7 @@
       "source_file": "src/components/ActivityTypeIcon.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 133,
       "norm_label": "activitytypeicon.tsx",
       "id": "src_components_activitytypeicon"
     },
@@ -1542,7 +1772,7 @@
       "source_file": "src/components/ActivityTypeIcon.tsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 3,
+      "community": 133,
       "norm_label": "props",
       "id": "src_components_activitytypeicon_props"
     },
@@ -1552,7 +1782,7 @@
       "source_file": "src/components/ActivityTypeIcon.tsx",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 3,
+      "community": 133,
       "norm_label": "activitytypeicon()",
       "id": "src_components_activitytypeicon_activitytypeicon"
     },
@@ -1632,7 +1862,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 19,
+      "community": 125,
       "norm_label": "intervalswiperow.tsx",
       "id": "src_components_editsession_intervalswiperow"
     },
@@ -1642,7 +1872,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 19,
+      "community": 125,
       "norm_label": "props",
       "id": "src_components_editsession_intervalswiperow_props"
     },
@@ -1652,7 +1882,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L32",
       "_origin": "ast",
-      "community": 19,
+      "community": 125,
       "norm_label": "intervalswipeduplicateaction",
       "id": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction"
     },
@@ -1662,7 +1892,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L61",
       "_origin": "ast",
-      "community": 19,
+      "community": 125,
       "norm_label": "intervalswiperow()",
       "id": "src_components_editsession_intervalswiperow_intervalswiperow"
     },
@@ -1672,7 +1902,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L120",
       "_origin": "ast",
-      "community": 19,
+      "community": 125,
       "norm_label": "styles",
       "id": "src_components_editsession_intervalswiperow_styles"
     },
@@ -1702,7 +1932,7 @@
       "source_file": "src/components/EditSession/PresetStrip.tsx",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 0,
+      "community": 131,
       "norm_label": "props",
       "id": "src_components_editsession_presetstrip_props"
     },
@@ -1732,7 +1962,7 @@
       "source_file": "src/components/FolderHeader.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 128,
+      "community": 69,
       "norm_label": "folderheader.tsx",
       "id": "src_components_folderheader"
     },
@@ -1742,7 +1972,7 @@
       "source_file": "src/components/FolderHeader.tsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 128,
+      "community": 69,
       "norm_label": "folderheaderprops",
       "id": "src_components_folderheader_folderheaderprops"
     },
@@ -1752,7 +1982,7 @@
       "source_file": "src/components/FolderHeader.tsx",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 128,
+      "community": 69,
       "norm_label": "folderheader()",
       "id": "src_components_folderheader_folderheader"
     },
@@ -1762,7 +1992,7 @@
       "source_file": "src/components/FolderHeader.tsx",
       "source_location": "L100",
       "_origin": "ast",
-      "community": 128,
+      "community": 69,
       "norm_label": "makestyles()",
       "id": "src_components_folderheader_makestyles"
     },
@@ -1802,7 +2032,7 @@
       "source_file": "src/components/GhostBtn.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 133,
       "norm_label": "ghostbtn.tsx",
       "id": "src_components_ghostbtn"
     },
@@ -1812,7 +2042,7 @@
       "source_file": "src/components/GhostBtn.tsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 3,
+      "community": 133,
       "norm_label": "props",
       "id": "src_components_ghostbtn_props"
     },
@@ -1822,7 +2052,7 @@
       "source_file": "src/components/GhostBtn.tsx",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 3,
+      "community": 133,
       "norm_label": "ghostbtn()",
       "id": "src_components_ghostbtn_ghostbtn"
     },
@@ -1842,7 +2072,7 @@
       "source_file": "src/components/IntervalRow.tsx",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 125,
+      "community": 123,
       "norm_label": "intervalrowprops",
       "id": "src_components_intervalrow_intervalrowprops"
     },
@@ -1952,7 +2182,7 @@
       "source_file": "src/components/PhaseStrip.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 123,
+      "community": 19,
       "norm_label": "phasestrip.tsx",
       "id": "src_components_phasestrip"
     },
@@ -1962,7 +2192,7 @@
       "source_file": "src/components/PhaseStrip.tsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 123,
+      "community": 19,
       "norm_label": "phasestrip()",
       "id": "src_components_phasestrip_phasestrip"
     },
@@ -1972,7 +2202,7 @@
       "source_file": "src/components/PhaseStrip.tsx",
       "source_location": "L28",
       "_origin": "ast",
-      "community": 123,
+      "community": 19,
       "norm_label": "styles",
       "id": "src_components_phasestrip_styles"
     },
@@ -2082,7 +2312,7 @@
       "source_file": "src/components/PickerModal.tsx",
       "source_location": "L20",
       "_origin": "ast",
-      "community": 9,
+      "community": 127,
       "norm_label": "props",
       "id": "src_components_pickermodal_props"
     },
@@ -2147,52 +2377,12 @@
       "id": "src_components_screenheader_styles"
     },
     {
-      "label": "SessionCard.tsx",
-      "file_type": "code",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 123,
-      "norm_label": "sessioncard.tsx",
-      "id": "src_components_sessioncard"
-    },
-    {
-      "label": "Props",
-      "file_type": "code",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L15",
-      "_origin": "ast",
-      "community": 19,
-      "norm_label": "props",
-      "id": "src_components_sessioncard_props"
-    },
-    {
-      "label": "SessionCard()",
-      "file_type": "code",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L26",
-      "_origin": "ast",
-      "community": 123,
-      "norm_label": "sessioncard()",
-      "id": "src_components_sessioncard_sessioncard"
-    },
-    {
-      "label": "makeStyles()",
-      "file_type": "code",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L92",
-      "_origin": "ast",
-      "community": 123,
-      "norm_label": "makestyles()",
-      "id": "src_components_sessioncard_makestyles"
-    },
-    {
       "label": "SettingsRow.tsx",
       "file_type": "code",
       "source_file": "src/components/SettingsRow.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 69,
+      "community": 135,
       "norm_label": "settingsrow.tsx",
       "id": "src_components_settingsrow"
     },
@@ -2202,7 +2392,7 @@
       "source_file": "src/components/SettingsRow.tsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 69,
+      "community": 135,
       "norm_label": "settingsrow()",
       "id": "src_components_settingsrow_settingsrow"
     },
@@ -2212,7 +2402,7 @@
       "source_file": "src/components/SettingsRow.tsx",
       "source_location": "L31",
       "_origin": "ast",
-      "community": 69,
+      "community": 135,
       "norm_label": "makestyles()",
       "id": "src_components_settingsrow_makestyles"
     },
@@ -2222,7 +2412,7 @@
       "source_file": "src/components/SettingsSection.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 69,
+      "community": 133,
       "norm_label": "settingssection.tsx",
       "id": "src_components_settingssection"
     },
@@ -2232,7 +2422,7 @@
       "source_file": "src/components/SettingsSection.tsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 69,
+      "community": 133,
       "norm_label": "settingssection()",
       "id": "src_components_settingssection_settingssection"
     },
@@ -2242,7 +2432,7 @@
       "source_file": "src/components/SettingsSection.tsx",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 69,
+      "community": 133,
       "norm_label": "makestyles()",
       "id": "src_components_settingssection_makestyles"
     },
@@ -2252,7 +2442,7 @@
       "source_file": "src/components/SettingsToggle.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 69,
+      "community": 133,
       "norm_label": "settingstoggle.tsx",
       "id": "src_components_settingstoggle"
     },
@@ -2262,7 +2452,7 @@
       "source_file": "src/components/SettingsToggle.tsx",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 69,
+      "community": 133,
       "norm_label": "settingstoggle()",
       "id": "src_components_settingstoggle_settingstoggle"
     },
@@ -2272,7 +2462,7 @@
       "source_file": "src/components/SettingsToggle.tsx",
       "source_location": "L54",
       "_origin": "ast",
-      "community": 69,
+      "community": 133,
       "norm_label": "makestyles()",
       "id": "src_components_settingstoggle_makestyles"
     },
@@ -2312,7 +2502,7 @@
       "source_file": "src/components/VolumeRow.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 69,
+      "community": 135,
       "norm_label": "volumerow.tsx",
       "id": "src_components_volumerow"
     },
@@ -2322,7 +2512,7 @@
       "source_file": "src/components/VolumeRow.tsx",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 69,
+      "community": 135,
       "norm_label": "volumerow()",
       "id": "src_components_volumerow_volumerow"
     },
@@ -2332,7 +2522,7 @@
       "source_file": "src/components/VolumeRow.tsx",
       "source_location": "L36",
       "_origin": "ast",
-      "community": 69,
+      "community": 135,
       "norm_label": "makestyles()",
       "id": "src_components_volumerow_makestyles"
     },
@@ -2342,7 +2532,7 @@
       "source_file": "src/components/WheelColumn.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
+      "community": 9,
       "norm_label": "wheelcolumn.tsx",
       "id": "src_components_wheelcolumn"
     },
@@ -2352,7 +2542,7 @@
       "source_file": "src/components/WheelColumn.tsx",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 3,
+      "community": 9,
       "norm_label": "props",
       "id": "src_components_wheelcolumn_props"
     },
@@ -2362,7 +2552,7 @@
       "source_file": "src/components/WheelColumn.tsx",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 3,
+      "community": 9,
       "norm_label": "wheelcolumn()",
       "id": "src_components_wheelcolumn_wheelcolumn"
     },
@@ -2372,7 +2562,7 @@
       "source_file": "src/components/WheelColumn.tsx",
       "source_location": "L63",
       "_origin": "ast",
-      "community": 3,
+      "community": 9,
       "norm_label": "styles",
       "id": "src_components_wheelcolumn_styles"
     },
@@ -2462,7 +2652,7 @@
       "source_file": "src/hooks/editSessionTypes.ts",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 0,
+      "community": 127,
       "norm_label": "timefield",
       "id": "src_hooks_editsessiontypes_timefield"
     },
@@ -2472,7 +2662,7 @@
       "source_file": "src/hooks/editSessionTypes.ts",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 9,
+      "community": 127,
       "norm_label": "savepayload",
       "id": "src_hooks_editsessiontypes_savepayload"
     },
@@ -2602,7 +2792,7 @@
       "source_file": "src/hooks/useEasyModeEdit.ts",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 0,
+      "community": 127,
       "norm_label": "easymodeedit",
       "id": "src_hooks_useeasymodeedit_easymodeedit"
     },
@@ -2632,7 +2822,7 @@
       "source_file": "src/hooks/useEditSession.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 127,
+      "community": 0,
       "norm_label": "useeditsession.ts",
       "id": "src_hooks_useeditsession"
     },
@@ -2642,7 +2832,7 @@
       "source_file": "src/hooks/useEditSession.ts",
       "source_location": "L31",
       "_origin": "ast",
-      "community": 127,
+      "community": 0,
       "norm_label": "phases",
       "id": "src_hooks_useeditsession_phases"
     },
@@ -2652,7 +2842,7 @@
       "source_file": "src/hooks/useEditSession.ts",
       "source_location": "L32",
       "_origin": "ast",
-      "community": 127,
+      "community": 0,
       "norm_label": "circuit_phases",
       "id": "src_hooks_useeditsession_circuit_phases"
     },
@@ -2672,7 +2862,7 @@
       "source_file": "src/hooks/useEditSession.ts",
       "source_location": "L57",
       "_origin": "ast",
-      "community": 9,
+      "community": 127,
       "norm_label": "editsessioninterface",
       "id": "src_hooks_useeditsession_editsessioninterface"
     },
@@ -2712,7 +2902,7 @@
       "source_file": "src/hooks/usePickerState.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 127,
+      "community": 130,
       "norm_label": "usepickerstate.ts",
       "id": "src_hooks_usepickerstate"
     },
@@ -2722,7 +2912,7 @@
       "source_file": "src/hooks/usePickerState.ts",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 127,
+      "community": 130,
       "norm_label": "activepicker",
       "id": "src_hooks_usepickerstate_activepicker"
     },
@@ -2732,7 +2922,7 @@
       "source_file": "src/hooks/usePickerState.ts",
       "source_location": "L22",
       "_origin": "ast",
-      "community": 127,
+      "community": 130,
       "norm_label": "commitresult",
       "id": "src_hooks_usepickerstate_commitresult"
     },
@@ -2742,7 +2932,7 @@
       "source_file": "src/hooks/usePickerState.ts",
       "source_location": "L37",
       "_origin": "ast",
-      "community": 9,
+      "community": 127,
       "norm_label": "editsessionpicker",
       "id": "src_hooks_usepickerstate_editsessionpicker"
     },
@@ -2752,7 +2942,7 @@
       "source_file": "src/hooks/usePickerState.ts",
       "source_location": "L52",
       "_origin": "ast",
-      "community": 9,
+      "community": 127,
       "norm_label": "pickervalues",
       "id": "src_hooks_usepickerstate_pickervalues"
     },
@@ -2762,7 +2952,7 @@
       "source_file": "src/hooks/usePickerState.ts",
       "source_location": "L60",
       "_origin": "ast",
-      "community": 127,
+      "community": 0,
       "norm_label": "usepickerstate()",
       "id": "src_hooks_usepickerstate_usepickerstate"
     },
@@ -2772,7 +2962,7 @@
       "source_file": "src/hooks/usePreStartCountdown.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 140,
       "norm_label": "useprestartcountdown.ts",
       "id": "src_hooks_useprestartcountdown"
     },
@@ -2782,7 +2972,7 @@
       "source_file": "src/hooks/usePreStartCountdown.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 1,
+      "community": 140,
       "norm_label": "useprestartcountdown()",
       "id": "src_hooks_useprestartcountdown_useprestartcountdown"
     },
@@ -2805,96 +2995,6 @@
       "community": 13,
       "norm_label": "usepremiumstate()",
       "id": "src_hooks_usepremiumstate_usepremiumstate"
-    },
-    {
-      "label": "useTimerEngine.ts",
-      "file_type": "code",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "usetimerengine.ts",
-      "id": "src_hooks_usetimerengine"
-    },
-    {
-      "label": "TimerState",
-      "file_type": "code",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L22",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "timerstate",
-      "id": "src_hooks_usetimerengine_timerstate"
-    },
-    {
-      "label": "Callbacks",
-      "file_type": "code",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L30",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "callbacks",
-      "id": "src_hooks_usetimerengine_callbacks"
-    },
-    {
-      "label": "useTimerEngine()",
-      "file_type": "code",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L44",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "usetimerengine()",
-      "id": "src_hooks_usetimerengine_usetimerengine"
-    },
-    {
-      "label": "useWorkoutSession.ts",
-      "file_type": "code",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "useworkoutsession.ts",
-      "id": "src_hooks_useworkoutsession"
-    },
-    {
-      "label": "WorkoutStatus",
-      "file_type": "code",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L10",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "workoutstatus",
-      "id": "src_hooks_useworkoutsession_workoutstatus"
-    },
-    {
-      "label": "WorkoutSession",
-      "file_type": "code",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L12",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "workoutsession",
-      "id": "src_hooks_useworkoutsession_workoutsession"
-    },
-    {
-      "label": "reindexFrom()",
-      "file_type": "code",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L27",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "reindexfrom()",
-      "id": "src_hooks_useworkoutsession_reindexfrom"
-    },
-    {
-      "label": "useWorkoutSession()",
-      "file_type": "code",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L38",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "useworkoutsession()",
-      "id": "src_hooks_useworkoutsession_useworkoutsession"
     },
     {
       "label": "alerts.ts",
@@ -3152,7 +3252,7 @@
       "source_file": "src/lib/i18n.ts",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 127,
+      "community": 130,
       "norm_label": "i18n",
       "id": "src_lib_i18n_i18n"
     },
@@ -3182,7 +3282,7 @@
       "source_file": "src/lib/i18n.ts",
       "source_location": "L34",
       "_origin": "ast",
-      "community": 128,
+      "community": 5,
       "norm_label": "usetranslation()",
       "id": "src_lib_i18n_usetranslation"
     },
@@ -3242,7 +3342,7 @@
       "source_file": "src/lib/presets.ts",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 0,
+      "community": 127,
       "norm_label": "presetlevel",
       "id": "src_lib_presets_presetlevel"
     },
@@ -3562,7 +3662,7 @@
       "source_file": "src/lib/reviewState.ts",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 129,
+      "community": 5,
       "norm_label": "setforcenextreview()",
       "id": "src_lib_reviewstate_setforcenextreview"
     },
@@ -3702,7 +3802,7 @@
       "source_file": "src/lib/sessions.ts",
       "source_location": "L20",
       "_origin": "ast",
-      "community": 124,
+      "community": 5,
       "norm_label": "sessionsdata",
       "id": "src_lib_sessions_sessionsdata"
     },
@@ -3752,7 +3852,7 @@
       "source_file": "src/lib/sessions.ts",
       "source_location": "L57",
       "_origin": "ast",
-      "community": 124,
+      "community": 123,
       "norm_label": "spinvalueforphase()",
       "id": "src_lib_sessions_spinvalueforphase"
     },
@@ -3762,7 +3862,7 @@
       "source_file": "src/lib/sessions.ts",
       "source_location": "L69",
       "_origin": "ast",
-      "community": 19,
+      "community": 0,
       "norm_label": "session",
       "id": "src_lib_sessions_session"
     },
@@ -3772,7 +3872,7 @@
       "source_file": "src/lib/sessions.ts",
       "source_location": "L74",
       "_origin": "ast",
-      "community": 19,
+      "community": 123,
       "norm_label": "speedforphase()",
       "id": "src_lib_sessions_speedforphase"
     },
@@ -3932,7 +4032,7 @@
       "source_file": "src/lib/settings.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 1,
+      "community": 69,
       "norm_label": "themekey",
       "id": "src_lib_settings_themekey"
     },
@@ -4032,7 +4132,7 @@
       "source_file": "src/lib/settingsContext.tsx",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 128,
+      "community": 5,
       "norm_label": "usesettings()",
       "id": "src_lib_settingscontext_usesettings"
     },
@@ -4112,7 +4212,7 @@
       "source_file": "src/lib/speedUnit.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 130,
+      "community": 123,
       "norm_label": "todisplay()",
       "id": "src_lib_speedunit_todisplay"
     },
@@ -4152,7 +4252,7 @@
       "source_file": "src/lib/timerComputation.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 19,
       "norm_label": "timercomputation.ts",
       "id": "src_lib_timercomputation"
     },
@@ -4162,7 +4262,7 @@
       "source_file": "src/lib/timerComputation.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 1,
+      "community": 19,
       "norm_label": "timersnapshot",
       "id": "src_lib_timercomputation_timersnapshot"
     },
@@ -4172,7 +4272,7 @@
       "source_file": "src/lib/timerComputation.ts",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 1,
+      "community": 19,
       "norm_label": "computetimersnapshot()",
       "id": "src_lib_timercomputation_computetimersnapshot"
     },
@@ -4182,7 +4282,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 125,
+      "community": 19,
       "norm_label": "workout.ts",
       "id": "src_lib_workout"
     },
@@ -4192,7 +4292,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 125,
+      "community": 127,
       "norm_label": "phase",
       "id": "src_lib_workout_phase"
     },
@@ -4202,7 +4302,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 1,
+      "community": 19,
       "norm_label": "segment",
       "id": "src_lib_workout_segment"
     },
@@ -4212,7 +4312,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 125,
+      "community": 123,
       "norm_label": "interval",
       "id": "src_lib_workout_interval"
     },
@@ -4222,7 +4322,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L25",
       "_origin": "ast",
-      "community": 125,
+      "community": 19,
       "norm_label": "workoutconfig",
       "id": "src_lib_workout_workoutconfig"
     },
@@ -4232,7 +4332,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L33",
       "_origin": "ast",
-      "community": 125,
+      "community": 19,
       "norm_label": "phase_meta",
       "id": "src_lib_workout_phase_meta"
     },
@@ -4272,7 +4372,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L122",
       "_origin": "ast",
-      "community": 123,
+      "community": 19,
       "norm_label": "totalduration()",
       "id": "src_lib_workout_totalduration"
     },
@@ -4282,7 +4382,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L126",
       "_origin": "ast",
-      "community": 1,
+      "community": 19,
       "norm_label": "segmentindexat()",
       "id": "src_lib_workout_segmentindexat"
     },
@@ -4292,7 +4392,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L133",
       "_origin": "ast",
-      "community": 125,
+      "community": 19,
       "norm_label": "converttoeasyresult",
       "id": "src_lib_workout_converttoeasyresult"
     },
@@ -4332,7 +4432,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L202",
       "_origin": "ast",
-      "community": 128,
+      "community": 19,
       "norm_label": "fmttimer()",
       "id": "src_lib_workout_fmttimer"
     },
@@ -4342,7 +4442,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L214",
       "_origin": "ast",
-      "community": 125,
+      "community": 19,
       "norm_label": "fmtspeed()",
       "id": "src_lib_workout_fmtspeed"
     },
@@ -4392,7 +4492,7 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 19,
+      "community": 123,
       "norm_label": "editsessionscreen.tsx",
       "id": "src_screens_editsessionscreen"
     },
@@ -4402,7 +4502,7 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L30",
       "_origin": "ast",
-      "community": 19,
+      "community": 123,
       "norm_label": "getintervaldisplayspeed()",
       "id": "src_screens_editsessionscreen_getintervaldisplayspeed"
     },
@@ -4412,7 +4512,7 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L36",
       "_origin": "ast",
-      "community": 19,
+      "community": 123,
       "norm_label": "props",
       "id": "src_screens_editsessionscreen_props"
     },
@@ -4477,62 +4577,12 @@
       "id": "src_screens_privacypolicyscreen_makestyles"
     },
     {
-      "label": "SessionCompleteScreen.tsx",
-      "file_type": "code",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "sessioncompletescreen.tsx",
-      "id": "src_screens_sessioncompletescreen"
-    },
-    {
-      "label": "Props",
-      "file_type": "code",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L11",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "props",
-      "id": "src_screens_sessioncompletescreen_props"
-    },
-    {
-      "label": "StatCard()",
-      "file_type": "code",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L23",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "statcard()",
-      "id": "src_screens_sessioncompletescreen_statcard"
-    },
-    {
-      "label": "SessionCompleteScreen()",
-      "file_type": "code",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L33",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "sessioncompletescreen()",
-      "id": "src_screens_sessioncompletescreen_sessioncompletescreen"
-    },
-    {
-      "label": "makeStyles()",
-      "file_type": "code",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L190",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "makestyles()",
-      "id": "src_screens_sessioncompletescreen_makestyles"
-    },
-    {
       "label": "SettingsScreen.tsx",
       "file_type": "code",
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 69,
+      "community": 5,
       "norm_label": "settingsscreen.tsx",
       "id": "src_screens_settingsscreen"
     },
@@ -4542,7 +4592,7 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L29",
       "_origin": "ast",
-      "community": 129,
+      "community": 5,
       "norm_label": "settingsscreen()",
       "id": "src_screens_settingsscreen_settingsscreen"
     },
@@ -4552,49 +4602,9 @@
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L333",
       "_origin": "ast",
-      "community": 129,
+      "community": 5,
       "norm_label": "makestyles()",
       "id": "src_screens_settingsscreen_makestyles"
-    },
-    {
-      "label": "WorkoutScreen.tsx",
-      "file_type": "code",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "workoutscreen.tsx",
-      "id": "src_screens_workoutscreen"
-    },
-    {
-      "label": "EXTEND_OPTIONS",
-      "file_type": "code",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L33",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "extend_options",
-      "id": "src_screens_workoutscreen_extend_options"
-    },
-    {
-      "label": "WorkoutScreen()",
-      "file_type": "code",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L35",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "workoutscreen()",
-      "id": "src_screens_workoutscreen_workoutscreen"
-    },
-    {
-      "label": "makeStyles()",
-      "file_type": "code",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L475",
-      "_origin": "ast",
-      "community": 128,
-      "norm_label": "makestyles()",
-      "id": "src_screens_workoutscreen_makestyles"
     },
     {
       "label": "theme.ts",
@@ -4612,7 +4622,7 @@
       "source_file": "src/theme.ts",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 69,
+      "community": 135,
       "norm_label": "themetokens",
       "id": "src_theme_themetokens"
     },
@@ -4672,7 +4682,7 @@
       "source_file": "src/theme.ts",
       "source_location": "L106",
       "_origin": "ast",
-      "community": 1,
+      "community": 69,
       "norm_label": "themecontextvalue",
       "id": "src_theme_themecontextvalue"
     },
@@ -4682,7 +4692,7 @@
       "source_file": "src/theme.ts",
       "source_location": "L112",
       "_origin": "ast",
-      "community": 1,
+      "community": 69,
       "norm_label": "themecontext",
       "id": "src_theme_themecontext"
     },
@@ -4692,7 +4702,7 @@
       "source_file": "src/theme.ts",
       "source_location": "L118",
       "_origin": "ast",
-      "community": 3,
+      "community": 133,
       "norm_label": "usetheme()",
       "id": "src_theme_usetheme"
     },
@@ -4742,7 +4752,7 @@
       "source_file": "src/theme.ts",
       "source_location": "L143",
       "_origin": "ast",
-      "community": 128,
+      "community": 69,
       "norm_label": "buttonshadow()",
       "id": "src_theme_buttonshadow"
     },
@@ -4762,7 +4772,7 @@
       "source_file": "src/typography.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 19,
+      "community": 125,
       "norm_label": "typography.ts",
       "id": "src_typography"
     },
@@ -4772,7 +4782,7 @@
       "source_file": "src/typography.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 19,
+      "community": 125,
       "norm_label": "typography",
       "id": "src_typography_typography"
     },
@@ -15002,21 +15012,10 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/FolderCreateModal.tsx",
-      "source_location": "L82",
+      "source_location": "L83",
       "weight": 1.0,
       "source": "src_components_foldercreatemodal",
       "target": "src_components_foldercreatemodal_makestyles",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/FolderCreateModal.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "src_components_foldercreatemodal",
-      "target": "src_components_foldericonpicker",
       "confidence_score": 1.0
     },
     {
@@ -15044,68 +15043,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "source": "src_components_foldericonpicker",
-      "target": "src_components_foldericonpicker_foldericonpicker",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "source": "src_components_foldericonpicker",
-      "target": "src_components_foldericonpicker_foldericonpickerprops",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "source": "src_components_foldericonpicker",
-      "target": "src_components_foldericonpicker_icons",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L43",
-      "weight": 1.0,
-      "source": "src_components_foldericonpicker",
-      "target": "src_components_foldericonpicker_makestyles",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/FolderRenameModal.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "src_components_folderrenamemodal",
-      "target": "src_components_foldericonpicker",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/FolderIconPicker.tsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "source": "src_components_foldericonpicker_foldericonpicker",
-      "target": "src_components_foldericonpicker_makestyles",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "src/components/FolderRenameModal.tsx",
       "source_location": "L26",
       "weight": 1.0,
@@ -15127,7 +15064,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/FolderRenameModal.tsx",
-      "source_location": "L90",
+      "source_location": "L91",
       "weight": 1.0,
       "source": "src_components_folderrenamemodal",
       "target": "src_components_folderrenamemodal_makestyles",
@@ -15158,42 +15095,31 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/TrialStatusPill.tsx",
-      "source_location": "L48",
+      "source_file": "src/components/SessionCard.tsx",
+      "source_location": "L78",
       "weight": 1.0,
-      "source": "src_components_trialstatuspill",
-      "target": "src_components_trialstatuspill_makestyles",
+      "source": "src_components_sessioncard",
+      "target": "src_components_sessioncard_makestyles",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/TrialStatusPill.tsx",
-      "source_location": "L11",
+      "source_file": "src/components/SessionCard.tsx",
+      "source_location": "L14",
       "weight": 1.0,
-      "source": "src_components_trialstatuspill",
-      "target": "src_components_trialstatuspill_trialstatuspill",
+      "source": "src_components_sessioncard",
+      "target": "src_components_sessioncard_props",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/TrialStatusPill.tsx",
-      "source_location": "L7",
+      "source_file": "src/components/SessionCard.tsx",
+      "source_location": "L24",
       "weight": 1.0,
-      "source": "src_components_trialstatuspill",
-      "target": "src_components_trialstatuspill_trialstatuspillprops",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/FoldersScreen.tsx",
-      "source_location": "L28",
-      "weight": 1.0,
-      "source": "src_screens_foldersscreen",
-      "target": "src_components_trialstatuspill",
+      "source": "src_components_sessioncard",
+      "target": "src_components_sessioncard_sessioncard",
       "confidence_score": 1.0
     },
     {
@@ -15201,22 +15127,169 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L34",
+      "source_location": "L30",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
-      "target": "src_components_trialstatuspill",
+      "target": "src_components_sessioncard",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_file": "src/components/SessionCard.tsx",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_components_sessioncard_sessioncard",
+      "target": "src_components_sessioncard_makestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useTimerEngine.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_hooks_usetimerengine",
+      "target": "src_hooks_usetimerengine_callbacks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useTimerEngine.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_hooks_usetimerengine",
+      "target": "src_hooks_usetimerengine_timerstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useTimerEngine.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_hooks_usetimerengine",
+      "target": "src_hooks_usetimerengine_usetimerengine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession",
+      "target": "src_hooks_usetimerengine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession",
+      "target": "src_hooks_usetimerengine_usetimerengine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession_useworkoutsession",
+      "target": "src_hooks_usetimerengine_usetimerengine"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession",
+      "target": "src_hooks_useworkoutsession_reindexfrom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession",
+      "target": "src_hooks_useworkoutsession_useworkoutsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession",
+      "target": "src_hooks_useworkoutsession_workoutsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession",
+      "target": "src_hooks_useworkoutsession_workoutstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
       "source_location": "L15",
       "weight": 1.0,
-      "source": "src_components_trialstatuspill_trialstatuspill",
-      "target": "src_components_trialstatuspill_makestyles",
+      "source": "src_screens_workoutscreen",
+      "target": "src_hooks_useworkoutsession",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L140",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession_useworkoutsession",
+      "target": "src_hooks_useworkoutsession_reindexfrom",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen",
+      "target": "src_hooks_useworkoutsession_useworkoutsession",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen_workoutscreen",
+      "target": "src_hooks_useworkoutsession_useworkoutsession"
     },
     {
       "relation": "imports_from",
@@ -15421,6 +15494,100 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen",
+      "target": "src_screens_sessioncompletescreen_fmtstattime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L219",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen",
+      "target": "src_screens_sessioncompletescreen_makestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen",
+      "target": "src_screens_sessioncompletescreen_props",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen",
+      "target": "src_screens_sessioncompletescreen_sessioncompletescreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen",
+      "target": "src_screens_sessioncompletescreen_statcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen",
+      "target": "src_screens_sessioncompletescreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L168",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
+      "target": "src_screens_sessioncompletescreen_fmtstattime",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen_statcard",
+      "target": "src_screens_sessioncompletescreen_makestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/SessionCompleteScreen.tsx",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
+      "target": "src_screens_sessioncompletescreen_makestyles",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -15435,7 +15602,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L321",
+      "source_location": "L292",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_makestyles",
@@ -15445,7 +15612,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L37",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_sessionslistscreen",
@@ -15455,7 +15622,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L531",
+      "source_location": "L500",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_sessionswiperow",
@@ -15465,7 +15632,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L502",
+      "source_location": "L471",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_swipeduplicateaction",
@@ -15487,11 +15654,155 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L41",
+      "source_location": "L39",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_makestyles",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "App.tsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app_tsx_app",
+      "target": "src_screens_workoutscreen"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen",
+      "target": "src_screens_workoutscreen_extend_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L527",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen",
+      "target": "src_screens_workoutscreen_makestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen",
+      "target": "src_screens_workoutscreen_workoutscreen",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen_workoutscreen",
+      "target": "src_screens_workoutscreen_makestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_foldericonpicker",
+      "target": "src_components_foldericonpicker_foldericonpicker"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_foldericonpicker",
+      "target": "src_components_foldericonpicker_foldericonpickerprops"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_foldericonpicker",
+      "target": "src_components_foldericonpicker_icons"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L43",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_foldericonpicker",
+      "target": "src_components_foldericonpicker_makestyles"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/FolderIconPicker.tsx",
+      "source_location": "L17",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_foldericonpicker_foldericonpicker",
+      "target": "src_components_foldericonpicker_makestyles"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L48",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_trialstatuspill",
+      "target": "src_components_trialstatuspill_makestyles"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_trialstatuspill",
+      "target": "src_components_trialstatuspill_trialstatuspill"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_trialstatuspill",
+      "target": "src_components_trialstatuspill_trialstatuspillprops"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/TrialStatusPill.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_components_trialstatuspill_trialstatuspill",
+      "target": "src_components_trialstatuspill_makestyles"
     },
     {
       "relation": "contains",
@@ -15765,17 +16076,6 @@
       "confidence_score": 1.0,
       "source": "app_tsx_app",
       "target": "src_screens_settingsscreen"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "App.tsx",
-      "source_location": "L29",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "app_tsx_app",
-      "target": "src_screens_workoutscreen"
     },
     {
       "relation": "imports_from",
@@ -17234,33 +17534,11 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_components_activitytypeicon"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L28",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen",
-      "target": "src_components_activitytypeicon"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L28",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
       "target": "src_components_activitytypeicon"
     },
     {
@@ -17278,33 +17556,11 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_components_activitytypeicon_activitytypeicon"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L28",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_screens_editsessionscreen",
-      "target": "src_components_activitytypeicon_activitytypeicon"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L28",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
       "target": "src_components_activitytypeicon_activitytypeicon"
     },
     {
@@ -17490,17 +17746,6 @@
       "target": "src_components_draghandle"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_components_draghandle"
-    },
-    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -17509,17 +17754,6 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_components_intervalrow",
-      "target": "src_components_draghandle_draghandle"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
       "target": "src_components_draghandle_draghandle"
     },
     {
@@ -18091,17 +18325,6 @@
       "target": "src_theme_usetheme"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L29",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_components_ghostbtn"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -18111,17 +18334,6 @@
       "weight": 1.0,
       "source": "src_components_ghostbtn_ghostbtn",
       "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L29",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_components_ghostbtn_ghostbtn"
     },
     {
       "relation": "contains",
@@ -18751,28 +18963,6 @@
       "target": "src_theme_withopacity"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_components_phasestrip"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_components_phasestrip"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -19220,17 +19410,6 @@
       "target": "src_components_screenheader"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L26",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_components_screenheader"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -19251,311 +19430,6 @@
       "weight": 1.0,
       "source": "src_components_screenheader_screenheader",
       "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L92",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_components_sessioncard_makestyles"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_components_sessioncard_props"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L26",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_components_sessioncard_sessioncard"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_i18n"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_i18n_usetranslation"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_sessions"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_sessions_getsessionsegments"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_sessions_session"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_workout"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_workout_fmtduration"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_lib_workout_totalduration"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_theme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_theme_buttonshadow"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_theme_glowshadow"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_theme_selectedbg"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_theme_themetokens"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard",
-      "target": "src_theme_withopacity"
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard_props",
-      "target": "src_lib_sessions_session"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L29",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_components_sessioncard_sessioncard",
-      "target": "src_components_sessioncard_makestyles"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L28",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_sessioncard",
-      "target": "src_lib_i18n_usetranslation"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L31",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_sessioncard",
-      "target": "src_lib_sessions_getsessionsegments"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L75",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_sessioncard",
-      "target": "src_lib_workout_fmtduration"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L32",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_sessioncard",
-      "target": "src_lib_workout_totalduration"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L27",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_sessioncard",
-      "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L185",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_makestyles",
-      "target": "src_theme_buttonshadow"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L108",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_makestyles",
-      "target": "src_theme_glowshadow"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/components/SessionCard.tsx",
-      "source_location": "L106",
-      "weight": 1.0,
-      "source": "src_components_sessioncard_makestyles",
-      "target": "src_theme_selectedbg"
     },
     {
       "relation": "contains",
@@ -20179,28 +20053,6 @@
       "confidence_score": 1.0,
       "source": "src_components_workouticon",
       "target": "src_lib_workout_phase"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L27",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_components_workouticon"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L27",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_components_workouticon_workouticon"
     },
     {
       "relation": "contains",
@@ -21880,39 +21732,6 @@
       "target": "src_hooks_useprestartcountdown_useprestartcountdown"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_useprestartcountdown"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_useprestartcountdown_useprestartcountdown"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L106",
-      "weight": 1.0,
-      "source": "src_hooks_useworkoutsession_useworkoutsession",
-      "target": "src_hooks_useprestartcountdown_useprestartcountdown"
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePremiumState.ts",
@@ -22097,417 +21916,6 @@
       "weight": 1.0,
       "source": "src_hooks_usepremiumstate_usepremiumstate",
       "target": "src_lib_purchases_setmockpremium"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L30",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_hooks_usetimerengine_callbacks"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L22",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_hooks_usetimerengine_timerstate"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L44",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_hooks_usetimerengine_usetimerengine"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L20",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_lib_timercomputation"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L20",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_lib_timercomputation_computetimersnapshot"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L19",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_lib_workout"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L19",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_lib_workout_segment"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L19",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_lib_workout_segmentindexat"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L19",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine",
-      "target": "src_lib_workout_totalduration"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_usetimerengine"
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L32",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_usetimerengine_callbacks",
-      "target": "src_lib_workout_segment"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L135",
-      "weight": 1.0,
-      "source": "src_hooks_usetimerengine_usetimerengine",
-      "target": "src_lib_timercomputation_computetimersnapshot"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L220",
-      "weight": 1.0,
-      "source": "src_hooks_usetimerengine_usetimerengine",
-      "target": "src_lib_workout_segmentindexat"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useTimerEngine.ts",
-      "source_location": "L45",
-      "weight": 1.0,
-      "source": "src_hooks_usetimerengine_usetimerengine",
-      "target": "src_lib_workout_totalduration"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_usetimerengine_usetimerengine"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L75",
-      "weight": 1.0,
-      "source": "src_hooks_useworkoutsession_useworkoutsession",
-      "target": "src_hooks_usetimerengine_usetimerengine"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L27",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_useworkoutsession_reindexfrom"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L38",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_useworkoutsession_useworkoutsession"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L12",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_useworkoutsession_workoutsession"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L10",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_hooks_useworkoutsession_workoutstatus"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_audio"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_audio_configureaudiosession"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L3",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_audio_useworkoutaudio"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_i18n"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_i18n_getcongratsmessages"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_settings"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_settings_default_settings"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L7",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_settings_settings"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_workout"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession",
-      "target": "src_lib_workout_segment"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_hooks_useworkoutsession"
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L23",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession_workoutsession",
-      "target": "src_lib_workout_segment"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L139",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useworkoutsession_useworkoutsession",
-      "target": "src_hooks_useworkoutsession_reindexfrom"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L98",
-      "weight": 1.0,
-      "source": "src_hooks_useworkoutsession_useworkoutsession",
-      "target": "src_lib_audio_configureaudiosession"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L43",
-      "weight": 1.0,
-      "source": "src_hooks_useworkoutsession_useworkoutsession",
-      "target": "src_lib_audio_useworkoutaudio"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L51",
-      "weight": 1.0,
-      "source": "src_hooks_useworkoutsession_useworkoutsession",
-      "target": "src_lib_i18n_getcongratsmessages"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L15",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_hooks_useworkoutsession_useworkoutsession"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L74",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_hooks_useworkoutsession_useworkoutsession"
     },
     {
       "relation": "contains",
@@ -23027,33 +22435,11 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_lib_i18n"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L14",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_screens_settingsscreen",
-      "target": "src_lib_i18n"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L22",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
       "target": "src_lib_i18n"
     },
     {
@@ -23170,28 +22556,6 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_lib_i18n_usetranslation"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L35",
-      "weight": 1.0,
-      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
-      "target": "src_lib_i18n_usetranslation"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L14",
       "weight": 1.0,
@@ -23208,28 +22572,6 @@
       "source_location": "L34",
       "weight": 1.0,
       "source": "src_screens_settingsscreen_settingsscreen",
-      "target": "src_lib_i18n_usetranslation"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L22",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_i18n_usetranslation"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L37",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_i18n_usetranslation"
     },
     {
@@ -23951,17 +23293,6 @@
       "target": "src_lib_reviewstate"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L31",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_reviewstate"
-    },
-    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -24026,28 +23357,6 @@
       "confidence_score": 1.0,
       "source": "src_lib_reviewstate_checkandrequestreview",
       "target": "src_lib_reviewstate_savereviewstate"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L31",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_reviewstate_checkandrequestreview"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L133",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_lib_reviewstate_checkandrequestreview"
     },
     {
       "relation": "contains",
@@ -24511,33 +23820,11 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_lib_sessions"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L24",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_screens_settingsscreen",
-      "target": "src_lib_sessions"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L24",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
       "target": "src_lib_sessions"
     },
     {
@@ -24640,39 +23927,6 @@
       "target": "src_lib_sessions_session"
     },
     {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_lib_sessions_session"
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L12",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen_props",
-      "target": "src_lib_sessions_session"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L24",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_sessions_session"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -24737,28 +23991,6 @@
       "weight": 1.0,
       "source": "src_lib_sessions_getsessionsegments",
       "target": "src_lib_workout_intervalstosegments"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L23",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_sessions_getsessionsegments"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L53",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_lib_sessions_getsessionsegments"
     },
     {
       "relation": "calls",
@@ -25136,17 +24368,6 @@
       "target": "src_lib_settingscontext"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_settingscontext"
-    },
-    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -25188,28 +24409,6 @@
       "source_location": "L33",
       "weight": 1.0,
       "source": "src_screens_settingsscreen_settingsscreen",
-      "target": "src_lib_settingscontext_usesettings"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_settingscontext_usesettings"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L36",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_settingscontext_usesettings"
     },
     {
@@ -25402,17 +24601,6 @@
       "target": "src_lib_speedunit"
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L21",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_speedunit"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
@@ -25477,28 +24665,6 @@
       "weight": 1.0,
       "source": "src_lib_speedunit_formatspeed",
       "target": "src_lib_workout_convertkmhtomph"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L21",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_speedunit_formatspeed"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L244",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_lib_speedunit_formatspeed"
     },
     {
       "relation": "contains",
@@ -25781,28 +24947,6 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_lib_workout"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_workout"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/theme.ts",
       "source_location": "L4",
       "weight": 1.0,
@@ -25847,50 +24991,6 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_lib_workout_segment"
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L13",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen_props",
-      "target": "src_lib_workout_segment"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_workout_totalduration"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L59",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_lib_workout_totalduration"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L17",
       "weight": 1.0,
@@ -25908,50 +25008,6 @@
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_lib_workout_fmtduration"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_lib_workout_fmttimer"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L154",
-      "weight": 1.0,
-      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
-      "target": "src_lib_workout_fmttimer"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_lib_workout_fmttimer"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L161",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_lib_workout_fmttimer"
     },
     {
       "relation": "contains",
@@ -26267,167 +25323,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L190",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_screens_sessioncompletescreen_makestyles"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_screens_sessioncompletescreen_props"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L33",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_screens_sessioncompletescreen_sessioncompletescreen"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L23",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_screens_sessioncompletescreen_statcard"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_theme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_theme_buttonshadow"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_theme_themetokens"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen",
-      "target": "src_theme_withopacity"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L30",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_screens_sessioncompletescreen"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L24",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen_statcard",
-      "target": "src_screens_sessioncompletescreen_makestyles"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L38",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
-      "target": "src_screens_sessioncompletescreen_makestyles"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L175",
-      "weight": 1.0,
-      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
-      "target": "src_theme_buttonshadow"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L34",
-      "weight": 1.0,
-      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
-      "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/SessionCompleteScreen.tsx",
-      "source_location": "L94",
-      "weight": 1.0,
-      "source": "src_screens_sessioncompletescreen_sessioncompletescreen",
-      "target": "src_theme_withopacity"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "src/screens/SettingsScreen.tsx",
       "source_location": "L333",
       "weight": 1.0,
@@ -26510,146 +25405,6 @@
       "weight": 1.0,
       "source": "src_screens_settingsscreen_settingsscreen",
       "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L33",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_screens_workoutscreen_extend_options"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L475",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_screens_workoutscreen_makestyles"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L35",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_screens_workoutscreen_workoutscreen"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_theme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_theme_buttonshadow"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_theme_theme_tokens"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_theme_themetokens"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L25",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen",
-      "target": "src_theme_withopacity"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L51",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_screens_workoutscreen_makestyles"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L46",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_theme_usetheme"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L211",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_workoutscreen",
-      "target": "src_theme_withopacity"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L675",
-      "weight": 1.0,
-      "source": "src_screens_workoutscreen_makestyles",
-      "target": "src_theme_buttonshadow"
     },
     {
       "relation": "contains",
@@ -35965,5 +34720,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "8c062d7624940e7f8fce01197df06dc5ad1803ae"
+  "built_at_commit": "9c9d7c5d4d48e0aff7c7612c481be6add096af07"
 }
