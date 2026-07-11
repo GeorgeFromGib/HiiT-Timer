@@ -4,20 +4,8 @@ import { useTheme, type ThemeTokens } from '../theme';
 import WheelColumn from './WheelColumn';
 import type { EditSessionPicker, PickerValues } from '../hooks/useEditSession';
 import { useTranslation } from '../lib/i18n';
-import { pickerRange } from '../lib/speedUnit';
-import { MIN_TARGET_DURATION_MINUTES } from '../hooks/usePickerState';
 
-const MINUTE_LABELS   = Array.from({ length: 60 }, (_, i) => String(i));
-const TARGET_DURATION_LABELS = Array.from({ length: 176 }, (_, i) => String(i + MIN_TARGET_DURATION_MINUTES));
-const SECOND_LABELS   = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
-const ROUND_LABELS    = Array.from({ length: 99 }, (_, i) => String(i + 1));
-const KMH_WHOLE       = Array.from({ length: pickerRange('km').max + 1 }, (_, i) => String(i));
-const MPH_WHOLE       = Array.from({ length: pickerRange('miles').max + 1 }, (_, i) => String(i));
-const DECIMAL_LABELS  = Array.from({ length: 10 }, (_, i) => String(i));
-const RESISTANCE_LABELS = Array.from({ length: 10 }, (_, i) => String(i + 1));
-const POWER_LABELS      = Array.from({ length: 27 }, (_, i) => String(40 + i * 10));
-
-const EMPTY_VALUES: PickerValues = { minutes: 0, seconds: 0, rounds: 0, speedWhole: 0, speedDecimal: 0 };
+const EMPTY_VALUES: PickerValues = { selected: [] };
 
 interface Props {
   picker:    EditSessionPicker | null;
@@ -34,17 +22,19 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
 
   useEffect(() => {
     if (picker) {
-      setLocal({
-        minutes:      picker.minutes,
-        seconds:      picker.seconds,
-        rounds:       picker.rounds,
-        speedWhole:   picker.speedWhole,
-        speedDecimal: picker.speedDecimal,
-      });
+      setLocal({ selected: picker.selected });
     }
   // Re-initialize whenever the picker opens (null → non-null) or a different picker opens
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [picker !== null, picker?.title]);
+
+  function setColumnValue(column: number, value: number) {
+    setLocal(prev => {
+      const next = [...prev.selected];
+      next[column] = value;
+      return { selected: next };
+    });
+  }
 
   return (
     <Modal
@@ -66,102 +56,31 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
             </Pressable>
           </View>
 
-          {picker?.isRounds ? (
+          {picker && (
             <>
               <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{picker.roundsLabel ?? t('picker.rounds')}</Text>
+                {picker.columns.map((col, i) => (
+                  <React.Fragment key={i}>
+                    {i > 0 && picker.separator && <View style={{ flex: 0, width: 24 }} />}
+                    <Text style={styles.pickerUnitLabel}>{col.unitLabel}</Text>
+                  </React.Fragment>
+                ))}
               </View>
               <View style={styles.pickerRow}>
-                <WheelColumn
-                  values={ROUND_LABELS}
-                  selected={local.rounds}
-                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
-                />
-              </View>
-            </>
-          ) : picker?.isDuration ? (
-            <>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{t('picker.min')}</Text>
-              </View>
-              <View style={styles.pickerRow}>
-                <WheelColumn
-                  values={TARGET_DURATION_LABELS}
-                  selected={local.rounds}
-                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
-                />
-              </View>
-            </>
-          ) : picker?.isSpeed ? (
-            <>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{picker.speedUnit === 'miles' ? 'mph' : 'km/h'}</Text>
-                <View style={{ flex: 0, width: 24 }} />
-                <Text style={styles.pickerUnitLabel}>{t('picker.dec')}</Text>
-              </View>
-              <View style={styles.pickerRow}>
-                <WheelColumn
-                  values={picker.speedUnit === 'miles' ? MPH_WHOLE : KMH_WHOLE}
-                  selected={local.speedWhole}
-                  onChange={v => setLocal(prev => ({ ...prev, speedWhole: v }))}
-                />
-                <View style={styles.pickerSeparator}>
-                  <Text style={styles.pickerSeparatorText}>.</Text>
-                </View>
-                <WheelColumn
-                  values={DECIMAL_LABELS}
-                  selected={local.speedDecimal}
-                  onChange={v => setLocal(prev => ({ ...prev, speedDecimal: v }))}
-                />
-              </View>
-            </>
-          ) : picker?.isResistance ? (
-            <>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{t('picker.resistanceTitle')}</Text>
-              </View>
-              <View style={styles.pickerRow}>
-                <WheelColumn
-                  values={RESISTANCE_LABELS}
-                  selected={local.rounds}
-                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
-                />
-              </View>
-            </>
-          ) : picker?.isPower ? (
-            <>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>W</Text>
-              </View>
-              <View style={styles.pickerRow}>
-                <WheelColumn
-                  values={POWER_LABELS}
-                  selected={local.rounds}
-                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
-                />
-              </View>
-            </>
-          ) : (
-            <>
-              <View style={styles.pickerUnits}>
-                <Text style={styles.pickerUnitLabel}>{t('picker.min')}</Text>
-                <View style={{ flex: 0, width: 24 }} />
-                <Text style={styles.pickerUnitLabel}>{t('picker.sec')}</Text>
-              </View>
-              <View style={styles.pickerRow}>
-                <WheelColumn
-                  values={MINUTE_LABELS}
-                  selected={local.minutes}
-                  onChange={v => setLocal(prev => ({ ...prev, minutes: v }))}
-                />
-                <View style={styles.pickerSeparator}>
-                  <Text style={styles.pickerSeparatorText}>:</Text>
-                </View>
-                <WheelColumn
-                  values={SECOND_LABELS}
-                  selected={local.seconds}
-                  onChange={v => setLocal(prev => ({ ...prev, seconds: v }))}
-                />
+                {picker.columns.map((col, i) => (
+                  <React.Fragment key={i}>
+                    {i > 0 && picker.separator && (
+                      <View style={styles.pickerSeparator}>
+                        <Text style={styles.pickerSeparatorText}>{picker.separator}</Text>
+                      </View>
+                    )}
+                    <WheelColumn
+                      values={col.values}
+                      selected={local.selected[i] ?? 0}
+                      onChange={v => setColumnValue(i, v)}
+                    />
+                  </React.Fragment>
+                ))}
               </View>
             </>
           )}

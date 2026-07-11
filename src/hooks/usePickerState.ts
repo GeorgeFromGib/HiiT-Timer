@@ -1,10 +1,63 @@
 import { useState } from 'react';
 import { i18n } from '../lib/i18n';
 import { type RunSpeeds, type SpinValues } from '../lib/sessions';
-import { fromDisplay } from '../lib/speedUnit';
+import { fromDisplay, pickerRange } from '../lib/speedUnit';
 import { type LocalInterval, type TimeField } from './editSessionTypes';
 
 export const MIN_TARGET_DURATION_MINUTES = 5;
+
+export interface PickerColumn {
+  values:    string[];
+  unitLabel: string;
+}
+
+// ── Shared wheel value arrays ────────────────────────────────────────────────
+const MINUTE_LABELS          = Array.from({ length: 60 }, (_, i) => String(i));
+const SECOND_LABELS          = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
+const ROUND_LABELS           = Array.from({ length: 99 }, (_, i) => String(i + 1));
+const RESISTANCE_LABELS      = Array.from({ length: 10 }, (_, i) => String(i + 1));
+const POWER_LABELS           = Array.from({ length: 27 }, (_, i) => String(40 + i * 10));
+const TARGET_DURATION_LABELS = Array.from({ length: 176 }, (_, i) => String(i + MIN_TARGET_DURATION_MINUTES));
+const DECIMAL_LABELS         = Array.from({ length: 10 }, (_, i) => String(i));
+const KMH_WHOLE              = Array.from({ length: pickerRange('km').max + 1 }, (_, i) => String(i));
+const MPH_WHOLE              = Array.from({ length: pickerRange('miles').max + 1 }, (_, i) => String(i));
+
+// ── Shared shape encode/decode — wheel index[] <-> real value ───────────────
+// Every picker "kind" below picks one of these shapes instead of repeating the
+// arithmetic; adding a kind means picking a shape, not re-deriving it.
+const durationColumns = (): PickerColumn[] => [
+  { values: MINUTE_LABELS, unitLabel: i18n.t('picker.min') },
+  { values: SECOND_LABELS, unitLabel: i18n.t('picker.sec') },
+];
+const encodeDuration = (secs: number): number[] => [Math.floor(secs / 60), secs % 60];
+const decodeDuration = (idx: number[]): number => idx[0] * 60 + idx[1];
+
+const countColumns = (unitLabel: string): PickerColumn[] => [{ values: ROUND_LABELS, unitLabel }];
+const encodeCount = (current: number): number[] => [current - 1];
+const decodeCount = (idx: number[]): number => idx[0] + 1;
+
+const minutesOnlyColumns = (): PickerColumn[] => [{ values: TARGET_DURATION_LABELS, unitLabel: i18n.t('picker.min') }];
+const encodeMinutesOnly = (minutes: number): number[] => [minutes - MIN_TARGET_DURATION_MINUTES];
+const decodeMinutesOnly = (idx: number[]): number => idx[0] + MIN_TARGET_DURATION_MINUTES;
+
+const resistanceColumns = (): PickerColumn[] => [{ values: RESISTANCE_LABELS, unitLabel: i18n.t('picker.resistanceTitle') }];
+const encodeResistance = (current: number): number[] => [current - 1];
+const decodeResistance = (idx: number[]): number => idx[0] + 1;
+
+const powerColumns = (): PickerColumn[] => [{ values: POWER_LABELS, unitLabel: 'W' }];
+const encodePower = (current: number): number[] => [(current - 40) / 10];
+const decodePower = (idx: number[]): number => 40 + idx[0] * 10;
+
+const speedColumns = (isMiles: boolean): PickerColumn[] => [
+  { values: isMiles ? MPH_WHOLE : KMH_WHOLE, unitLabel: isMiles ? 'mph' : 'km/h' },
+  { values: DECIMAL_LABELS, unitLabel: i18n.t('picker.dec') },
+];
+const encodeSpeedDisplay = (displayValue: number): number[] => {
+  const whole = Math.floor(displayValue);
+  const decimal = Math.min(9, Math.round((displayValue - whole) * 10));
+  return [whole, decimal];
+};
+const decodeSpeedDisplay = (idx: number[]): number => idx[0] + idx[1] / 10;
 
 export type ActivePicker =
   | { type: 'field'; field: TimeField }
@@ -39,28 +92,20 @@ export type CommitResult =
   | { type: 'intervalPower';      key: string;            value: number };
 
 export interface EditSessionPicker {
-  title:        string;
-  isRounds:     boolean;
-  roundsLabel?: string;
-  isDuration:   boolean;
-  isSpeed:      boolean;
-  speedUnit:    'km' | 'miles';
-  isResistance: boolean;
-  isPower:      boolean;
-  minutes:      number;
-  seconds:      number;
-  rounds:       number;
-  speedWhole:   number;
-  speedDecimal: number;
+  title:      string;
+  columns:    PickerColumn[];
+  separator?: string;
+  selected:   number[]; // current wheel index per column, used to seed the modal
 }
 
 export interface PickerValues {
-  minutes:      number;
-  seconds:      number;
-  rounds:       number;
-  speedWhole:   number;
-  speedDecimal: number;
+  selected: number[];
 }
+
+const HAS_SEPARATOR: Partial<Record<ActivePicker['type'], string>> = {
+  field: ':', interval: ':', circuitWarmup: ':', circuitCooldown: ':', circuitRest: ':',
+  speed: '.', intervalSpeed: '.',
+};
 
 export function usePickerState(
   intervals:     LocalInterval[],
@@ -68,12 +113,8 @@ export function usePickerState(
   circuitValues: { warmup: number; cooldown: number; rest: number; count: number },
   onCommit:      (result: CommitResult) => void,
 ) {
-  const [activePicker,  setActivePicker]  = useState<ActivePicker | null>(null);
-  const [pickerMinutes, setPickerMinutes] = useState(0);
-  const [pickerSeconds, setPickerSeconds] = useState(0);
-  const [pickerRounds,  setPickerRounds]  = useState(0);
-  const [speedWhole,    setSpeedWhole]    = useState(0);
-  const [speedDecimal,  setSpeedDecimal]  = useState(0);
+  const [activePicker, setActivePicker] = useState<ActivePicker | null>(null);
+  const [selected,      setSelected]    = useState<number[]>([]);
 
   const pickerTitle = (() => {
     if (!activePicker) return '';
@@ -98,147 +139,134 @@ export function usePickerState(
     return i18n.t('picker.intervalTitle', { n: idx + 1 });
   })();
 
+  const columns: PickerColumn[] = (() => {
+    if (!activePicker) return [];
+    switch (activePicker.type) {
+      case 'rounds':              return countColumns(i18n.t('picker.rounds'));
+      case 'circuitCount':        return countColumns(i18n.t('picker.circuitsTitle'));
+      case 'targetDuration':      return minutesOnlyColumns();
+      case 'spinResistance':
+      case 'intervalResistance':  return resistanceColumns();
+      case 'spinPower':
+      case 'intervalPower':       return powerColumns();
+      case 'speed':
+      case 'intervalSpeed':       return speedColumns(activePicker.isMiles);
+      default:                    return durationColumns();
+    }
+  })();
+
   function openFieldPicker(field: TimeField) {
-    const secs = fieldValues[field];
-    setPickerMinutes(Math.floor(secs / 60));
-    setPickerSeconds(secs % 60);
+    setSelected(encodeDuration(fieldValues[field]));
     setActivePicker({ type: 'field', field });
   }
 
   function openRoundsPicker(currentRounds: number) {
-    setPickerRounds(currentRounds - 1);
+    setSelected(encodeCount(currentRounds));
     setActivePicker({ type: 'rounds' });
   }
 
   function openTargetDurationPicker(currentMinutes: number) {
-    setPickerRounds(Math.max(0, currentMinutes - MIN_TARGET_DURATION_MINUTES));
+    setSelected(encodeMinutesOnly(Math.max(MIN_TARGET_DURATION_MINUTES, currentMinutes)));
     setActivePicker({ type: 'targetDuration' });
   }
 
   function openIntervalPicker(key: string) {
     const iv = intervals.find(i => i._key === key);
     if (!iv) return;
-    setPickerMinutes(Math.floor(iv.dur / 60));
-    setPickerSeconds(iv.dur % 60);
+    setSelected(encodeDuration(iv.dur));
     setActivePicker({ type: 'interval', key });
   }
 
   function openSpeedPicker(field: keyof RunSpeeds, displayValue: number, isMiles: boolean) {
-    const whole = Math.floor(displayValue);
-    const decimal = Math.min(9, Math.round((displayValue - whole) * 10));
-    setSpeedWhole(whole);
-    setSpeedDecimal(decimal);
+    setSelected(encodeSpeedDisplay(displayValue));
     setActivePicker({ type: 'speed', field, isMiles });
   }
 
   function openIntervalSpeedPicker(key: string, displayValue: number, isMiles: boolean) {
-    const whole = Math.floor(displayValue);
-    const decimal = Math.min(9, Math.round((displayValue - whole) * 10));
-    setSpeedWhole(whole);
-    setSpeedDecimal(decimal);
+    setSelected(encodeSpeedDisplay(displayValue));
     setActivePicker({ type: 'intervalSpeed', key, isMiles });
   }
 
   function openCircuitWarmupPicker() {
-    setPickerMinutes(Math.floor(circuitValues.warmup / 60));
-    setPickerSeconds(circuitValues.warmup % 60);
+    setSelected(encodeDuration(circuitValues.warmup));
     setActivePicker({ type: 'circuitWarmup' });
   }
 
   function openCircuitCooldownPicker() {
-    setPickerMinutes(Math.floor(circuitValues.cooldown / 60));
-    setPickerSeconds(circuitValues.cooldown % 60);
+    setSelected(encodeDuration(circuitValues.cooldown));
     setActivePicker({ type: 'circuitCooldown' });
   }
 
   function openCircuitRestPicker() {
-    setPickerMinutes(Math.floor(circuitValues.rest / 60));
-    setPickerSeconds(circuitValues.rest % 60);
+    setSelected(encodeDuration(circuitValues.rest));
     setActivePicker({ type: 'circuitRest' });
   }
 
   function openCircuitCountPicker() {
-    setPickerRounds(circuitValues.count - 1);
+    setSelected(encodeCount(circuitValues.count));
     setActivePicker({ type: 'circuitCount' });
   }
 
   function openSpinResistancePicker(field: keyof SpinValues, currentValue: number) {
-    setPickerRounds(currentValue - 1); // index 0 = resistance 1
+    setSelected(encodeResistance(currentValue));
     setActivePicker({ type: 'spinResistance', field });
   }
 
   function openSpinPowerPicker(field: keyof SpinValues, currentValue: number) {
-    setPickerRounds((currentValue - 40) / 10); // index 0 = 40W
+    setSelected(encodePower(currentValue));
     setActivePicker({ type: 'spinPower', field });
   }
 
   function openIntervalResistancePicker(key: string, currentValue: number) {
-    setPickerRounds(currentValue - 1);
+    setSelected(encodeResistance(currentValue));
     setActivePicker({ type: 'intervalResistance', key });
   }
 
   function openIntervalPowerPicker(key: string, currentValue: number) {
-    setPickerRounds((currentValue - 40) / 10);
+    setSelected(encodePower(currentValue));
     setActivePicker({ type: 'intervalPower', key });
   }
 
   function commitPicker(values: PickerValues) {
     if (!activePicker) return;
+    const idx = values.selected;
     if (activePicker.type === 'rounds') {
-      onCommit({ type: 'rounds', value: values.rounds + 1 });
+      onCommit({ type: 'rounds', value: decodeCount(idx) });
     } else if (activePicker.type === 'targetDuration') {
-      onCommit({ type: 'targetDuration', minutes: values.rounds + MIN_TARGET_DURATION_MINUTES });
+      onCommit({ type: 'targetDuration', minutes: decodeMinutesOnly(idx) });
     } else if (activePicker.type === 'speed') {
-      const displayVal = values.speedWhole + values.speedDecimal / 10;
-      const kmh = fromDisplay(displayVal, activePicker.isMiles ? 'miles' : 'km');
-      onCommit({ type: 'speed', field: activePicker.field, kmh });
+      onCommit({ type: 'speed', field: activePicker.field, kmh: fromDisplay(decodeSpeedDisplay(idx), activePicker.isMiles ? 'miles' : 'km') });
     } else if (activePicker.type === 'intervalSpeed') {
-      const displayVal = values.speedWhole + values.speedDecimal / 10;
-      const kmh = fromDisplay(displayVal, activePicker.isMiles ? 'miles' : 'km');
-      onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh });
+      onCommit({ type: 'intervalSpeed', key: activePicker.key, kmh: fromDisplay(decodeSpeedDisplay(idx), activePicker.isMiles ? 'miles' : 'km') });
     } else if (activePicker.type === 'circuitCount') {
-      onCommit({ type: 'circuitCount', value: values.rounds + 1 });
+      onCommit({ type: 'circuitCount', value: decodeCount(idx) });
     } else if (activePicker.type === 'spinResistance') {
-      onCommit({ type: 'spinResistance', field: activePicker.field, value: values.rounds + 1 });
+      onCommit({ type: 'spinResistance', field: activePicker.field, value: decodeResistance(idx) });
     } else if (activePicker.type === 'spinPower') {
-      onCommit({ type: 'spinPower', field: activePicker.field, value: 40 + values.rounds * 10 });
+      onCommit({ type: 'spinPower', field: activePicker.field, value: decodePower(idx) });
     } else if (activePicker.type === 'intervalResistance') {
-      onCommit({ type: 'intervalResistance', key: activePicker.key, value: values.rounds + 1 });
+      onCommit({ type: 'intervalResistance', key: activePicker.key, value: decodeResistance(idx) });
     } else if (activePicker.type === 'intervalPower') {
-      onCommit({ type: 'intervalPower', key: activePicker.key, value: 40 + values.rounds * 10 });
+      onCommit({ type: 'intervalPower', key: activePicker.key, value: decodePower(idx) });
     } else if (activePicker.type === 'circuitWarmup') {
-      onCommit({ type: 'circuitWarmup', secs: values.minutes * 60 + values.seconds });
+      onCommit({ type: 'circuitWarmup', secs: decodeDuration(idx) });
     } else if (activePicker.type === 'circuitCooldown') {
-      onCommit({ type: 'circuitCooldown', secs: values.minutes * 60 + values.seconds });
+      onCommit({ type: 'circuitCooldown', secs: decodeDuration(idx) });
     } else if (activePicker.type === 'circuitRest') {
-      onCommit({ type: 'circuitRest', secs: values.minutes * 60 + values.seconds });
+      onCommit({ type: 'circuitRest', secs: decodeDuration(idx) });
+    } else if (activePicker.type === 'field') {
+      onCommit({ type: 'field', field: activePicker.field, secs: decodeDuration(idx) });
     } else {
-      const secs = values.minutes * 60 + values.seconds;
-      if (activePicker.type === 'field') {
-        onCommit({ type: 'field', field: activePicker.field, secs });
-      } else {
-        onCommit({ type: 'interval', key: activePicker.key, secs });
-      }
+      onCommit({ type: 'interval', key: activePicker.key, secs: decodeDuration(idx) });
     }
     setActivePicker(null);
   }
 
   const picker: EditSessionPicker | null = activePicker ? {
-    title:       pickerTitle,
-    isRounds:    activePicker.type === 'rounds' || activePicker.type === 'circuitCount',
-    roundsLabel: activePicker.type === 'circuitCount' ? i18n.t('picker.circuitsTitle')
-               : activePicker.type === 'rounds'       ? i18n.t('picker.rounds')
-               : undefined,
-    isDuration:   activePicker.type === 'targetDuration',
-    isSpeed:      activePicker.type === 'speed' || activePicker.type === 'intervalSpeed',
-    speedUnit:    (activePicker.type === 'speed' || activePicker.type === 'intervalSpeed') && activePicker.isMiles ? 'miles' : 'km',
-    isResistance: activePicker.type === 'spinResistance' || activePicker.type === 'intervalResistance',
-    isPower:      activePicker.type === 'spinPower'      || activePicker.type === 'intervalPower',
-    minutes:     pickerMinutes,
-    seconds:     pickerSeconds,
-    rounds:      pickerRounds,
-    speedWhole,
-    speedDecimal,
+    title: pickerTitle,
+    columns,
+    separator: HAS_SEPARATOR[activePicker.type],
+    selected,
   } : null;
 
   return {
