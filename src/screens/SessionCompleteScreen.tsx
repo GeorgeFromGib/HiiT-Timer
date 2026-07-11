@@ -7,6 +7,7 @@ import { useTranslation } from '../lib/i18n';
 import PhaseStrip from '../components/PhaseStrip';
 import { fmtTimer, type Segment } from '../lib/workout';
 import type { Session } from '../lib/sessions';
+import type { SessionStats } from '../hooks/useWorkoutSession';
 
 /** Stat-card time format: always mm:ss (or h:mm:ss), never bare seconds. */
 function fmtStatTime(s: number): string {
@@ -15,21 +16,14 @@ function fmtStatTime(s: number): string {
 }
 
 interface Props {
-  session:           Session;
-  segments:          Segment[];
-  totalDur:          number;
-  congratsMsg:       string;
-  skippedCount:      number;
-  skippedSecs:       number;
-  skippedWorkSecs:   number;
-  extendedSecs:      number;
-  addedRoundSecs:    number;
-  skipBackSecs:      number;
-  skipBackWorkSecs:  number;
-  skipBackWorkCount: number;
-  showConfetti:      boolean;
-  onDone:            () => void;
-  onRepeat:          () => void;
+  session:      Session;
+  segments:     Segment[];
+  totalDur:     number;
+  congratsMsg:  string;
+  stats:        SessionStats;
+  showConfetti: boolean;
+  onDone:       () => void;
+  onRepeat:     () => void;
 }
 
 function StatCard({ label, value, accent, T, uiScale }: { label: string; value: string; accent?: string; T: ThemeTokens; uiScale: number }) {
@@ -42,7 +36,11 @@ function StatCard({ label, value, accent, T, uiScale }: { label: string; value: 
   );
 }
 
-export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, skippedCount, skippedSecs, skippedWorkSecs, extendedSecs, addedRoundSecs, skipBackSecs, skipBackWorkSecs, skipBackWorkCount, showConfetti, onDone, onRepeat }: Props) {
+export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, stats, showConfetti, onDone, onRepeat }: Props) {
+  const {
+    skippedCount, skippedSecs, skippedWorkSecs, extendedSecs,
+    addedRoundSecs, skipBackSecs, skipBackWorkSecs, skipBackWorkCount,
+  } = stats;
   const { T } = useTheme();
   const { t } = useTranslation();
   const { height: screenHeight } = useWindowDimensions();
