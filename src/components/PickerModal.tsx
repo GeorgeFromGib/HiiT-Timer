@@ -5,8 +5,10 @@ import WheelColumn from './WheelColumn';
 import type { EditSessionPicker, PickerValues } from '../hooks/useEditSession';
 import { useTranslation } from '../lib/i18n';
 import { pickerRange } from '../lib/speedUnit';
+import { MIN_TARGET_DURATION_MINUTES } from '../hooks/usePickerState';
 
 const MINUTE_LABELS   = Array.from({ length: 60 }, (_, i) => String(i));
+const TARGET_DURATION_LABELS = Array.from({ length: 176 }, (_, i) => String(i + MIN_TARGET_DURATION_MINUTES));
 const SECOND_LABELS   = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const ROUND_LABELS    = Array.from({ length: 99 }, (_, i) => String(i + 1));
 const KMH_WHOLE       = Array.from({ length: pickerRange('km').max + 1 }, (_, i) => String(i));
@@ -72,6 +74,19 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
               <View style={styles.pickerRow}>
                 <WheelColumn
                   values={ROUND_LABELS}
+                  selected={local.rounds}
+                  onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
+                />
+              </View>
+            </>
+          ) : picker?.isDuration ? (
+            <>
+              <View style={styles.pickerUnits}>
+                <Text style={styles.pickerUnitLabel}>{t('picker.min')}</Text>
+              </View>
+              <View style={styles.pickerRow}>
+                <WheelColumn
+                  values={TARGET_DURATION_LABELS}
                   selected={local.rounds}
                   onChange={v => setLocal(prev => ({ ...prev, rounds: v }))}
                 />

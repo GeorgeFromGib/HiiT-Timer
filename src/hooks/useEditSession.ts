@@ -10,6 +10,7 @@ import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import {
   type PresetLevel, DURATION_PRESETS,
   findMatchingDurationPresetForIntervals,
+  computeRoundsForTargetDuration,
 } from '../lib/presets';
 import {
   totalDuration, expandCircuit,
@@ -22,7 +23,7 @@ import { useEasyModeEdit } from './useEasyModeEdit';
 import { useCircuitModeEdit } from './useCircuitModeEdit';
 import { useIntervalListEdit } from './useIntervalListEdit';
 import { useSpeedAndSpinEdit } from './useSpeedAndSpinEdit';
-import { usePickerState, type EditSessionPicker, type PickerValues } from './usePickerState';
+import { usePickerState, MIN_TARGET_DURATION_MINUTES, type EditSessionPicker, type PickerValues } from './usePickerState';
 
 // Re-export shared types — EditSessionScreen imports these from here
 export type { LocalInterval, TimeField, SavePayload, EditSessionPicker, PickerValues };
@@ -45,6 +46,7 @@ export interface EditSessionDraft {
   runSpeeds:           RunSpeeds;
   spinValues:          SpinValues;
   activeTimingPreset:  PresetLevel | null;
+  targetLengthMinutes: number;
   activeSpeedPreset:   PresetLevel | null;
   activeSpinPreset:    PresetLevel | null;
   hasChanges:          boolean;
@@ -76,6 +78,7 @@ export interface EditSessionInterface {
   commitPicker:             (values: PickerValues) => void;
   dismissPicker:            () => void;
   applyDurationPreset:      (level: PresetLevel) => void;
+  openCustomLengthPicker:   () => void;
   applySpeedPreset:         (level: PresetLevel) => void;
   applySpinPreset:          (level: PresetLevel) => void;
   setActivityLabel:         (key: string, label: string) => void;
@@ -113,7 +116,7 @@ export function useEditSession(
     if (!existing && initialActivityType === 'spinning') return 'spinning';
     return undefined;
   });
-  const [timingDirty, setTimingDirty] = useState(false);
+  const [targetLengthMinutes, setTargetLengthMinutes] = useState(15);
   // True when Easy-mode fields (warmup/work/rest/cooldown/rounds) have changed since the
   // Advanced interval list was last built from them — signals toggleMode() to rebuild.
   const [easyDirty, setEasyDirty] = useState(false);
@@ -132,6 +135,11 @@ export function useEditSession(
   const intervalEdit = useIntervalListEdit(existing);
   const speedSpinEdit = useSpeedAndSpinEdit(existing);
 
+  // Derived from each sub-hook's own preset checkpoint — not manually flagged at each call site.
+  const timingDirty = mode === 'advanced' ? intervalEdit.isTimingDirty
+                     : mode === 'easy'     ? easyEdit.isTimingDirty
+                     : false;
+
   const pickerState = usePickerState(
     intervalEdit.intervals,
     easyEdit.fieldValues,
@@ -144,12 +152,12 @@ export function useEditSession(
     (result) => {
       if (result.type === 'rounds') {
         easyEdit.setRounds(result.value);
-        setTimingDirty(true);
         setEasyDirty(true);
       } else if (result.type === 'field') {
         easyEdit.setField(result.field, result.secs);
-        setTimingDirty(true);
         setEasyDirty(true);
+      } else if (result.type === 'targetDuration') {
+        applyTimePresetMinutes(result.minutes);
       } else if (result.type === 'speed') {
         speedSpinEdit.setRunSpeed(result.field, result.kmh);
       } else if (result.type === 'intervalSpeed') {
@@ -164,19 +172,14 @@ export function useEditSession(
         intervalEdit.setIntervalPower(result.key, result.value);
       } else if (result.type === 'circuitWarmup') {
         circuitEdit.set('warmup', result.secs);
-        setTimingDirty(true);
       } else if (result.type === 'circuitCooldown') {
         circuitEdit.set('cooldown', result.secs);
-        setTimingDirty(true);
       } else if (result.type === 'circuitRest') {
         circuitEdit.set('rest', result.secs);
-        setTimingDirty(true);
       } else if (result.type === 'circuitCount') {
         circuitEdit.set('count', result.value);
-        setTimingDirty(true);
       } else if (result.type === 'interval') {
         intervalEdit.setIntervalDuration(result.key, result.secs);
-        setTimingDirty(true);
       }
     },
   );
@@ -226,33 +229,32 @@ export function useEditSession(
   }
 
   function cyclePhase(key: string) {
-    setTimingDirty(true);
     const phases = mode === 'circuit' ? CIRCUIT_PHASES : PHASES;
     intervalEdit.cyclePhase(key, phases);
   }
 
   function addInterval(type: Phase) {
-    setTimingDirty(true);
     intervalEdit.addInterval(type);
   }
 
   function duplicateInterval(key: string) {
-    setTimingDirty(true);
     intervalEdit.duplicateInterval(key);
   }
 
   function removeInterval(key: string) {
-    setTimingDirty(true);
     intervalEdit.removeInterval(key);
   }
 
   function applyDurationPreset(level: PresetLevel) {
     const p = DURATION_PRESETS[level];
     const doApply = () => {
-      easyEdit.applyPresetValues(p.warmup, p.work, p.rest, p.rounds, p.cooldown, level);
-      setTimingDirty(false);
+      const rounds = computeRoundsForTargetDuration(
+        easyEdit.fieldValues.warmup, p.work, p.rest, easyEdit.fieldValues.cooldown,
+        targetLengthMinutes * 60,
+      );
+      easyEdit.applyIntensityPreset(p.work, p.rest, rounds, level);
       if (mode === 'advanced') {
-        const config = { warmup: p.warmup, high: Math.max(1, p.work), low: p.rest, rounds: Math.max(1, p.rounds), cooldown: p.cooldown };
+        const config = { warmup: easyEdit.fieldValues.warmup, high: Math.max(1, p.work), low: p.rest, rounds, cooldown: easyEdit.fieldValues.cooldown };
         intervalEdit.buildFromEasy(config);
         setEasyDirty(false);
       } else {
@@ -268,6 +270,19 @@ export function useEditSession(
     } else {
       doApply();
     }
+  }
+
+  function applyTimePresetMinutes(minutes: number) {
+    const rounds = computeRoundsForTargetDuration(
+      easyEdit.fieldValues.warmup, easyEdit.fieldValues.work, easyEdit.fieldValues.rest, easyEdit.fieldValues.cooldown,
+      minutes * 60,
+    );
+    easyEdit.setRounds(rounds);
+    setTargetLengthMinutes(minutes);
+  }
+
+  function openCustomLengthPicker() {
+    pickerState.openTargetDurationPicker(targetLengthMinutes);
   }
 
   function openIntervalSpeedPicker(key: string, isMiles: boolean) {
@@ -362,6 +377,7 @@ export function useEditSession(
     runSpeeds:  speedSpinEdit.runSpeeds,
     spinValues: speedSpinEdit.spinValues,
     activeTimingPreset,
+    targetLengthMinutes,
     activeSpeedPreset: speedSpinEdit.activeSpeedPreset,
     activeSpinPreset:  speedSpinEdit.activeSpinPreset,
     hasChanges,
@@ -381,10 +397,10 @@ export function useEditSession(
     addInterval,
     duplicateInterval,
     removeInterval,
-    clearIntervals:   () => { setTimingDirty(true); intervalEdit.clearIntervals(); },
-    reorderIntervals: (data: LocalInterval[]) => { setTimingDirty(true); intervalEdit.reorderIntervals(data); },
+    clearIntervals:   intervalEdit.clearIntervals,
+    reorderIntervals: intervalEdit.reorderIntervals,
     openFieldPicker:  pickerState.openFieldPicker,
-    setFieldEnabled:  (field: TimeField, enabled: boolean) => { easyEdit.setFieldEnabled(field, enabled); setTimingDirty(true); setEasyDirty(true); },
+    setFieldEnabled:  (field: TimeField, enabled: boolean) => { easyEdit.setFieldEnabled(field, enabled); setEasyDirty(true); },
     openRoundsPicker: () => pickerState.openRoundsPicker(easyEdit.rounds),
     openIntervalPicker: pickerState.openIntervalPicker,
     openSpeedPicker:    pickerState.openSpeedPicker,
@@ -393,6 +409,7 @@ export function useEditSession(
     commitPicker:    pickerState.commitPicker,
     dismissPicker:   pickerState.dismissPicker,
     applyDurationPreset,
+    openCustomLengthPicker,
     applySpeedPreset: speedSpinEdit.applySpeedPreset,
     applySpinPreset:  speedSpinEdit.applySpinPreset,
     setActivityLabel: intervalEdit.setActivityLabel,

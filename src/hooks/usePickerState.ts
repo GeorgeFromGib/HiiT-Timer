@@ -4,10 +4,13 @@ import { type RunSpeeds, type SpinValues } from '../lib/sessions';
 import { fromDisplay } from '../lib/speedUnit';
 import { type LocalInterval, type TimeField } from './editSessionTypes';
 
+export const MIN_TARGET_DURATION_MINUTES = 5;
+
 export type ActivePicker =
   | { type: 'field'; field: TimeField }
   | { type: 'interval'; key: string }
   | { type: 'rounds' }
+  | { type: 'targetDuration' }
   | { type: 'speed'; field: keyof RunSpeeds; isMiles: boolean }
   | { type: 'intervalSpeed'; key: string; isMiles: boolean }
   | { type: 'circuitWarmup' }
@@ -23,6 +26,7 @@ export type CommitResult =
   | { type: 'field';           field: TimeField;       secs: number }
   | { type: 'interval';        key: string;            secs: number }
   | { type: 'rounds';          value: number }
+  | { type: 'targetDuration';  minutes: number }
   | { type: 'speed';           field: keyof RunSpeeds; kmh: number }
   | { type: 'intervalSpeed';   key: string;            kmh: number }
   | { type: 'circuitWarmup';   secs: number }
@@ -38,6 +42,7 @@ export interface EditSessionPicker {
   title:        string;
   isRounds:     boolean;
   roundsLabel?: string;
+  isDuration:   boolean;
   isSpeed:      boolean;
   speedUnit:    'km' | 'miles';
   isResistance: boolean;
@@ -77,6 +82,7 @@ export function usePickerState(
     if (activePicker.type === 'circuitCooldown') return i18n.t('phases.cooldown');
     if (activePicker.type === 'circuitRest') return i18n.t('edit.circuitRest');
     if (activePicker.type === 'rounds') return i18n.t('picker.roundsTitle');
+    if (activePicker.type === 'targetDuration') return i18n.t('picker.sessionLengthTitle');
     if (activePicker.type === 'field') return i18n.t('phases.' + activePicker.field);
     if (activePicker.type === 'speed') {
       const phase = activePicker.field.replace('Speed', '');
@@ -102,6 +108,11 @@ export function usePickerState(
   function openRoundsPicker(currentRounds: number) {
     setPickerRounds(currentRounds - 1);
     setActivePicker({ type: 'rounds' });
+  }
+
+  function openTargetDurationPicker(currentMinutes: number) {
+    setPickerRounds(Math.max(0, currentMinutes - MIN_TARGET_DURATION_MINUTES));
+    setActivePicker({ type: 'targetDuration' });
   }
 
   function openIntervalPicker(key: string) {
@@ -175,6 +186,8 @@ export function usePickerState(
     if (!activePicker) return;
     if (activePicker.type === 'rounds') {
       onCommit({ type: 'rounds', value: values.rounds + 1 });
+    } else if (activePicker.type === 'targetDuration') {
+      onCommit({ type: 'targetDuration', minutes: values.rounds + MIN_TARGET_DURATION_MINUTES });
     } else if (activePicker.type === 'speed') {
       const displayVal = values.speedWhole + values.speedDecimal / 10;
       const kmh = fromDisplay(displayVal, activePicker.isMiles ? 'miles' : 'km');
@@ -216,6 +229,7 @@ export function usePickerState(
     roundsLabel: activePicker.type === 'circuitCount' ? i18n.t('picker.circuitsTitle')
                : activePicker.type === 'rounds'       ? i18n.t('picker.rounds')
                : undefined,
+    isDuration:   activePicker.type === 'targetDuration',
     isSpeed:      activePicker.type === 'speed' || activePicker.type === 'intervalSpeed',
     speedUnit:    (activePicker.type === 'speed' || activePicker.type === 'intervalSpeed') && activePicker.isMiles ? 'miles' : 'km',
     isResistance: activePicker.type === 'spinResistance' || activePicker.type === 'intervalResistance',
@@ -231,6 +245,7 @@ export function usePickerState(
     picker,
     openFieldPicker,
     openRoundsPicker,
+    openTargetDurationPicker,
     openIntervalPicker,
     openSpeedPicker,
     openIntervalSpeedPicker,

@@ -9,6 +9,9 @@ type EasyConfig = { warmup: number; high: number; low: number; rounds: number; c
 export interface IntervalListEdit {
   intervals:               LocalInterval[];
   hasChanges:              boolean;
+  // True when the interval list has diverged from the last buildFromEasy() call —
+  // signals the coordinator to warn before a new preset overwrites it.
+  isTimingDirty:           boolean;
   cyclePhase:              (key: string, phases: Phase[]) => void;
   addInterval:             (type: Phase) => void;
   duplicateInterval:       (key: string) => void;
@@ -37,6 +40,15 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
 
   const hasChanges = useMemo(
     () => draft.isDirty(intervals.map(({ _key, ...iv }) => iv)),
+    [intervals],
+  );
+
+  // Separate, resettable checkpoint: tracks divergence since the last buildFromEasy()
+  // (rather than since the session was loaded), so the coordinator can warn before overwriting.
+  const presetCheckpoint = useDraft<Interval[]>(initIntervals);
+
+  const isTimingDirty = useMemo(
+    () => presetCheckpoint.isDirty(intervals.map(({ _key, ...iv }) => iv)),
     [intervals],
   );
 
@@ -116,11 +128,13 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
   }
 
   function buildFromEasy(config: EasyConfig) {
-    setIntervals(buildIntervalsFromEasy(config).map(toLocal));
+    const built = buildIntervalsFromEasy(config);
+    setIntervals(built.map(toLocal));
+    presetCheckpoint.commit(built);
   }
 
   return {
-    intervals, hasChanges,
+    intervals, hasChanges, isTimingDirty,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     setActivityLabel,
     setIntervalDuration, setIntervalSpeed, clearIntervalSpeed,

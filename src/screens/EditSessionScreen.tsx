@@ -24,6 +24,7 @@ import { useEditSession, type LocalInterval, type TimeField } from '../hooks/use
 import { useSettings } from '../lib/settingsContext';
 import { i18n, type Language, useTranslation } from '../lib/i18n';
 import PresetStrip from '../components/EditSession/PresetStrip';
+import TimePresetStrip from '../components/EditSession/TimePresetStrip';
 import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import { SettingsToggle } from '../components/SettingsToggle';
@@ -61,7 +62,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     clearIntervalResistance, clearIntervalPower,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     commitPicker, dismissPicker,
-    applyDurationPreset, applySpeedPreset, applySpinPreset,
+    applyDurationPreset, openCustomLengthPicker, applySpeedPreset, applySpinPreset,
     setActivityLabel,
     buildSavePayload,
   } = useEditSession(existing, onBack, activityType, folderId);
@@ -70,7 +71,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     name, isAdvanced, isCircuit, isSpinning, fieldValues, rounds, intervals,
     previewSegments, previewTotal,
     activityType: draftActivityType, runSpeeds, spinValues,
-    activeTimingPreset, activeSpeedPreset, activeSpinPreset, hasChanges,
+    activeTimingPreset, targetLengthMinutes, activeSpeedPreset, activeSpinPreset, hasChanges,
     circuitWarmup, circuitCooldown, circuitRest, circuitCount,
   } = draft;
   const isRun = draftActivityType === 'run';
@@ -387,6 +388,11 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           ) : (
             <>
               {/* Easy mode timing */}
+              <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>{t('edit.sessionLength')}</Text>
+                <TimePresetStrip minutes={targetLengthMinutes} onCustom={openCustomLengthPicker} />
+              </View>
+
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
                 <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
