@@ -67,6 +67,7 @@ export interface EditSessionInterface {
   clearIntervals:           () => void;
   reorderIntervals:         (data: LocalInterval[]) => void;
   openFieldPicker:          (field: TimeField) => void;
+  setFieldEnabled:          (field: TimeField, enabled: boolean) => void;
   openRoundsPicker:         () => void;
   openIntervalPicker:       (key: string) => void;
   openSpeedPicker:          (field: keyof RunSpeeds, displayValue: number, isMiles: boolean) => void;
@@ -113,6 +114,9 @@ export function useEditSession(
     return undefined;
   });
   const [timingDirty, setTimingDirty] = useState(false);
+  // True when Easy-mode fields (warmup/work/rest/cooldown/rounds) have changed since the
+  // Advanced interval list was last built from them — signals toggleMode() to rebuild.
+  const [easyDirty, setEasyDirty] = useState(false);
 
   // Change tracking for coordinator-owned state
   const initialName            = useRef(existing?.name ?? '').current;
@@ -141,9 +145,11 @@ export function useEditSession(
       if (result.type === 'rounds') {
         easyEdit.setRounds(result.value);
         setTimingDirty(true);
+        setEasyDirty(true);
       } else if (result.type === 'field') {
         easyEdit.setField(result.field, result.secs);
         setTimingDirty(true);
+        setEasyDirty(true);
       } else if (result.type === 'speed') {
         speedSpinEdit.setRunSpeed(result.field, result.kmh);
       } else if (result.type === 'intervalSpeed') {
@@ -193,8 +199,9 @@ export function useEditSession(
 
   function toggleMode(advanced: boolean) {
     if (advanced) {
-      if (intervalEdit.intervals.length === 0) {
+      if (intervalEdit.intervals.length === 0 || easyDirty) {
         intervalEdit.buildFromEasy(easyEdit.easyConfig);
+        setEasyDirty(false);
       }
       setMode('advanced');
     } else {
@@ -213,6 +220,7 @@ export function useEditSession(
       easyEdit.setField('work', result.work);
       easyEdit.setField('rest', result.rest);
       easyEdit.setRounds(result.rounds);
+      setEasyDirty(false);
       setMode('easy');
     }
   }
@@ -246,6 +254,9 @@ export function useEditSession(
       if (mode === 'advanced') {
         const config = { warmup: p.warmup, high: Math.max(1, p.work), low: p.rest, rounds: Math.max(1, p.rounds), cooldown: p.cooldown };
         intervalEdit.buildFromEasy(config);
+        setEasyDirty(false);
+      } else {
+        setEasyDirty(true);
       }
     };
     if (timingDirty) {
@@ -373,6 +384,7 @@ export function useEditSession(
     clearIntervals:   () => { setTimingDirty(true); intervalEdit.clearIntervals(); },
     reorderIntervals: (data: LocalInterval[]) => { setTimingDirty(true); intervalEdit.reorderIntervals(data); },
     openFieldPicker:  pickerState.openFieldPicker,
+    setFieldEnabled:  (field: TimeField, enabled: boolean) => { easyEdit.setFieldEnabled(field, enabled); setTimingDirty(true); setEasyDirty(true); },
     openRoundsPicker: () => pickerState.openRoundsPicker(easyEdit.rounds),
     openIntervalPicker: pickerState.openIntervalPicker,
     openSpeedPicker:    pickerState.openSpeedPicker,

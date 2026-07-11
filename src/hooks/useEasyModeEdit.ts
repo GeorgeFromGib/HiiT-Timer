@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useDraft } from './useDraft';
 import { type Session } from '../lib/sessions';
 import { type PresetLevel, DURATION_PRESETS, findMatchingDurationPreset } from '../lib/presets';
@@ -13,6 +13,7 @@ export interface EasyModeEdit {
   activeTimingPreset: PresetLevel | null;
   hasChanges:         boolean;
   setField:           (field: TimeField, value: number) => void;
+  setFieldEnabled:    (field: TimeField, enabled: boolean) => void;
   setRounds:          (value: number) => void;
   applyPresetValues:  (warmup: number, work: number, rest: number, rounds: number, cooldown: number, level: PresetLevel) => void;
   reset:              () => void;
@@ -46,6 +47,11 @@ export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
     warmup: setWarmup, work: setWork, rest: setRest, cooldown: setCooldown,
   };
 
+  // Remembers the last non-zero duration per field so re-enabling warmup/cooldown restores it.
+  const lastNonZero = useRef<Record<TimeField, number>>({
+    warmup: initW || DEFAULTS.warmup, work: initWk, rest: initR, cooldown: initC || DEFAULTS.cooldown,
+  });
+
   const draft = useDraft({ warmup: initW, work: initWk, rest: initR, rounds: initRd, cooldown: initC });
 
   const hasChanges = useMemo(
@@ -55,7 +61,12 @@ export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
 
   function setField(field: TimeField, value: number) {
     setters[field](value);
+    if (value > 0) lastNonZero.current[field] = value;
     setActiveTimingPreset(null);
+  }
+
+  function setFieldEnabled(field: TimeField, enabled: boolean) {
+    setField(field, enabled ? lastNonZero.current[field] : 0);
   }
 
   function setRounds(value: number) {
@@ -93,6 +104,6 @@ export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
   return {
     fieldValues, rounds: rounds_, easyConfig,
     activeTimingPreset, hasChanges,
-    setField, setRounds, applyPresetValues, reset,
+    setField, setFieldEnabled, setRounds, applyPresetValues, reset,
   };
 }

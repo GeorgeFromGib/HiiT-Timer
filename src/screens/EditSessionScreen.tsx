@@ -26,6 +26,7 @@ import { i18n, type Language, useTranslation } from '../lib/i18n';
 import PresetStrip from '../components/EditSession/PresetStrip';
 import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
+import { SettingsToggle } from '../components/SettingsToggle';
 
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const unit = isMiles ? 'miles' : 'km';
@@ -52,7 +53,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     draft, picker,
     setName,
     toggleMode,
-    openFieldPicker, openRoundsPicker, openIntervalPicker, openSpeedPicker,
+    openFieldPicker, setFieldEnabled, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
     openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker,
     openSpinResistancePicker, openSpinPowerPicker,
@@ -87,11 +88,10 @@ export default function EditSessionScreen({ session: existing, activityType, fol
         ? t('edit.newSpinningTitle')
         : t('edit.newTitle');
 
+  // Warm-up and cool-down get their own toggleable rows (see easy-mode block below); this grid is work/rest only.
   const timeFields: { label: string; field: TimeField }[] = [
-    { label: t('phases.warmup'),   field: 'warmup'   },
     { label: t('phases.work'),     field: 'work'     },
     { label: t('phases.rest'),     field: 'rest'     },
-    { label: t('phases.cooldown'), field: 'cooldown' },
   ];
 
   const speedFields: { label: string; field: keyof RunSpeeds }[] = [
@@ -390,6 +390,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
                 <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
+
                 <Text style={[styles.fieldLabel, { marginTop: 8 }]}>
                   {t('edit.intervalSetup')}{previewTotal > 0 ? <Text style={styles.intervalSetupTotal}>{' '}[{fmtDuration(previewTotal)}]</Text> : null}
                 </Text>
@@ -412,6 +413,44 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <Pressable style={styles.configInput} onPress={openRoundsPicker}>
                       <Text style={styles.configInputText}>{rounds}</Text>
                     </Pressable>
+                  </View>
+                </View>
+
+                <View style={styles.configRow}>
+                  <Text style={styles.configCellLabel}>{t('phases.warmup')}</Text>
+                  <View style={styles.configRowInline}>
+                    <Pressable
+                      style={[styles.configInput, { flex: 1 }, fieldValues.warmup === 0 && styles.configInputDisabled]}
+                      onPress={() => openFieldPicker('warmup')}
+                      disabled={fieldValues.warmup === 0}
+                    >
+                      <Text style={styles.configInputText}>
+                        {fieldValues.warmup > 0 ? fmtDuration(fieldValues.warmup) : '—'}
+                      </Text>
+                    </Pressable>
+                    <SettingsToggle
+                      value={fieldValues.warmup > 0}
+                      onChange={v => setFieldEnabled('warmup', v)}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.configRow}>
+                  <Text style={styles.configCellLabel}>{t('phases.cooldown')}</Text>
+                  <View style={styles.configRowInline}>
+                    <Pressable
+                      style={[styles.configInput, { flex: 1 }, fieldValues.cooldown === 0 && styles.configInputDisabled]}
+                      onPress={() => openFieldPicker('cooldown')}
+                      disabled={fieldValues.cooldown === 0}
+                    >
+                      <Text style={styles.configInputText}>
+                        {fieldValues.cooldown > 0 ? fmtDuration(fieldValues.cooldown) : '—'}
+                      </Text>
+                    </Pressable>
+                    <SettingsToggle
+                      value={fieldValues.cooldown > 0}
+                      onChange={v => setFieldEnabled('cooldown', v)}
+                    />
                   </View>
                 </View>
               </View>
@@ -571,6 +610,14 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     color: T.subText,
   },
 
+  configRow: {
+    gap: 4,
+  },
+  configRowInline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
   configGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -594,6 +641,9 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  configInputDisabled: {
+    opacity: 0.5,
   },
   configInputText: {
     fontFamily: 'ChakraPetch_700Bold',
