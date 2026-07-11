@@ -33,11 +33,11 @@ import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import OnboardingModal, { CURRENT_ONBOARDING_VERSION } from './src/components/OnboardingModal';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
-import { DEFAULT_SETTINGS, detectSpeedUnit, loadSettings, saveSettings, type Settings, type ThemeKey } from './src/lib/settings';
+import { type ThemeKey } from './src/lib/settings';
 import { SettingsContext } from './src/lib/settingsContext';
-import { detectLanguage, i18n } from './src/lib/i18n';
 import { PremiumContext } from './src/lib/premiumContext';
 import { usePremiumState } from './src/hooks/usePremiumState';
+import { useSettingsState } from './src/hooks/useSettingsState';
 import { configureAudioSession } from './src/lib/audio';
 
 function RouteScreen({ children }: { children: ReactNode }) {
@@ -64,11 +64,7 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [route, setRouteState] = useState<Route>({ name: 'Sessions' });
   const [previousRoute, setPreviousRoute] = useState<Route>({ name: 'Sessions' });
-  const [themeKey, setThemeKey] = useState<ThemeKey>('daybreak');
-  const [settings, setSettings] = useState<Settings>({
-    ...DEFAULT_SETTINGS,
-    language: detectLanguage(),
-  });
+  const { settings, loading: settingsLoading, updateSettings } = useSettingsState();
   const premiumState = usePremiumState();
 
   const setRoute = (newRoute: Route) => {
@@ -84,24 +80,15 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    loadSettings().then(s => {
-      const resolved: Settings = {
-        ...s,
-        speedUnit: s.speedUnitIsManuallySet ? s.speedUnit : detectSpeedUnit(),
-        language: s.languageIsManuallySet ? s.language : detectLanguage(),
-      };
-      i18n.locale = resolved.language;
-      setSettings(resolved);
-      setThemeKey(resolved.theme);
-      setShowOnboarding(resolved.onboardingVersion < CURRENT_ONBOARDING_VERSION);
-      if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
-
-      // Set initial route based on folder settings
-      if (!resolved.hideFolders) {
-        setRouteState({ name: 'Folders' });
-      }
-    });
-  }, []);
+    if (settingsLoading) return;
+    setShowOnboarding(settings.onboardingVersion < CURRENT_ONBOARDING_VERSION);
+    // Set initial route based on folder settings — a one-shot decision made when
+    // settings finish loading, not a reactive response to later settings changes.
+    if (!settings.hideFolders) {
+      setRouteState({ name: 'Folders' });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settingsLoading]);
 
   useEffect(() => {
     if (fontsLoaded && audioReady) {
@@ -109,26 +96,12 @@ export default function App() {
     }
   }, [fontsLoaded, audioReady]);
 
-  function updateSettings<K extends keyof Settings>(key: K, value: Settings[K]) {
-    if (key === ('language' satisfies keyof Settings)) i18n.locale = value as 'en' | 'es';
-    if (key === ('theme' satisfies keyof Settings)) setThemeKey(value as ThemeKey);
-    setSettings(prev => {
-      const next: Settings =
-        key === ('speedUnit' satisfies keyof Settings)
-          ? { ...prev, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
-          : key === ('language' satisfies keyof Settings)
-            ? { ...prev, language: value as 'en' | 'es', languageIsManuallySet: true }
-            : { ...prev, [key]: value };
-      saveSettings(next);
-      return next;
-    });
-  }
-
-  const setTheme = (key: ThemeKey) => setThemeKey(key);
+  const setTheme = (key: ThemeKey) => updateSettings('theme', key);
 
   if (!fontsLoaded || !audioReady) return null;
 
   const goBack = () => setRoute(previousRoute);
+  const themeKey = settings.theme;
   const T = THEME_TOKENS[themeKey];
 
   return (
