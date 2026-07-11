@@ -83,6 +83,16 @@ export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   return map[phase];
 }
 
+// Merges per-activity-type values onto each segment. `intervals` supplies per-interval
+// overrides in advanced mode (undefined in easy mode, where there's nothing to override).
+function withActivityValues<T extends object>(
+  base: Segment[],
+  intervals: Interval[] | undefined,
+  valueForPhase: (phase: Phase, override: Interval | undefined) => T,
+): (Segment & T)[] {
+  return base.map((seg, i) => ({ ...seg, ...valueForPhase(seg.phase, intervals?.[i]) }));
+}
+
 export function getSessionSegments(session: Session): Segment[] {
   if (session.mode === 'circuit') {
     return expandCircuit(session.intervals, session.circuits, session.warmup, session.cooldown, session.circuitRest);
@@ -90,30 +100,22 @@ export function getSessionSegments(session: Session): Segment[] {
   const base = session.mode === 'advanced'
     ? intervalsToSegments(session.intervals)
     : expandWorkout(session.config);
+  const overrides = session.mode === 'advanced' ? session.intervals : undefined;
+
   if (session.activityType === 'run' && session.runSpeeds) {
-    if (session.mode === 'advanced') {
-      return base.map((seg, i) => ({
-        ...seg,
-        speed: session.intervals[i].speed ?? speedForPhase(seg.phase, session.runSpeeds!),
-      }));
-    }
-    return base.map(seg => ({ ...seg, speed: speedForPhase(seg.phase, session.runSpeeds!) }));
+    const runSpeeds = session.runSpeeds;
+    return withActivityValues(base, overrides, (phase, iv) => ({
+      speed: iv?.speed ?? speedForPhase(phase, runSpeeds),
+    }));
   }
   if (session.activityType === 'spinning') {
     const sv = session.spinValues ?? DEFAULT_SPIN_VALUES;
-    if (session.mode === 'advanced') {
-      return base.map((seg, i) => {
-        const defaults = spinValueForPhase(seg.phase, sv);
-        return {
-          ...seg,
-          resistance: session.intervals[i].resistance ?? defaults.resistance,
-          power:      session.intervals[i].power      ?? defaults.power,
-        };
-      });
-    }
-    return base.map(seg => {
-      const { resistance, power } = spinValueForPhase(seg.phase, sv);
-      return { ...seg, resistance, power };
+    return withActivityValues(base, overrides, (phase, iv) => {
+      const defaults = spinValueForPhase(phase, sv);
+      return {
+        resistance: iv?.resistance ?? defaults.resistance,
+        power:      iv?.power      ?? defaults.power,
+      };
     });
   }
   return base;
