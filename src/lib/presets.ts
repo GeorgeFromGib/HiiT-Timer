@@ -1,12 +1,6 @@
-import { type Interval, tryConvertToEasy } from './workout';
 import { type RunSpeeds, type SpinValues } from './sessions';
 
 export type PresetLevel = '1' | '2' | '3' | '4' | '5' | '6';
-
-export interface DurationPreset {
-  work: number; // seconds
-  rest: number;
-}
 
 export interface SpeedPreset {
   warmupSpeed:   number; // km/h
@@ -25,15 +19,6 @@ export interface SpinPreset {
   cooldownResistance: number;
   cooldownPower:      number;
 }
-
-export const DURATION_PRESETS: Record<PresetLevel, DurationPreset> = {
-  '1': { work: 20, rest: 40 },
-  '2': { work: 30, rest: 30 },
-  '3': { work: 45, rest: 15 },
-  '4': { work: 50, rest: 10 },
-  '5': { work: 55, rest: 10 },
-  '6': { work: 60, rest:  5 },
-};
 
 export const SPEED_PRESETS: Record<PresetLevel, SpeedPreset> = {
   '1': { warmupSpeed:  5, workSpeed:  8, restSpeed:  5, cooldownSpeed: 4.5 },
@@ -56,36 +41,12 @@ export const SPIN_PRESETS: Record<PresetLevel, SpinPreset> = {
 
 const ALL_LEVELS: PresetLevel[] = ['1', '2', '3', '4', '5', '6'];
 
-export function findMatchingDurationPreset(work: number, rest: number): PresetLevel | null {
-  return ALL_LEVELS.find(level => {
-    const p = DURATION_PRESETS[level];
-    return p.work === work && p.rest === rest;
-  }) ?? null;
-}
-
-export function findMatchingDurationPresetForIntervals(intervals: Interval[]): PresetLevel | null {
-  const result = tryConvertToEasy(intervals);
-  if (!result.ok) return null;
-  return findMatchingDurationPreset(result.work, result.rest);
-}
-
 export function findMatchingSpeedPreset(speeds: RunSpeeds): PresetLevel | null {
   return ALL_LEVELS.find(level => {
     const p = SPEED_PRESETS[level];
     return p.warmupSpeed === speeds.warmupSpeed && p.workSpeed === speeds.workSpeed &&
            p.restSpeed === speeds.restSpeed && p.cooldownSpeed === speeds.cooldownSpeed;
   }) ?? null;
-}
-
-/** Solves for the round count that brings warmup + rounds*(work+rest) + cooldown as close as possible to targetSeconds. */
-export function computeRoundsForTargetDuration(
-  warmup: number, work: number, rest: number, cooldown: number, targetSeconds: number,
-): number {
-  const perRound = work + rest;
-  if (perRound <= 0) return 1;
-  const available = targetSeconds - warmup - cooldown;
-  if (available <= 0) return 1;
-  return Math.max(1, Math.round(available / perRound));
 }
 
 export function findMatchingSpinPreset(values: SpinValues): PresetLevel | null {

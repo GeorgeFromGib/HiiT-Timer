@@ -145,6 +145,17 @@ export type ConvertToEasyResult =
   | { ok: true; warmup: number; work: number; rest: number; rounds: number; cooldown: number }
   | { ok: false; reasonKey: string; reasonParams?: Record<string, string | number> };
 
+/** Solves for the round count that brings warmup + rounds*(work+rest) + cooldown as close as possible to targetSeconds. */
+export function computeRoundsForTargetDuration(
+  warmup: number, work: number, rest: number, cooldown: number, targetSeconds: number,
+): number {
+  const perRound = work + rest;
+  if (perRound <= 0) return 1;
+  const available = targetSeconds - warmup - cooldown;
+  if (available <= 0) return 1;
+  return Math.max(1, Math.round(available / perRound));
+}
+
 export function buildIntervalsFromEasy(cfg: WorkoutConfig): Interval[] {
   const intervals: Interval[] = [];
   if (cfg.warmup > 0)   intervals.push({ type: 'warmup', dur: cfg.warmup });

@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 import { useDraft } from './useDraft';
 import { type Session } from '../lib/sessions';
-import { type PresetLevel, findMatchingDurationPreset } from '../lib/presets';
+import { type PresetLevel } from '../lib/presets';
+import { findMatchingIntensityPreset } from '../lib/intensityPresets';
 import { type TimeField } from './editSessionTypes';
 
 type EasyConfig = { warmup: number; high: number; low: number; rounds: number; cooldown: number };
@@ -39,7 +40,7 @@ export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
 
   const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() =>
     initial?.mode === 'easy'
-      ? findMatchingDurationPreset(initial.config.high, initial.config.low)
+      ? findMatchingIntensityPreset(initial.config.high, initial.config.low)
       : null
   );
 

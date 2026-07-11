@@ -7,13 +7,10 @@ import {
   newId,
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
+import { type PresetLevel } from '../lib/presets';
+import { INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
 import {
-  type PresetLevel, DURATION_PRESETS,
-  findMatchingDurationPresetForIntervals,
-  computeRoundsForTargetDuration,
-} from '../lib/presets';
-import {
-  totalDuration, expandCircuit,
+  totalDuration, expandCircuit, computeRoundsForTargetDuration,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
 import { toDisplay } from '../lib/speedUnit';
@@ -246,7 +243,7 @@ export function useEditSession(
   }
 
   function applyDurationPreset(level: PresetLevel) {
-    const p = DURATION_PRESETS[level];
+    const p = INTENSITY_PRESETS[level];
     const doApply = () => {
       const rounds = computeRoundsForTargetDuration(
         easyEdit.fieldValues.warmup, p.work, p.rest, easyEdit.fieldValues.cooldown,
@@ -360,7 +357,7 @@ export function useEditSession(
   ]);
 
   const activeTimingPreset: PresetLevel | null = mode === 'advanced'
-    ? findMatchingDurationPresetForIntervals(intervalEdit.intervals.map(({ _key, ...iv }) => iv))
+    ? findMatchingIntensityPresetForIntervals(intervalEdit.intervals.map(({ _key, ...iv }) => iv))
     : easyEdit.activeTimingPreset;
 
   const draft: EditSessionDraft = {
