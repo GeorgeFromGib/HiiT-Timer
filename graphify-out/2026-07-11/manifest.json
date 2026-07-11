@@ -1,6 +1,6 @@
 {
   "App.tsx": {
-    "mtime": 1783776767.5904553,
+    "mtime": 1783706668.499761,
     "ast_hash": "d4ae0e1b69fa46f6546ee597c6e71793",
     "semantic_hash": ""
   },
@@ -70,7 +70,7 @@
     "semantic_hash": ""
   },
   "src/components/ActivityTypeIcon.tsx": {
-    "mtime": 1783776767.820337,
+    "mtime": 1783709266.0516448,
     "ast_hash": "652e6979282fd161abd108c1fcadfd8e",
     "semantic_hash": ""
   },
@@ -200,7 +200,7 @@
     "semantic_hash": ""
   },
   "src/hooks/useEditSession.ts": {
-    "mtime": 1783776767.8225212,
+    "mtime": 1783708900.4722373,
     "ast_hash": "7347d61298358d525622fcd68e9f4199",
     "semantic_hash": ""
   },
@@ -230,7 +230,7 @@
     "semantic_hash": ""
   },
   "src/hooks/useWorkoutSession.ts": {
-    "mtime": 1783776767.8236332,
+    "mtime": 1783709201.7230356,
     "ast_hash": "a04a40818ecec6d8c19a75735db2cc6b",
     "semantic_hash": ""
   },
@@ -260,7 +260,7 @@
     "semantic_hash": ""
   },
   "src/lib/purchases.ts": {
-    "mtime": 1783776767.8244476,
+    "mtime": 1783708983.7955785,
     "ast_hash": "5f7000627f232e7c860b56f65e622d7d",
     "semantic_hash": ""
   },
@@ -275,12 +275,12 @@
     "semantic_hash": ""
   },
   "src/lib/sessions.ts": {
-    "mtime": 1783776767.8248036,
+    "mtime": 1783709017.2189398,
     "ast_hash": "7a5c11fd47ea51c091fb1cba358f8ebb",
     "semantic_hash": ""
   },
   "src/lib/settings.ts": {
-    "mtime": 1783776767.8251054,
+    "mtime": 1783708965.9002962,
     "ast_hash": "25f7818d48a9e8815183fe173e1a95b6",
     "semantic_hash": ""
   },
@@ -305,22 +305,22 @@
     "semantic_hash": ""
   },
   "src/lib/workout.ts": {
-    "mtime": 1783776767.8255084,
+    "mtime": 1783709158.4185293,
     "ast_hash": "56f94bda4088aad144f6c24e6fd0831c",
     "semantic_hash": ""
   },
   "src/locales/en.ts": {
-    "mtime": 1783776767.8260288,
+    "mtime": 1783706322.6105044,
     "ast_hash": "e54e6dee321533ba7b39c11b55a81a7c",
     "semantic_hash": ""
   },
   "src/locales/es.ts": {
-    "mtime": 1783776767.8264778,
+    "mtime": 1783706326.9728086,
     "ast_hash": "618b81b708e5f786cca5a077a293eaa8",
     "semantic_hash": ""
   },
   "src/locales/fr.ts": {
-    "mtime": 1783776767.8270946,
+    "mtime": 1783706338.1126544,
     "ast_hash": "bc0af49a12dc93cf49620cd64f4113e1",
     "semantic_hash": ""
   },
@@ -335,7 +335,7 @@
     "semantic_hash": ""
   },
   "src/screens/FoldersScreen.tsx": {
-    "mtime": 1783776767.8274715,
+    "mtime": 1783709110.8105378,
     "ast_hash": "1212b5caea9477b8c84d7d31786785f3",
     "semantic_hash": ""
   },
@@ -355,7 +355,7 @@
     "semantic_hash": ""
   },
   "src/screens/SettingsScreen.tsx": {
-    "mtime": 1783776767.8276584,
+    "mtime": 1783705460.8452172,
     "ast_hash": "e609df36767941dea14522980167a733",
     "semantic_hash": ""
   },
@@ -1055,7 +1055,7 @@
     "semantic_hash": ""
   },
   "src/components/FolderIcon.tsx": {
-    "mtime": 1783776767.822104,
+    "mtime": 1783709282.991331,
     "ast_hash": "496ed71058a64095b389b6ec0c4294fa",
     "semantic_hash": ""
   },
@@ -1070,42 +1070,42 @@
     "semantic_hash": ""
   },
   "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md": {
-    "mtime": 1783776767.8113203,
+    "mtime": 1783706697.5284905,
     "ast_hash": "4b2c0a00ce4266d8da997c8c8dcb738c",
     "semantic_hash": ""
   },
   "src/components/FolderEditModal.tsx": {
-    "mtime": 1783776767.8206263,
+    "mtime": 1783709093.6711223,
     "ast_hash": "5ab6e533715c1e983ab1838bfb764661",
     "semantic_hash": ""
   },
   "src/components/OnboardingModal.tsx": {
-    "mtime": 1783776767.8222818,
+    "mtime": 1783706661.8949397,
     "ast_hash": "d57e35739b9cda9f02af4201b5c4417a",
     "semantic_hash": ""
   },
   "src/components/activityIconShapes.ts": {
-    "mtime": 1783776767.8223689,
+    "mtime": 1783709249.8495831,
     "ast_hash": "ca23da9b20c6d99a3ecafd80f744eae8",
     "semantic_hash": ""
   },
   "src/hooks/useHapticBurst.ts": {
-    "mtime": 1783776767.8226407,
+    "mtime": 1783709152.9189582,
     "ast_hash": "681e456928ba5797497f9c18ad37921a",
     "semantic_hash": ""
   },
   "src/hooks/useIntervalListEdit.ts": {
-    "mtime": 1783776767.823219,
+    "mtime": 1783708838.1046028,
     "ast_hash": "6e295904bda643c43c1fdfc760103119",
     "semantic_hash": ""
   },
   "src/hooks/useSpeedAndSpinEdit.ts": {
-    "mtime": 1783776767.8233364,
+    "mtime": 1783708852.5197954,
     "ast_hash": "db6fe59b3e873c9aceaf5c6fb248b308",
     "semantic_hash": ""
   },
   "src/lib/jsonFile.ts": {
-    "mtime": 1783776767.8239207,
+    "mtime": 1783708950.7029047,
     "ast_hash": "7ea347c8230a6fa66f69d7bf0a3e4e29",
     "semantic_hash": ""
   }
