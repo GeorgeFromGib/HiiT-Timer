@@ -17,7 +17,7 @@ export interface EasyModeEdit {
   // signals the coordinator to warn before a new preset overwrites them.
   isTimingDirty:      boolean;
   setField:             (field: TimeField, value: number) => void;
-  setFieldEnabled:      (field: TimeField, enabled: boolean) => void;
+  setFieldEnabled:      (field: TimeField, enabled: boolean) => number;
   setRounds:            (value: number) => void;
   applyIntensityPreset: (work: number, rest: number, rounds: number, level: PresetLevel) => void;
   reset:                () => void;
@@ -75,8 +75,10 @@ export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
     setActiveTimingPreset(null);
   }
 
-  function setFieldEnabled(field: TimeField, enabled: boolean) {
-    setField(field, enabled ? lastNonZero.current[field] : 0);
+  function setFieldEnabled(field: TimeField, enabled: boolean): number {
+    const value = enabled ? lastNonZero.current[field] : 0;
+    setField(field, value);
+    return value;
   }
 
   function setRounds(value: number) {

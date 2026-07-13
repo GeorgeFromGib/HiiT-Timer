@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { i18n } from '../lib/i18n';
-import { Alert } from 'react-native';
+import { appAlert } from '../lib/appAlert';
 import {
   getSessionSegments, speedForPhase, spinValueForPhase,
   type Session, type RunSpeeds, type SpinValues,
@@ -20,7 +20,7 @@ import { useEasyModeEdit } from './useEasyModeEdit';
 import { useCircuitModeEdit } from './useCircuitModeEdit';
 import { useIntervalListEdit } from './useIntervalListEdit';
 import { useSpeedAndSpinEdit } from './useSpeedAndSpinEdit';
-import { usePickerState, MIN_TARGET_DURATION_MINUTES, type EditSessionPicker, type PickerValues } from './usePickerState';
+import { usePickerState, MIN_TARGET_DURATION_MINUTES, MAX_TARGET_DURATION_MINUTES, type EditSessionPicker, type PickerValues } from './usePickerState';
 
 // Re-export shared types — EditSessionScreen imports these from here
 export type { LocalInterval, TimeField, SavePayload, EditSessionPicker, PickerValues };
@@ -137,6 +137,24 @@ export function useEditSession(
                      : mode === 'easy'     ? easyEdit.isTimingDirty
                      : false;
 
+  function warnIfShortDuration(secs: number) {
+    if (secs < 300) {
+      appAlert('warning', i18n.t('alerts.shortWarmupCooldownTitle'), i18n.t('alerts.shortWarmupCooldownMessage'));
+    }
+  }
+
+  // Keeps total session length constant when warmup/work/rest/cooldown changes by re-solving
+  // rounds against the pre-change total, using the field values as they stood before this edit.
+  function recalcRoundsForFieldChange(field: TimeField, newSecs: number) {
+    const { warmup, work, rest, cooldown } = easyEdit.fieldValues;
+    const currentTotal = warmup + easyEdit.rounds * (work + rest) + cooldown;
+    const newWarmup   = field === 'warmup'   ? newSecs : warmup;
+    const newWork     = field === 'work'     ? newSecs : work;
+    const newRest     = field === 'rest'     ? newSecs : rest;
+    const newCooldown = field === 'cooldown' ? newSecs : cooldown;
+    easyEdit.setRounds(computeRoundsForTargetDuration(newWarmup, newWork, newRest, newCooldown, currentTotal));
+  }
+
   const pickerState = usePickerState(
     intervalEdit.intervals,
     easyEdit.fieldValues,
@@ -150,9 +168,12 @@ export function useEditSession(
       if (result.type === 'rounds') {
         easyEdit.setRounds(result.value);
         setEasyDirty(true);
+        setTargetLengthMinutes(nearestTargetMinutes(result.value));
       } else if (result.type === 'field') {
         easyEdit.setField(result.field, result.secs);
         setEasyDirty(true);
+        recalcRoundsForFieldChange(result.field, result.secs);
+        if (result.field === 'warmup' || result.field === 'cooldown') warnIfShortDuration(result.secs);
       } else if (result.type === 'targetDuration') {
         applyTimePresetMinutes(result.minutes);
       } else if (result.type === 'speed') {
@@ -169,8 +190,10 @@ export function useEditSession(
         intervalEdit.setIntervalPower(result.key, result.value);
       } else if (result.type === 'circuitWarmup') {
         circuitEdit.set('warmup', result.secs);
+        warnIfShortDuration(result.secs);
       } else if (result.type === 'circuitCooldown') {
         circuitEdit.set('cooldown', result.secs);
+        warnIfShortDuration(result.secs);
       } else if (result.type === 'circuitRest') {
         circuitEdit.set('rest', result.secs);
       } else if (result.type === 'circuitCount') {
@@ -207,7 +230,8 @@ export function useEditSession(
     } else {
       const result = intervalEdit.tryConvertToEasy(intervalEdit.intervals);
       if (!result.ok) {
-        Alert.alert(
+        appAlert(
+          'error',
           i18n.t('alerts.cannotSwitchEasyTitle'),
           i18n.t(result.reasonKey, result.reasonParams?.phase !== undefined
             ? { ...result.reasonParams, phase: i18n.t('phases.' + result.reasonParams.phase) }
@@ -259,7 +283,8 @@ export function useEditSession(
       }
     };
     if (timingDirty) {
-      Alert.alert(
+      appAlert(
+        'warning',
         i18n.t('alerts.overwriteTitle'),
         i18n.t('alerts.overwriteTimingMessage'),
         [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
@@ -267,6 +292,13 @@ export function useEditSession(
     } else {
       doApply();
     }
+  }
+
+  function nearestTargetMinutes(rounds: number): number {
+    const { warmup, work, rest, cooldown } = easyEdit.fieldValues;
+    const totalSeconds = warmup + rounds * (work + rest) + cooldown;
+    const minutes = Math.round(totalSeconds / 60);
+    return Math.min(MAX_TARGET_DURATION_MINUTES, Math.max(MIN_TARGET_DURATION_MINUTES, minutes));
   }
 
   function applyTimePresetMinutes(minutes: number) {
@@ -397,7 +429,16 @@ export function useEditSession(
     clearIntervals:   intervalEdit.clearIntervals,
     reorderIntervals: intervalEdit.reorderIntervals,
     openFieldPicker:  pickerState.openFieldPicker,
-    setFieldEnabled:  (field: TimeField, enabled: boolean) => { easyEdit.setFieldEnabled(field, enabled); setEasyDirty(true); },
+    setFieldEnabled:  (field: TimeField, enabled: boolean) => {
+      if (field === 'warmup' || field === 'cooldown') {
+        const newSecs = easyEdit.setFieldEnabled(field, enabled);
+        recalcRoundsForFieldChange(field, newSecs);
+        if (!enabled) warnIfShortDuration(0);
+      } else {
+        easyEdit.setFieldEnabled(field, enabled);
+      }
+      setEasyDirty(true);
+    },
     openRoundsPicker: () => pickerState.openRoundsPicker(easyEdit.rounds),
     openIntervalPicker: pickerState.openIntervalPicker,
     openSpeedPicker:    pickerState.openSpeedPicker,

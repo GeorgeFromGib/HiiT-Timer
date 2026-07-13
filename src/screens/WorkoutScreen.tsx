@@ -2,7 +2,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Alert,
   Animated,
   PixelRatio,
   Pressable,
@@ -20,6 +19,7 @@ import {
 } from '../lib/workout';
 import { formatSpeed } from '../lib/speedUnit';
 import { useTranslation } from '../lib/i18n';
+import { appAlert } from '../lib/appAlert';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
@@ -96,7 +96,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
 
   const handleBackPress = useCallback(() => {
     if (status === 'running' || status === 'paused') {
-      Alert.alert(
+      appAlert(
+        'warning',
         t('alerts.exitWorkoutTitle'),
         t('alerts.exitWorkoutMessage'),
         [

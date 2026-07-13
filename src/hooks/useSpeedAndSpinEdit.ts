@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Alert } from 'react-native';
 import { useDraft } from './useDraft';
 import { i18n } from '../lib/i18n';
+import { appAlert } from '../lib/appAlert';
 import {
   type Session, type RunSpeeds, type SpinValues,
   DEFAULT_RUN_SPEEDS, DEFAULT_SPIN_VALUES,
@@ -69,7 +69,8 @@ export function useSpeedAndSpinEdit(existing: Session | undefined): SpeedAndSpin
       setActiveSpeedPreset(level);
     };
     if (speedsDirty) {
-      Alert.alert(
+      appAlert(
+        'warning',
         i18n.t('alerts.overwriteTitle'),
         i18n.t('alerts.overwriteSpeedMessage'),
         [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
@@ -86,7 +87,8 @@ export function useSpeedAndSpinEdit(existing: Session | undefined): SpeedAndSpin
       setActiveSpinPreset(level);
     };
     if (spinDirty) {
-      Alert.alert(
+      appAlert(
+        'warning',
         i18n.t('alerts.overwriteTitle'),
         i18n.t('alerts.overwriteSpinMessage'),
         [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],

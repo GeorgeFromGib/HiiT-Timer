@@ -2,6 +2,8 @@ import { readJsonFile, writeJsonFile } from './jsonFile';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
+import { SPIN_PRESETS } from './presets';
+import { INTENSITY_PRESETS } from './intensityPresets';
 
 export type FolderIconName =
   | 'sun' | 'flame' | 'bolt' | 'pauseIcon' | 'snow'
@@ -130,7 +132,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
       name: i18n.t('defaultSessions.example1', { locale: language }),
       folderId: 'default',
       mode: 'easy',
-      config: { warmup: 45, high: 20, low: 10, rounds: 8, cooldown: 60 },
+      config: { warmup: 45, high: 45, low: 15, rounds: 13, cooldown: 60 },
     },
     {
       id: 'default-2',
@@ -154,8 +156,8 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
       folderId: 'default',
       mode: 'easy',
       activityType: 'run',
-      config: { warmup: 300, high: 30, low: 90, rounds: 6, cooldown: 300 },
-      runSpeeds: { warmupSpeed: 7, workSpeed: 11, restSpeed: 6, cooldownSpeed: 5.5 },
+      config: { warmup: 300, high: 45, low: 15, rounds: 5, cooldown: 300 },
+      runSpeeds: { warmupSpeed: 7, workSpeed: 14, restSpeed: 7, cooldownSpeed: 6.0 },
     },
     {
       id: 'default-circuit-1',
@@ -181,8 +183,8 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
       folderId: 'default',
       mode: 'easy',
       activityType: 'spinning',
-      config: { warmup: 60, high: 30, low: 20, rounds: 6, cooldown: 60 },
-      spinValues: DEFAULT_SPIN_VALUES,
+      config: { warmup: 300, high: INTENSITY_PRESETS['3'].work, low: INTENSITY_PRESETS['3'].rest, rounds: 5, cooldown: 300 },
+      spinValues: SPIN_PRESETS['3'],
     },
   ];
 }

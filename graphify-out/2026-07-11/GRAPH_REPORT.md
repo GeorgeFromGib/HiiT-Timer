@@ -1,30 +1,30 @@
-# Graph Report - hiit-timer  (2026-07-10)
+# Graph Report - hiit-timer  (2026-07-11)
 
 ## Corpus Check
-- 194 files · ~187,969 words
+- 197 files · ~188,834 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1517 nodes · 2018 edges · 139 communities (126 shown, 13 thin omitted)
-- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 4 edges (avg confidence: 0.8)
+- 1550 nodes · 2275 edges · 135 communities (122 shown, 13 thin omitted)
+- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b562e356`
+- Built from commit: `80909b79`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_useEditSession.ts|useEditSession.ts]]
+- [[_COMMUNITY_purchases.ts|purchases.ts]]
 - [[_COMMUNITY_useWorkoutSession.ts|useWorkoutSession.ts]]
 - [[_COMMUNITY_dependencies|dependencies]]
-- [[_COMMUNITY_useTheme|useTheme]]
+- [[_COMMUNITY_ThemeTokens|ThemeTokens]]
 - [[_COMMUNITY_expo|expo]]
-- [[_COMMUNITY_EditSessionScreen.tsx|EditSessionScreen.tsx]]
+- [[_COMMUNITY_theme.ts|theme.ts]]
 - [[_COMMUNITY_useTranslation|useTranslation]]
 - [[_COMMUNITY_sessions.ts|sessions.ts]]
 - [[_COMMUNITY_1. `srchooksuseEditSession.ts`|1. `src/hooks/useEditSession.ts`]]
-- [[_COMMUNITY_PickerModal.tsx|PickerModal.tsx]]
+- [[_COMMUNITY_sessions.ts|sessions.ts]]
 - [[_COMMUNITY_Settings Developer Footer & Privacy Policy Screen|Settings: Developer Footer & Privacy Policy Screen]]
 - [[_COMMUNITY_.application|.application]]
 - [[_COMMUNITY_IAP — Premium Unlock (Unlimited Sessions) Implementation Plan|IAP — Premium Unlock (Unlimited Sessions) Implementation Plan]]
@@ -84,7 +84,7 @@
 - [[_COMMUNITY_Activity Type Icons Design|Activity Type Icons Design]]
 - [[_COMMUNITY_Spinning Show Resistance & Power in Next-Up Row|Spinning: Show Resistance & Power in Next-Up Row]]
 - [[_COMMUNITY_Spinning Combine R and W into One Pill|Spinning: Combine R and W into One Pill]]
-- [[_COMMUNITY_useEditSession.ts|useEditSession.ts]]
+- [[_COMMUNITY_SessionCard.tsx|SessionCard.tsx]]
 - [[_COMMUNITY_Sound Off Setting Implementation Plan|Sound Off Setting Implementation Plan]]
 - [[_COMMUNITY_Per-Interval Speed Implementation Plan|Per-Interval Speed Implementation Plan]]
 - [[_COMMUNITY_Session Complete Screen Implementation Plan|Session Complete Screen Implementation Plan]]
@@ -134,74 +134,71 @@
 - [[_COMMUNITY_task-9-brief|task-9-brief.md]]
 - [[_COMMUNITY_task-9-report|task-9-report.md]]
 - [[_COMMUNITY_i18n.ts|i18n.ts]]
-- [[_COMMUNITY_WorkoutScreen.tsx|WorkoutScreen.tsx]]
-- [[_COMMUNITY_usePickerState.ts|usePickerState.ts]]
-- [[_COMMUNITY_workout.ts|workout.ts]]
-- [[_COMMUNITY_workout.ts|workout.ts]]
 - [[_COMMUNITY_useEditSession.ts|useEditSession.ts]]
+- [[_COMMUNITY_useSpeedAndSpinEdit.ts|useSpeedAndSpinEdit.ts]]
+- [[_COMMUNITY_FolderHeader.tsx|FolderHeader.tsx]]
+- [[_COMMUNITY_App.tsx|App.tsx]]
+- [[_COMMUNITY_ActivityTypeIcon.tsx|ActivityTypeIcon.tsx]]
 - [[_COMMUNITY_SessionCard.tsx|SessionCard.tsx]]
-- [[_COMMUNITY_usePickerState.ts|usePickerState.ts]]
-- [[_COMMUNITY_useEditSession.ts|useEditSession.ts]]
-- [[_COMMUNITY_i18n.ts|i18n.ts]]
-- [[_COMMUNITY_folderIcons.ts|folderIcons.ts]]
+- [[_COMMUNITY_useSpeedAndSpinEdit.ts|useSpeedAndSpinEdit.ts]]
+- [[_COMMUNITY_sessions.ts|sessions.ts]]
+- [[_COMMUNITY_package.json|package.json]]
+- [[_COMMUNITY_react|react]]
 - [[_COMMUNITY_useTheme|useTheme]]
-- [[_COMMUNITY_reviewState.ts|reviewState.ts]]
-- [[_COMMUNITY_AppDelegate.swift|AppDelegate.swift]]
 - [[_COMMUNITY_scripts|scripts]]
-- [[_COMMUNITY_SessionCard.tsx|SessionCard.tsx]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `useTheme()` - 50 edges
-2. `useTranslation()` - 30 edges
-3. `ThemeTokens` - 23 edges
-4. `SDD Progress — Sessions Folder System` - 18 edges
-5. `Session` - 17 edges
-6. `withOpacity()` - 16 edges
-7. `Phase` - 14 edges
-8. `expo` - 14 edges
-9. `1. `src/hooks/useEditSession.ts`` - 14 edges
-10. `Implementation Tasks` - 14 edges
+1. `useTheme()` - 65 edges
+2. `useTranslation()` - 39 edges
+3. `ThemeTokens` - 28 edges
+4. `withOpacity()` - 18 edges
+5. `SDD Progress — Sessions Folder System` - 18 edges
+6. `Session` - 17 edges
+7. `useSettings()` - 15 edges
+8. `buttonShadow()` - 15 edges
+9. `expo` - 14 edges
+10. `Phase` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `RouteScreen()` --calls--> `useTheme()`  [EXTRACTED]
+  App.tsx → src/theme.ts
+- `App()` --calls--> `usePremiumState()`  [EXTRACTED]
+  App.tsx → src/hooks/usePremiumState.ts
+- `App()` --calls--> `useSettingsState()`  [EXTRACTED]
+  App.tsx → src/hooks/useSettingsState.ts
 - `EditSessionScreen()` --references--> `react`  [EXTRACTED]
   src/screens/EditSessionScreen.tsx → package.json
 - `SessionsListScreen()` --references--> `react`  [EXTRACTED]
   src/screens/SessionsListScreen.tsx → package.json
-- `useTheme()` --references--> `react`  [EXTRACTED]
-  src/theme.ts → package.json
-- `App()` --calls--> `detectSpeedUnit()`  [EXTRACTED]
-  App.tsx → src/lib/settings.ts
-- `App()` --calls--> `loadSettings()`  [EXTRACTED]
-  App.tsx → src/lib/settings.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (139 total, 13 thin omitted)
+## Communities (135 total, 13 thin omitted)
 
-### Community 0 - "useEditSession.ts"
-Cohesion: 0.12
-Nodes (21): Props, CircuitModeEdit, DEFAULTS, useCircuitModeEdit(), useDraft(), DEFAULTS, EasyConfig, EasyModeEdit (+13 more)
+### Community 0 - "purchases.ts"
+Cohesion: 0.13
+Nodes (29): usePremiumState(), SettingsState, useSettingsState(), detectLanguage(), readJsonFile(), writeJsonFile(), expireTrialForTesting(), FlowState (+21 more)
 
 ### Community 1 - "useWorkoutSession.ts"
-Cohesion: 0.14
-Nodes (12): AudioSettings, configureAudioSession(), CueKey, CUES, useWorkoutAudio(), WorkoutAudioCues, Language, LANGUAGE_CODES (+4 more)
+Cohesion: 0.31
+Nodes (9): DeleteFolderModal(), DeleteFolderModalProps, makeStyles(), FolderEditModalProps, makeStyles(), MoveToFolderSheet(), MoveToFolderSheetProps, useTranslation() (+1 more)
 
 ### Community 2 - "dependencies"
 Cohesion: 0.07
 Nodes (30): dependencies, expo-asset, expo-audio, expo-dev-client, expo-file-system, @expo-google-fonts/chakra-petch, @expo-google-fonts/inter, expo-haptics (+22 more)
 
-### Community 3 - "useTheme"
-Cohesion: 0.16
-Nodes (19): buildSessionFromDraft(), createDefaultFolder(), createFolder(), DEFAULT_RUN_SPEEDS, DEFAULT_SPIN_VALUES, deleteFolder(), deleteSessionById(), getDefaultSessions() (+11 more)
+### Community 3 - "ThemeTokens"
+Cohesion: 0.21
+Nodes (16): FolderEditModal(), makeStyles(), Props, FolderIconPicker(), FolderIconPickerProps, ICONS, makeStyles(), ColorToken (+8 more)
 
 ### Community 4 - "expo"
 Cohesion: 0.06
 Nodes (34): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, package, permissions, predictiveBackGestureEnabled (+26 more)
 
-### Community 5 - "EditSessionScreen.tsx"
-Cohesion: 0.23
-Nodes (10): makeStyles(), PaywallModal(), Props, makeStyles(), TrialStatusPill(), TrialStatusPillProps, useGatedAction(), PremiumContext (+2 more)
+### Community 5 - "theme.ts"
+Cohesion: 0.16
+Nodes (18): IntervalSwipeDuplicateAction, IntervalSwipeRow(), Props, styles, LocalInterval, Session, formatSpeed(), fromDisplay() (+10 more)
 
 ### Community 6 - "useTranslation"
 Cohesion: 0.18
@@ -209,15 +206,15 @@ Nodes (10): Concerns, Files changed, Fix, Fix: Icon chip tinting for rgba-based 
 
 ### Community 7 - "sessions.ts"
 Cohesion: 0.13
-Nodes (18): ACTIVITY_ICON_SHAPES, ActivityIconShape, Props, FolderEditModal(), makeStyles(), Props, FolderIconPicker(), FolderIconPickerProps (+10 more)
+Nodes (26): FolderHeader(), FolderHeaderProps, makeStyles(), Props, ScreenHeader(), styles, confirmDeleteSession(), createFolder() (+18 more)
 
 ### Community 8 - "1. `src/hooks/useEditSession.ts`"
 Cohesion: 0.08
 Nodes (23): 1. `src/hooks/useEditSession.ts`, 1a. Extend `ActivePicker` union, 1b. Extend `CommitResult` union, 1c. Add `openCircuitRestPicker` to `EditSessionInterface`, 1d. Extend `usePickerState` circuitValues param, 1e. Add `openCircuitRestPicker` function inside `usePickerState`, 1f. Add title for circuitRest picker, 1g. Add commit handling for circuitRest (+15 more)
 
-### Community 9 - "PickerModal.tsx"
-Cohesion: 0.15
-Nodes (15): DECIMAL_LABELS, EMPTY_VALUES, KMH_WHOLE, makeStyles(), MINUTE_LABELS, MPH_WHOLE, PickerModal(), POWER_LABELS (+7 more)
+### Community 9 - "sessions.ts"
+Cohesion: 0.18
+Nodes (13): CircuitModeEdit, DEFAULTS, useCircuitModeEdit(), useDraft(), DEFAULTS, EasyConfig, useEasyModeEdit(), useEditSession() (+5 more)
 
 ### Community 10 - "Settings: Developer Footer & Privacy Policy Screen"
 Cohesion: 0.09
@@ -232,8 +229,8 @@ Cohesion: 0.09
 Nodes (21): File Structure, Final verification, IAP — Premium Unlock (Unlimited Sessions) Implementation Plan, Notes / decisions carried from the spec, Phase 1 — Pure session-limit logic, Phase 2 — Purchases module, Phase 3 — Context, state hook, and app wiring, Phase 4 — Paywall and gate enforcement (+13 more)
 
 ### Community 13 - "purchases.ts"
-Cohesion: 0.09
-Nodes (36): App(), makeStyles(), makeSwatchStyles(), OnboardingModal(), Props, ThemeSwatch(), useHapticBurst(), usePremiumState() (+28 more)
+Cohesion: 0.05
+Nodes (52): App(), GhostBtn(), Props, PhaseStrip(), styles, useHapticBurst(), usePreStartCountdown(), Callbacks (+44 more)
 
 ### Community 14 - "2026-06-12-paywall-design.md"
 Cohesion: 0.10
@@ -455,9 +452,9 @@ Nodes (7): Design, Implementation, Problem, Scope, Solution, Spinning: Show Resi
 Cohesion: 0.25
 Nodes (7): Design, Implementation, Problem, Scope, Solution, Spinning: Combine R and W into One Pill, Visual
 
-### Community 69 - "useEditSession.ts"
-Cohesion: 0.16
-Nodes (13): makeStyles(), ThemeCard(), Props, styles, WheelColumn(), ThemeKey, daybreak, THEME_PREVIEWS (+5 more)
+### Community 69 - "SessionCard.tsx"
+Cohesion: 0.19
+Nodes (19): EMPTY_VALUES, makeStyles(), PickerModal(), Props, SavePayload, TimeField, EasyModeEdit, CIRCUIT_PHASES (+11 more)
 
 ### Community 70 - "Sound Off Setting Implementation Plan"
 Cohesion: 0.29
@@ -603,85 +600,73 @@ Nodes (8): Commit, Files changed, How I handled the pre-existing WIP, Manual ver
 Cohesion: 0.17
 Nodes (11): Folder Icons Implementation Plan, Global Constraints, Self-Review Notes, Task 1: Data model — `FolderIconName` and `Folder.icon`, Task 2: Icon catalog and theme color mapping, Task 3: `FolderIcon` render component, Task 4: `FolderIconPicker` grid component, Task 5: Wire the picker into `FolderCreateModal` (+3 more)
 
-### Community 123 - "WorkoutScreen.tsx"
-Cohesion: 0.24
-Nodes (14): IntervalSwipeDuplicateAction, IntervalSwipeRow(), Props, styles, LocalInterval, speedForPhase(), spinValueForPhase(), toDisplay() (+6 more)
+### Community 123 - "useEditSession.ts"
+Cohesion: 0.23
+Nodes (7): ACTIVITY_ICON_SHAPES, ActivityIconShape, ActivityTypeIcon(), Props, BASE_SVG_STROKE, WorkoutIcon(), WorkoutIconProps
 
-### Community 124 - "usePickerState.ts"
-Cohesion: 0.25
-Nodes (12): PhaseStrip(), styles, Callbacks, TimerState, useTimerEngine(), WorkoutSession, computeTimerSnapshot(), TimerSnapshot (+4 more)
+### Community 124 - "useSpeedAndSpinEdit.ts"
+Cohesion: 0.19
+Nodes (12): RouteScreen(), ThemeKey, Route, makeStyles(), POLICY_SECTIONS, PrivacyPolicyScreen(), daybreak, THEME_TOKENS (+4 more)
 
-### Community 125 - "workout.ts"
-Cohesion: 0.22
-Nodes (11): IntervalRowProps, EasyConfig, IntervalListEdit, useIntervalListEdit(), buildIntervalsFromEasy(), ConvertToEasyResult, Interval, Phase (+3 more)
+### Community 125 - "FolderHeader.tsx"
+Cohesion: 0.07
+Nodes (20): ActivePicker, CommitResult, countColumns(), DECIMAL_LABELS, durationColumns(), HAS_SEPARATOR, KMH_WHOLE, MINUTE_LABELS (+12 more)
 
-### Community 126 - "workout.ts"
-Cohesion: 0.26
-Nodes (13): CIRCUIT_PHASES, EditSessionDraft, EditSessionInterface, PHASES, useEditSession(), SpeedAndSpinEdit, useSpeedAndSpinEdit(), getSessionSegments() (+5 more)
+### Community 126 - "App.tsx"
+Cohesion: 0.16
+Nodes (19): DragHandle(), Props, makeStyles(), PRESET_LEVELS, PresetStrip(), Props, makeStyles(), Props (+11 more)
 
-### Community 127 - "useEditSession.ts"
-Cohesion: 0.22
-Nodes (10): Props, ScreenHeader(), styles, confirmDeleteSession(), Route, makeStyles(), SessionsListScreen(), SessionSwipeRow() (+2 more)
+### Community 127 - "ActivityTypeIcon.tsx"
+Cohesion: 0.23
+Nodes (10): makeStyles(), PaywallModal(), Props, makeStyles(), TrialStatusPill(), TrialStatusPillProps, useGatedAction(), PremiumContext (+2 more)
 
 ### Community 128 - "SessionCard.tsx"
-Cohesion: 0.21
-Nodes (14): BASE_SVG_STROKE, WorkoutIcon(), WorkoutIconProps, useTranslation(), useSettings(), formatSpeed(), fmtTimer(), fmtStatTime() (+6 more)
+Cohesion: 0.22
+Nodes (12): toLocal(), EasyConfig, IntervalListEdit, useIntervalListEdit(), buildIntervalsFromEasy(), computeRoundsForTargetDuration(), ConvertToEasyResult, Interval (+4 more)
 
-### Community 129 - "usePickerState.ts"
-Cohesion: 0.19
-Nodes (8): SavePayload, TimeField, ActivePicker, CommitResult, i18n, fromDisplay(), convertKmhToMph(), convertMphToKmh()
+### Community 129 - "useSpeedAndSpinEdit.ts"
+Cohesion: 0.23
+Nodes (11): useSpeedAndSpinEdit(), i18n, ALL_LEVELS, findMatchingSpeedPreset(), findMatchingSpinPreset(), SPEED_PRESETS, SpeedPreset, SPIN_PRESETS (+3 more)
 
-### Community 130 - "useEditSession.ts"
+### Community 130 - "sessions.ts"
+Cohesion: 0.31
+Nodes (9): createDefaultFolder(), getSessionSegments(), migrateSessionsToFolders(), speedForPhase(), spinValueForPhase(), withActivityValues(), expandCircuit(), expandWorkout() (+1 more)
+
+### Community 131 - "package.json"
 Cohesion: 0.22
 Nodes (8): devDependencies, babel-preset-expo, @types/react, typescript, main, name, private, version
 
-### Community 131 - "i18n.ts"
-Cohesion: 0.26
-Nodes (6): makeStyles(), PRESET_LEVELS, PresetStrip(), en, es, fr
-
-### Community 132 - "folderIcons.ts"
-Cohesion: 0.29
-Nodes (8): DeleteFolderModal(), DeleteFolderModalProps, makeStyles(), FolderEditModalProps, makeStyles(), MoveToFolderSheet(), MoveToFolderSheetProps, Folder
-
-### Community 133 - "useTheme"
-Cohesion: 0.14
-Nodes (18): FolderHeader(), FolderHeaderProps, makeStyles(), GhostBtn(), Props, makeStyles(), SettingsRow(), makeStyles() (+10 more)
-
-### Community 134 - "reviewState.ts"
-Cohesion: 0.33
-Nodes (7): checkAndRequestReview(), DEFAULT, loadReviewState(), reviewFile(), ReviewState, saveReviewState(), THRESHOLDS
-
-### Community 135 - "AppDelegate.swift"
+### Community 132 - "react"
 Cohesion: 0.33
 Nodes (5): Expo, expo, react, React, ReactAppDependencyProvider
 
-### Community 136 - "scripts"
+### Community 133 - "useTheme"
+Cohesion: 0.14
+Nodes (24): makeStyles(), makeSwatchStyles(), OnboardingModal(), Props, ThemeSwatch(), makeStyles(), SettingsRow(), makeStyles() (+16 more)
+
+### Community 134 - "scripts"
 Cohesion: 0.40
 Nodes (5): scripts, android, ios, start, web
 
-### Community 141 - "SessionCard.tsx"
-Cohesion: 0.23
-Nodes (13): DragHandle(), Props, IntervalRow(), makeStyles(), makeStyles(), Props, SessionCard(), Session (+5 more)
-
 ## Knowledge Gaps
-- **875 isolated node(s):** `Purpose`, `Data model`, `Version constant`, `Component: `src/components/OnboardingModal.tsx``, `Wiring in `App.tsx`` (+870 more)
+- **874 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+869 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useTheme()` connect `useTheme` to `SessionCard.tsx`, `i18n.ts`, `folderIcons.ts`, `EditSessionScreen.tsx`, `useEditSession.ts`, `sessions.ts`, `AppDelegate.swift`, `PickerModal.tsx`, `SessionCard.tsx`, `WorkoutScreen.tsx`, `usePickerState.ts`, `useEditSession.ts`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
-- **Why does `react` connect `AppDelegate.swift` to `dependencies`, `WorkoutScreen.tsx`, `useTheme`, `useEditSession.ts`?**
-  _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `useEditSession.ts`, `AppDelegate.swift`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **What connects `Purpose`, `Data model`, `Version constant` to the rest of the system?**
-  _875 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `useEditSession.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.12333333333333334 - nodes in this community are weakly interconnected._
-- **Should `useWorkoutSession.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.1380952380952381 - nodes in this community are weakly interconnected._
+- **Why does `useTheme()` connect `useTheme` to `useWorkoutSession.ts`, `ThemeTokens`, `react`, `SessionCard.tsx`, `theme.ts`, `sessions.ts`, `purchases.ts`, `useEditSession.ts`, `useSpeedAndSpinEdit.ts`, `App.tsx`, `ActivityTypeIcon.tsx`?**
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+- **Why does `react` connect `react` to `dependencies`, `theme.ts`, `useTheme`, `sessions.ts`?**
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+- **Why does `dependencies` connect `dependencies` to `package.json`, `react`?**
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **What connects `name`, `slug`, `version` to the rest of the system?**
+  _874 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `purchases.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.12605042016806722 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.06666666666666667 - nodes in this community are weakly interconnected._
+- **Should `expo` be split into smaller, more focused modules?**
+  _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._

@@ -11,6 +11,7 @@ export const fr: typeof en = {
     create: 'Créer',
     move: 'Déplacer',
     apply: 'Appliquer',
+    ok: 'OK',
     intervals: 'intervalles',
     intervalsAbbr: 'Int.',
   },
@@ -259,6 +260,8 @@ export const fr: typeof en = {
     exitWorkoutMessage: 'Êtes-vous sûr de vouloir terminer cet entraînement ?',
     terminate: 'Terminer',
     continueWorkout: 'Continuer',
+    shortWarmupCooldownTitle: 'Durée courte',
+    shortWarmupCooldownMessage: 'Les périodes d\'échauffement et de récupération de moins de 5 minutes ne sont pas recommandées.',
   },
   validation: {
     noWorkIntervals: 'Aucun intervalle de travail trouvé.',

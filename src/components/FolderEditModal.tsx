@@ -6,10 +6,10 @@ import {
   TextInput,
   Pressable,
   View,
-  Alert,
 } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import { useTranslation } from '../lib/i18n';
+import { appAlert } from '../lib/appAlert';
 import { validateFolderName, type Folder, type FolderIconName } from '../lib/sessions';
 import { DEFAULT_FOLDER_ICON, resolveFolderIconColor, folderIconTint } from '../lib/folderIcons';
 import FolderIcon from './FolderIcon';
@@ -46,7 +46,7 @@ export default function FolderEditModal({
 
   const handleSubmit = () => {
     if (!validateFolderName(name, allFolders, folder?.id)) {
-      Alert.alert(t('folders.invalidName'), t('folders.nameExists'));
+      appAlert('error', t('folders.invalidName'), t('folders.nameExists'));
       return;
     }
     onSubmit(name, icon);

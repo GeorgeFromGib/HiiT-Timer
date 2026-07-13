@@ -1,7 +1,7 @@
 {
   "App.tsx": {
-    "mtime": 1783776767.5904553,
-    "ast_hash": "d4ae0e1b69fa46f6546ee597c6e71793",
+    "mtime": 1783786659.1747653,
+    "ast_hash": "72804e6758cd444e9f190dddfd314749",
     "semantic_hash": ""
   },
   "app.json": {
@@ -125,8 +125,8 @@
     "semantic_hash": ""
   },
   "src/components/PickerModal.tsx": {
-    "mtime": 1782582897.4608746,
-    "ast_hash": "b09be62442c09c91f69f23be62ae6321",
+    "mtime": 1783786018.469764,
+    "ast_hash": "2f6f1010fa2be288fea864db6f6f3503",
     "semantic_hash": ""
   },
   "src/components/ScreenHeader.tsx": {
@@ -195,13 +195,13 @@
     "semantic_hash": ""
   },
   "src/hooks/useEasyModeEdit.ts": {
-    "mtime": 1782561183.4456534,
-    "ast_hash": "7be39ea5ad5fece1a93a279bd1a5c736",
+    "mtime": 1783786181.4134943,
+    "ast_hash": "630fe3c9b29082a67e90af7df70cd42a",
     "semantic_hash": ""
   },
   "src/hooks/useEditSession.ts": {
-    "mtime": 1783776767.8225212,
-    "ast_hash": "7347d61298358d525622fcd68e9f4199",
+    "mtime": 1783786203.0276954,
+    "ast_hash": "70c235077a0bc18e6e62c2f800e2dc56",
     "semantic_hash": ""
   },
   "src/hooks/useGatedAction.ts": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "src/hooks/usePickerState.ts": {
-    "mtime": 1782582897.4615993,
-    "ast_hash": "733fc490435cf22dd228046f7c6750cb",
+    "mtime": 1783786001.3247588,
+    "ast_hash": "06ea4ceef1dec4e727f8ce1909509242",
     "semantic_hash": ""
   },
   "src/hooks/usePreStartCountdown.ts": {
@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "src/hooks/useWorkoutSession.ts": {
-    "mtime": 1783776767.8236332,
-    "ast_hash": "a04a40818ecec6d8c19a75735db2cc6b",
+    "mtime": 1783786411.3167627,
+    "ast_hash": "38f7119d1ae756f46371bc191eaccc68",
     "semantic_hash": ""
   },
   "src/lib/alerts.ts": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "src/lib/presets.ts": {
-    "mtime": 1782582897.4619434,
-    "ast_hash": "ab2c59b264d684e1ede31226f29aba82",
+    "mtime": 1783786162.9719272,
+    "ast_hash": "9ecb7318b268d9e70492db0c49d334cd",
     "semantic_hash": ""
   },
   "src/lib/purchases.ts": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "src/lib/sessions.ts": {
-    "mtime": 1783776767.8248036,
-    "ast_hash": "7a5c11fd47ea51c091fb1cba358f8ebb",
+    "mtime": 1783786270.4194682,
+    "ast_hash": "ed29680de10ca9a77868ddfc4f52de94",
     "semantic_hash": ""
   },
   "src/lib/settings.ts": {
@@ -305,23 +305,23 @@
     "semantic_hash": ""
   },
   "src/lib/workout.ts": {
-    "mtime": 1783776767.8255084,
-    "ast_hash": "56f94bda4088aad144f6c24e6fd0831c",
+    "mtime": 1783786173.0239947,
+    "ast_hash": "0698ed662f9705bf694515f1430e37f3",
     "semantic_hash": ""
   },
   "src/locales/en.ts": {
-    "mtime": 1783776767.8260288,
-    "ast_hash": "e54e6dee321533ba7b39c11b55a81a7c",
+    "mtime": 1783784714.0619586,
+    "ast_hash": "a9423ceb4a31860d0fd8ea392ca0df72",
     "semantic_hash": ""
   },
   "src/locales/es.ts": {
-    "mtime": 1783776767.8264778,
-    "ast_hash": "618b81b708e5f786cca5a077a293eaa8",
+    "mtime": 1783784718.1010065,
+    "ast_hash": "7073d9c971f6a6e97f962c7d426d2926",
     "semantic_hash": ""
   },
   "src/locales/fr.ts": {
-    "mtime": 1783776767.8270946,
-    "ast_hash": "bc0af49a12dc93cf49620cd64f4113e1",
+    "mtime": 1783784721.3045516,
+    "ast_hash": "7f12fb5e4784fbbfc48d095bfe8dd90e",
     "semantic_hash": ""
   },
   "src/navigation.ts": {
@@ -330,8 +330,8 @@
     "semantic_hash": ""
   },
   "src/screens/EditSessionScreen.tsx": {
-    "mtime": 1783702454.214032,
-    "ast_hash": "bcdee0be6ab348c5018dc7629b95c282",
+    "mtime": 1783784707.1736348,
+    "ast_hash": "0fb65e851f25055c3de18ae4b5d9b5b1",
     "semantic_hash": ""
   },
   "src/screens/FoldersScreen.tsx": {
@@ -345,8 +345,8 @@
     "semantic_hash": ""
   },
   "src/screens/SessionCompleteScreen.tsx": {
-    "mtime": 1783702454.214902,
-    "ast_hash": "01eb8feba580b47734cf9a291ee2d133",
+    "mtime": 1783786480.5204952,
+    "ast_hash": "3fcfa5af2963f133c5eb70fc5d72be88",
     "semantic_hash": ""
   },
   "src/screens/SessionsListScreen.tsx": {
@@ -360,8 +360,8 @@
     "semantic_hash": ""
   },
   "src/screens/WorkoutScreen.tsx": {
-    "mtime": 1783702454.2159066,
-    "ast_hash": "03bd37e9c27cde6ef80f50c3e754ce73",
+    "mtime": 1783786458.556792,
+    "ast_hash": "1376446b515105a83196b332abec5363",
     "semantic_hash": ""
   },
   "src/theme.ts": {
@@ -1095,8 +1095,8 @@
     "semantic_hash": ""
   },
   "src/hooks/useIntervalListEdit.ts": {
-    "mtime": 1783776767.823219,
-    "ast_hash": "6e295904bda643c43c1fdfc760103119",
+    "mtime": 1783785609.1492233,
+    "ast_hash": "ff980b4b4370b6d861c519862acf513b",
     "semantic_hash": ""
   },
   "src/hooks/useSpeedAndSpinEdit.ts": {
@@ -1107,6 +1107,21 @@
   "src/lib/jsonFile.ts": {
     "mtime": 1783776767.8239207,
     "ast_hash": "7ea347c8230a6fa66f69d7bf0a3e4e29",
+    "semantic_hash": ""
+  },
+  "src/components/EditSession/TimePresetStrip.tsx": {
+    "mtime": 1783784697.5881941,
+    "ast_hash": "a3af76e19eeee10404daa5cf559d8a80",
+    "semantic_hash": ""
+  },
+  "src/lib/intensityPresets.ts": {
+    "mtime": 1783786142.1802142,
+    "ast_hash": "a0264955bafc127181708762586f2db1",
+    "semantic_hash": ""
+  },
+  "src/hooks/useSettingsState.ts": {
+    "mtime": 1783786636.1749904,
+    "ast_hash": "f818fce13cb6f5882abee2cadb05ac05",
     "semantic_hash": ""
   }
 }

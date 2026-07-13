@@ -4,7 +4,9 @@ import { type RunSpeeds, type SpinValues } from '../lib/sessions';
 import { fromDisplay, pickerRange } from '../lib/speedUnit';
 import { type LocalInterval, type TimeField } from './editSessionTypes';
 
-export const MIN_TARGET_DURATION_MINUTES = 5;
+export const MIN_TARGET_DURATION_MINUTES = 10;
+const TARGET_DURATION_LABEL_COUNT = 171;
+export const MAX_TARGET_DURATION_MINUTES = MIN_TARGET_DURATION_MINUTES + TARGET_DURATION_LABEL_COUNT - 1;
 
 export interface PickerColumn {
   values:    string[];
@@ -17,7 +19,7 @@ const SECOND_LABELS          = Array.from({ length: 60 }, (_, i) => String(i).pa
 const ROUND_LABELS           = Array.from({ length: 99 }, (_, i) => String(i + 1));
 const RESISTANCE_LABELS      = Array.from({ length: 10 }, (_, i) => String(i + 1));
 const POWER_LABELS           = Array.from({ length: 27 }, (_, i) => String(40 + i * 10));
-const TARGET_DURATION_LABELS = Array.from({ length: 176 }, (_, i) => String(i + MIN_TARGET_DURATION_MINUTES));
+const TARGET_DURATION_LABELS = Array.from({ length: TARGET_DURATION_LABEL_COUNT }, (_, i) => String(i + MIN_TARGET_DURATION_MINUTES));
 const DECIMAL_LABELS         = Array.from({ length: 10 }, (_, i) => String(i));
 const KMH_WHOLE              = Array.from({ length: pickerRange('km').max + 1 }, (_, i) => String(i));
 const MPH_WHOLE              = Array.from({ length: pickerRange('miles').max + 1 }, (_, i) => String(i));

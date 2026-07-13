@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -21,8 +20,10 @@ import ScreenHeader from '../components/ScreenHeader';
 import { typography } from '../typography';
 import PickerModal from '../components/PickerModal';
 import { useEditSession, type LocalInterval, type TimeField } from '../hooks/useEditSession';
+import { MIN_TARGET_DURATION_MINUTES } from '../hooks/usePickerState';
 import { useSettings } from '../lib/settingsContext';
 import { i18n, type Language, useTranslation } from '../lib/i18n';
+import { appAlert } from '../lib/appAlert';
 import PresetStrip from '../components/EditSession/PresetStrip';
 import TimePresetStrip from '../components/EditSession/TimePresetStrip';
 import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
@@ -105,7 +106,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
   async function handleSave() {
     const payload = buildSavePayload();
     if (!payload.ok) {
-      Alert.alert(i18n.t(payload.titleKey), i18n.t(payload.messageKey));
+      appAlert('error', i18n.t(payload.titleKey), i18n.t(payload.messageKey));
       return;
     }
     const data = await loadSessions(i18n.locale as Language);
@@ -118,7 +119,8 @@ export default function EditSessionScreen({ session: existing, activityType, fol
 
   function handleCancel() {
     if (!draft.hasChanges) { onBack(); return; }
-    Alert.alert(
+    appAlert(
+      'warning',
       i18n.t('alerts.unsavedTitle'),
       i18n.t('alerts.unsavedMessage'),
       [
@@ -390,7 +392,11 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               {/* Easy mode timing */}
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.sessionLength')}</Text>
-                <TimePresetStrip minutes={targetLengthMinutes} onCustom={openCustomLengthPicker} />
+                <TimePresetStrip
+                  minutes={targetLengthMinutes}
+                  belowMin={previewTotal > 0 && previewTotal < MIN_TARGET_DURATION_MINUTES * 60}
+                  onCustom={openCustomLengthPicker}
+                />
               </View>
 
               <View style={styles.fieldGroup}>
@@ -400,6 +406,25 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                 <Text style={[styles.fieldLabel, { marginTop: 8 }]}>
                   {t('edit.intervalSetup')}{previewTotal > 0 ? <Text style={styles.intervalSetupTotal}>{' '}[{fmtDuration(previewTotal)}]</Text> : null}
                 </Text>
+                <View style={styles.configRow}>
+                  <Text style={styles.configCellLabel}>{t('phases.warmup')}</Text>
+                  <View style={styles.configRowInline}>
+                    <Pressable
+                      style={[styles.configInput, { flex: 1 }, fieldValues.warmup === 0 && styles.configInputDisabled]}
+                      onPress={() => openFieldPicker('warmup')}
+                      disabled={fieldValues.warmup === 0}
+                    >
+                      <Text style={styles.configInputText}>
+                        {fieldValues.warmup > 0 ? fmtDuration(fieldValues.warmup) : '—'}
+                      </Text>
+                    </Pressable>
+                    <SettingsToggle
+                      value={fieldValues.warmup > 0}
+                      onChange={v => setFieldEnabled('warmup', v)}
+                    />
+                  </View>
+                </View>
+
                 <View style={styles.configGrid}>
                   {timeFields.map(({ label, field }) => (
                     <View key={field} style={styles.configCell}>
@@ -419,25 +444,6 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <Pressable style={styles.configInput} onPress={openRoundsPicker}>
                       <Text style={styles.configInputText}>{rounds}</Text>
                     </Pressable>
-                  </View>
-                </View>
-
-                <View style={styles.configRow}>
-                  <Text style={styles.configCellLabel}>{t('phases.warmup')}</Text>
-                  <View style={styles.configRowInline}>
-                    <Pressable
-                      style={[styles.configInput, { flex: 1 }, fieldValues.warmup === 0 && styles.configInputDisabled]}
-                      onPress={() => openFieldPicker('warmup')}
-                      disabled={fieldValues.warmup === 0}
-                    >
-                      <Text style={styles.configInputText}>
-                        {fieldValues.warmup > 0 ? fmtDuration(fieldValues.warmup) : '—'}
-                      </Text>
-                    </Pressable>
-                    <SettingsToggle
-                      value={fieldValues.warmup > 0}
-                      onChange={v => setFieldEnabled('warmup', v)}
-                    />
                   </View>
                 </View>
 
@@ -472,11 +478,17 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <View style={styles.configGrid}>
                       {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                         const field = `${phase}Resistance` as keyof SpinValues;
+                        const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
+                          || (phase === 'cooldown' && fieldValues.cooldown === 0);
                         return (
                           <View key={field} style={styles.configCell}>
                             <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
-                            <Pressable style={styles.configInput} onPress={() => openSpinResistancePicker(field)}>
-                              <Text style={styles.configInputText}>{spinValues[field]}</Text>
+                            <Pressable
+                              style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                              onPress={() => openSpinResistancePicker(field)}
+                              disabled={isPhaseDisabled}
+                            >
+                              <Text style={styles.configInputText}>{isPhaseDisabled ? '—' : spinValues[field]}</Text>
                             </Pressable>
                           </View>
                         );
@@ -489,12 +501,18 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <View style={styles.configGrid}>
                       {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                         const field = `${phase}Power` as keyof SpinValues;
+                        const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
+                          || (phase === 'cooldown' && fieldValues.cooldown === 0);
                         return (
                           <View key={field} style={styles.configCell}>
                             <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
-                            <Pressable style={styles.configInput} onPress={() => openSpinPowerPicker(field)}>
+                            <Pressable
+                              style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                              onPress={() => openSpinPowerPicker(field)}
+                              disabled={isPhaseDisabled}
+                            >
                               <Text style={styles.configInputText}>
-                                {spinValues[field]}<Text style={styles.speedUnitText}>W</Text>
+                                {isPhaseDisabled ? '—' : <>{spinValues[field]}<Text style={styles.speedUnitText}>W</Text></>}
                               </Text>
                             </Pressable>
                           </View>
@@ -513,20 +531,29 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
               <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} />
               <View style={styles.configGrid}>
-                {speedFields.map(({ label, field }) => (
-                  <View key={field} style={styles.configCell}>
-                    <Text style={styles.configCellLabel}>{label}</Text>
-                    <Pressable
-                      style={styles.configInput}
-                      onPress={() => openSpeedPicker(field, toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km'), isMiles)}
-                    >
-                      <Text style={styles.configInputText}>
-                        {toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km').toFixed(1)}
-                        <Text style={styles.speedUnitText}>{' '}{isMiles ? 'mph' : 'km/h'}</Text>
-                      </Text>
-                    </Pressable>
-                  </View>
-                ))}
+                {speedFields.map(({ label, field }) => {
+                  const isPhaseDisabled = (field === 'warmupSpeed' && fieldValues.warmup === 0)
+                    || (field === 'cooldownSpeed' && fieldValues.cooldown === 0);
+                  return (
+                    <View key={field} style={styles.configCell}>
+                      <Text style={styles.configCellLabel}>{label}</Text>
+                      <Pressable
+                        style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                        onPress={() => openSpeedPicker(field, toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km'), isMiles)}
+                        disabled={isPhaseDisabled}
+                      >
+                        <Text style={styles.configInputText}>
+                          {isPhaseDisabled ? '—' : (
+                            <>
+                              {toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km').toFixed(1)}
+                              <Text style={styles.speedUnitText}>{' '}{isMiles ? 'mph' : 'km/h'}</Text>
+                            </>
+                          )}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  );
+                })}
               </View>
             </View>
           )}

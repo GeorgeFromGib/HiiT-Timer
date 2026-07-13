@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef, useImperativeHandle } from 'react';
-import { Alert, Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import DraggableFlatList, { ScaleDecorator, type RenderItemParams } from 'react-native-draggable-flatlist';
@@ -8,6 +8,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import DragHandle from '../components/DragHandle';
 import { useSettings } from '../lib/settingsContext';
 import { useTranslation } from '../lib/i18n';
+import { appAlert } from '../lib/appAlert';
 import {
   loadSessions,
   saveSessions,
@@ -67,7 +68,7 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
 
     const result = renameFolder(renamingFolder.id, newName, icon, data.folders);
     if (!result.success) {
-      Alert.alert(t('folders.error'), result.error);
+      appAlert('error', t('folders.error'), result.error);
       return;
     }
 
@@ -114,7 +115,7 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
       setShowDeleteFolderModal(false);
       setDeletingFolder(null);
     } catch (e: any) {
-      Alert.alert(t('folders.error'), e.message);
+      appAlert('error', t('folders.error'), e.message);
     }
   };
 

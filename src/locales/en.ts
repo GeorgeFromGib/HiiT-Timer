@@ -9,6 +9,7 @@ export const en = {
     create: 'Create',
     move: 'Move',
     apply: 'Apply',
+    ok: 'OK',
     intervals: 'intervals',
     intervalsAbbr: 'Int.',
   },
@@ -257,6 +258,8 @@ export const en = {
     exitWorkoutMessage: 'Are you sure you want to end this workout?',
     terminate: 'Terminate',
     continueWorkout: 'Continue',
+    shortWarmupCooldownTitle: 'Short duration',
+    shortWarmupCooldownMessage: 'Warm-up and cool-down periods of less than 5 minutes are not recommended.',
   },
   validation: {
     noWorkIntervals: 'No work intervals found.',

@@ -5,10 +5,11 @@ import { fmtDuration } from '../../lib/workout';
 
 interface Props {
   minutes: number;
+  belowMin?: boolean;
   onCustom: () => void;
 }
 
-export default function TimePresetStrip({ minutes, onCustom }: Props) {
+export default function TimePresetStrip({ minutes, belowMin, onCustom }: Props) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
@@ -17,7 +18,7 @@ export default function TimePresetStrip({ minutes, onCustom }: Props) {
       style={({ pressed }) => [styles.presetPill, pressed && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
       onPress={onCustom}
     >
-      <Text style={[styles.presetPillText, { color: T.subText }]}>{fmtDuration(minutes * 60)}</Text>
+      <Text style={[styles.presetPillText, { color: T.subText }]}>{belowMin ? '--' : fmtDuration(minutes * 60)}</Text>
     </Pressable>
   );
 }

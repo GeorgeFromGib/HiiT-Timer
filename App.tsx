@@ -31,6 +31,7 @@ import EditSessionScreen from './src/screens/EditSessionScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import OnboardingModal, { CURRENT_ONBOARDING_VERSION } from './src/components/OnboardingModal';
+import AppAlertModal from './src/components/AppAlertModal';
 import type { Route } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { type ThemeKey } from './src/lib/settings';
@@ -150,6 +151,7 @@ export default function App() {
           }
         }}
       />
+      <AppAlertModal />
     </ThemeContext.Provider>
     </SettingsContext.Provider>
     </PremiumContext.Provider>
