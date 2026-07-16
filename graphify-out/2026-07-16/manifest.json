@@ -275,7 +275,7 @@
     "semantic_hash": ""
   },
   "src/lib/sessions.ts": {
-    "mtime": 1783970923.3578298,
+    "mtime": 1784151354.8636267,
     "ast_hash": "aa5967d3cb357cdb4040073c49689825",
     "semantic_hash": ""
   },
@@ -350,8 +350,8 @@
     "semantic_hash": ""
   },
   "src/screens/SessionsListScreen.tsx": {
-    "mtime": 1783702454.21541,
-    "ast_hash": "c3ca4e08123405d0db8ae4ba559019ef",
+    "mtime": 1784219088.7093117,
+    "ast_hash": "23722ef8e411e39abda6c360c4be89b5",
     "semantic_hash": ""
   },
   "src/screens/SettingsScreen.tsx": {
@@ -1050,12 +1050,12 @@
     "semantic_hash": ""
   },
   "src/lib/folderIcons.ts": {
-    "mtime": 1783702454.2113783,
+    "mtime": 1784151354.8631353,
     "ast_hash": "2adea01d536a7582ab094e17bd68d50d",
     "semantic_hash": ""
   },
   "src/components/FolderIcon.tsx": {
-    "mtime": 1783776767.822104,
+    "mtime": 1784151354.8624938,
     "ast_hash": "496ed71058a64095b389b6ec0c4294fa",
     "semantic_hash": ""
   },
