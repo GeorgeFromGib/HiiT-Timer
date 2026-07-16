@@ -8,16 +8,14 @@ interface Props {
   color?:    string;
   size?:     number;
   children:  React.ReactNode;
-  testID?:   string;
 }
 
-export default function GhostBtn({ onPress, disabled, color, size = 54, children, testID }: Props) {
+export default function GhostBtn({ onPress, disabled, color, size = 54, children }: Props) {
   const { T } = useTheme();
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled}
-      testID={testID}
       style={[
         {
           width: size,

@@ -12,14 +12,13 @@ interface Props {
   right?:      ReactNode;
   style?:      ViewStyle;
   titleStyle?: TextStyle;
-  backTestID?: string;
 }
 
-export default function ScreenHeader({ title, subtitle, onBack, left, right, style, titleStyle, backTestID }: Props) {
+export default function ScreenHeader({ title, subtitle, onBack, left, right, style, titleStyle }: Props) {
   const { T } = useTheme();
 
   const leftSlot = left ?? (onBack ? (
-    <Pressable style={ghostBtnStyle(T)} onPress={onBack} testID={backTestID}>
+    <Pressable style={ghostBtnStyle(T)} onPress={onBack}>
       <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
         <Path d="M10 13L5 8l5-5" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
       </Svg>

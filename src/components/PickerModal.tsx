@@ -47,11 +47,11 @@ export default function PickerModal({ picker, onDismiss, onCommit }: Props) {
         <Pressable style={styles.modalDismiss} onPress={onDismiss} />
         <View style={styles.modalSheet}>
           <View style={styles.modalHeader}>
-            <Pressable onPress={onDismiss} style={styles.modalCancelBtn} testID="picker-cancel">
+            <Pressable onPress={onDismiss} style={styles.modalCancelBtn}>
               <Text style={styles.modalCancelText}>{t('common.cancel')}</Text>
             </Pressable>
             <Text style={styles.modalTitle}>{picker?.title}</Text>
-            <Pressable onPress={() => onCommit(local)} style={styles.modalDoneBtn} testID="picker-confirm">
+            <Pressable onPress={() => onCommit(local)} style={styles.modalDoneBtn}>
               <Text style={styles.modalDoneText}>{t('common.done')}</Text>
             </Pressable>
           </View>

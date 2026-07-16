@@ -57,7 +57,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
         showsVerticalScrollIndicator={false}
       >
         {/* ── Header ── */}
-        <ScreenHeader onBack={onBack} backTestID="settings-back" subtitle={t('settings.subtitle')} title={t('settings.title')} style={styles.header} />
+        <ScreenHeader onBack={onBack} subtitle={t('settings.subtitle')} title={t('settings.title')} style={styles.header} />
 
         {/* ── Appearance ── */}
         <View style={styles.section}>
@@ -84,7 +84,6 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
                 value={!settings.hideFolders}
                 onChange={v => canHideFolders && updateSettings('hideFolders', !v)}
                 disabled={!canHideFolders}
-                testID="settings-toggle-hidefolders"
               />
             }
             last
@@ -106,12 +105,12 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
           <SettingsRow
             label={t('settings.keepAwakeLabel')}
             sub={t('settings.keepAwakeSub')}
-            right={<SettingsToggle value={settings.keepScreenAwake} onChange={v => updateSettings('keepScreenAwake', v)} testID="settings-toggle-keepawake" />}
+            right={<SettingsToggle value={settings.keepScreenAwake} onChange={v => updateSettings('keepScreenAwake', v)} />}
           />
           <SettingsRow
             label={t('settings.hapticLabel')}
             sub={t('settings.hapticSub')}
-            right={<SettingsToggle value={settings.hapticFeedback} onChange={v => updateSettings('hapticFeedback', v)} testID="settings-toggle-haptic" />}
+            right={<SettingsToggle value={settings.hapticFeedback} onChange={v => updateSettings('hapticFeedback', v)} />}
             last
           />
         </SettingsSection>
@@ -158,7 +157,6 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
                   <Pressable
                     key={lng}
                     onPress={() => updateSettings('language', lng)}
-                    testID={`settings-lang-${lng}`}
                     style={[
                       styles.segBtn,
                       settings.language === lng && { backgroundColor: T.accent },
@@ -216,7 +214,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             <SettingsRow
               label="Mock Premium"
               sub="Simulate premium unlock"
-              right={<SettingsToggle value={isPremium} onChange={setMockPremium} testID="settings-mock-premium" />}
+              right={<SettingsToggle value={isPremium} onChange={setMockPremium} />}
             />
             <SettingsRow
               label="Trial days remaining"
@@ -263,7 +261,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
               right={<Text style={styles.versionText}>{t('settings.subscriptionPremium')}</Text>}
             />
           ) : (
-            <Pressable onPress={() => setShowPaywall(true)} testID="settings-subscription">
+            <Pressable onPress={() => setShowPaywall(true)}>
               <SettingsRow
                 label={t('settings.subscription')}
                 right={

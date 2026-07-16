@@ -48,7 +48,6 @@ export default function MoveToFolderSheet({
             {otherFolders.map(folder => (
               <Pressable
                 key={folder.id}
-                testID={`move-folder-${folder.id}`}
                 style={styles.folderOption}
                 onPress={() => handleSelectFolder(folder.id)}
               >
@@ -56,7 +55,7 @@ export default function MoveToFolderSheet({
               </Pressable>
             ))}
           </ScrollView>
-          <Pressable style={styles.cancelBtn} onPress={onDismiss} testID="move-cancel">
+          <Pressable style={styles.cancelBtn} onPress={onDismiss}>
             <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
           </Pressable>
         </View>

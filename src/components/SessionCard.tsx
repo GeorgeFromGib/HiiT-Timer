@@ -33,7 +33,6 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
     <Pressable
       onPress={onPress}
       onLongPress={onLongPress}
-      testID={`session-card-${session.id}`}
       style={[styles.card, selected && styles.cardSelected, isActive && styles.cardActive]}
     >
       {onDrag && (
@@ -67,7 +66,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
         </View>
 
         {selected && (
-          <Pressable onPress={onStart} testID={`session-start-${session.id}`} style={styles.startBtn}>
+          <Pressable onPress={onStart} style={styles.startBtn}>
             <Text style={styles.startBtnText}>{t('sessions.select')}</Text>
           </Pressable>
         )}

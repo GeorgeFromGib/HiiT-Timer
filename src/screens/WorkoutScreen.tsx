@@ -187,7 +187,6 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       {/* ── Header ── */}
       <ScreenHeader
         onBack={handleBackPress}
-        backTestID="workout-back"
         title={session.name}
         titleStyle={styles.headerTitle}
         right={
@@ -327,12 +326,12 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               <View style={styles.extendRow}>
                 <View style={styles.extendLeft}>
                   {EXTEND_OPTIONS.map((secs) => (
-                    <GhostBtn key={secs} onPress={() => handleExtend(secs)} disabled={isIdle} color={phaseColor} size={68} testID={`workout-add${secs}`}>
+                    <GhostBtn key={secs} onPress={() => handleExtend(secs)} disabled={isIdle} color={phaseColor} size={68}>
                       <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
                     </GhostBtn>
                   ))}
                 </View>
-                <GhostBtn onPress={appendLastTwo} disabled={isIdle} color={phaseColor} size={68} testID="workout-addround">
+                <GhostBtn onPress={appendLastTwo} disabled={isIdle} color={phaseColor} size={68}>
                   <Text style={[styles.intervalCounter, { color: phaseColor }]}>
                     {'+1 '}
                     <Text style={styles.roundAbbr}>{t('workout.roundAbbr')}</Text>
@@ -436,14 +435,14 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       {/* ── Controls row ── */}
       <View style={styles.controls}>
         {isPlaying ? (
-          <GhostBtn onPress={skipBack} testID="workout-skipback">
+          <GhostBtn onPress={skipBack}>
             <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
               <Rect x="2.5" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />
               <Path d="M16 4l-9 6 9 6V4z" fill={T.subText} />
             </Svg>
           </GhostBtn>
         ) : (
-          <GhostBtn onPress={reset} disabled={isIdle || isPreStart} testID="workout-reset">
+          <GhostBtn onPress={reset} disabled={isIdle || isPreStart}>
             <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
               <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
               <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -451,7 +450,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           </GhostBtn>
         )}
 
-        <Pressable onPress={handlePlayPause} testID="workout-playpause" style={styles.playBtn}>
+        <Pressable onPress={handlePlayPause} style={styles.playBtn}>
           <View style={styles.playBtnInner}>
             {(isPlaying || isPreStart) ? (
               <Svg width={Math.round(26 * uiScale)} height={Math.round(28 * uiScale)} viewBox="0 0 28 30">
@@ -466,7 +465,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           </View>
         </Pressable>
 
-        <GhostBtn onPress={skip} disabled={isIdle || isPreStart} testID="workout-skip">
+        <GhostBtn onPress={skip} disabled={isIdle || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M4 4l9 6-9 6V4z" fill={T.subText} />
             <Rect x="15" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />

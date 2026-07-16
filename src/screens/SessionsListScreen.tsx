@@ -146,13 +146,13 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
         style={styles.header}
         left={
           folderId ? (
-            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Folders' })} testID="sessions-back-folders">
+            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Folders' })}>
               <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
                 <Path d="M19 12H5M12 19l-7-7 7-7" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
             </Pressable>
           ) : (
-            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })} testID="settings-btn">
+            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })}>
               <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
                 <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -164,7 +164,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
           <Pressable
             ref={addBtnRef}
             style={styles.addBtn}
-            testID="add-btn"
             onPress={gate(() => {
               // Measure button position for dropdown menu
               addBtnRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -275,7 +274,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('general')}
-              testID="type-general"
             >
               <ActivityTypeIcon mode="easy" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.general')}</Text>
@@ -284,7 +282,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('run')}
-              testID="type-run"
             >
               <ActivityTypeIcon mode="easy" activityType="run" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.run')}</Text>
@@ -293,7 +290,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('circuit')}
-              testID="type-circuit"
             >
               <ActivityTypeIcon mode="circuit" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.circuit')}</Text>
@@ -302,7 +298,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('spinning')}
-              testID="type-spinning"
             >
               <ActivityTypeIcon mode="easy" activityType="spinning" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.spinning')}</Text>
@@ -549,12 +544,11 @@ const SwipeDuplicateAction = React.forwardRef<
 });
 
 function SwipeMoveToFolderAction({
-  styles, onMoveToFolder, swipeable, sessionId,
+  styles, onMoveToFolder, swipeable,
 }: {
   styles: ReturnType<typeof makeStyles>;
   onMoveToFolder: () => void;
   swipeable: { close: () => void };
-  sessionId: string;
 }) {
   const { t } = useTranslation();
 
@@ -565,7 +559,7 @@ function SwipeMoveToFolderAction({
 
   return (
     <View style={{ alignSelf: 'stretch' }}>
-      <Pressable onPress={handlePress} style={[styles.swipeMoveAction, { flex: 1 }]} testID={`session-move-${sessionId}`}>
+      <Pressable onPress={handlePress} style={[styles.swipeMoveAction, { flex: 1 }]}>
         <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
           <Path
             d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"
@@ -621,21 +615,20 @@ function SessionSwipeRow({
               styles={styles}
               onMoveToFolder={onMoveToFolder}
               swipeable={swipeable}
-              sessionId={session.id}
             />
           )}
         </View>
       )}
       renderRightActions={(_p, _d, swipeable) => (
         <View style={styles.rightActionsContainer}>
-          <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction} testID={`session-delete-${session.id}`}>
+          <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
             </Svg>
             <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
           </Pressable>
-          <Pressable onPress={() => { onEdit(); swipeable.close(); }} style={styles.swipeEditAction} testID={`session-edit-${session.id}`}>
+          <Pressable onPress={() => { onEdit(); swipeable.close(); }} style={styles.swipeEditAction}>
             <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
               <Path
                 d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"

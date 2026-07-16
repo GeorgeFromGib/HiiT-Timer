@@ -199,10 +199,10 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
 
       {/* Actions */}
       <View style={styles.actions}>
-        <Pressable onPress={onDone} testID="complete-done" style={[styles.doneBtn, { backgroundColor: T.accent, ...buttonShadow(T) }]}>
+        <Pressable onPress={onDone} style={[styles.doneBtn, { backgroundColor: T.accent, ...buttonShadow(T) }]}>
           <Text style={[styles.doneBtnText, { color: T.btnGlyph }]}>{t('complete.done')}</Text>
         </Pressable>
-        <Pressable onPress={onRepeat} testID="complete-repeat" style={[styles.repeatBtn, { backgroundColor: T.ghostBg, borderColor: T.hairline }]}>
+        <Pressable onPress={onRepeat} style={[styles.repeatBtn, { backgroundColor: T.ghostBg, borderColor: T.hairline }]}>
           <Svg width={16} height={16} viewBox="0 0 20 20" fill="none">
             <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
             <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
