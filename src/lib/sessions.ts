@@ -2,7 +2,7 @@ import { readJsonFile, writeJsonFile } from './jsonFile';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
-import { SPIN_PRESETS } from './presets';
+import { SPEED_PRESETS, SPIN_PRESETS } from './presets';
 import { INTENSITY_PRESETS } from './intensityPresets';
 
 export type FolderIconName =
@@ -31,12 +31,7 @@ export interface RunSpeeds {
   cooldownSpeed: number;
 }
 
-export const DEFAULT_RUN_SPEEDS: RunSpeeds = {
-  warmupSpeed: 5,
-  workSpeed: 8,
-  restSpeed: 5,
-  cooldownSpeed: 4.5,
-};
+export const DEFAULT_RUN_SPEEDS: RunSpeeds = SPEED_PRESETS['3'];
 
 export interface SpinValues {
   warmupResistance:   number;
@@ -157,7 +152,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
       mode: 'easy',
       activityType: 'run',
       config: { warmup: 300, high: 45, low: 15, rounds: 5, cooldown: 300 },
-      runSpeeds: { warmupSpeed: 7, workSpeed: 14, restSpeed: 7, cooldownSpeed: 6.0 },
+      runSpeeds: SPEED_PRESETS['3'],
     },
     {
       id: 'default-circuit-1',

@@ -1,0 +1,27 @@
+appId: com.georgefromgib.hiittimer
+---
+# Fresh install always shows OnboardingModal first; every flow starts here
+# so each one is independent of app state left over from a previous run.
+# clearState wipes the dev-client's saved packager connection too, so it
+# lands on the Expo dev-launcher home screen — tap through to the app first.
+- launchApp:
+    clearState: true
+- runFlow:
+    when:
+      visible: "DEVELOPMENT SERVERS"
+    commands:
+      - tapOn: ".*:8081.*"
+    label: Connect to the Metro dev server if the dev-launcher home shows
+# The dev client shows a one-time "developer menu" explainer sheet on first
+# connect after clearState; "Continue" advances it to the actual dev menu,
+# which then needs its own close tap. Both are no-ops if not present.
+- tapOn:
+    text: "Continue"
+    optional: true
+- tapOn:
+    text: "Close"
+    optional: true
+- assertVisible:
+    id: "onboarding-confirm"
+- tapOn:
+    id: "onboarding-confirm"

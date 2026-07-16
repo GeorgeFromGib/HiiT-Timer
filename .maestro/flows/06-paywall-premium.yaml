@@ -1,0 +1,31 @@
+appId: com.georgefromgib.hiittimer
+# Requires a __DEV__ build — "Mock Premium" / "Expire trial" only render in dev.
+---
+- runFlow: ../subflows/reset-and-launch.yaml
+- tapOn:
+    id: "settings-btn"
+
+# Mock Premium ON: the gated "+" action should pass straight through to the
+# create-session type menu instead of showing the paywall.
+- tapOn:
+    id: "settings-mock-premium"
+- tapOn:
+    id: "settings-back"
+- tapOn:
+    id: "add-btn"
+- assertVisible: "Add session type"
+- tapOn:
+    point: "5%,5%" # dismiss the type menu without picking a type
+
+# Trial expired + Mock Premium OFF: the gate should now show the paywall.
+- tapOn:
+    id: "settings-btn"
+- tapOn:
+    id: "settings-mock-premium"
+- tapOn: "Expire trial"
+- tapOn:
+    id: "settings-back"
+- tapOn:
+    id: "add-btn"
+- assertVisible: "Unlock forever"
+- tapOn: "Not now"

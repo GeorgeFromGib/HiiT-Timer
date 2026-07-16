@@ -40,19 +40,15 @@ export default function MoveToFolderSheet({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade">
-      <Pressable style={styles.overlay} onPress={onDismiss}>
-        <Pressable style={styles.sheetContainer} onPress={e => e.stopPropagation()}>
-          <View style={styles.header}>
-            <Text style={styles.title}>{t('folders.moveSessionTo')}</Text>
-            <Pressable onPress={onDismiss} hitSlop={8}>
-              <Text style={styles.closeBtn}>✕</Text>
-            </Pressable>
-          </View>
-          <ScrollView style={styles.folderList}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onDismiss}>
+      <View style={styles.overlay}>
+        <View style={styles.card}>
+          <Text style={styles.title}>{t('folders.moveSessionTo')}</Text>
+          <ScrollView style={styles.folderList} showsVerticalScrollIndicator={false}>
             {otherFolders.map(folder => (
               <Pressable
                 key={folder.id}
+                testID={`move-folder-${folder.id}`}
                 style={styles.folderOption}
                 onPress={() => handleSelectFolder(folder.id)}
               >
@@ -60,8 +56,11 @@ export default function MoveToFolderSheet({
               </Pressable>
             ))}
           </ScrollView>
-        </Pressable>
-      </Pressable>
+          <Pressable style={styles.cancelBtn} onPress={onDismiss} testID="move-cancel">
+            <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
+          </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }
@@ -70,39 +69,32 @@ function makeStyles(T: ThemeTokens) {
   return StyleSheet.create({
     overlay: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-      justifyContent: 'flex-end',
-    },
-    sheetContainer: {
-      backgroundColor: T.sheetBg,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-      maxHeight: '70%',
-    },
-    header: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+      justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical: 16,
-      paddingHorizontal: 20,
-      borderBottomWidth: 1,
-      borderBottomColor: T.hairline,
+    },
+    card: {
+      width: '85%',
+      maxWidth: 340,
+      backgroundColor: T.sheetBg,
+      borderRadius: 16,
+      padding: 20,
+      alignItems: 'center',
     },
     title: {
       fontFamily: 'Inter_700Bold',
       fontSize: 16,
       color: T.text,
-    },
-    closeBtn: {
-      fontSize: 20,
-      color: T.subText,
+      textAlign: 'center',
     },
     folderList: {
-      paddingVertical: 8,
+      alignSelf: 'stretch',
+      maxHeight: 240,
+      marginTop: 16,
     },
     folderOption: {
       paddingVertical: 14,
-      paddingHorizontal: 20,
+      paddingHorizontal: 8,
       borderBottomWidth: 1,
       borderBottomColor: T.hairline,
     },
@@ -110,6 +102,20 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_500Medium',
       fontSize: 15,
       color: T.text,
+      textAlign: 'center',
+    },
+    cancelBtn: {
+      marginTop: 18,
+      width: '100%',
+      paddingVertical: 10,
+      alignItems: 'center',
+      borderRadius: 8,
+      backgroundColor: T.faintText + '20',
+    },
+    cancelBtnText: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 14,
+      color: T.subText,
     },
   });
 }

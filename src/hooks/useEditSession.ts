@@ -114,6 +114,16 @@ export function useEditSession(
     return undefined;
   });
   const [targetLengthMinutes, setTargetLengthMinutes] = useState(15);
+  // True once the session's length is considered established — either the session already had
+  // a length over 10 minutes when opened, or the user has since picked a target length. Once
+  // true, changing rounds directly (which drifts the length) warns instead of silently updating it.
+  const [lengthIsSet, setLengthIsSet] = useState(() => {
+    if (existing?.mode === 'easy') {
+      const c = existing.config;
+      return c.warmup + c.rounds * (c.high + c.low) + c.cooldown > 600;
+    }
+    return false;
+  });
   // True when Easy-mode fields (warmup/work/rest/cooldown/rounds) have changed since the
   // Advanced interval list was last built from them — signals toggleMode() to rebuild.
   const [easyDirty, setEasyDirty] = useState(false);
@@ -166,6 +176,10 @@ export function useEditSession(
     },
     (result) => {
       if (result.type === 'rounds') {
+        if (lengthIsSet && result.value !== easyEdit.rounds) {
+          appAlert('warning', i18n.t('alerts.roundsChangeLengthTitle'), i18n.t('alerts.roundsChangeLengthMessage'));
+          setLengthIsSet(false);
+        }
         easyEdit.setRounds(result.value);
         setEasyDirty(true);
         setTargetLengthMinutes(nearestTargetMinutes(result.value));
@@ -308,6 +322,7 @@ export function useEditSession(
     );
     easyEdit.setRounds(rounds);
     setTargetLengthMinutes(minutes);
+    setLengthIsSet(true);
   }
 
   function openCustomLengthPicker() {

@@ -29,6 +29,7 @@ export default function AppAlertModal() {
             {request.buttons.map((button, i) => (
               <Pressable
                 key={`${button.text}-${i}`}
+                testID={`alert-btn-${button.style ?? 'default'}`}
                 style={[styles.button, stacked ? styles.buttonFullWidth : styles.buttonFlex, buttonBg(T, button.style)]}
                 onPress={() => handlePress(button)}
               >

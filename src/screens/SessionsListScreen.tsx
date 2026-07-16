@@ -17,6 +17,7 @@ import {
   loadSessions,
   saveSessions,
   newId,
+  moveSessionToFolder,
   type Session,
   type SessionsData,
 } from '../lib/sessions';
@@ -30,6 +31,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import SessionCard from '../components/SessionCard';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import TrialStatusPill from '../components/TrialStatusPill';
+import MoveToFolderSheet from '../components/MoveToFolderSheet';
 import { useTranslation } from '../lib/i18n';
 
 export default function SessionsListScreen({ folderId, onNavigate }: { folderId?: string; onNavigate: (route: Route) => void }) {
@@ -41,6 +43,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [showTypeMenu, setShowTypeMenu] = useState(false);
+  const [moveSheetSession, setMoveSheetSession] = useState<Session | null>(null);
 
   const [selectedFolderForSession, setSelectedFolderForSession] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ top: 98, right: 20 });
@@ -64,6 +67,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   // Show flat list if: viewing a specific folder, hideFolders is enabled, or only 1 folder exists
   const shouldHideFolders =
     Boolean(folderId) || Boolean((settings as { hideFolders?: boolean }).hideFolders) || data.folders.length === 1;
+  const showMoveToFolder = !(settings as { hideFolders?: boolean }).hideFolders;
 
   useEffect(() => {
     if (showTypeMenu) {
@@ -106,6 +110,13 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
     saveSessions(next);
   };
 
+  const handleMoveToFolder = (folderId: string) => {
+    if (!moveSheetSession) return;
+    const next = moveSessionToFolder(moveSheetSession.id, folderId, data);
+    setData(next);
+    saveSessions(next);
+  };
+
   const handleDeleteSession = (session: Session, swipeable: { close: () => void }) => {
     confirmDeleteSession(
       session.name,
@@ -135,13 +146,13 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
         style={styles.header}
         left={
           folderId ? (
-            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Folders' })}>
+            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Folders' })} testID="sessions-back-folders">
               <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
                 <Path d="M19 12H5M12 19l-7-7 7-7" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               </Svg>
             </Pressable>
           ) : (
-            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })}>
+            <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })} testID="settings-btn">
               <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
                 <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -153,6 +164,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
           <Pressable
             ref={addBtnRef}
             style={styles.addBtn}
+            testID="add-btn"
             onPress={gate(() => {
               // Measure button position for dropdown menu
               addBtnRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -204,7 +216,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
           }}
           ListHeaderComponent={
             data.sessions.length > 0
-              ? <Text style={styles.hintText}>{t('sessions.hint')}</Text>
+              ? <Text style={styles.hintText}>{t(showMoveToFolder ? 'sessions.hintWithFolders' : 'sessions.hint')}</Text>
               : null
           }
           ListEmptyComponent={<Text style={styles.emptyText}>{t('sessions.empty')}</Text>}
@@ -216,6 +228,8 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
               isActive={isActive}
               selectedId={selectedSessionId}
               onDuplicate={gate(() => handleDuplicate(session))}
+              showMoveToFolder={showMoveToFolder}
+              onMoveToFolder={gate(() => setMoveSheetSession(session))}
               onDelete={(swipeable) => handleDeleteSession(session, swipeable)}
               onSelect={() => setSelectedSessionId(prev => prev === session.id ? null : session.id)}
               onEdit={gate(() => onNavigate({ name: 'EditSession', session }))}
@@ -227,6 +241,14 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
         <Text style={styles.emptyText}>{t('sessions.empty')}</Text>
       )}
       <PaywallModal visible={showPaywall} onDismiss={() => setShowPaywall(false)} />
+
+      <MoveToFolderSheet
+        visible={moveSheetSession !== null}
+        session={moveSheetSession}
+        allFolders={data.folders}
+        onDismiss={() => setMoveSheetSession(null)}
+        onSelectFolder={handleMoveToFolder}
+      />
 
       {showTypeMenu && (
         <>
@@ -253,6 +275,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('general')}
+              testID="type-general"
             >
               <ActivityTypeIcon mode="easy" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.general')}</Text>
@@ -261,6 +284,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('run')}
+              testID="type-run"
             >
               <ActivityTypeIcon mode="easy" activityType="run" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.run')}</Text>
@@ -269,6 +293,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('circuit')}
+              testID="type-circuit"
             >
               <ActivityTypeIcon mode="circuit" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.circuit')}</Text>
@@ -277,6 +302,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <Pressable
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('spinning')}
+              testID="type-spinning"
             >
               <ActivityTypeIcon mode="easy" activityType="spinning" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.spinning')}</Text>
@@ -418,6 +444,28 @@ function makeStyles(T: ThemeTokens) {
     swipeContainer: {
       borderRadius: 20,
     },
+    leftActionsContainer: {
+      flexDirection: 'row',
+    },
+    swipeMoveAction: {
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      borderColor: '#22c55e',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      width: 88,
+      paddingHorizontal: 6,
+      borderRadius: 20,
+      marginRight: 8,
+    },
+    swipeMoveText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 13,
+      letterSpacing: 0.5,
+      color: '#22c55e',
+      textAlign: 'center',
+    },
     swipeDuplicateAction: {
       backgroundColor: 'transparent',
       borderWidth: 1.5,
@@ -442,6 +490,7 @@ function makeStyles(T: ThemeTokens) {
       gap: 4,
       width: 88,
       borderRadius: 20,
+      marginLeft: 8,
     },
     swipeDeleteText: {
       fontFamily: 'Inter_700Bold',
@@ -451,7 +500,7 @@ function makeStyles(T: ThemeTokens) {
     },
     rightActionsContainer: {
       flexDirection: 'row',
-      gap: 0,
+      gap: 8,
     },
     swipeEditAction: {
       backgroundColor: '#3b82f6',
@@ -499,9 +548,39 @@ const SwipeDuplicateAction = React.forwardRef<
   );
 });
 
+function SwipeMoveToFolderAction({
+  styles, onMoveToFolder, swipeable, sessionId,
+}: {
+  styles: ReturnType<typeof makeStyles>;
+  onMoveToFolder: () => void;
+  swipeable: { close: () => void };
+  sessionId: string;
+}) {
+  const { t } = useTranslation();
+
+  const handlePress = () => {
+    swipeable.close();
+    onMoveToFolder();
+  };
+
+  return (
+    <View style={{ alignSelf: 'stretch' }}>
+      <Pressable onPress={handlePress} style={[styles.swipeMoveAction, { flex: 1 }]} testID={`session-move-${sessionId}`}>
+        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+          <Path
+            d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"
+            stroke={styles.swipeMoveText.color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
+          />
+        </Svg>
+        <Text style={styles.swipeMoveText}>{t('folders.moveToFolder')}</Text>
+      </Pressable>
+    </View>
+  );
+}
+
 function SessionSwipeRow({
   session, styles, drag, isActive, selectedId, draggable = true,
-  onDuplicate, onDelete, onSelect, onEdit, onStart,
+  onDuplicate, showMoveToFolder, onMoveToFolder, onDelete, onSelect, onEdit, onStart,
 }: {
   session:    Session;
   styles:     ReturnType<typeof makeStyles>;
@@ -515,6 +594,8 @@ function SessionSwipeRow({
   // from within CellProvider!".
   draggable?: boolean;
   onDuplicate: () => void;
+  showMoveToFolder?: boolean;
+  onMoveToFolder?: () => void;
   onDelete:    (swipeable: { close: () => void }) => void;
   onSelect:    () => void;
   onEdit:      () => void;
@@ -528,23 +609,33 @@ function SessionSwipeRow({
       containerStyle={styles.swipeContainer}
       onSwipeableClose={() => duplicateRef.current?.reset()}
       renderLeftActions={(_p, _d, swipeable) => (
-        <SwipeDuplicateAction
-          ref={duplicateRef}
-          styles={styles}
-          onDuplicate={onDuplicate}
-          swipeable={swipeable}
-        />
+        <View style={styles.leftActionsContainer}>
+          <SwipeDuplicateAction
+            ref={duplicateRef}
+            styles={styles}
+            onDuplicate={onDuplicate}
+            swipeable={swipeable}
+          />
+          {showMoveToFolder && onMoveToFolder && (
+            <SwipeMoveToFolderAction
+              styles={styles}
+              onMoveToFolder={onMoveToFolder}
+              swipeable={swipeable}
+              sessionId={session.id}
+            />
+          )}
+        </View>
       )}
       renderRightActions={(_p, _d, swipeable) => (
         <View style={styles.rightActionsContainer}>
-          <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction}>
+          <Pressable onPress={() => onDelete(swipeable)} style={styles.swipeDeleteAction} testID={`session-delete-${session.id}`}>
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="#fff" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
               <Path d="M10 11v6M14 11v6" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
             </Svg>
             <Text style={styles.swipeDeleteText}>{t('common.delete')}</Text>
           </Pressable>
-          <Pressable onPress={() => { onEdit(); swipeable.close(); }} style={styles.swipeEditAction}>
+          <Pressable onPress={() => { onEdit(); swipeable.close(); }} style={styles.swipeEditAction} testID={`session-edit-${session.id}`}>
             <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
               <Path
                 d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"

@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Pressable, StyleSheet } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 
-export function SettingsToggle({ value, onChange, disabled = false }: {
+export function SettingsToggle({ value, onChange, disabled = false, testID }: {
   value: boolean;
   onChange: (v: boolean) => void;
   disabled?: boolean;
+  testID?: string;
 }) {
   const { T } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
@@ -25,6 +26,7 @@ export function SettingsToggle({ value, onChange, disabled = false }: {
     <Pressable
       onPress={() => { if (!disabled) onChange(!value); }}
       disabled={disabled}
+      testID={testID}
       style={[
         styles.toggleTrack,
         {

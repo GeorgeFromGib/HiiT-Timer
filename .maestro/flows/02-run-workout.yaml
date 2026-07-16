@@ -1,0 +1,27 @@
+appId: com.georgefromgib.hiittimer
+---
+- runFlow: ../subflows/reset-and-launch.yaml
+- tapOn:
+    id: "session-card-default-1"
+- tapOn:
+    id: "session-start-default-1"
+- assertVisible: "INTERVAL 1 OF 28"
+- tapOn:
+    id: "workout-playpause"
+- assertVisible: "GET READY"
+- assertVisible: "WARM UP"
+
+# Fast-forward through every remaining segment; skip stops existing once the
+# workout finishes and SessionCompleteScreen replaces the transport controls.
+- repeat:
+    while:
+      visible:
+        id: "workout-skip"
+    commands:
+      - tapOn:
+          id: "workout-skip"
+
+- assertVisible: "Crushed it!"
+- tapOn:
+    id: "complete-done"
+- assertVisible: "My Sessions"

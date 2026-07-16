@@ -1,0 +1,40 @@
+appId: com.georgefromgib.hiittimer
+---
+- runFlow: ../subflows/reset-and-launch.yaml
+
+# Create
+- tapOn:
+    id: "add-btn"
+- tapOn:
+    id: "type-general"
+- tapOn:
+    id: "edit-name"
+- inputText: "Maestro Test Session"
+- tapOn:
+    id: "edit-save"
+- assertVisible: "Maestro Test Session"
+
+# Delete via long-press (SessionCard's onLongPress skips the swipe reveal)
+- longPressOn:
+    text: "Maestro Test Session"
+- assertVisible:
+    id: "alert-btn-destructive"
+- tapOn:
+    id: "alert-btn-destructive"
+- assertNotVisible: "Maestro Test Session"
+
+# Edit an existing (default) session via the swipe-left "Edit" action
+- swipe:
+    direction: LEFT
+    from:
+      id: "session-card-default-2"
+- tapOn:
+    id: "session-edit-default-2"
+- assertVisible: "Edit Session"
+- tapOn:
+    id: "edit-name"
+- eraseText
+- inputText: "Advanced Example Edited"
+- tapOn:
+    id: "edit-save"
+- assertVisible: "Advanced Example Edited"

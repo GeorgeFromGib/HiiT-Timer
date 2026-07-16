@@ -145,10 +145,10 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
           </ScrollView>
 
           <View style={styles.footer}>
-            <Pressable style={styles.confirmBtn} onPress={handleConfirm}>
+            <Pressable style={styles.confirmBtn} onPress={handleConfirm} testID="onboarding-confirm">
               <Text style={styles.confirmBtnText}>{t('onboarding.confirm')}</Text>
             </Pressable>
-            <Pressable style={styles.skipBtn} onPress={handleSkip}>
+            <Pressable style={styles.skipBtn} onPress={handleSkip} testID="onboarding-later">
               <Text style={styles.skipBtnText}>{t('onboarding.later')}</Text>
             </Pressable>
           </View>

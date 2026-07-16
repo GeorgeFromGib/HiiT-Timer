@@ -1,0 +1,42 @@
+appId: com.georgefromgib.hiittimer
+---
+- runFlow: ../subflows/reset-and-launch.yaml
+
+# Folders are hidden by default with only one folder present; enable them so
+# there's a Folders screen and a "Move to Folder" swipe action to test.
+- tapOn:
+    id: "settings-btn"
+- tapOn:
+    id: "settings-toggle-hidefolders"
+- tapOn:
+    id: "settings-back"
+- assertVisible: "Folders"
+
+# Create a second folder so there's somewhere to move a session to.
+- tapOn:
+    id: "add-btn"
+- tapOn: "e.g. Weekend Sessions"
+- inputText: "Second Folder"
+- tapOn: "Create"
+- assertVisible: "Second Folder"
+
+- tapOn:
+    id: "folder-default"
+- assertVisible:
+    id: "session-card-default-1"
+
+# Swiping the card right reveals the leading actions (Duplicate, Move to Folder).
+- swipe:
+    direction: RIGHT
+    from:
+      id: "session-card-default-1"
+- tapOn:
+    id: "session-move-default-1"
+- assertVisible: "Second Folder"
+- tapOn: "Second Folder"
+
+- tapOn:
+    id: "sessions-back-folders"
+- tapOn: "Second Folder"
+- assertVisible:
+    id: "session-card-default-1"

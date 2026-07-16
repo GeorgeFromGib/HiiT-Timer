@@ -16,9 +16,11 @@ const PRESET_LEVELS: { label: string; level: PresetLevel }[] = [
 interface Props {
   onApply: (level: PresetLevel) => void;
   activePreset?: PresetLevel | null;
+  lowLabel?:  string;
+  highLabel?: string;
 }
 
-export default function PresetStrip({ onApply, activePreset }: Props) {
+export default function PresetStrip({ onApply, activePreset, lowLabel, highLabel }: Props) {
   const { T } = useTheme();
   const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
@@ -26,8 +28,8 @@ export default function PresetStrip({ onApply, activePreset }: Props) {
   return (
     <View>
       <View style={styles.presetRangeLabels}>
-        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{t('edit.presetEasy')}</Text>
-        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{t('edit.presetHard')}</Text>
+        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{lowLabel ?? t('edit.presetEasy')}</Text>
+        <Text style={[styles.presetRangeLabelText, { color: T.faintText }]}>{highLabel ?? t('edit.presetHard')}</Text>
       </View>
       <View style={styles.presetStrip}>
         {PRESET_LEVELS.map(({ label, level }) => {

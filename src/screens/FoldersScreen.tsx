@@ -130,7 +130,7 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
         title={t('folders.title')}
         style={styles.header}
         left={
-          <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })}>
+          <Pressable style={ghostBtnStyle(T)} onPress={() => onNavigate({ name: 'Settings' })} testID="settings-btn">
             <Svg width={17} height={17} viewBox="0 0 24 24" fill="none">
               <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
               <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
@@ -138,7 +138,7 @@ export default function FoldersScreen({ onNavigate }: { onNavigate: (route: Rout
           </Pressable>
         }
         right={
-          <Pressable style={styles.addBtn} onPress={() => setShowCreateFolderModal(true)}>
+          <Pressable style={styles.addBtn} onPress={() => setShowCreateFolderModal(true)} testID="add-btn">
             <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
               <Path d="M12 5v14M5 12h14" stroke={T.btnGlyph} strokeWidth={2.5} strokeLinecap="round" />
             </Svg>
@@ -303,6 +303,7 @@ function FolderSwipeRow({
       <Pressable
         style={[styles.folderCard, isActive && styles.folderCardActive]}
         onPress={onPress}
+        testID={`folder-${folder.id}`}
       >
         <Pressable onLongPress={drag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
           <DragHandle color={T.subText} />

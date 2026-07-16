@@ -161,7 +161,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     }
     return (
       <View style={styles.intervalActions}>
-        <Pressable onPress={() => setShowAddPhasePicker(true)} style={styles.addIntervalBtn}>
+        <Pressable onPress={() => setShowAddPhasePicker(true)} style={styles.addIntervalBtn} testID="edit-add-interval">
           <Svg width={14} height={14} viewBox="0 0 24 24" fill="none">
             <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.2} strokeLinecap="round" />
           </Svg>
@@ -186,6 +186,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.kav}>
         <ScreenHeader
           onBack={handleCancel}
+          backTestID="edit-back"
           title={editorTitle}
           style={styles.header}
           right={
@@ -213,6 +214,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               placeholder={t('edit.namePlaceholder')}
               placeholderTextColor={T.faintText}
               returnKeyType="done"
+              testID="edit-name"
             />
           </View>
 
@@ -258,6 +260,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                   onValueChange={toggleMode}
                   trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
                   thumbColor={T.accent}
+                  testID="edit-mode-switch"
                 />
                 <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>{t('edit.advanced')}</Text>
               </View>
@@ -337,7 +340,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                 {isRun && (
                   <>
                     <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
-                    <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} />
+                    <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} lowLabel={t('edit.presetBriskWalk')} highLabel={t('edit.presetHardRun')} />
                   </>
                 )}
                 {isSpinning && (
@@ -441,7 +444,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                   ))}
                   <View style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{t('edit.rounds')}</Text>
-                    <Pressable style={styles.configInput} onPress={openRoundsPicker}>
+                    <Pressable style={styles.configInput} onPress={openRoundsPicker} testID="edit-rounds-picker">
                       <Text style={styles.configInputText}>{rounds}</Text>
                     </Pressable>
                   </View>
@@ -529,7 +532,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           {isRun && !isAdvanced && !isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
-              <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} />
+              <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} lowLabel={t('edit.presetBriskWalk')} highLabel={t('edit.presetHardRun')} />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => {
                   const isPhaseDisabled = (field === 'warmupSpeed' && fieldValues.warmup === 0)
@@ -559,12 +562,12 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           )}
 
           {/* Save / Cancel */}
-          <Pressable onPress={handleSave} style={[styles.saveBtn, !hasChanges && styles.saveBtnDisabled]} disabled={!hasChanges}>
+          <Pressable onPress={handleSave} testID="edit-save" style={[styles.saveBtn, !hasChanges && styles.saveBtnDisabled]} disabled={!hasChanges}>
             <Text style={styles.saveBtnText}>
               {isEditing ? t('edit.saveChanges') : t('edit.save')}
             </Text>
           </Pressable>
-          <Pressable onPress={handleCancel} style={styles.cancelBtn}>
+          <Pressable onPress={handleCancel} testID="edit-cancel" style={styles.cancelBtn}>
             <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
           </Pressable>
 

@@ -21,12 +21,12 @@ export interface SpinPreset {
 }
 
 export const SPEED_PRESETS: Record<PresetLevel, SpeedPreset> = {
-  '1': { warmupSpeed:  5, workSpeed:  8, restSpeed:  5, cooldownSpeed: 4.5 },
-  '2': { warmupSpeed:  6, workSpeed: 11, restSpeed:  6, cooldownSpeed: 5.5 },
-  '3': { warmupSpeed:  7, workSpeed: 14, restSpeed:  7, cooldownSpeed: 6.0 },
-  '4': { warmupSpeed:  8, workSpeed: 17, restSpeed:  8, cooldownSpeed: 6.5 },
-  '5': { warmupSpeed:  9, workSpeed: 20, restSpeed:  9, cooldownSpeed: 7.0 },
-  '6': { warmupSpeed: 10, workSpeed: 23, restSpeed: 10, cooldownSpeed: 7.5 },
+  '1': { warmupSpeed:  3.0, workSpeed:  5.5, restSpeed:  3.0, cooldownSpeed: 2.5 },
+  '2': { warmupSpeed:  4.5, workSpeed:  8.4, restSpeed:  4.5, cooldownSpeed: 3.8 },
+  '3': { warmupSpeed:  6.2, workSpeed: 11.3, restSpeed:  6.2, cooldownSpeed: 5.1 },
+  '4': { warmupSpeed:  7.8, workSpeed: 14.2, restSpeed:  7.8, cooldownSpeed: 6.4 },
+  '5': { warmupSpeed:  9.4, workSpeed: 17.1, restSpeed:  9.4, cooldownSpeed: 7.7 },
+  '6': { warmupSpeed: 11.0, workSpeed: 20.0, restSpeed: 11.0, cooldownSpeed: 9.0 },
 };
 
 // Levels map to spinning intensity zones: Recovery → Easy Endurance → Steady Tempo → Threshold → VO2 Push → Max Sprint
