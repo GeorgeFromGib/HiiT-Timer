@@ -169,7 +169,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                   </Svg>
                 </View>
                 <Text style={styles.optionTitle}>{t('settings.hideFoldersLabel')}</Text>
-                <Text style={styles.optionSub}>{t('settings.hideFoldersSub')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.foldersSub')}</Text>
                 <View style={styles.optionToggleRow}>
                   <SettingsToggle value={showFolders} onChange={setShowFolders} />
                 </View>
@@ -185,7 +185,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                   </Svg>
                 </View>
                 <Text style={styles.optionTitle}>{t('settings.voiceCuesLabel')}</Text>
-                <Text style={styles.optionSub}>{t('settings.voiceCuesSub')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.voiceCuesSub')}</Text>
                 <View style={styles.optionToggleRow}>
                   <SettingsToggle value={voiceCues} onChange={setVoiceCues} />
                 </View>

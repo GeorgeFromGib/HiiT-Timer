@@ -9,10 +9,10 @@ export interface IntensityPreset {
 export const INTENSITY_PRESETS: Record<PresetLevel, IntensityPreset> = {
   '1': { work: 20, rest: 40 },
   '2': { work: 30, rest: 30 },
-  '3': { work: 45, rest: 15 },
-  '4': { work: 50, rest: 10 },
-  '5': { work: 55, rest: 10 },
-  '6': { work: 60, rest:  5 },
+  '3': { work: 40, rest: 20 },
+  '4': { work: 45, rest: 15 },
+  '5': { work: 50, rest: 15 },
+  '6': { work: 60, rest: 15 },
 };
 
 const ALL_LEVELS: PresetLevel[] = ['1', '2', '3', '4', '5', '6'];

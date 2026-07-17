@@ -181,6 +181,8 @@ export const es: typeof en = {
     feature3Title: 'Pensado para todo tipo de entrenamiento',
     feature3Sub: 'Intervalos estándar, carrera, circuitos o ciclismo — cada uno con su propio ritmo.',
     appearanceSub: 'Elige el estilo que verás cada vez que abras la app. Siempre puedes cambiarlo después en Ajustes.',
+    foldersSub: 'Activa esta opción para agrupar tus sesiones en carpetas. Déjala desactivada para ver solo una lista única de sesiones.',
+    voiceCuesSub: 'Activa esta opción para escuchar avisos de voz en lugar de tonos de alerta.',
     settingsTitle: 'Todo listo',
     settingsSub: 'Estas y todas las demás opciones se pueden ajustar en cualquier momento desde la pantalla de Ajustes — solo toca el icono de engranaje en la parte superior izquierda de la pantalla.',
     next: 'Continuar',

@@ -179,6 +179,8 @@ export const en = {
     feature3Title: 'Built for every workout style',
     feature3Sub: 'Standard intervals, runs, circuits, or cycling — each with its own timing.',
     appearanceSub: "Pick the look you'll see every time you open the app. You can always change it later in Settings.",
+    foldersSub: 'Enable to group sessions into folders. Leave disabled to show just a single list of sessions.',
+    voiceCuesSub: 'Enable to have voice prompts instead of alert chimes.',
     settingsTitle: "You're all set",
     settingsSub: 'These and every other option can be fine-tuned anytime from the Settings screen — just tap the gear icon at the top left of the screen.',
     next: 'Continue',
