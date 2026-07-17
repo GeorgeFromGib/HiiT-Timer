@@ -5,14 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, withOpacity, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
 import { useSettings } from '../lib/settingsContext';
 import { useTranslation } from '../lib/i18n';
-import { SettingsRow } from './SettingsRow';
 import { SettingsToggle } from './SettingsToggle';
 
 export const CURRENT_ONBOARDING_VERSION = 1;
 
 interface Props {
   visible: boolean;
-  onConfirm: (showFolders?: boolean) => void;
+  onConfirm: (showFolders: boolean) => void;
 }
 
 export default function OnboardingModal({ visible, onConfirm }: Props) {
@@ -23,6 +22,9 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
 
   const [showFolders, setShowFolders] = useState(!settings.hideFolders);
   const [voiceCues, setVoiceCues] = useState(settings.voiceCues);
+  const [step, setStep] = useState(0);
+  const STEP_COUNT = 5;
+  const lastStep = step === STEP_COUNT - 1;
 
   // Re-sync local state to the loaded settings each time the modal opens,
   // since it mounts once at launch before settings have resolved.
@@ -30,6 +32,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     if (!visible) return;
     setShowFolders(!settings.hideFolders);
     setVoiceCues(settings.voiceCues);
+    setStep(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
@@ -40,9 +43,16 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     onConfirm(showFolders);
   }
 
-  function handleSkip() {
-    updateSettings('onboardingVersion', CURRENT_ONBOARDING_VERSION);
-    onConfirm();
+  function handleNext() {
+    if (lastStep) {
+      handleConfirm();
+    } else {
+      setStep(s => s + 1);
+    }
+  }
+
+  function handleBack() {
+    setStep(s => Math.max(0, s - 1));
   }
 
   const FEATURES = [
@@ -85,72 +95,128 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
             <View style={styles.handle} />
           </View>
 
+          <View style={styles.dotsRow}>
+            {Array.from({ length: STEP_COUNT }).map((_, i) => (
+              <View
+                key={i}
+                style={[styles.dot, i === step ? styles.dotActive : styles.dotInactive]}
+              />
+            ))}
+          </View>
+
           <ScrollView
             style={styles.scroll}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.headerBlock}>
-              <View style={styles.glyph}>
-                <Svg width={26} height={26} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-                  <Circle cx={12} cy={14} r={7} />
-                  <Path d="M9.7 3.2h4.6M12 3.4V7M18.4 7.6l1.3-1.3M12 14l3 1.8M12 14V10.2" />
-                </Svg>
-              </View>
-              <Text style={styles.title}>{t('onboarding.title')}</Text>
-              <Text style={styles.subtitle}>{t('onboarding.subtitle')}</Text>
-            </View>
-
-            <Text style={styles.sectionLabel}>{t('onboarding.whatsNew')}</Text>
-            <View style={styles.featureList}>
-              {FEATURES.map(f => (
-                <View key={f.titleKey} style={styles.featureRow}>
-                  <View style={styles.featureIcon}>{f.icon}</View>
-                  <View style={styles.featureTextBlock}>
-                    <Text style={styles.featureTitle}>{t(f.titleKey)}</Text>
-                    <Text style={styles.featureSub}>{t(f.subKey)}</Text>
+            {step === 0 && (
+              <>
+                <View style={styles.headerBlock}>
+                  <View style={styles.glyph}>
+                    <Svg width={26} height={26} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+                      <Circle cx={12} cy={14} r={7} />
+                      <Path d="M9.7 3.2h4.6M12 3.4V7M18.4 7.6l1.3-1.3M12 14l3 1.8M12 14V10.2" />
+                    </Svg>
                   </View>
+                  <Text style={styles.title}>{t('onboarding.title')}</Text>
+                  <Text style={styles.subtitle}>{t('onboarding.subtitle')}</Text>
                 </View>
-              ))}
-            </View>
 
-            <Text style={styles.sectionLabel}>{t('onboarding.quickSetup')}</Text>
+                <Text style={styles.sectionLabel}>{t('onboarding.whatsNew')}</Text>
+                <View style={styles.featureList}>
+                  {FEATURES.map(f => (
+                    <View key={f.titleKey} style={styles.featureRow}>
+                      <View style={styles.featureIcon}>{f.icon}</View>
+                      <View style={styles.featureTextBlock}>
+                        <Text style={styles.featureTitle}>{t(f.titleKey)}</Text>
+                        <Text style={styles.featureSub}>{t(f.subKey)}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
 
-            <Text style={styles.subsectionLabel}>{t('settings.appearance')}</Text>
-            <View style={styles.themeRow}>
-              {THEME_PREVIEWS.map(preview => (
-                <ThemeSwatch
-                  key={preview.key}
-                  T={T}
-                  preview={preview}
-                  selected={themeKey === preview.key}
-                  onSelect={() => updateSettings('theme', preview.key)}
-                />
-              ))}
-            </View>
+            {step === 1 && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <Circle cx={12} cy={12} r={4} />
+                    <Path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('settings.appearance')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.appearanceSub')}</Text>
+                <View style={styles.themeRow}>
+                  {THEME_PREVIEWS.map(preview => (
+                    <ThemeSwatch
+                      key={preview.key}
+                      T={T}
+                      preview={preview}
+                      selected={themeKey === preview.key}
+                      onSelect={() => updateSettings('theme', preview.key)}
+                    />
+                  ))}
+                </View>
+              </View>
+            )}
 
-            <View style={styles.settingsCard}>
-              <SettingsRow
-                label={t('settings.hideFoldersLabel')}
-                sub={t('settings.hideFoldersSub')}
-                right={<SettingsToggle value={showFolders} onChange={setShowFolders} />}
-              />
-              <SettingsRow
-                label={t('settings.voiceCuesLabel')}
-                sub={t('settings.voiceCuesSub')}
-                right={<SettingsToggle value={voiceCues} onChange={setVoiceCues} />}
-                last
-              />
-            </View>
+            {step === 2 && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <Path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('settings.hideFoldersLabel')}</Text>
+                <Text style={styles.optionSub}>{t('settings.hideFoldersSub')}</Text>
+                <View style={styles.optionToggleRow}>
+                  <SettingsToggle value={showFolders} onChange={setShowFolders} />
+                </View>
+              </View>
+            )}
+
+            {step === 3 && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                    <Path d="M4 9v6h4l5 4V5L8 9H4z" fill={T.btnGlyph} />
+                    <Path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" fill="none" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('settings.voiceCuesLabel')}</Text>
+                <Text style={styles.optionSub}>{t('settings.voiceCuesSub')}</Text>
+                <View style={styles.optionToggleRow}>
+                  <SettingsToggle value={voiceCues} onChange={setVoiceCues} />
+                </View>
+              </View>
+            )}
+
+            {step === 4 && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                    <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                    <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('onboarding.settingsTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.settingsSub')}</Text>
+              </View>
+            )}
           </ScrollView>
 
           <View style={styles.footer}>
-            <Pressable style={styles.confirmBtn} onPress={handleConfirm}>
-              <Text style={styles.confirmBtnText}>{t('onboarding.confirm')}</Text>
-            </Pressable>
-            <Pressable style={styles.skipBtn} onPress={handleSkip}>
-              <Text style={styles.skipBtnText}>{t('onboarding.later')}</Text>
-            </Pressable>
+            <View style={styles.footerRow}>
+              {step > 0 && (
+                <Pressable style={styles.backBtn} onPress={handleBack}>
+                  <Text style={styles.backBtnText}>{t('onboarding.back')}</Text>
+                </Pressable>
+              )}
+              <Pressable style={styles.confirmBtn} onPress={handleNext}>
+                <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : t('onboarding.next')}</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -301,25 +367,52 @@ function makeStyles(T: ThemeTokens) {
       marginTop: 2,
       lineHeight: 17,
     },
-    subsectionLabel: {
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: 12,
-      color: T.subText,
-      marginBottom: 8,
-      paddingLeft: 2,
-    },
     themeRow: {
       flexDirection: 'row',
       gap: 8,
       marginBottom: 16,
     },
-    settingsCard: {
-      backgroundColor: T.card,
-      borderWidth: 1,
-      borderColor: T.hairline,
-      borderRadius: 16,
-      overflow: 'hidden',
-      marginBottom: 22,
+    dotsRow: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 6,
+      paddingTop: 14,
+    },
+    dot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+    },
+    dotActive: {
+      backgroundColor: T.accent,
+      width: 16,
+    },
+    dotInactive: {
+      backgroundColor: T.hairline,
+    },
+    optionBlock: {
+      alignItems: 'center',
+      paddingTop: 24,
+      paddingBottom: 12,
+    },
+    optionTitle: {
+      fontFamily: 'Inter_800ExtraBold',
+      fontSize: 19,
+      color: T.text,
+      textAlign: 'center',
+      marginTop: 4,
+    },
+    optionSub: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 13,
+      color: T.subText,
+      textAlign: 'center',
+      marginTop: 8,
+      maxWidth: 280,
+      lineHeight: 19,
+    },
+    optionToggleRow: {
+      marginTop: 22,
     },
     footer: {
       paddingHorizontal: 20,
@@ -328,10 +421,28 @@ function makeStyles(T: ThemeTokens) {
       borderTopWidth: 1,
       borderTopColor: T.hairline,
       backgroundColor: T.sheetBg,
+    },
+    footerRow: {
+      flexDirection: 'row',
       gap: 10,
     },
+    backBtn: {
+      paddingVertical: 15,
+      paddingHorizontal: 20,
+      borderRadius: 16,
+      backgroundColor: T.ghostBg,
+      borderWidth: 1,
+      borderColor: T.hairline,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    backBtnText: {
+      fontFamily: 'Inter_800ExtraBold',
+      fontSize: 14.5,
+      color: T.text,
+    },
     confirmBtn: {
-      width: '100%',
+      flex: 1,
       paddingVertical: 15,
       borderRadius: 16,
       backgroundColor: T.accent,
@@ -346,15 +457,6 @@ function makeStyles(T: ThemeTokens) {
       fontSize: 14.5,
       letterSpacing: 14.5 * 0.03,
       color: T.btnGlyph,
-    },
-    skipBtn: {
-      alignItems: 'center',
-      paddingVertical: 2,
-    },
-    skipBtnText: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 12.5,
-      color: T.faintText,
     },
   });
 }

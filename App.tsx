@@ -146,9 +146,7 @@ export default function App() {
         visible={showOnboarding}
         onConfirm={showFolders => {
           setShowOnboarding(false);
-          if (typeof showFolders === 'boolean') {
-            setRoute(showFolders ? { name: 'Folders' } : { name: 'Sessions' });
-          }
+          setRoute(showFolders ? { name: 'Folders' } : { name: 'Sessions' });
         }}
       />
       <AppAlertModal />
