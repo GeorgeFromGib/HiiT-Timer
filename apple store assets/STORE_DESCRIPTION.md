@@ -2,41 +2,73 @@
 
 ## Promotional Text (170 characters)
 
-Train your way. Standard, Run, Circuit, or Spin — cues play over your music, your targets are always on screen, and it keeps ticking with your screen locked.
+Train your way. Organise workouts for yourself or your clients, enjoy extended voice coaching, and keep every session on track—even with your phone locked.
 
 ---
 
-**HIIT Timer** is a clean, focused interval training app on iOS. No clutter, no subscriptions required — just your workout, on time, every time.
+## Main Description
 
-Build your session in seconds. Choose a preset or craft your own intervals from scratch, with full control over every phase. When you're ready, hit start and let the timer do the work — crisp audio cues keep you in the zone without ever needing to glance at your screen.
+**HIIT Timer** is a clean, reliable interval timer built for serious workouts. Whether you're training yourself or coaching others, HIIT Timer keeps every workout on track without distractions.
 
-Audio cues play over whatever you're listening to — your playlist never gets interrupted, just nudged at the right moment.
+Whether you're training with HIIT, Tabata, running intervals, circuit training, treadmill sessions, or indoor cycling, it gives you the tools to build, organise, and complete every session with confidence.
 
-Train however you move. Pick from four session types — each shaped for the way you work out.
+No clutter. No subscriptions. Just your workout, on time, every time.
 
-**Run** sessions surface your programmed speeds on screen for every phase, so you always know exactly what to dial in on the treadmill. **Circuit** sessions let you name each exercise in every work interval, keeping your focus on the reps instead of what's next. **Spinning** sessions put your difficulty and power targets front and centre — every interval tells you exactly how hard to push.
+### Organise your workouts
 
-Lock your phone, pocket it, and go. The timer keeps ticking reliably in the background — no missed transitions, no surprises.
+Keep your workouts organised with **folders**. Group sessions by training style, fitness goal, or athlete, and create separate workout libraries for yourself, your clients, friends, or family. Whether you're following your own programme or coaching others, every workout is always easy to find.
 
-When the last interval is done, you'll know you earned it.
+### Build better workouts
+
+Create a workout in seconds with improved presets or build one from scratch with complete control over every interval. Fine-tune warm-ups, work intervals, recovery periods, cooldowns, and every transition to match exactly how you train.
+
+### Train without interruption
+
+Press **Start** and focus entirely on your workout while clear voice prompts guide every transition.
+
+Audio cues and **extended voice prompts** play over your music, podcast, or audiobook, so you always know what's coming next without constantly checking your screen.
+
+### Choose the workout mode that matches your training
+
+**Standard**
+A flexible interval timer for HIIT, Tabata, strength training, boxing, rowing, bodyweight workouts, and more.
+
+**Treadmill**
+Display your target speed for every interval so you always know exactly what to set before each work or recovery phase.
+
+**Circuit**
+Name every exercise in your workout and follow each circuit with confidence, keeping your focus on training instead of remembering what's next.
+
+**Spin**
+Set target difficulty and power for every interval, giving every effort a clear goal.
+
+### Train with confidence
+
+Lock your phone, put it in your pocket, and train without worrying about the timer. It continues running reliably in the background, delivering every cue exactly when you need it.
+
+When the final interval ends, all that's left is the satisfaction of finishing a great workout.
 
 ---
 
+## Features
+
+* Organise workouts into folders
+* Create separate workout libraries for yourself, your clients, friends, or family
+* Unlimited custom workouts
+* Improved quick-start presets
+* Full control over every workout phase
+* Four workout modes: Standard, Treadmill, Circuit, and Spin
+* Per-interval treadmill speed guidance
+* Named exercises for circuit workouts
+* Per-interval difficulty and power targets for Spin workouts
+* Extended voice prompts and audio cues that play over your music
+* Countdown flash before every interval
+* Reliable background timer that works with your screen locked
+* Beautiful Tidal and Daybreak themes
+* Available in English, Spanish, and French
+
+---
 
 ## Keywords (100 characters)
 
-HIIT,interval timer,treadmill,running,circuit,spinning,fitness,cardio,tabata,workout,gym,cycling
-
----
-
-## Highlights
-
-- Custom intervals or one-tap presets
-- Four session types: Standard, Run, Circuit, and Spin
-- Treadmill speed guidance per phase for Run sessions
-- Circuit training with named exercises in every work interval
-- Spinning sessions with per-interval difficulty and power targets
-- Reliable background timing — works with screen locked
-- Audio cues and countdown flash
-- Two beautiful themes: Tidal and Daybreak
-- Available in English, Spanish, and French
+hiit,interval timer,tabata,workout,treadmill,running,circuit,spin,cycling,fitness,gym

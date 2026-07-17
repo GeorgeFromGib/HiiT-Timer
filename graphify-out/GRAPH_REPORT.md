@@ -1,16 +1,16 @@
 # Graph Report - hiit-timer  (2026-07-17)
 
 ## Corpus Check
-- 200 files · ~190,991 words
+- 200 files · ~191,082 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1569 nodes · 2299 edges · 135 communities (122 shown, 13 thin omitted)
+- 1569 nodes · 2294 edges · 135 communities (122 shown, 13 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c766c4e6`
+- Built from commit: `afa0f992`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -172,7 +172,7 @@
   src/components/ActivityTypeIcon.tsx → src/theme.ts
 
 ## Import Cycles
-- 3-file cycle: `src/lib/intensityPresets.ts -> src/lib/presets.ts -> src/lib/sessions.ts -> src/lib/intensityPresets.ts`
+- None detected.
 
 ## Communities (135 total, 13 thin omitted)
 
@@ -181,8 +181,8 @@ Cohesion: 0.12
 Nodes (30): usePremiumState(), SettingsState, useSettingsState(), detectLanguage(), readJsonFile(), writeJsonFile(), PremiumContextValue, expireTrialForTesting() (+22 more)
 
 ### Community 1 - "useWorkoutSession.ts"
-Cohesion: 0.19
-Nodes (14): Props, TimeField, DEFAULTS, EasyConfig, EasyModeEdit, useEasyModeEdit(), EditSessionDraft, useEditSession() (+6 more)
+Cohesion: 0.21
+Nodes (11): CircuitModeEdit, DEFAULTS, useCircuitModeEdit(), useDraft(), useEasyModeEdit(), useEditSession(), ALL_LEVELS, findMatchingIntensityPreset() (+3 more)
 
 ### Community 2 - "dependencies"
 Cohesion: 0.05
@@ -197,8 +197,8 @@ Cohesion: 0.06
 Nodes (34): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, package, permissions, predictiveBackGestureEnabled (+26 more)
 
 ### Community 5 - "theme.ts"
-Cohesion: 0.19
-Nodes (13): CircuitModeEdit, DEFAULTS, useCircuitModeEdit(), useDraft(), useSpeedAndSpinEdit(), ALL_LEVELS, findMatchingSpeedPreset(), findMatchingSpinPreset() (+5 more)
+Cohesion: 0.21
+Nodes (12): useSpeedAndSpinEdit(), confirmDeleteSession(), appAlert(), i18n, ALL_LEVELS, findMatchingSpeedPreset(), findMatchingSpinPreset(), SPEED_PRESETS (+4 more)
 
 ### Community 6 - "useTranslation"
 Cohesion: 0.18
@@ -453,8 +453,8 @@ Cohesion: 0.25
 Nodes (7): Design, Implementation, Problem, Scope, Solution, Spinning: Combine R and W into One Pill, Visual
 
 ### Community 69 - "EditSessionScreen.tsx"
-Cohesion: 0.27
-Nodes (11): createDefaultFolder(), getSessionSegments(), migrateSessionsToFolders(), speedForPhase(), spinValueForPhase(), withActivityValues(), expandCircuit(), expandWorkout() (+3 more)
+Cohesion: 0.39
+Nodes (8): createDefaultFolder(), getSessionSegments(), migrateSessionsToFolders(), spinValueForPhase(), withActivityValues(), expandCircuit(), expandWorkout(), intervalsToSegments()
 
 ### Community 70 - "Sound Off Setting Implementation Plan"
 Cohesion: 0.29
@@ -605,8 +605,8 @@ Cohesion: 0.39
 Nodes (7): checkAndRequestReview(), DEFAULT, loadReviewState(), reviewFile(), ReviewState, saveReviewState(), THRESHOLDS
 
 ### Community 124 - "speedUnit.ts"
-Cohesion: 0.36
-Nodes (7): formatSpeed(), fromDisplay(), pickerRange(), toDisplay(), convertKmhToMph(), convertMphToKmh(), getIntervalDisplaySpeed()
+Cohesion: 0.18
+Nodes (13): IntervalSwipeDuplicateAction, IntervalSwipeRow(), Props, styles, speedForPhase(), formatSpeed(), fromDisplay(), pickerRange() (+5 more)
 
 ### Community 125 - "FolderHeader.tsx"
 Cohesion: 0.07
@@ -645,11 +645,11 @@ Cohesion: 0.21
 Nodes (15): EMPTY_VALUES, makeStyles(), PickerModal(), Props, SavePayload, CIRCUIT_PHASES, EditSessionInterface, PHASES (+7 more)
 
 ### Community 138 - "speedUnit.ts"
-Cohesion: 0.19
-Nodes (11): IntervalSwipeDuplicateAction, IntervalSwipeRow(), Props, styles, Props, confirmDeleteSession(), appAlert(), i18n (+3 more)
+Cohesion: 0.21
+Nodes (12): Props, Props, TimeField, DEFAULTS, EasyConfig, EasyModeEdit, EditSessionDraft, PresetLevel (+4 more)
 
 ## Knowledge Gaps
-- **881 isolated node(s):** `Props`, `name`, `slug`, `version`, `orientation` (+876 more)
+- **880 isolated node(s):** `Props`, `IntensityPreset`, `name`, `slug`, `version` (+875 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -657,13 +657,13 @@ Nodes (11): IntervalSwipeDuplicateAction, IntervalSwipeRow(), Props, styles, Pro
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `useTheme()` connect `useTheme` to `IntervalSwipeRow.tsx`, `ThemeTokens`, `Session`, `appAlert.ts`, `SessionsListScreen.tsx`, `useTranslation`, `speedUnit.ts`, `App.tsx`, `Session`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **Why does `react` connect `App.tsx` to `ThemeTokens`, `dependencies`, `.application`, `useTheme`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `.application`, `App.tsx`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
-- **What connects `Props`, `name`, `slug` to the rest of the system?**
-  _881 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
+- **What connects `Props`, `IntensityPreset`, `name` to the rest of the system?**
+  _880 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `purchases.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.12063492063492064 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**

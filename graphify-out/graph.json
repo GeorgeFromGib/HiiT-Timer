@@ -4,36 +4,6 @@
   "graph": {},
   "nodes": [
     {
-      "label": "App.tsx",
-      "file_type": "code",
-      "source_file": "App.tsx",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "app",
-      "community": 7,
-      "norm_label": "app.tsx"
-    },
-    {
-      "label": "RouteScreen()",
-      "file_type": "code",
-      "source_file": "App.tsx",
-      "source_location": "L44",
-      "_origin": "ast",
-      "id": "app_routescreen",
-      "community": 7,
-      "norm_label": "routescreen()"
-    },
-    {
-      "label": "App()",
-      "file_type": "code",
-      "source_file": "App.tsx",
-      "source_location": "L54",
-      "_origin": "ast",
-      "id": "app_app",
-      "community": 7,
-      "norm_label": "app()"
-    },
-    {
       "label": "OnboardingModal.tsx",
       "file_type": "code",
       "source_file": "src/components/OnboardingModal.tsx",
@@ -94,6 +64,66 @@
       "norm_label": "makeswatchstyles()"
     },
     {
+      "label": "intensityPresets.ts",
+      "file_type": "code",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_lib_intensitypresets",
+      "community": 1,
+      "norm_label": "intensitypresets.ts"
+    },
+    {
+      "label": "IntensityPreset",
+      "file_type": "code",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_lib_intensitypresets_intensitypreset",
+      "community": 1,
+      "norm_label": "intensitypreset"
+    },
+    {
+      "label": "INTENSITY_PRESETS",
+      "file_type": "code",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "src_lib_intensitypresets_intensity_presets",
+      "community": 1,
+      "norm_label": "intensity_presets"
+    },
+    {
+      "label": "ALL_LEVELS",
+      "file_type": "code",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_lib_intensitypresets_all_levels",
+      "community": 1,
+      "norm_label": "all_levels"
+    },
+    {
+      "label": "findMatchingIntensityPreset()",
+      "file_type": "code",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "src_lib_intensitypresets_findmatchingintensitypreset",
+      "community": 1,
+      "norm_label": "findmatchingintensitypreset()"
+    },
+    {
+      "label": "findMatchingIntensityPresetForIntervals()",
+      "file_type": "code",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L27",
+      "_origin": "ast",
+      "id": "src_lib_intensitypresets_findmatchingintensitypresetforintervals",
+      "community": 1,
+      "norm_label": "findmatchingintensitypresetforintervals()"
+    },
+    {
       "label": "en.ts",
       "file_type": "code",
       "source_file": "src/locales/en.ts",
@@ -152,6 +182,36 @@
       "id": "src_locales_fr_fr",
       "community": 13,
       "norm_label": "fr"
+    },
+    {
+      "label": "App.tsx",
+      "file_type": "code",
+      "source_file": "App.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 7,
+      "norm_label": "app.tsx",
+      "id": "app"
+    },
+    {
+      "label": "RouteScreen()",
+      "file_type": "code",
+      "source_file": "App.tsx",
+      "source_location": "L44",
+      "_origin": "ast",
+      "community": 7,
+      "norm_label": "routescreen()",
+      "id": "app_routescreen"
+    },
+    {
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "App.tsx",
+      "source_location": "L54",
+      "_origin": "ast",
+      "community": 7,
+      "norm_label": "app()",
+      "id": "app_app"
     },
     {
       "label": "app.json",
@@ -1522,7 +1582,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "intervalswiperow.tsx",
       "id": "src_components_editsession_intervalswiperow"
     },
@@ -1532,7 +1592,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "props",
       "id": "src_components_editsession_intervalswiperow_props"
     },
@@ -1542,7 +1602,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L32",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "intervalswipeduplicateaction",
       "id": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction"
     },
@@ -1552,7 +1612,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L61",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "intervalswiperow()",
       "id": "src_components_editsession_intervalswiperow_intervalswiperow"
     },
@@ -1562,7 +1622,7 @@
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
       "source_location": "L120",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "styles",
       "id": "src_components_editsession_intervalswiperow_styles"
     },
@@ -1592,7 +1652,7 @@
       "source_file": "src/components/EditSession/PresetStrip.tsx",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "props",
       "id": "src_components_editsession_presetstrip_props"
     },
@@ -2472,7 +2532,7 @@
       "source_file": "src/hooks/editSessionTypes.ts",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "timefield",
       "id": "src_hooks_editsessiontypes_timefield"
     },
@@ -2492,7 +2552,7 @@
       "source_file": "src/hooks/useCircuitModeEdit.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 5,
+      "community": 1,
       "norm_label": "usecircuitmodeedit.ts",
       "id": "src_hooks_usecircuitmodeedit"
     },
@@ -2502,7 +2562,7 @@
       "source_file": "src/hooks/useCircuitModeEdit.ts",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 5,
+      "community": 1,
       "norm_label": "circuitmodeedit",
       "id": "src_hooks_usecircuitmodeedit_circuitmodeedit"
     },
@@ -2512,7 +2572,7 @@
       "source_file": "src/hooks/useCircuitModeEdit.ts",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 5,
+      "community": 1,
       "norm_label": "defaults",
       "id": "src_hooks_usecircuitmodeedit_defaults"
     },
@@ -2522,7 +2582,7 @@
       "source_file": "src/hooks/useCircuitModeEdit.ts",
       "source_location": "L17",
       "_origin": "ast",
-      "community": 5,
+      "community": 1,
       "norm_label": "usecircuitmodeedit()",
       "id": "src_hooks_usecircuitmodeedit_usecircuitmodeedit"
     },
@@ -2532,7 +2592,7 @@
       "source_file": "src/hooks/useDraft.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 5,
+      "community": 1,
       "norm_label": "usedraft.ts",
       "id": "src_hooks_usedraft"
     },
@@ -2542,7 +2602,7 @@
       "source_file": "src/hooks/useDraft.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 5,
+      "community": 1,
       "norm_label": "usedraft()",
       "id": "src_hooks_usedraft_usedraft"
     },
@@ -2552,7 +2612,7 @@
       "source_file": "src/hooks/useEasyModeEdit.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "useeasymodeedit.ts",
       "id": "src_hooks_useeasymodeedit"
     },
@@ -2562,7 +2622,7 @@
       "source_file": "src/hooks/useEasyModeEdit.ts",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "easyconfig",
       "id": "src_hooks_useeasymodeedit_easyconfig"
     },
@@ -2572,7 +2632,7 @@
       "source_file": "src/hooks/useEasyModeEdit.ts",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "easymodeedit",
       "id": "src_hooks_useeasymodeedit_easymodeedit"
     },
@@ -2582,7 +2642,7 @@
       "source_file": "src/hooks/useEasyModeEdit.ts",
       "source_location": "L26",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "defaults",
       "id": "src_hooks_useeasymodeedit_defaults"
     },
@@ -2632,7 +2692,7 @@
       "source_file": "src/hooks/useEditSession.ts",
       "source_location": "L32",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "editsessiondraft",
       "id": "src_hooks_useeditsession_editsessiondraft"
     },
@@ -3282,7 +3342,7 @@
       "source_file": "src/lib/alerts.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 138,
+      "community": 5,
       "norm_label": "alerts.ts",
       "id": "src_lib_alerts"
     },
@@ -3292,7 +3352,7 @@
       "source_file": "src/lib/alerts.ts",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 138,
+      "community": 5,
       "norm_label": "confirmdeletesession()",
       "id": "src_lib_alerts_confirmdeletesession"
     },
@@ -3362,7 +3422,7 @@
       "source_file": "src/lib/appAlert.ts",
       "source_location": "L26",
       "_origin": "ast",
-      "community": 138,
+      "community": 5,
       "norm_label": "appalert()",
       "id": "src_lib_appalert_appalert"
     },
@@ -3622,7 +3682,7 @@
       "source_file": "src/lib/i18n.ts",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 138,
+      "community": 5,
       "norm_label": "i18n",
       "id": "src_lib_i18n_i18n"
     },
@@ -3655,66 +3715,6 @@
       "community": 3,
       "norm_label": "usetranslation()",
       "id": "src_lib_i18n_usetranslation"
-    },
-    {
-      "label": "intensityPresets.ts",
-      "file_type": "code",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "intensitypresets.ts",
-      "id": "src_lib_intensitypresets"
-    },
-    {
-      "label": "IntensityPreset",
-      "file_type": "code",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L4",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "intensitypreset",
-      "id": "src_lib_intensitypresets_intensitypreset"
-    },
-    {
-      "label": "INTENSITY_PRESETS",
-      "file_type": "code",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L9",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "intensity_presets",
-      "id": "src_lib_intensitypresets_intensity_presets"
-    },
-    {
-      "label": "ALL_LEVELS",
-      "file_type": "code",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L18",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "all_levels",
-      "id": "src_lib_intensitypresets_all_levels"
-    },
-    {
-      "label": "findMatchingIntensityPreset()",
-      "file_type": "code",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L20",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "findmatchingintensitypreset()",
-      "id": "src_lib_intensitypresets_findmatchingintensitypreset"
-    },
-    {
-      "label": "findMatchingIntensityPresetForIntervals()",
-      "file_type": "code",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L27",
-      "_origin": "ast",
-      "community": 1,
-      "norm_label": "findmatchingintensitypresetforintervals()",
-      "id": "src_lib_intensitypresets_findmatchingintensitypresetforintervals"
     },
     {
       "label": "jsonFile.ts",
@@ -3802,7 +3802,7 @@
       "source_file": "src/lib/presets.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 1,
+      "community": 138,
       "norm_label": "presetlevel",
       "id": "src_lib_presets_presetlevel"
     },
@@ -4262,7 +4262,7 @@
       "source_file": "src/lib/sessions.ts",
       "source_location": "L71",
       "_origin": "ast",
-      "community": 69,
+      "community": 124,
       "norm_label": "speedforphase()",
       "id": "src_lib_sessions_speedforphase"
     },
@@ -4682,7 +4682,7 @@
       "source_file": "src/lib/workout.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 69,
+      "community": 138,
       "norm_label": "segment",
       "id": "src_lib_workout_segment"
     },
@@ -4892,7 +4892,7 @@
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "editsessionscreen.tsx",
       "id": "src_screens_editsessionscreen"
     },
@@ -5052,7 +5052,7 @@
       "source_file": "src/screens/SessionCompleteScreen.tsx",
       "source_location": "L18",
       "_origin": "ast",
-      "community": 69,
+      "community": 138,
       "norm_label": "props",
       "id": "src_screens_sessioncompletescreen_props"
     },
@@ -5382,7 +5382,7 @@
       "source_file": "src/typography.ts",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "typography.ts",
       "id": "src_typography"
     },
@@ -5392,7 +5392,7 @@
       "source_file": "src/typography.ts",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 138,
+      "community": 124,
       "norm_label": "typography",
       "id": "src_typography_typography"
     },
@@ -15699,35 +15699,15 @@
   ],
   "links": [
     {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "App.tsx",
-      "source_location": "L54",
-      "weight": 1.0,
-      "source": "app",
-      "target": "app_app",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "App.tsx",
-      "source_location": "L44",
-      "weight": 1.0,
-      "source": "app",
-      "target": "app_routescreen",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "App.tsx",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app",
-      "target": "src_components_onboardingmodal",
-      "confidence_score": 1.0
+      "target": "src_components_onboardingmodal"
     },
     {
       "relation": "contains",
@@ -15811,6 +15791,177 @@
       "source": "src_components_onboardingmodal_themeswatch",
       "target": "src_components_onboardingmodal_makeswatchstyles",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEasyModeEdit.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_hooks_useeasymodeedit",
+      "target": "src_lib_intensitypresets"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_intensitypresets"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_lib_intensitypresets",
+      "target": "src_lib_intensitypresets_all_levels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_lib_intensitypresets",
+      "target": "src_lib_intensitypresets_findmatchingintensitypreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_lib_intensitypresets",
+      "target": "src_lib_intensitypresets_findmatchingintensitypresetforintervals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lib_intensitypresets",
+      "target": "src_lib_intensitypresets_intensity_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_intensitypresets",
+      "target": "src_lib_intensitypresets_intensitypreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_lib_sessions",
+      "target": "src_lib_intensitypresets"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_intensitypresets_intensity_presets"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_lib_sessions",
+      "target": "src_lib_intensitypresets_intensity_presets"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_lib_intensitypresets_findmatchingintensitypreset",
+      "target": "src_lib_intensitypresets_all_levels"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEasyModeEdit.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_hooks_useeasymodeedit",
+      "target": "src_lib_intensitypresets_findmatchingintensitypreset"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/hooks/useEasyModeEdit.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "src_hooks_useeasymodeedit_useeasymodeedit",
+      "target": "src_lib_intensitypresets_findmatchingintensitypreset"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/intensityPresets.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_lib_intensitypresets_findmatchingintensitypresetforintervals",
+      "target": "src_lib_intensitypresets_findmatchingintensitypreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_intensitypresets_findmatchingintensitypresetforintervals"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L407",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession_useeditsession",
+      "target": "src_lib_intensitypresets_findmatchingintensitypresetforintervals"
     },
     {
       "relation": "imports_from",
@@ -15951,6 +16102,26 @@
       "confidence_score": 1.0,
       "source": "src_lib_i18n",
       "target": "src_locales_fr_fr"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "App.tsx",
+      "source_location": "L54",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app",
+      "target": "app_app"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "App.tsx",
+      "source_location": "L44",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "app",
+      "target": "app_routescreen"
     },
     {
       "relation": "contains",
@@ -22147,28 +22318,6 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEasyModeEdit.ts",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useeasymodeedit",
-      "target": "src_lib_intensitypresets"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useEasyModeEdit.ts",
-      "source_location": "L5",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useeasymodeedit",
-      "target": "src_lib_intensitypresets_findmatchingintensitypreset"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useEasyModeEdit.ts",
       "source_location": "L4",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -22229,17 +22378,6 @@
       "confidence_score": 1.0,
       "source": "src_hooks_useeasymodeedit_easymodeedit",
       "target": "src_lib_presets_presetlevel"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useEasyModeEdit.ts",
-      "source_location": "L43",
-      "weight": 1.0,
-      "source": "src_hooks_useeasymodeedit_useeasymodeedit",
-      "target": "src_lib_intensitypresets_findmatchingintensitypreset"
     },
     {
       "relation": "imports",
@@ -22444,39 +22582,6 @@
       "confidence_score": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_i18n_i18n"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useeditsession",
-      "target": "src_lib_intensitypresets"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useeditsession",
-      "target": "src_lib_intensitypresets_findmatchingintensitypresetforintervals"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_hooks_useeditsession",
-      "target": "src_lib_intensitypresets_intensity_presets"
     },
     {
       "relation": "imports_from",
@@ -22884,17 +22989,6 @@
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_lib_appalert_appalert"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L407",
-      "weight": 1.0,
-      "source": "src_hooks_useeditsession_useeditsession",
-      "target": "src_lib_intensitypresets_findmatchingintensitypresetforintervals"
     },
     {
       "relation": "calls",
@@ -25967,155 +26061,6 @@
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_i18n_usetranslation"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L18",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_intensitypresets_all_levels"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L20",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_intensitypresets_findmatchingintensitypreset"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L27",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_intensitypresets_findmatchingintensitypresetforintervals"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L9",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_intensitypresets_intensity_presets"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_intensitypresets_intensitypreset"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_presets"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L2",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_presets_presetlevel"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_workout"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_workout_interval"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets",
-      "target": "src_lib_workout_tryconverttoeasy"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/sessions.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_sessions",
-      "target": "src_lib_intensitypresets"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/sessions.ts",
-      "source_location": "L6",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_sessions",
-      "target": "src_lib_intensitypresets_intensity_presets"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L30",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_lib_intensitypresets_findmatchingintensitypresetforintervals",
-      "target": "src_lib_intensitypresets_findmatchingintensitypreset"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/lib/intensityPresets.ts",
-      "source_location": "L28",
-      "weight": 1.0,
-      "source": "src_lib_intensitypresets_findmatchingintensitypresetforintervals",
-      "target": "src_lib_workout_tryconverttoeasy"
     },
     {
       "relation": "contains",
@@ -39627,5 +39572,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c766c4e63803c1e4668d396a37dbf8ddd78cbe87"
+  "built_at_commit": "afa0f9922b60bdb2418bdb5c549cc080e99a0373"
 }

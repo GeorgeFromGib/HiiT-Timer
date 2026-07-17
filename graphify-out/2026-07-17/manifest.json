@@ -1,7 +1,7 @@
 {
   "App.tsx": {
-    "mtime": 1784226318.0971599,
-    "ast_hash": "2c224a1c9a4412b3dc841fd890b44593",
+    "mtime": 1784230523.699966,
+    "ast_hash": "dbbb22d1d8b117c95c01c65e92d9c1d6",
     "semantic_hash": ""
   },
   "app.json": {
@@ -310,18 +310,18 @@
     "semantic_hash": ""
   },
   "src/locales/en.ts": {
-    "mtime": 1784226318.1401238,
-    "ast_hash": "4e741aed12fc2acf23ffd0f592173325",
+    "mtime": 1784269634.5913796,
+    "ast_hash": "81bad9c7b63fdbee0723beb72292b550",
     "semantic_hash": ""
   },
   "src/locales/es.ts": {
-    "mtime": 1784226318.140474,
-    "ast_hash": "3308e28bf2bfee771a31eb2b3ce7f314",
+    "mtime": 1784269638.4558985,
+    "ast_hash": "bfb9e6ff70c1d54308643fa22de551f3",
     "semantic_hash": ""
   },
   "src/locales/fr.ts": {
-    "mtime": 1784226318.1410708,
-    "ast_hash": "1dc41d788b0b46ba0399f424502bb972",
+    "mtime": 1784269642.843338,
+    "ast_hash": "259e85e1b8630867d8e1b589aa52324e",
     "semantic_hash": ""
   },
   "src/navigation.ts": {
@@ -1080,8 +1080,8 @@
     "semantic_hash": ""
   },
   "src/components/OnboardingModal.tsx": {
-    "mtime": 1784229355.057367,
-    "ast_hash": "d57e35739b9cda9f02af4201b5c4417a",
+    "mtime": 1784269358.875073,
+    "ast_hash": "d5f684ef5722793878ece5111c47c391",
     "semantic_hash": ""
   },
   "src/components/activityIconShapes.ts": {
