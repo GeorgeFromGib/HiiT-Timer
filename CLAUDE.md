@@ -85,28 +85,14 @@ High-fidelity design references live in `design/`. Read `design/README.md` for f
 Key files:
 - `design/HIIT Timer - Explorations.html` — open in a browser to see all screens live in both themes
 
-### Three screens
-1. **Workout Timer** — active timer with phase block, countdown, timeline strip, controls
-2. **Sessions List** — browsable card list with category filter and start button
-3. **Edit Session** — create/edit interval sequences with phase picker
-
-### Themes
-- **Tidal** (dark, deep teal — accent `#3ad6c6`)
-- **Daybreak** (light, warm paper — accent `#ff5a3d`)
-
-### Typography
-- UI/body: **Inter** (400–900)
-- Timers/numbers: **Chakra Petch** monospace (500–700)
-
 Implement pixel-close to the designs. Colors, spacing, and interactions are final.
 
 ### Versioning
 
-- 0 represnets digit location
-
-- MAJOR (0._._) — breaking change or significant new product (rare, usually signals a full rewrite or incompatible data migration)
-- MINOR (_.0._) — new features, backwards compatible
-- PATCH (_._.0) — bug fixes, no new features
+Format is `MAJOR.MINOR.PATCH`:
+- MAJOR — breaking change or significant new product (rare, usually signals a full rewrite or incompatible data migration)
+- MINOR — new features, backwards compatible
+- PATCH — bug fixes, no new features
 
 ### Planning
 - When you have finshed written a plan from a spec ask if you should run the karpathy skill on it.
