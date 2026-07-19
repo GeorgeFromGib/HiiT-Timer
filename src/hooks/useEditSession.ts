@@ -2,13 +2,14 @@ import { useMemo, useRef, useState } from 'react';
 import { i18n } from '../lib/i18n';
 import { appAlert } from '../lib/appAlert';
 import {
-  getSessionSegments, speedForPhase, spinValueForPhase,
-  type Session, type RunSpeeds, type SpinValues,
+  getSessionSegments, speedForPhase, spinValueForPhase, inclineForPhase,
+  type Session, type RunSpeeds, type RunInclines, type SpinValues,
   newId,
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel } from '../lib/presets';
 import { INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
+import { WALK_PRESETS, walkPresetTotalSeconds, findMatchingWalkPreset } from '../lib/walkPresets';
 import {
   totalDuration, expandCircuit, computeRoundsForTargetDuration,
   type Interval, type Phase, type Segment,
@@ -39,13 +40,17 @@ export interface EditSessionDraft {
   intervals:           LocalInterval[];
   previewSegments:     Segment[];
   previewTotal:        number;
-  activityType:        'run' | 'spinning' | undefined;
+  activityType:        'run' | 'walk' | 'spinning' | undefined;
   runSpeeds:           RunSpeeds;
+  runInclines:         RunInclines;
+  inclineEnabled:      boolean;
   spinValues:          SpinValues;
   activeTimingPreset:  PresetLevel | null;
   targetLengthMinutes: number;
   activeSpeedPreset:   PresetLevel | null;
+  activeInclinePreset: PresetLevel | null;
   activeSpinPreset:    PresetLevel | null;
+  activeWalkPreset:    PresetLevel | null;
   hasChanges:          boolean;
   circuitWarmup:       number;
   circuitCooldown:     number;
@@ -77,7 +82,9 @@ export interface EditSessionInterface {
   applyDurationPreset:      (level: PresetLevel) => void;
   openCustomLengthPicker:   () => void;
   applySpeedPreset:         (level: PresetLevel) => void;
+  applyInclinePreset:       (level: PresetLevel) => void;
   applySpinPreset:          (level: PresetLevel) => void;
+  applyWalkPreset:          (level: PresetLevel) => void;
   setActivityLabel:         (key: string, label: string) => void;
   openCircuitWarmupPicker:  () => void;
   openCircuitCooldownPicker: () => void;
@@ -89,13 +96,17 @@ export interface EditSessionInterface {
   openIntervalPowerPicker:     (key: string) => void;
   clearIntervalResistance:     (key: string) => void;
   clearIntervalPower:          (key: string) => void;
+  openInclinePicker:            (field: keyof RunInclines) => void;
+  openIntervalInclinePicker:    (key: string) => void;
+  clearIntervalIncline:         (key: string) => void;
+  setInclineEnabled:            (enabled: boolean) => void;
   buildSavePayload:         () => SavePayload;
 }
 
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
-  initialActivityType?: 'general' | 'run' | 'circuit' | 'spinning',
+  initialActivityType?: 'general' | 'run' | 'walk' | 'circuit' | 'spinning',
   folderId?: string,
 ): EditSessionInterface {
   const sessionFolderId = existing?.folderId ?? folderId ?? 'default';
@@ -107,9 +118,10 @@ export function useEditSession(
     return 'easy';
   });
 
-  const [activityType] = useState<'run' | 'spinning' | undefined>(() => {
+  const [activityType] = useState<'run' | 'walk' | 'spinning' | undefined>(() => {
     if (existing && existing.mode !== 'circuit') return existing.activityType;
     if (!existing && initialActivityType === 'run') return 'run';
+    if (!existing && initialActivityType === 'walk') return 'walk';
     if (!existing && initialActivityType === 'spinning') return 'spinning';
     return undefined;
   });
@@ -130,17 +142,17 @@ export function useEditSession(
 
   // Change tracking for coordinator-owned state
   const initialName            = useRef(existing?.name ?? '').current;
-  const initialActivityTypeRef = useRef<'run' | 'spinning' | undefined>(
+  const initialActivityTypeRef = useRef<'run' | 'walk' | 'spinning' | undefined>(
     existing && existing.mode !== 'circuit'
       ? existing.activityType
-      : (initialActivityType === 'run' ? 'run' : initialActivityType === 'spinning' ? 'spinning' : undefined)
+      : (initialActivityType === 'run' ? 'run' : initialActivityType === 'walk' ? 'walk' : initialActivityType === 'spinning' ? 'spinning' : undefined)
   ).current;
 
   // Mode sub-hooks
   const easyEdit     = useEasyModeEdit(existing);
   const circuitEdit  = useCircuitModeEdit(existing);
   const intervalEdit = useIntervalListEdit(existing);
-  const speedSpinEdit = useSpeedAndSpinEdit(existing);
+  const speedSpinEdit = useSpeedAndSpinEdit(existing, activityType);
 
   // Derived from each sub-hook's own preset checkpoint — not manually flagged at each call site.
   const timingDirty = mode === 'advanced' ? intervalEdit.isTimingDirty
@@ -202,6 +214,10 @@ export function useEditSession(
         intervalEdit.setIntervalResistance(result.key, result.value);
       } else if (result.type === 'intervalPower') {
         intervalEdit.setIntervalPower(result.key, result.value);
+      } else if (result.type === 'incline') {
+        speedSpinEdit.setRunIncline(result.field, result.value);
+      } else if (result.type === 'intervalIncline') {
+        intervalEdit.setIntervalIncline(result.key, result.value);
       } else if (result.type === 'circuitWarmup') {
         circuitEdit.set('warmup', result.secs);
         warnIfShortDuration(result.secs);
@@ -228,10 +244,10 @@ export function useEditSession(
       return expandCircuit(cleanIntervals, circuitEdit.circuitCount, circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitRest);
     }
     const draft: Session = mode === 'easy'
-      ? { id: '', name: '', folderId: sessionFolderId, mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds: speedSpinEdit.runSpeeds, spinValues: speedSpinEdit.spinValues }
-      : { id: '', name: '', folderId: sessionFolderId, mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds: speedSpinEdit.runSpeeds, spinValues: speedSpinEdit.spinValues };
+      ? { id: '', name: '', folderId: sessionFolderId, mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines, inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues }
+      : { id: '', name: '', folderId: sessionFolderId, mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines, inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues };
     return getSessionSegments(draft);
-  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervalEdit.intervals, activityType, speedSpinEdit.runSpeeds, speedSpinEdit.spinValues,
+  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervalEdit.intervals, activityType, speedSpinEdit.runSpeeds, speedSpinEdit.runInclines, speedSpinEdit.inclineEnabled, speedSpinEdit.spinValues,
       circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitCount, circuitEdit.circuitRest]);
 
   function toggleMode(advanced: boolean) {
@@ -308,6 +324,33 @@ export function useEditSession(
     }
   }
 
+  function applyWalkPreset(level: PresetLevel) {
+    const preset = WALK_PRESETS[level];
+    const doApply = () => {
+      easyEdit.setField('warmup', preset.structure.warmup);
+      easyEdit.setField('work', preset.structure.work);
+      easyEdit.setField('rest', preset.structure.rest);
+      easyEdit.setField('cooldown', preset.structure.cooldown);
+      easyEdit.setRounds(preset.structure.rounds);
+      setEasyDirty(true);
+      setTargetLengthMinutes(Math.round(walkPresetTotalSeconds(level) / 60));
+      setLengthIsSet(true);
+      (Object.keys(preset.runSpeeds) as (keyof RunSpeeds)[]).forEach(field => {
+        speedSpinEdit.setRunSpeed(field, preset.runSpeeds[field]);
+      });
+    };
+    if (timingDirty || speedSpinEdit.hasChanges) {
+      appAlert(
+        'warning',
+        i18n.t('alerts.overwriteTitle'),
+        i18n.t('alerts.overwriteWalkMessage'),
+        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
+      );
+    } else {
+      doApply();
+    }
+  }
+
   function nearestTargetMinutes(rounds: number): number {
     const { warmup, work, rest, cooldown } = easyEdit.fieldValues;
     const totalSeconds = warmup + rounds * (work + rest) + cooldown;
@@ -351,6 +394,13 @@ export function useEditSession(
     pickerState.openIntervalPowerPicker(key, current);
   }
 
+  function openIntervalInclinePicker(key: string) {
+    const iv = intervalEdit.intervals.find(i => i._key === key);
+    if (!iv) return;
+    const current = iv.incline ?? inclineForPhase(iv.type, speedSpinEdit.runInclines);
+    pickerState.openIntervalInclinePicker(key, current);
+  }
+
   function buildSavePayload(): SavePayload {
     if (mode === 'circuit') {
       if (!name.trim()) {
@@ -381,7 +431,7 @@ export function useEditSession(
     const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
     const session = buildSessionFromDraft(
       mode, name.trim(), easyEdit.easyConfig, cleanIntervals, activityType, speedSpinEdit.runSpeeds, existing?.id,
-      undefined, speedSpinEdit.spinValues, sessionFolderId,
+      undefined, speedSpinEdit.spinValues, speedSpinEdit.runInclines, speedSpinEdit.inclineEnabled, sessionFolderId, activeWalkPreset,
     );
     return { ok: true, session, isNew: !existing };
   }
@@ -407,6 +457,10 @@ export function useEditSession(
     ? findMatchingIntensityPresetForIntervals(intervalEdit.intervals.map(({ _key, ...iv }) => iv))
     : easyEdit.activeTimingPreset;
 
+  const activeWalkPreset: PresetLevel | null = (activityType === 'walk' && mode === 'easy')
+    ? findMatchingWalkPreset(easyEdit.fieldValues, easyEdit.rounds, speedSpinEdit.runSpeeds)
+    : null;
+
   const draft: EditSessionDraft = {
     name,
     isAdvanced:  mode === 'advanced',
@@ -419,11 +473,15 @@ export function useEditSession(
     previewTotal: totalDuration(previewSegments),
     activityType,
     runSpeeds:  speedSpinEdit.runSpeeds,
+    runInclines: speedSpinEdit.runInclines,
+    inclineEnabled: speedSpinEdit.inclineEnabled,
     spinValues: speedSpinEdit.spinValues,
     activeTimingPreset,
     targetLengthMinutes,
     activeSpeedPreset: speedSpinEdit.activeSpeedPreset,
+    activeInclinePreset: speedSpinEdit.activeInclinePreset,
     activeSpinPreset:  speedSpinEdit.activeSpinPreset,
+    activeWalkPreset,
     hasChanges,
     circuitWarmup:   circuitEdit.circuitWarmup,
     circuitCooldown: circuitEdit.circuitCooldown,
@@ -464,7 +522,9 @@ export function useEditSession(
     applyDurationPreset,
     openCustomLengthPicker,
     applySpeedPreset: speedSpinEdit.applySpeedPreset,
+    applyInclinePreset: speedSpinEdit.applyInclinePreset,
     applySpinPreset:  speedSpinEdit.applySpinPreset,
+    applyWalkPreset,
     setActivityLabel: intervalEdit.setActivityLabel,
     openCircuitWarmupPicker:   pickerState.openCircuitWarmupPicker,
     openCircuitCooldownPicker: pickerState.openCircuitCooldownPicker,
@@ -476,6 +536,10 @@ export function useEditSession(
     openIntervalPowerPicker,
     clearIntervalResistance: intervalEdit.clearIntervalResistance,
     clearIntervalPower:      intervalEdit.clearIntervalPower,
+    openInclinePicker:         (field) => pickerState.openInclinePicker(field, speedSpinEdit.runInclines[field]),
+    openIntervalInclinePicker,
+    clearIntervalIncline:      intervalEdit.clearIntervalIncline,
+    setInclineEnabled:         speedSpinEdit.setInclineEnabled,
     buildSavePayload,
   };
 }

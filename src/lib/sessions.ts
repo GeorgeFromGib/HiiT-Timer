@@ -2,12 +2,12 @@ import { readJsonFile, writeJsonFile } from './jsonFile';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
-import { SPEED_PRESETS, SPIN_PRESETS } from './presets';
+import { SPEED_PRESETS, SPIN_PRESETS, INCLINE_PRESETS, type PresetLevel } from './presets';
 import { INTENSITY_PRESETS } from './intensityPresets';
 
 export type FolderIconName =
   | 'sun' | 'flame' | 'bolt' | 'pauseIcon' | 'snow'
-  | 'standard' | 'run' | 'circuit' | 'spinning'
+  | 'standard' | 'run' | 'walk' | 'circuit' | 'spinning'
   | 'user' | 'users'
   | 'folder' | 'folderOpen' | 'star' | 'heart' | 'tag' | 'bookmark' | 'flag'
   | 'target' | 'calendar' | 'pin' | 'archive' | 'grid' | 'list' | 'bell' | 'lock' | 'share' | 'home';
@@ -32,6 +32,17 @@ export interface RunSpeeds {
 }
 
 export const DEFAULT_RUN_SPEEDS: RunSpeeds = SPEED_PRESETS['3'];
+
+// Treadmill-only incline axis (% grade), kept separate from RunSpeeds since RunSpeeds is
+// shared with Outdoor Walk, which has no incline control.
+export interface RunInclines {
+  warmupIncline:   number;
+  workIncline:     number;
+  restIncline:     number;
+  cooldownIncline: number;
+}
+
+export const DEFAULT_RUN_INCLINES: RunInclines = INCLINE_PRESETS['3'];
 
 export interface SpinValues {
   warmupResistance:   number;
@@ -64,9 +75,17 @@ export function spinValueForPhase(phase: Phase, values: SpinValues): { resistanc
 }
 
 export type Session =
-  | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
-  | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
+  | { id: string; name: string; folderId: string; activityType?: 'run' | 'walk' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; walkPresetLevel?: PresetLevel; mode: 'easy'; config: WorkoutConfig }
+  | { id: string; name: string; folderId: string; activityType?: 'run' | 'walk' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; walkPresetLevel?: PresetLevel; mode: 'advanced'; intervals: Interval[] }
   | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number };
+
+// Qualitative pace label for walk sessions — used in place of a numeric speed during a run,
+// since beginner-oriented walk presets are framed by effort, not km/h. A session only has a
+// meaningful "brisk" phase when its work pace actually exceeds its rest pace (continuous
+// presets share one pace throughout, so they read as "easy" the whole way).
+export function walkEffortForPhase(phase: Phase, speeds: RunSpeeds): 'easy' | 'brisk' {
+  return phase === 'work' && speeds.workSpeed > speeds.restSpeed ? 'brisk' : 'easy';
+}
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   const map: Record<Phase, number> = {
@@ -76,6 +95,18 @@ export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
     cooldown:    speeds.cooldownSpeed,
     circuitRest: speeds.restSpeed,
     finish:      speeds.restSpeed,
+  };
+  return map[phase];
+}
+
+export function inclineForPhase(phase: Phase, inclines: RunInclines): number {
+  const map: Record<Phase, number> = {
+    warmup:      inclines.warmupIncline,
+    work:        inclines.workIncline,
+    rest:        inclines.restIncline,
+    cooldown:    inclines.cooldownIncline,
+    circuitRest: inclines.restIncline,
+    finish:      inclines.restIncline,
   };
   return map[phase];
 }
@@ -100,6 +131,19 @@ export function getSessionSegments(session: Session): Segment[] {
   const overrides = session.mode === 'advanced' ? session.intervals : undefined;
 
   if (session.activityType === 'run' && session.runSpeeds) {
+    const runSpeeds = session.runSpeeds;
+    if (session.inclineEnabled === false) {
+      return withActivityValues(base, overrides, (phase, iv) => ({
+        speed: iv?.speed ?? speedForPhase(phase, runSpeeds),
+      }));
+    }
+    const runInclines = session.runInclines ?? DEFAULT_RUN_INCLINES;
+    return withActivityValues(base, overrides, (phase, iv) => ({
+      speed:   iv?.speed   ?? speedForPhase(phase, runSpeeds),
+      incline: iv?.incline ?? inclineForPhase(phase, runInclines),
+    }));
+  }
+  if (session.activityType === 'walk' && session.runSpeeds) {
     const runSpeeds = session.runSpeeds;
     return withActivityValues(base, overrides, (phase, iv) => ({
       speed: iv?.speed ?? speedForPhase(phase, runSpeeds),
@@ -153,6 +197,7 @@ export function getDefaultSessions(language: Language = 'en'): Session[] {
       activityType: 'run',
       config: { warmup: 300, high: 45, low: 15, rounds: 5, cooldown: 300 },
       runSpeeds: SPEED_PRESETS['3'],
+      runInclines: INCLINE_PRESETS['3'],
     },
     {
       id: 'default-circuit-1',

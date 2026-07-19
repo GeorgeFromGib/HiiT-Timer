@@ -20,7 +20,7 @@ import {
 import { formatSpeed } from '../lib/speedUnit';
 import { useTranslation } from '../lib/i18n';
 import { appAlert } from '../lib/appAlert';
-import { getSessionSegments } from '../lib/sessions';
+import { getSessionSegments, walkEffortForPhase } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -50,6 +50,11 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const uiScale = Math.min(1, (screenHeight / 844) / Math.max(1, PixelRatio.getFontScale()));
   const styles = useMemo(() => makeStyles(T, uiScale), [T, uiScale]);
 
+  // Effort (Easy/Brisk) is only shown when the session still matches a chosen walk preset —
+  // edit away from it (or never pick one) and the workout falls back to the numeric speed.
+  const walkRunSpeeds = session.mode !== 'circuit' && session.activityType === 'walk' && session.walkPresetLevel
+    ? session.runSpeeds : undefined;
+
   const initialSegments = useMemo(() => getSessionSegments(session), [session]);
   const toInsert = useMemo(
     () => initialSegments.filter(s => s.phase !== 'cooldown').slice(-2),
@@ -78,7 +83,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
     setFlashing(true);
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
-  });
+  }, session.mode !== 'circuit' && session.activityType === 'walk');
 
   const reset = useCallback(() => {
     resetEngine();
@@ -236,7 +241,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
               borderColor:     withOpacity(phaseColor, 0x59),
             }]}>
               <Text style={[styles.speedPillText, { color: phaseColor }]}>
-                {formatSpeed(seg.speed, settings.speedUnit)}
+                {walkRunSpeeds ? t('workout.effort.' + walkEffortForPhase(seg.phase, walkRunSpeeds)) : formatSpeed(seg.speed, settings.speedUnit)}
+                {seg.incline !== undefined ? ` · ${seg.incline}%` : ''}
               </Text>
             </View>
           )}
@@ -355,7 +361,8 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
             </Text>
             {nextSeg.speed !== undefined && (
               <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
-                {formatSpeed(nextSeg.speed, settings.speedUnit)}
+                {walkRunSpeeds ? t('workout.effort.' + walkEffortForPhase(nextSeg.phase, walkRunSpeeds)) : formatSpeed(nextSeg.speed, settings.speedUnit)}
+                {nextSeg.incline !== undefined ? ` · ${nextSeg.incline}%` : ''}
               </Text>
             )}
             {nextSeg.resistance !== undefined && nextSeg.power !== undefined && (

@@ -14,7 +14,7 @@ const FOLDER_ICON_COLOR_TOKEN: Record<FolderIconName, ColorToken> = {
   // Phase
   sun: 'warmup', flame: 'work', bolt: 'accent', pauseIcon: 'rest', snow: 'cooldown',
   // Session Types (mirrors ActivityTypeIcon's tinting)
-  standard: 'accent', run: 'cooldown', circuit: 'warmup', spinning: 'rest',
+  standard: 'accent', run: 'cooldown', walk: 'circuitRest', circuit: 'warmup', spinning: 'rest',
   // People
   user: 'accent', users: 'cooldown',
 };
@@ -46,6 +46,6 @@ export const FOLDER_ICON_GROUPS: FolderIconGroup[] = [
     icons: ['folder', 'folderOpen', 'star', 'heart', 'tag', 'bookmark', 'flag', 'target', 'calendar', 'pin', 'archive', 'grid', 'list', 'bell', 'lock', 'share', 'home'],
   },
   { labelKey: 'folders.iconGroupPhase', icons: ['sun', 'flame', 'bolt', 'pauseIcon', 'snow'] },
-  { labelKey: 'folders.iconGroupSessionTypes', icons: ['standard', 'run', 'circuit', 'spinning'] },
+  { labelKey: 'folders.iconGroupSessionTypes', icons: ['standard', 'run', 'walk', 'circuit', 'spinning'] },
   { labelKey: 'folders.iconGroupPeople', icons: ['user', 'users'] },
 ];

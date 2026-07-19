@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { i18n } from '../lib/i18n';
-import { type RunSpeeds, type SpinValues } from '../lib/sessions';
+import { type RunSpeeds, type RunInclines, type SpinValues } from '../lib/sessions';
 import { fromDisplay, pickerRange } from '../lib/speedUnit';
 import { type LocalInterval, type TimeField } from './editSessionTypes';
 
@@ -18,6 +18,7 @@ const MINUTE_LABELS          = Array.from({ length: 60 }, (_, i) => String(i));
 const SECOND_LABELS          = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 const ROUND_LABELS           = Array.from({ length: 99 }, (_, i) => String(i + 1));
 const RESISTANCE_LABELS      = Array.from({ length: 10 }, (_, i) => String(i + 1));
+const INCLINE_LABELS         = Array.from({ length: 31 }, (_, i) => String(i / 2)); // 0–15% in 0.5 steps
 const POWER_LABELS           = Array.from({ length: 27 }, (_, i) => String(40 + i * 10));
 const TARGET_DURATION_LABELS = Array.from({ length: TARGET_DURATION_LABEL_COUNT }, (_, i) => String(i + MIN_TARGET_DURATION_MINUTES));
 const DECIMAL_LABELS         = Array.from({ length: 10 }, (_, i) => String(i));
@@ -50,6 +51,10 @@ const powerColumns = (): PickerColumn[] => [{ values: POWER_LABELS, unitLabel: '
 const encodePower = (current: number): number[] => [(current - 40) / 10];
 const decodePower = (idx: number[]): number => 40 + idx[0] * 10;
 
+const inclineColumns = (): PickerColumn[] => [{ values: INCLINE_LABELS, unitLabel: '%' }];
+const encodeIncline = (current: number): number[] => [Math.round(current * 2)];
+const decodeIncline = (idx: number[]): number => idx[0] / 2;
+
 const speedColumns = (isMiles: boolean): PickerColumn[] => [
   { values: isMiles ? MPH_WHOLE : KMH_WHOLE, unitLabel: isMiles ? 'mph' : 'km/h' },
   { values: DECIMAL_LABELS, unitLabel: i18n.t('picker.dec') },
@@ -75,7 +80,9 @@ export type ActivePicker =
   | { type: 'spinResistance';    field: keyof SpinValues }
   | { type: 'spinPower';         field: keyof SpinValues }
   | { type: 'intervalResistance'; key: string }
-  | { type: 'intervalPower';      key: string };
+  | { type: 'intervalPower';      key: string }
+  | { type: 'incline';           field: keyof RunInclines }
+  | { type: 'intervalIncline';   key: string };
 
 export type CommitResult =
   | { type: 'field';           field: TimeField;       secs: number }
@@ -91,7 +98,9 @@ export type CommitResult =
   | { type: 'spinResistance';    field: keyof SpinValues; value: number }
   | { type: 'spinPower';         field: keyof SpinValues; value: number }
   | { type: 'intervalResistance'; key: string;            value: number }
-  | { type: 'intervalPower';      key: string;            value: number };
+  | { type: 'intervalPower';      key: string;            value: number }
+  | { type: 'incline';           field: keyof RunInclines; value: number }
+  | { type: 'intervalIncline';   key: string;               value: number };
 
 export interface EditSessionPicker {
   title:      string;
@@ -137,6 +146,7 @@ export function usePickerState(
     }
     if (activePicker.type === 'spinResistance' || activePicker.type === 'intervalResistance') return i18n.t('picker.resistanceTitle');
     if (activePicker.type === 'spinPower'      || activePicker.type === 'intervalPower')      return i18n.t('picker.powerTitle');
+    if (activePicker.type === 'incline'        || activePicker.type === 'intervalIncline')    return i18n.t('picker.inclineTitle');
     const idx = intervals.findIndex(iv => iv._key === activePicker.key);
     return i18n.t('picker.intervalTitle', { n: idx + 1 });
   })();
@@ -151,6 +161,8 @@ export function usePickerState(
       case 'intervalResistance':  return resistanceColumns();
       case 'spinPower':
       case 'intervalPower':       return powerColumns();
+      case 'incline':
+      case 'intervalIncline':     return inclineColumns();
       case 'speed':
       case 'intervalSpeed':       return speedColumns(activePicker.isMiles);
       default:                    return durationColumns();
@@ -229,6 +241,16 @@ export function usePickerState(
     setActivePicker({ type: 'intervalPower', key });
   }
 
+  function openInclinePicker(field: keyof RunInclines, currentValue: number) {
+    setSelected(encodeIncline(currentValue));
+    setActivePicker({ type: 'incline', field });
+  }
+
+  function openIntervalInclinePicker(key: string, currentValue: number) {
+    setSelected(encodeIncline(currentValue));
+    setActivePicker({ type: 'intervalIncline', key });
+  }
+
   function commitPicker(values: PickerValues) {
     if (!activePicker) return;
     const idx = values.selected;
@@ -250,6 +272,10 @@ export function usePickerState(
       onCommit({ type: 'intervalResistance', key: activePicker.key, value: decodeResistance(idx) });
     } else if (activePicker.type === 'intervalPower') {
       onCommit({ type: 'intervalPower', key: activePicker.key, value: decodePower(idx) });
+    } else if (activePicker.type === 'incline') {
+      onCommit({ type: 'incline', field: activePicker.field, value: decodeIncline(idx) });
+    } else if (activePicker.type === 'intervalIncline') {
+      onCommit({ type: 'intervalIncline', key: activePicker.key, value: decodeIncline(idx) });
     } else if (activePicker.type === 'circuitWarmup') {
       onCommit({ type: 'circuitWarmup', secs: decodeDuration(idx) });
     } else if (activePicker.type === 'circuitCooldown') {
@@ -287,6 +313,8 @@ export function usePickerState(
     openSpinPowerPicker,
     openIntervalResistancePicker,
     openIntervalPowerPicker,
+    openInclinePicker,
+    openIntervalInclinePicker,
     commitPicker,
     dismissPicker: () => setActivePicker(null),
   };

@@ -3,7 +3,7 @@ import { configureAudioSession, useWorkoutAudio } from '../lib/audio';
 import { useTimerEngine } from './useTimerEngine';
 import { usePreStartCountdown } from './usePreStartCountdown';
 import { useHapticBurst } from './useHapticBurst';
-import { reindexSegments, Segment } from '../lib/workout';
+import { reindexSegments, Segment, totalDuration } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
 import { getCongratsMessages } from '../lib/i18n';
 
@@ -43,8 +43,11 @@ export function useWorkoutSession(
   segments: Segment[],
   settings: Settings = DEFAULT_SETTINGS,
   onCountdownBeat?: () => void,
+  enableMidpointCue = false,
 ): WorkoutSession {
   const cues = useWorkoutAudio(settings);
+  const totalDur = totalDuration(segments);
+  const midpointFiredRef = useRef(false);
 
   const onCountdownBeatRef = useRef(onCountdownBeat);
   onCountdownBeatRef.current = onCountdownBeat;
@@ -85,6 +88,14 @@ export function useWorkoutSession(
 
   useEffect(() => { configureAudioSession(); }, []);
 
+  useEffect(() => {
+    if (!enableMidpointCue || midpointFiredRef.current) return;
+    if (state.status === 'running' && totalDur > 0 && state.elapsed >= totalDur / 2) {
+      midpointFiredRef.current = true;
+      cues.onMidpoint();
+    }
+  }, [enableMidpointCue, state.status, state.elapsed, totalDur, cues]);
+
   const countdown = usePreStartCountdown({
     onTick: () => cues.onPreStartTick(),
     onComplete: () => { cues.startKeepAlive(); start(); },
@@ -119,6 +130,7 @@ export function useWorkoutSession(
     countdown.cancel();
     cues.stopKeepAlive();
     engineReset();
+    midpointFiredRef.current = false;
     setSkippedCount(0);
     setSkippedSecs(0);
     setSkippedWorkSecs(0);

@@ -89,6 +89,10 @@ export const fr: typeof en = {
     roundAbbr: 'rnd',
     circuit: 'SÉRIE',
     nextCircuit: 'SÉRIE SUIVANTE',
+    effort: {
+      easy:  'Facile',
+      brisk: 'Soutenu',
+    },
   },
   complete: {
     eyebrow:       'ENTRAÎNEMENT TERMINÉ',
@@ -198,6 +202,7 @@ export const fr: typeof en = {
     activityType: "TYPE D'ACTIVITÉ",
     general: 'Standard',
     run: 'Tapis de course',
+    walk: 'Marche en extérieur',
     setupMode: 'MODE DE CONFIGURATION',
     easy: 'Facile',
     advanced: 'Avancé',
@@ -231,6 +236,14 @@ export const fr: typeof en = {
     spinResistance:   'Résistance',
     spinPower:        'Puissance (W)',
     spinPresets:      'PRÉRÉGLAGES SPINNING',
+    inclinePresets:   'PRÉRÉGLAGES D\'INCLINAISON',
+    treadmillIncline: 'INCLINAISON (%)',
+    useIncline:       'Utiliser l\'Inclinaison',
+    walkPresets:            'PRÉRÉGLAGES DE MARCHE',
+    walkPresetContinuous:   'Continu',
+    walkPresetRounds:       '%{count} tours',
+    walkPresetIntervalDetail: '%{warmup} échauffement + %{rounds}× (%{work} soutenu / %{rest} facile) + %{cooldown} récupération',
+    walkPresetLevel: 'Niveau %{level} - %{name}',
   },
   picker: {
     rounds: 'rounds',
@@ -245,6 +258,7 @@ export const fr: typeof en = {
     circuitsTitle: 'Séries',
     resistanceTitle: 'Résistance',
     powerTitle:      'Puissance',
+    inclineTitle:    'Inclinaison',
   },
   alerts: {
     cannotSwitchEasyTitle: 'Impossible de passer en Facile',
@@ -252,6 +266,8 @@ export const fr: typeof en = {
     overwriteTimingMessage: 'Appliquer ce préréglage remplacera vos réglages de minutage actuels.',
     overwriteSpeedMessage: 'Appliquer ce préréglage remplacera vos réglages de vitesse actuels.',
     overwriteSpinMessage:  'Appliquer ce préréglage remplacera vos réglages de résistance et de puissance actuels.',
+    overwriteInclineMessage: 'Appliquer ce préréglage remplacera vos réglages d\'inclinaison actuels.',
+    overwriteWalkMessage: 'Appliquer ce préréglage remplacera vos réglages de minutage et de vitesse actuels.',
     apply: 'Appliquer',
     cancel: 'Annuler',
     unsavedTitle: 'Modifications non enregistrées',
@@ -295,6 +311,7 @@ export const fr: typeof en = {
   },
   speech: {
     complete: 'Séance terminée',
+    midpoint: 'Point médian atteint',
     phases: {
       warmup:      'Échauffement',
       work:        'Travail',
@@ -310,6 +327,14 @@ export const fr: typeof en = {
       circuitRest: 'Préparez-vous pour la pause',
       finish:      'Préparez-vous à terminer',
     },
+  },
+  walkPresets: {
+    l1: { name: 'Premiers Pas',        cue: 'Un rythme auquel vous pourriez tenir une conversation' },
+    l2: { name: 'Prise de Rythme',     cue: 'Le même rythme facile et conversationnel' },
+    l3: { name: 'Trouver le Rythme',   cue: 'Premier aperçu de la variation d\'effort — soutenu signifie respirer un peu plus fort' },
+    l4: { name: 'Accélérer le Pas',    cue: 'La proportion penche vers plus de temps soutenu' },
+    l5: { name: 'Progrès Constant',    cue: 'Répartition 50/50 entre facile et soutenu' },
+    l6: { name: 'Marcheur Confiant',   cue: 'Le rythme soutenu devient dominant — la passerelle vers les séances de Tapis de course' },
   },
   defaultSessions: {
     example1: 'Exemple Standard',

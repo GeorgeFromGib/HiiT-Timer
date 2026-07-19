@@ -27,6 +27,9 @@ interface Props {
   displayPower?:           number;
   onOpenPowerPicker?:      () => void;
   onClearPower?:           () => void;
+  displayIncline?:         number;
+  onOpenInclinePicker?:    () => void;
+  onClearIncline?:         () => void;
 }
 
 const IntervalSwipeDuplicateAction = React.forwardRef<
@@ -65,6 +68,7 @@ export default function IntervalSwipeRow({
   activityLabel, onLabelChange,
   displayResistance, onOpenResistancePicker, onClearResistance,
   displayPower, onOpenPowerPicker, onClearPower,
+  displayIncline, onOpenInclinePicker, onClearIncline,
 }: Props) {
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
@@ -111,6 +115,9 @@ export default function IntervalSwipeRow({
           displayPower={displayPower}
           onOpenPowerPicker={onOpenPowerPicker}
           onClearPower={onClearPower}
+          displayIncline={displayIncline}
+          onOpenInclinePicker={onOpenInclinePicker}
+          onClearIncline={onClearIncline}
         />
       </ReanimatedSwipeable>
     </ScaleDecorator>

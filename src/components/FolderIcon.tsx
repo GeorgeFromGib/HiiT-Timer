@@ -75,6 +75,15 @@ export default function FolderIcon({ name, color, size = 20 }: Props) {
           </G>
         </Svg>
       );
+    case 'walk':
+      return (
+        <Svg width={size} height={size} viewBox="0 0 24 24">
+          <G {...p}>
+            {ACTIVITY_ICON_SHAPES.walk.circles!.map(c => <Circle key={`${c.cx},${c.cy}`} {...c} />)}
+            {ACTIVITY_ICON_SHAPES.walk.paths.map(d => <Path key={d} d={d} />)}
+          </G>
+        </Svg>
+      );
     case 'circuit':
       return (
         <Svg width={size} height={size} viewBox="0 0 24 24">

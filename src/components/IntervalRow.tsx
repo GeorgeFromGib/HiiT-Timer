@@ -21,6 +21,9 @@ export interface IntervalRowProps {
   displayPower?:           number;
   onOpenPowerPicker?:      () => void;
   onClearPower?:           () => void;
+  displayIncline?:         number;
+  onOpenInclinePicker?:    () => void;
+  onClearIncline?:         () => void;
 }
 
 export default function IntervalRow({
@@ -30,6 +33,7 @@ export default function IntervalRow({
   activityLabel, onLabelChange,
   displayResistance, onOpenResistancePicker, onClearResistance,
   displayPower, onOpenPowerPicker, onClearPower,
+  displayIncline, onOpenInclinePicker, onClearIncline,
 }: IntervalRowProps) {
   const { T } = useTheme();
   const { t } = useTranslation();
@@ -98,6 +102,22 @@ export default function IntervalRow({
         </Pressable>
       )}
 
+      {displayIncline !== undefined && onOpenInclinePicker && (
+        <Pressable
+          onPress={onOpenInclinePicker}
+          onLongPress={onClearIncline}
+          delayLongPress={500}
+          hitSlop={8}
+          style={styles.spinChip}
+        >
+          <View style={[styles.settingChip, { borderColor: T.hairline }]}>
+            <Text style={styles.intervalDurationText}>
+              {displayIncline}<Text style={styles.spinChipUnit}>%</Text>
+            </Text>
+          </View>
+        </Pressable>
+      )}
+
       <Pressable
         onPress={onOpenPicker}
         style={[
@@ -105,7 +125,7 @@ export default function IntervalRow({
           (displaySpeed !== undefined
             || (onLabelChange !== undefined && interval.type === 'work')
           ) && { flex: 0 },
-          displayResistance !== undefined && { flex: 1, alignItems: 'center', paddingRight: 0 },
+          (displayResistance !== undefined || displayIncline !== undefined) && { flex: 1, alignItems: 'center', paddingRight: 0 },
         ]}
       >
         <View style={[styles.settingChip, { borderColor: T.hairline }]}>

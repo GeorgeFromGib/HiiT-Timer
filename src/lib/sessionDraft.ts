@@ -1,17 +1,21 @@
-import { newId, type Session, type RunSpeeds, type SpinValues } from './sessions';
+import { newId, type Session, type RunSpeeds, type RunInclines, type SpinValues } from './sessions';
 import { type Interval } from './workout';
+import { type PresetLevel } from './presets';
 
 export function buildSessionFromDraft(
   mode: 'easy' | 'advanced' | 'circuit',
   name: string,
   easyConfig: { warmup: number; high: number; low: number; rounds: number; cooldown: number },
   intervals: Interval[],
-  activityType: 'run' | 'spinning' | undefined,
+  activityType: 'run' | 'walk' | 'spinning' | undefined,
   runSpeeds: RunSpeeds,
   existingId: string | undefined,
   circuitData: { warmup: number; cooldown: number; circuits: number; circuitRest: number } | undefined,
   spinValues: SpinValues | undefined,
+  runInclines: RunInclines,
+  inclineEnabled: boolean,
   folderId: string,
+  walkPresetLevel?: PresetLevel | null,
 ): Session {
   const base = { id: existingId ?? newId(), name, folderId };
   if (mode === 'circuit') {
@@ -29,7 +33,8 @@ export function buildSessionFromDraft(
     throw new Error('spinValues must be provided for spinning sessions');
   }
   const activityProps =
-    activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds } :
+    activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds, runInclines, inclineEnabled } :
+    activityType === 'walk'     ? { activityType: 'walk'     as const, runSpeeds, walkPresetLevel: walkPresetLevel ?? undefined } :
     activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues: spinValues! } :
     {};
   if (mode === 'easy') {

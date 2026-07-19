@@ -6,7 +6,8 @@ export interface Segment {
   startAt: number;
   endAt: number;
   index: number;
-  speed?: number;       // km/h — run sessions only
+  speed?: number;       // km/h — run/walk sessions only
+  incline?: number;     // % grade — treadmill (run) sessions only
   resistance?: number;  // 1–10 — spinning sessions only
   power?: number;       // W — spinning sessions only
   activityLabel?: string;
@@ -16,7 +17,8 @@ export interface Segment {
 export interface Interval {
   type: Phase;
   dur: number;
-  speed?: number;       // km/h — run sessions only; overrides session-level RunSpeeds
+  speed?: number;       // km/h — run/walk sessions only; overrides session-level RunSpeeds
+  incline?: number;     // % grade — treadmill (run) sessions; overrides session-level RunInclines
   resistance?: number;  // 1–10 — spinning sessions; overrides session-level SpinValues
   power?: number;       // W — spinning sessions; overrides session-level SpinValues
   activityLabel?: string;

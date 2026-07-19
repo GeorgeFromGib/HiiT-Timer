@@ -22,6 +22,8 @@ export interface IntervalListEdit {
   setIntervalDuration:     (key: string, secs: number) => void;
   setIntervalSpeed:        (key: string, kmh: number) => void;
   clearIntervalSpeed:      (key: string) => void;
+  setIntervalIncline:      (key: string, value: number) => void;
+  clearIntervalIncline:    (key: string) => void;
   setIntervalResistance:   (key: string, value: number) => void;
   clearIntervalResistance: (key: string) => void;
   setIntervalPower:        (key: string, value: number) => void;
@@ -111,6 +113,14 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
     setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, speed: undefined } : iv));
   }
 
+  function setIntervalIncline(key: string, value: number) {
+    setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, incline: value } : iv));
+  }
+
+  function clearIntervalIncline(key: string) {
+    setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, incline: undefined } : iv));
+  }
+
   function setIntervalResistance(key: string, value: number) {
     setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, resistance: value } : iv));
   }
@@ -138,6 +148,7 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     setActivityLabel,
     setIntervalDuration, setIntervalSpeed, clearIntervalSpeed,
+    setIntervalIncline, clearIntervalIncline,
     setIntervalResistance, clearIntervalResistance, setIntervalPower, clearIntervalPower,
     buildFromEasy, tryConvertToEasy,
   };

@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, type RenderItemParams } from 'react-native-draggable-flatlist';
-import { loadSessions, saveSessions, type Session, type RunSpeeds, type SpinValues, speedForPhase, spinValueForPhase } from '../lib/sessions';
+import { loadSessions, saveSessions, type Session, type RunSpeeds, type RunInclines, type SpinValues, speedForPhase, spinValueForPhase, inclineForPhase } from '../lib/sessions';
 import { fmtDuration, type Phase } from '../lib/workout';
 import { toDisplay } from '../lib/speedUnit';
 import { useTheme, withOpacity, buttonShadow, selectedBorder, type ThemeTokens } from '../theme';
@@ -26,6 +26,7 @@ import { i18n, type Language, useTranslation } from '../lib/i18n';
 import { appAlert } from '../lib/appAlert';
 import PresetStrip from '../components/EditSession/PresetStrip';
 import TimePresetStrip from '../components/EditSession/TimePresetStrip';
+import WalkPresetList from '../components/EditSession/WalkPresetList';
 import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import { SettingsToggle } from '../components/SettingsToggle';
@@ -33,12 +34,12 @@ import { SettingsToggle } from '../components/SettingsToggle';
 function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMiles: boolean): { value: string; unit: string } {
   const unit = isMiles ? 'miles' : 'km';
   const kmh = iv.speed ?? speedForPhase(iv.type, runSpeeds);
-  return { value: toDisplay(kmh, unit).toFixed(1), unit: isMiles ? 'mph' : 'km/h' };
+  return { value: toDisplay(kmh, unit).toFixed(1), unit: isMiles ? 'mi' : 'km' };
 }
 
 interface Props {
   session?: Session;
-  activityType?: 'general' | 'run' | 'circuit' | 'spinning';
+  activityType?: 'general' | 'run' | 'walk' | 'circuit' | 'spinning';
   folderId?: string;
   onBack: () => void;
 }
@@ -61,9 +62,10 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     openSpinResistancePicker, openSpinPowerPicker,
     openIntervalResistancePicker, openIntervalPowerPicker,
     clearIntervalResistance, clearIntervalPower,
+    openInclinePicker, openIntervalInclinePicker, clearIntervalIncline, setInclineEnabled,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     commitPicker, dismissPicker,
-    applyDurationPreset, openCustomLengthPicker, applySpeedPreset, applySpinPreset,
+    applyDurationPreset, openCustomLengthPicker, applySpeedPreset, applyInclinePreset, applySpinPreset, applyWalkPreset,
     setActivityLabel,
     buildSavePayload,
   } = useEditSession(existing, onBack, activityType, folderId);
@@ -71,11 +73,13 @@ export default function EditSessionScreen({ session: existing, activityType, fol
   const {
     name, isAdvanced, isCircuit, isSpinning, fieldValues, rounds, intervals,
     previewSegments, previewTotal,
-    activityType: draftActivityType, runSpeeds, spinValues,
-    activeTimingPreset, targetLengthMinutes, activeSpeedPreset, activeSpinPreset, hasChanges,
+    activityType: draftActivityType, runSpeeds, runInclines, inclineEnabled, spinValues,
+    activeTimingPreset, targetLengthMinutes, activeSpeedPreset, activeInclinePreset, activeSpinPreset, activeWalkPreset, hasChanges,
     circuitWarmup, circuitCooldown, circuitRest, circuitCount,
   } = draft;
   const isRun = draftActivityType === 'run';
+  const isWalk = draftActivityType === 'walk';
+  const hasSpeed = isRun || isWalk;
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
   const addPhaseOptions: Phase[] = isCircuit
@@ -191,7 +195,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           right={
             <ActivityTypeIcon
               mode={isCircuit ? 'circuit' : 'easy'}
-              activityType={draftActivityType === 'run' ? 'run' : draftActivityType === 'spinning' ? 'spinning' : undefined}
+              activityType={draftActivityType === 'run' ? 'run' : draftActivityType === 'walk' ? 'walk' : draftActivityType === 'spinning' ? 'spinning' : undefined}
               size={32}
             />
           }
@@ -241,7 +245,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                   {fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}
                 </Text>
                 <Text style={styles.previewMeta}>
-                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : isSpinning ? t('edit.spinning') : t('edit.general')}
+                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : isWalk ? t('edit.walk') : isSpinning ? t('edit.spinning') : t('edit.general')}
                 </Text>
               </View>
             </View>
@@ -260,6 +264,18 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                   thumbColor={T.accent}
                 />
                 <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>{t('edit.advanced')}</Text>
+              </View>
+            </View>
+          )}
+
+          {/* Use Incline toggle — Treadmill only; opts a session out of incline entirely */}
+          {isRun && (
+            <View style={styles.fieldGroup}>
+              <View style={styles.configRow}>
+                <View style={[styles.configRowInline, { justifyContent: 'space-between' }]}>
+                  <Text style={styles.fieldLabel}>{t('edit.useIncline')}</Text>
+                  <SettingsToggle value={inclineEnabled} onChange={setInclineEnabled} />
+                </View>
               </View>
             </View>
           )}
@@ -334,10 +350,21 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
                 <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
-                {isRun && (
+                {hasSpeed && (
                   <>
                     <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
-                    <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} lowLabel={t('edit.presetBriskWalk')} highLabel={t('edit.presetHardRun')} />
+                    <PresetStrip
+                      onApply={applySpeedPreset}
+                      activePreset={activeSpeedPreset}
+                      lowLabel={isWalk ? undefined : t('edit.presetBriskWalk')}
+                      highLabel={isWalk ? undefined : t('edit.presetHardRun')}
+                    />
+                  </>
+                )}
+                {isRun && inclineEnabled && (
+                  <>
+                    <Text style={styles.fieldLabel}>{t('edit.inclinePresets')}</Text>
+                    <PresetStrip onApply={applyInclinePreset} activePreset={activeInclinePreset} />
                   </>
                 )}
                 {isSpinning && (
@@ -372,15 +399,18 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     onRemove={() => removeInterval(iv._key)}
                     onCyclePhase={() => cyclePhase(iv._key)}
                     onOpenPicker={() => openIntervalPicker(iv._key)}
-                    displaySpeed={isRun ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
-                    onOpenSpeedPicker={isRun ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
-                    onClearSpeed={isRun ? () => clearIntervalSpeed(iv._key) : undefined}
+                    displaySpeed={hasSpeed ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
+                    onOpenSpeedPicker={hasSpeed ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
+                    onClearSpeed={hasSpeed ? () => clearIntervalSpeed(iv._key) : undefined}
                     displayResistance={isSpinning ? (iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance) : undefined}
                     onOpenResistancePicker={isSpinning ? () => openIntervalResistancePicker(iv._key) : undefined}
                     onClearResistance={isSpinning ? () => clearIntervalResistance(iv._key) : undefined}
                     displayPower={isSpinning ? (iv.power ?? spinValueForPhase(iv.type, spinValues).power) : undefined}
                     onOpenPowerPicker={isSpinning ? () => openIntervalPowerPicker(iv._key) : undefined}
                     onClearPower={isSpinning ? () => clearIntervalPower(iv._key) : undefined}
+                    displayIncline={isRun && inclineEnabled ? (iv.incline ?? inclineForPhase(iv.type, runInclines)) : undefined}
+                    onOpenInclinePicker={isRun && inclineEnabled ? () => openIntervalInclinePicker(iv._key) : undefined}
+                    onClearIncline={isRun && inclineEnabled ? () => clearIntervalIncline(iv._key) : undefined}
                   />
                 )}
               />
@@ -390,18 +420,29 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           ) : (
             <>
               {/* Easy mode timing */}
-              <View style={styles.fieldGroup}>
-                <Text style={styles.fieldLabel}>{t('edit.sessionLength')}</Text>
-                <TimePresetStrip
-                  minutes={targetLengthMinutes}
-                  belowMin={previewTotal > 0 && previewTotal < MIN_TARGET_DURATION_MINUTES * 60}
-                  onCustom={openCustomLengthPicker}
-                />
-              </View>
+              {!isWalk && (
+                <View style={styles.fieldGroup}>
+                  <Text style={styles.fieldLabel}>{t('edit.sessionLength')}</Text>
+                  <TimePresetStrip
+                    minutes={targetLengthMinutes}
+                    belowMin={previewTotal > 0 && previewTotal < MIN_TARGET_DURATION_MINUTES * 60}
+                    onCustom={openCustomLengthPicker}
+                  />
+                </View>
+              )}
 
               <View style={styles.fieldGroup}>
-                <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
-                <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
+                {isWalk ? (
+                  <>
+                    <Text style={styles.fieldLabel}>{t('edit.walkPresets')}</Text>
+                    <WalkPresetList activePreset={activeWalkPreset} onApply={applyWalkPreset} />
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
+                    <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
+                  </>
+                )}
 
                 <Text style={[styles.fieldLabel, { marginTop: 8 }]}>
                   {t('edit.intervalSetup')}{previewTotal > 0 ? <Text style={styles.intervalSetupTotal}>{' '}[{fmtDuration(previewTotal)}]</Text> : null}
@@ -526,10 +567,12 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           )}
 
           {/* Speeds — only shown in Easy mode (Advanced mode has speed presets inline above intervals) */}
-          {isRun && !isAdvanced && !isCircuit && (
+          {hasSpeed && !isAdvanced && !isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
-              <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} lowLabel={t('edit.presetBriskWalk')} highLabel={t('edit.presetHardRun')} />
+              {!isWalk && (
+                <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} lowLabel={t('edit.presetBriskWalk')} highLabel={t('edit.presetHardRun')} />
+              )}
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => {
                   const isPhaseDisabled = (field === 'warmupSpeed' && fieldValues.warmup === 0)
@@ -549,6 +592,41 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                               <Text style={styles.speedUnitText}>{' '}{isMiles ? 'mph' : 'km/h'}</Text>
                             </>
                           )}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          )}
+
+          {/* Treadmill incline — independent preset dial + per-phase editing */}
+          {isRun && inclineEnabled && !isAdvanced && !isCircuit && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>{t('edit.inclinePresets')}</Text>
+              <PresetStrip onApply={applyInclinePreset} activePreset={activeInclinePreset} />
+            </View>
+          )}
+
+          {isRun && inclineEnabled && !isAdvanced && !isCircuit && (
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>{t('edit.treadmillIncline')}</Text>
+              <View style={styles.configGrid}>
+                {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
+                  const field = `${phase}Incline` as keyof RunInclines;
+                  const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
+                    || (phase === 'cooldown' && fieldValues.cooldown === 0);
+                  return (
+                    <View key={field} style={styles.configCell}>
+                      <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
+                      <Pressable
+                        style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                        onPress={() => openInclinePicker(field)}
+                        disabled={isPhaseDisabled}
+                      >
+                        <Text style={styles.configInputText}>
+                          {isPhaseDisabled ? '—' : <>{runInclines[field]}<Text style={styles.speedUnitText}>%</Text></>}
                         </Text>
                       </Pressable>
                     </View>

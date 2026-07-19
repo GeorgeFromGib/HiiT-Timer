@@ -1,4 +1,4 @@
-import { type RunSpeeds, type SpinValues } from './sessions';
+import { type RunSpeeds, type RunInclines, type SpinValues } from './sessions';
 
 export type PresetLevel = '1' | '2' | '3' | '4' | '5' | '6';
 
@@ -7,6 +7,13 @@ export interface SpeedPreset {
   workSpeed:     number;
   restSpeed:     number;
   cooldownSpeed: number;
+}
+
+export interface InclinePreset {
+  warmupIncline:   number; // % grade
+  workIncline:     number;
+  restIncline:     number;
+  cooldownIncline: number;
 }
 
 export interface SpinPreset {
@@ -39,13 +46,36 @@ export const SPIN_PRESETS: Record<PresetLevel, SpinPreset> = {
   '6': { warmupResistance: 5, warmupPower: 120, workResistance: 9, workPower: 250, restResistance: 3, restPower:  70, cooldownResistance: 4, cooldownPower: 100 },
 };
 
+// Levels map to treadmill incline intensity: Flat/Recovery → Gentle Rise → Rolling Hills →
+// Hill Climb → Steep Ascent → Max Grade — mirroring SPIN_PRESETS' resistance ramp, but as a
+// single incline axis (treadmills have one incline control, unlike a bike's resistance+power).
+export const INCLINE_PRESETS: Record<PresetLevel, InclinePreset> = {
+  '1': { warmupIncline: 1,   workIncline: 1,  restIncline: 0.5, cooldownIncline: 0.5 },
+  '2': { warmupIncline: 1,   workIncline: 2,  restIncline: 1,   cooldownIncline: 1   },
+  '3': { warmupIncline: 1.5, workIncline: 4,  restIncline: 1.5, cooldownIncline: 1   },
+  '4': { warmupIncline: 2,   workIncline: 6,  restIncline: 2,   cooldownIncline: 1.5 },
+  '5': { warmupIncline: 2,   workIncline: 9,  restIncline: 2,   cooldownIncline: 1.5 },
+  '6': { warmupIncline: 2.5, workIncline: 12, restIncline: 2,   cooldownIncline: 2   },
+};
+
 const ALL_LEVELS: PresetLevel[] = ['1', '2', '3', '4', '5', '6'];
 
-export function findMatchingSpeedPreset(speeds: RunSpeeds): PresetLevel | null {
+export function findMatchingSpeedPreset(
+  speeds: RunSpeeds,
+  source: Record<PresetLevel, SpeedPreset> = SPEED_PRESETS,
+): PresetLevel | null {
   return ALL_LEVELS.find(level => {
-    const p = SPEED_PRESETS[level];
+    const p = source[level];
     return p.warmupSpeed === speeds.warmupSpeed && p.workSpeed === speeds.workSpeed &&
            p.restSpeed === speeds.restSpeed && p.cooldownSpeed === speeds.cooldownSpeed;
+  }) ?? null;
+}
+
+export function findMatchingInclinePreset(inclines: RunInclines): PresetLevel | null {
+  return ALL_LEVELS.find(level => {
+    const i = INCLINE_PRESETS[level];
+    return i.warmupIncline === inclines.warmupIncline && i.workIncline === inclines.workIncline &&
+           i.restIncline === inclines.restIncline && i.cooldownIncline === inclines.cooldownIncline;
   }) ?? null;
 }
 

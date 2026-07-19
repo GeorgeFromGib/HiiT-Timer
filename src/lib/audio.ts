@@ -2,7 +2,7 @@ import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-aud
 import { useEffect, useMemo, useRef } from 'react';
 import type { Phase } from './workout';
 import type { Language } from './i18n';
-import { speakPhase, speakComplete, speakPrepare } from './speech';
+import { speakPhase, speakComplete, speakPrepare, speakMidpoint, isSpeaking } from './speech';
 
 // Static requires let Metro bundle the WAV files and give us asset module
 // numbers that expo-audio accepts on both native (AVFoundation / ExoPlayer)
@@ -17,6 +17,9 @@ const CUES = {
 } as const;
 
 type CueKey = keyof typeof CUES;
+
+const MIDPOINT_POLL_MS    = 200;
+const MIDPOINT_MAX_WAIT_MS = 4000;
 
 export type AudioSettings = {
   soundOff: boolean;
@@ -41,6 +44,7 @@ export interface WorkoutAudioCues {
   onPrepare(nextPhase: Phase): void;
   onFinish(): void;
   onPreStartTick(): void;
+  onMidpoint(): void;
   startKeepAlive(): void;
   stopKeepAlive(): void;
 }
@@ -99,6 +103,19 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     }
   };
 
+  const isBeepPlaying = () => Object.values(playersRef.current).some(p => p?.playing);
+
+  // Polls until no beep is playing and expo-speech reports idle, or the deadline passes —
+  // whichever comes first — so the midpoint cue waits its turn instead of talking over
+  // a phase-transition announcement or chime.
+  const waitForCuesToClear = async (deadline: number): Promise<void> => {
+    if (Date.now() >= deadline) return;
+    const speechBusy = await isSpeaking();
+    if (!isBeepPlaying() && !speechBusy) return;
+    await new Promise(resolve => setTimeout(resolve, MIDPOINT_POLL_MS));
+    return waitForCuesToClear(deadline);
+  };
+
   const stopKeepAlive = () => {
     keepAliveRef.current?.pause();
     keepAliveRef.current?.remove();
@@ -145,6 +162,13 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     onPreStartTick() {
       const s = settingsRef.current;
       if (!s.soundOff && s.soundCues) playCue('tick', s.soundVolume / 100);
+    },
+    onMidpoint() {
+      const s = settingsRef.current;
+      if (!s.voiceCues || s.soundOff) return;
+      waitForCuesToClear(Date.now() + MIDPOINT_MAX_WAIT_MS).then(() => {
+        speakMidpoint(settingsRef.current.language);
+      });
     },
     startKeepAlive,
     stopKeepAlive,

@@ -5,7 +5,7 @@ export interface ActivityIconShape {
   paths: string[];
 }
 
-export const ACTIVITY_ICON_SHAPES: Record<'run' | 'circuit' | 'spinning', ActivityIconShape> = {
+export const ACTIVITY_ICON_SHAPES: Record<'run' | 'walk' | 'circuit' | 'spinning', ActivityIconShape> = {
   run: {
     circles: [{ cx: 15.5, cy: 4.6, r: 2.1 }],
     paths: [
@@ -13,6 +13,16 @@ export const ACTIVITY_ICON_SHAPES: Record<'run' | 'circuit' | 'spinning', Activi
       'M10 13.4 6.2 16.8 4 18.4',
       'M13.6 9.6l3.3 1.7 2.7-.6',
       'M16.9 11.3l-.4 3',
+    ],
+  },
+  walk: {
+    circles: [{ cx: 12.6, cy: 4.6, r: 2.1 }],
+    paths: [
+      'M12.4 8.3v5.4',
+      'M12.4 13.7 9 19.5',
+      'M12.4 13.7 15.8 18.6',
+      'M12.4 10.2 9.3 13',
+      'M12.4 10.2 16 11.6',
     ],
   },
   circuit: {
