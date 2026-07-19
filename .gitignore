@@ -48,3 +48,6 @@ yarn-error.*
 # Claude Code
 .claude/
 ios/LocalFrameworks/
+
+# large store assets
+apple store assets/screenshots.zip
