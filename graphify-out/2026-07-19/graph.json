@@ -10,7 +10,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_tsx_app",
-      "community": 7,
+      "community": 0,
       "norm_label": "app.tsx"
     },
     {
@@ -20,7 +20,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "app_routescreen",
-      "community": 7,
+      "community": 0,
       "norm_label": "routescreen()"
     },
     {
@@ -30,7 +30,7 @@
       "source_location": "L54",
       "_origin": "ast",
       "id": "app_app",
-      "community": 13,
+      "community": 0,
       "norm_label": "app()"
     },
     {
@@ -410,7 +410,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "ios_clearhiit_appdelegate",
-      "community": 11,
+      "community": 124,
       "norm_label": "appdelegate.swift"
     },
     {
@@ -421,7 +421,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "expo",
-      "community": 11,
+      "community": 124,
       "norm_label": "expo"
     },
     {
@@ -432,7 +432,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "react",
-      "community": 11,
+      "community": 124,
       "norm_label": "react"
     },
     {
@@ -443,7 +443,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "reactappdependencyprovider",
-      "community": 11,
+      "community": 124,
       "norm_label": "reactappdependencyprovider"
     },
     {
@@ -633,7 +633,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "package",
-      "community": 2,
+      "community": 69,
       "norm_label": "package.json"
     },
     {
@@ -643,7 +643,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "package_name",
-      "community": 2,
+      "community": 69,
       "norm_label": "name"
     },
     {
@@ -653,7 +653,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "package_version",
-      "community": 2,
+      "community": 69,
       "norm_label": "version"
     },
     {
@@ -663,7 +663,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "package_main",
-      "community": 2,
+      "community": 69,
       "norm_label": "main"
     },
     {
@@ -753,7 +753,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "package_dependencies_expo",
-      "community": 11,
+      "community": 124,
       "norm_label": "expo"
     },
     {
@@ -903,7 +903,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "package_dependencies_react",
-      "community": 133,
+      "community": 124,
       "norm_label": "react"
     },
     {
@@ -993,7 +993,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "package_devdependencies",
-      "community": 2,
+      "community": 69,
       "norm_label": "devdependencies"
     },
     {
@@ -1003,7 +1003,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "package_devdependencies_types_react",
-      "community": 2,
+      "community": 69,
       "norm_label": "@types/react"
     },
     {
@@ -1013,7 +1013,7 @@
       "source_location": "L40",
       "_origin": "ast",
       "id": "package_devdependencies_babel_preset_expo",
-      "community": 2,
+      "community": 69,
       "norm_label": "babel-preset-expo"
     },
     {
@@ -1023,7 +1023,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "package_devdependencies_typescript",
-      "community": 2,
+      "community": 69,
       "norm_label": "typescript"
     },
     {
@@ -1033,7 +1033,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "package_scripts",
-      "community": 2,
+      "community": 128,
       "norm_label": "scripts"
     },
     {
@@ -1043,7 +1043,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "package_scripts_start",
-      "community": 2,
+      "community": 128,
       "norm_label": "start"
     },
     {
@@ -1053,7 +1053,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "package_scripts_android",
-      "community": 2,
+      "community": 128,
       "norm_label": "android"
     },
     {
@@ -1063,7 +1063,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "package_scripts_ios",
-      "community": 2,
+      "community": 128,
       "norm_label": "ios"
     },
     {
@@ -1073,7 +1073,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "package_scripts_web",
-      "community": 2,
+      "community": 128,
       "norm_label": "web"
     },
     {
@@ -1083,7 +1083,7 @@
       "source_location": "L49",
       "_origin": "ast",
       "id": "package_private",
-      "community": 2,
+      "community": 69,
       "norm_label": "private"
     },
     {
@@ -1203,7 +1203,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_activitytypeicon",
-      "community": 134,
+      "community": 7,
       "norm_label": "activitytypeicon.tsx"
     },
     {
@@ -1213,7 +1213,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_activitytypeicon_props",
-      "community": 134,
+      "community": 7,
       "norm_label": "props"
     },
     {
@@ -1223,7 +1223,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_components_activitytypeicon_activitytypeicon",
-      "community": 134,
+      "community": 7,
       "norm_label": "activitytypeicon()"
     },
     {
@@ -1333,7 +1333,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_deletefoldermodal",
-      "community": 131,
+      "community": 123,
       "norm_label": "deletefoldermodal.tsx"
     },
     {
@@ -1343,7 +1343,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_deletefoldermodal_deletefoldermodalprops",
-      "community": 134,
+      "community": 123,
       "norm_label": "deletefoldermodalprops"
     },
     {
@@ -1353,7 +1353,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_components_deletefoldermodal_deletefoldermodal",
-      "community": 131,
+      "community": 123,
       "norm_label": "deletefoldermodal()"
     },
     {
@@ -1363,7 +1363,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "src_components_deletefoldermodal_makestyles",
-      "community": 131,
+      "community": 123,
       "norm_label": "makestyles()"
     },
     {
@@ -1373,7 +1373,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_draghandle",
-      "community": 126,
+      "community": 127,
       "norm_label": "draghandle.tsx"
     },
     {
@@ -1383,7 +1383,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_components_draghandle_props",
-      "community": 126,
+      "community": 127,
       "norm_label": "props"
     },
     {
@@ -1393,7 +1393,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_draghandle_draghandle",
-      "community": 126,
+      "community": 127,
       "norm_label": "draghandle()"
     },
     {
@@ -1403,7 +1403,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_editsession_intervalswiperow",
-      "community": 131,
+      "community": 5,
       "norm_label": "intervalswiperow.tsx"
     },
     {
@@ -1413,37 +1413,37 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_components_editsession_intervalswiperow_props",
-      "community": 131,
+      "community": 5,
       "norm_label": "props"
     },
     {
       "label": "IntervalSwipeDuplicateAction",
       "file_type": "code",
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
-      "source_location": "L32",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction",
-      "community": 131,
+      "community": 5,
       "norm_label": "intervalswipeduplicateaction"
     },
     {
       "label": "IntervalSwipeRow()",
       "file_type": "code",
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
-      "source_location": "L61",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "src_components_editsession_intervalswiperow_intervalswiperow",
-      "community": 131,
+      "community": 5,
       "norm_label": "intervalswiperow()"
     },
     {
       "label": "styles",
       "file_type": "code",
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
-      "source_location": "L120",
+      "source_location": "L127",
       "_origin": "ast",
       "id": "src_components_editsession_intervalswiperow_styles",
-      "community": 131,
+      "community": 5,
       "norm_label": "styles"
     },
     {
@@ -1537,6 +1537,56 @@
       "norm_label": "makestyles()"
     },
     {
+      "label": "WalkPresetList.tsx",
+      "file_type": "code",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_components_editsession_walkpresetlist",
+      "community": 126,
+      "norm_label": "walkpresetlist.tsx"
+    },
+    {
+      "label": "LEVELS",
+      "file_type": "code",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "src_components_editsession_walkpresetlist_levels",
+      "community": 126,
+      "norm_label": "levels"
+    },
+    {
+      "label": "Props",
+      "file_type": "code",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "src_components_editsession_walkpresetlist_props",
+      "community": 126,
+      "norm_label": "props"
+    },
+    {
+      "label": "WalkPresetList()",
+      "file_type": "code",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L18",
+      "_origin": "ast",
+      "id": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "community": 126,
+      "norm_label": "walkpresetlist()"
+    },
+    {
+      "label": "makeStyles()",
+      "file_type": "code",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L75",
+      "_origin": "ast",
+      "id": "src_components_editsession_walkpresetlist_makestyles",
+      "community": 126,
+      "norm_label": "makestyles()"
+    },
+    {
       "label": "FolderEditModal.tsx",
       "file_type": "code",
       "source_file": "src/components/FolderEditModal.tsx",
@@ -1623,7 +1673,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_foldericon",
-      "community": 134,
+      "community": 7,
       "norm_label": "foldericon.tsx"
     },
     {
@@ -1633,7 +1683,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_foldericon_props",
-      "community": 134,
+      "community": 7,
       "norm_label": "props"
     },
     {
@@ -1643,7 +1693,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_components_foldericon_foldericon",
-      "community": 134,
+      "community": 7,
       "norm_label": "foldericon()"
     },
     {
@@ -1703,7 +1753,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_ghostbtn",
-      "community": 133,
+      "community": 13,
       "norm_label": "ghostbtn.tsx"
     },
     {
@@ -1713,7 +1763,7 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_components_ghostbtn_props",
-      "community": 133,
+      "community": 13,
       "norm_label": "props"
     },
     {
@@ -1723,7 +1773,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_components_ghostbtn_ghostbtn",
-      "community": 133,
+      "community": 13,
       "norm_label": "ghostbtn()"
     },
     {
@@ -1733,7 +1783,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_intervalrow",
-      "community": 126,
+      "community": 127,
       "norm_label": "intervalrow.tsx"
     },
     {
@@ -1743,27 +1793,27 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_components_intervalrow_intervalrowprops",
-      "community": 5,
+      "community": 127,
       "norm_label": "intervalrowprops"
     },
     {
       "label": "IntervalRow()",
       "file_type": "code",
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L26",
+      "source_location": "L29",
       "_origin": "ast",
       "id": "src_components_intervalrow_intervalrow",
-      "community": 126,
+      "community": 127,
       "norm_label": "intervalrow()"
     },
     {
       "label": "makeStyles()",
       "file_type": "code",
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L119",
+      "source_location": "L139",
       "_origin": "ast",
       "id": "src_components_intervalrow_makestyles",
-      "community": 126,
+      "community": 127,
       "norm_label": "makestyles()"
     },
     {
@@ -1773,7 +1823,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_movetofoldersheet",
-      "community": 131,
+      "community": 123,
       "norm_label": "movetofoldersheet.tsx"
     },
     {
@@ -1783,7 +1833,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_movetofoldersheet_movetofoldersheetprops",
-      "community": 134,
+      "community": 123,
       "norm_label": "movetofoldersheetprops"
     },
     {
@@ -1793,7 +1843,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_components_movetofoldersheet_movetofoldersheet",
-      "community": 131,
+      "community": 123,
       "norm_label": "movetofoldersheet()"
     },
     {
@@ -1803,7 +1853,7 @@
       "source_location": "L67",
       "_origin": "ast",
       "id": "src_components_movetofoldersheet_makestyles",
-      "community": 131,
+      "community": 123,
       "norm_label": "makestyles()"
     },
     {
@@ -1813,7 +1863,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_onboardingmodal",
-      "community": 7,
+      "community": 133,
       "norm_label": "onboardingmodal.tsx"
     },
     {
@@ -1823,7 +1873,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_components_onboardingmodal_props",
-      "community": 7,
+      "community": 133,
       "norm_label": "props"
     },
     {
@@ -1833,7 +1883,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_components_onboardingmodal_onboardingmodal",
-      "community": 7,
+      "community": 133,
       "norm_label": "onboardingmodal()"
     },
     {
@@ -1843,7 +1893,7 @@
       "source_location": "L227",
       "_origin": "ast",
       "id": "src_components_onboardingmodal_themeswatch",
-      "community": 7,
+      "community": 133,
       "norm_label": "themeswatch()"
     },
     {
@@ -1853,7 +1903,7 @@
       "source_location": "L261",
       "_origin": "ast",
       "id": "src_components_onboardingmodal_makestyles",
-      "community": 7,
+      "community": 133,
       "norm_label": "makestyles()"
     },
     {
@@ -1863,7 +1913,7 @@
       "source_location": "L464",
       "_origin": "ast",
       "id": "src_components_onboardingmodal_makeswatchstyles",
-      "community": 7,
+      "community": 133,
       "norm_label": "makeswatchstyles()"
     },
     {
@@ -1913,7 +1963,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_phasestrip",
-      "community": 126,
+      "community": 13,
       "norm_label": "phasestrip.tsx"
     },
     {
@@ -1923,7 +1973,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_components_phasestrip_phasestrip",
-      "community": 126,
+      "community": 13,
       "norm_label": "phasestrip()"
     },
     {
@@ -1933,7 +1983,7 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_components_phasestrip_styles",
-      "community": 126,
+      "community": 13,
       "norm_label": "styles"
     },
     {
@@ -1943,7 +1993,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_pickermodal",
-      "community": 125,
+      "community": 5,
       "norm_label": "pickermodal.tsx"
     },
     {
@@ -1953,7 +2003,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_components_pickermodal_empty_values",
-      "community": 125,
+      "community": 5,
       "norm_label": "empty_values"
     },
     {
@@ -1963,7 +2013,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_components_pickermodal_props",
-      "community": 125,
+      "community": 5,
       "norm_label": "props"
     },
     {
@@ -1973,7 +2023,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_components_pickermodal_pickermodal",
-      "community": 125,
+      "community": 5,
       "norm_label": "pickermodal()"
     },
     {
@@ -1983,7 +2033,7 @@
       "source_location": "L93",
       "_origin": "ast",
       "id": "src_components_pickermodal_makestyles",
-      "community": 125,
+      "community": 5,
       "norm_label": "makestyles()"
     },
     {
@@ -2033,7 +2083,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_sessioncard",
-      "community": 126,
+      "community": 127,
       "norm_label": "sessioncard.tsx"
     },
     {
@@ -2043,7 +2093,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_components_sessioncard_props",
-      "community": 5,
+      "community": 127,
       "norm_label": "props"
     },
     {
@@ -2053,7 +2103,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_components_sessioncard_sessioncard",
-      "community": 126,
+      "community": 127,
       "norm_label": "sessioncard()"
     },
     {
@@ -2063,7 +2113,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "src_components_sessioncard_makestyles",
-      "community": 126,
+      "community": 127,
       "norm_label": "makestyles()"
     },
     {
@@ -2263,7 +2313,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_wheelcolumn",
-      "community": 125,
+      "community": 133,
       "norm_label": "wheelcolumn.tsx"
     },
     {
@@ -2273,7 +2323,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_components_wheelcolumn_props",
-      "community": 125,
+      "community": 133,
       "norm_label": "props"
     },
     {
@@ -2283,7 +2333,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_components_wheelcolumn_wheelcolumn",
-      "community": 125,
+      "community": 133,
       "norm_label": "wheelcolumn()"
     },
     {
@@ -2293,7 +2343,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "src_components_wheelcolumn_styles",
-      "community": 125,
+      "community": 133,
       "norm_label": "styles"
     },
     {
@@ -2303,7 +2353,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_workouticon",
-      "community": 134,
+      "community": 13,
       "norm_label": "workouticon.tsx"
     },
     {
@@ -2313,7 +2363,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_components_workouticon_workouticonprops",
-      "community": 134,
+      "community": 13,
       "norm_label": "workouticonprops"
     },
     {
@@ -2323,7 +2373,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_components_workouticon_workouticon",
-      "community": 134,
+      "community": 13,
       "norm_label": "workouticon()"
     },
     {
@@ -2333,7 +2383,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_activityiconshapes",
-      "community": 134,
+      "community": 7,
       "norm_label": "activityiconshapes.ts"
     },
     {
@@ -2343,7 +2393,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_components_activityiconshapes_activityiconshape",
-      "community": 134,
+      "community": 7,
       "norm_label": "activityiconshape"
     },
     {
@@ -2353,7 +2403,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_components_activityiconshapes_activity_icon_shapes",
-      "community": 134,
+      "community": 7,
       "norm_label": "activity_icon_shapes"
     },
     {
@@ -2363,7 +2413,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_svgstroke",
-      "community": 134,
+      "community": 7,
       "norm_label": "svgstroke.ts"
     },
     {
@@ -2373,7 +2423,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_svgstroke_base_svg_stroke",
-      "community": 134,
+      "community": 7,
       "norm_label": "base_svg_stroke"
     },
     {
@@ -2550,7 +2600,7 @@
       "label": "PHASES",
       "file_type": "code",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L29",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "src_hooks_useeditsession_phases",
       "community": 5,
@@ -2560,7 +2610,7 @@
       "label": "CIRCUIT_PHASES",
       "file_type": "code",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "src_hooks_useeditsession_circuit_phases",
       "community": 5,
@@ -2570,7 +2620,7 @@
       "label": "EditSessionDraft",
       "file_type": "code",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L32",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "src_hooks_useeditsession_editsessiondraft",
       "community": 5,
@@ -2580,7 +2630,7 @@
       "label": "EditSessionInterface",
       "file_type": "code",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L56",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "src_hooks_useeditsession_editsessioninterface",
       "community": 5,
@@ -2590,7 +2640,7 @@
       "label": "useEditSession()",
       "file_type": "code",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L95",
+      "source_location": "L106",
       "_origin": "ast",
       "id": "src_hooks_useeditsession_useeditsession",
       "community": 5,
@@ -2670,7 +2720,7 @@
       "label": "useIntervalListEdit()",
       "file_type": "code",
       "source_file": "src/hooks/useIntervalListEdit.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "src_hooks_useintervallistedit_useintervallistedit",
       "community": 5,
@@ -2737,10 +2787,20 @@
       "norm_label": "resistance_labels"
     },
     {
-      "label": "POWER_LABELS",
+      "label": "INCLINE_LABELS",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
       "source_location": "L21",
+      "_origin": "ast",
+      "id": "src_hooks_usepickerstate_incline_labels",
+      "community": 125,
+      "norm_label": "incline_labels"
+    },
+    {
+      "label": "POWER_LABELS",
+      "file_type": "code",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_power_labels",
       "community": 125,
@@ -2750,7 +2810,7 @@
       "label": "TARGET_DURATION_LABELS",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_target_duration_labels",
       "community": 125,
@@ -2760,7 +2820,7 @@
       "label": "DECIMAL_LABELS",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_decimal_labels",
       "community": 125,
@@ -2770,7 +2830,7 @@
       "label": "KMH_WHOLE",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L24",
+      "source_location": "L25",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_kmh_whole",
       "community": 125,
@@ -2780,7 +2840,7 @@
       "label": "MPH_WHOLE",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L25",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_mph_whole",
       "community": 125,
@@ -2790,7 +2850,7 @@
       "label": "durationColumns()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_durationcolumns",
       "community": 125,
@@ -2800,7 +2860,7 @@
       "label": "encodeDuration()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L34",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_encodeduration",
       "community": 125,
@@ -2810,7 +2870,7 @@
       "label": "decodeDuration()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L35",
+      "source_location": "L36",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_decodeduration",
       "community": 125,
@@ -2820,7 +2880,7 @@
       "label": "countColumns()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L37",
+      "source_location": "L38",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_countcolumns",
       "community": 125,
@@ -2830,7 +2890,7 @@
       "label": "encodeCount()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L38",
+      "source_location": "L39",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_encodecount",
       "community": 125,
@@ -2840,7 +2900,7 @@
       "label": "decodeCount()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L39",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_decodecount",
       "community": 125,
@@ -2850,7 +2910,7 @@
       "label": "minutesOnlyColumns()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L41",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_minutesonlycolumns",
       "community": 125,
@@ -2860,7 +2920,7 @@
       "label": "encodeMinutesOnly()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L42",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_encodeminutesonly",
       "community": 125,
@@ -2870,7 +2930,7 @@
       "label": "decodeMinutesOnly()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L43",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_decodeminutesonly",
       "community": 125,
@@ -2880,7 +2940,7 @@
       "label": "resistanceColumns()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L45",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_resistancecolumns",
       "community": 125,
@@ -2890,7 +2950,7 @@
       "label": "encodeResistance()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L46",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_encoderesistance",
       "community": 125,
@@ -2900,7 +2960,7 @@
       "label": "decodeResistance()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L47",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_decoderesistance",
       "community": 125,
@@ -2910,7 +2970,7 @@
       "label": "powerColumns()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L49",
+      "source_location": "L50",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_powercolumns",
       "community": 125,
@@ -2920,7 +2980,7 @@
       "label": "encodePower()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L50",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_encodepower",
       "community": 125,
@@ -2930,17 +2990,47 @@
       "label": "decodePower()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L51",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_decodepower",
       "community": 125,
       "norm_label": "decodepower()"
     },
     {
+      "label": "inclineColumns()",
+      "file_type": "code",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "src_hooks_usepickerstate_inclinecolumns",
+      "community": 125,
+      "norm_label": "inclinecolumns()"
+    },
+    {
+      "label": "encodeIncline()",
+      "file_type": "code",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L55",
+      "_origin": "ast",
+      "id": "src_hooks_usepickerstate_encodeincline",
+      "community": 125,
+      "norm_label": "encodeincline()"
+    },
+    {
+      "label": "decodeIncline()",
+      "file_type": "code",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L56",
+      "_origin": "ast",
+      "id": "src_hooks_usepickerstate_decodeincline",
+      "community": 125,
+      "norm_label": "decodeincline()"
+    },
+    {
       "label": "speedColumns()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L53",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_speedcolumns",
       "community": 125,
@@ -2950,7 +3040,7 @@
       "label": "encodeSpeedDisplay()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L57",
+      "source_location": "L62",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_encodespeeddisplay",
       "community": 125,
@@ -2960,7 +3050,7 @@
       "label": "decodeSpeedDisplay()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L62",
+      "source_location": "L67",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_decodespeeddisplay",
       "community": 125,
@@ -2970,7 +3060,7 @@
       "label": "ActivePicker",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L64",
+      "source_location": "L69",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_activepicker",
       "community": 125,
@@ -2980,7 +3070,7 @@
       "label": "CommitResult",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L80",
+      "source_location": "L87",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_commitresult",
       "community": 125,
@@ -2990,27 +3080,27 @@
       "label": "EditSessionPicker",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L96",
+      "source_location": "L105",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_editsessionpicker",
-      "community": 125,
+      "community": 5,
       "norm_label": "editsessionpicker"
     },
     {
       "label": "PickerValues",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L103",
+      "source_location": "L112",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_pickervalues",
-      "community": 125,
+      "community": 5,
       "norm_label": "pickervalues"
     },
     {
       "label": "HAS_SEPARATOR",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L107",
+      "source_location": "L116",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_has_separator",
       "community": 125,
@@ -3020,7 +3110,7 @@
       "label": "usePickerState()",
       "file_type": "code",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L112",
+      "source_location": "L121",
       "_origin": "ast",
       "id": "src_hooks_usepickerstate_usepickerstate",
       "community": 125,
@@ -3110,7 +3200,7 @@
       "label": "SpeedAndSpinEdit",
       "file_type": "code",
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "_origin": "ast",
       "id": "src_hooks_usespeedandspinedit_speedandspinedit",
       "community": 5,
@@ -3120,7 +3210,7 @@
       "label": "useSpeedAndSpinEdit()",
       "file_type": "code",
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L26",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "src_hooks_usespeedandspinedit_usespeedandspinedit",
       "community": 5,
@@ -3193,7 +3283,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_hooks_useworkoutsession_sessionstats",
-      "community": 127,
+      "community": 13,
       "norm_label": "sessionstats"
     },
     {
@@ -3223,7 +3313,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_alerts",
-      "community": 3,
+      "community": 131,
       "norm_label": "alerts.ts"
     },
     {
@@ -3233,7 +3323,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_lib_alerts_confirmdeletesession",
-      "community": 3,
+      "community": 131,
       "norm_label": "confirmdeletesession()"
     },
     {
@@ -3303,7 +3393,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "src_lib_appalert_appalert",
-      "community": 3,
+      "community": 131,
       "norm_label": "appalert()"
     },
     {
@@ -3333,7 +3423,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_audio",
-      "community": 13,
+      "community": 1,
       "norm_label": "audio.ts"
     },
     {
@@ -3343,7 +3433,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_lib_audio_cues",
-      "community": 13,
+      "community": 1,
       "norm_label": "cues"
     },
     {
@@ -3353,117 +3443,127 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_lib_audio_cuekey",
-      "community": 13,
+      "community": 1,
       "norm_label": "cuekey"
     },
     {
       "label": "AudioSettings",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L21",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "src_lib_audio_audiosettings",
-      "community": 13,
+      "community": 1,
       "norm_label": "audiosettings"
     },
     {
       "label": "configureAudioSession()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L30",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "src_lib_audio_configureaudiosession",
-      "community": 13,
+      "community": 0,
       "norm_label": "configureaudiosession()"
     },
     {
       "label": "WorkoutAudioCues",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L38",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues",
-      "community": 13,
+      "community": 1,
       "norm_label": "workoutaudiocues"
     },
     {
       "label": ".onTransition()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L39",
+      "source_location": "L42",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues_ontransition",
-      "community": 13,
+      "community": 1,
       "norm_label": ".ontransition()"
     },
     {
       "label": ".onCountdown()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L40",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues_oncountdown",
-      "community": 13,
+      "community": 1,
       "norm_label": ".oncountdown()"
     },
     {
       "label": ".onPrepare()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L41",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues_onprepare",
-      "community": 13,
+      "community": 1,
       "norm_label": ".onprepare()"
     },
     {
       "label": ".onFinish()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L42",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues_onfinish",
-      "community": 13,
+      "community": 1,
       "norm_label": ".onfinish()"
     },
     {
       "label": ".onPreStartTick()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L43",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues_onprestarttick",
-      "community": 13,
+      "community": 1,
       "norm_label": ".onprestarttick()"
+    },
+    {
+      "label": ".onMidpoint()",
+      "file_type": "code",
+      "source_file": "src/lib/audio.ts",
+      "source_location": "L47",
+      "_origin": "ast",
+      "id": "src_lib_audio_workoutaudiocues_onmidpoint",
+      "community": 1,
+      "norm_label": ".onmidpoint()"
     },
     {
       "label": ".startKeepAlive()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L44",
+      "source_location": "L48",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues_startkeepalive",
-      "community": 13,
+      "community": 1,
       "norm_label": ".startkeepalive()"
     },
     {
       "label": ".stopKeepAlive()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L45",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "src_lib_audio_workoutaudiocues_stopkeepalive",
-      "community": 13,
+      "community": 1,
       "norm_label": ".stopkeepalive()"
     },
     {
       "label": "useWorkoutAudio()",
       "file_type": "code",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L48",
+      "source_location": "L52",
       "_origin": "ast",
       "id": "src_lib_audio_useworkoutaudio",
-      "community": 13,
+      "community": 1,
       "norm_label": "useworkoutaudio()"
     },
     {
@@ -3553,7 +3653,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_lib_i18n_language",
-      "community": 13,
+      "community": 1,
       "norm_label": "language"
     },
     {
@@ -3563,7 +3663,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_lib_i18n_i18n",
-      "community": 5,
+      "community": 131,
       "norm_label": "i18n"
     },
     {
@@ -3593,7 +3693,7 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_lib_i18n_usetranslation",
-      "community": 131,
+      "community": 9,
       "norm_label": "usetranslation()"
     },
     {
@@ -3693,7 +3793,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_premiumcontext",
-      "community": 9,
+      "community": 0,
       "norm_label": "premiumcontext.ts"
     },
     {
@@ -3713,7 +3813,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_lib_premiumcontext_premiumcontext",
-      "community": 7,
+      "community": 0,
       "norm_label": "premiumcontext"
     },
     {
@@ -3757,10 +3857,20 @@
       "norm_label": "speedpreset"
     },
     {
-      "label": "SpinPreset",
+      "label": "InclinePreset",
       "file_type": "code",
       "source_file": "src/lib/presets.ts",
       "source_location": "L12",
+      "_origin": "ast",
+      "id": "src_lib_presets_inclinepreset",
+      "community": 5,
+      "norm_label": "inclinepreset"
+    },
+    {
+      "label": "SpinPreset",
+      "file_type": "code",
+      "source_file": "src/lib/presets.ts",
+      "source_location": "L19",
       "_origin": "ast",
       "id": "src_lib_presets_spinpreset",
       "community": 5,
@@ -3770,7 +3880,7 @@
       "label": "SPEED_PRESETS",
       "file_type": "code",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L23",
+      "source_location": "L30",
       "_origin": "ast",
       "id": "src_lib_presets_speed_presets",
       "community": 5,
@@ -3780,17 +3890,27 @@
       "label": "SPIN_PRESETS",
       "file_type": "code",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L33",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "src_lib_presets_spin_presets",
       "community": 5,
       "norm_label": "spin_presets"
     },
     {
+      "label": "INCLINE_PRESETS",
+      "file_type": "code",
+      "source_file": "src/lib/presets.ts",
+      "source_location": "L52",
+      "_origin": "ast",
+      "id": "src_lib_presets_incline_presets",
+      "community": 5,
+      "norm_label": "incline_presets"
+    },
+    {
       "label": "ALL_LEVELS",
       "file_type": "code",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L42",
+      "source_location": "L61",
       "_origin": "ast",
       "id": "src_lib_presets_all_levels",
       "community": 5,
@@ -3800,17 +3920,27 @@
       "label": "findMatchingSpeedPreset()",
       "file_type": "code",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L44",
+      "source_location": "L63",
       "_origin": "ast",
       "id": "src_lib_presets_findmatchingspeedpreset",
       "community": 5,
       "norm_label": "findmatchingspeedpreset()"
     },
     {
+      "label": "findMatchingInclinePreset()",
+      "file_type": "code",
+      "source_file": "src/lib/presets.ts",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "src_lib_presets_findmatchinginclinepreset",
+      "community": 5,
+      "norm_label": "findmatchinginclinepreset()"
+    },
+    {
       "label": "findMatchingSpinPreset()",
       "file_type": "code",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L52",
+      "source_location": "L82",
       "_origin": "ast",
       "id": "src_lib_presets_findmatchingspinpreset",
       "community": 5,
@@ -3993,7 +4123,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_reviewstate",
-      "community": 123,
+      "community": 13,
       "norm_label": "reviewstate.ts"
     },
     {
@@ -4013,7 +4143,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_lib_reviewstate_reviewstate",
-      "community": 123,
+      "community": 13,
       "norm_label": "reviewstate"
     },
     {
@@ -4023,7 +4153,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_lib_reviewstate_default",
-      "community": 123,
+      "community": 13,
       "norm_label": "default"
     },
     {
@@ -4033,7 +4163,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_lib_reviewstate_thresholds",
-      "community": 123,
+      "community": 13,
       "norm_label": "thresholds"
     },
     {
@@ -4043,7 +4173,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_lib_reviewstate_reviewfile",
-      "community": 123,
+      "community": 13,
       "norm_label": "reviewfile()"
     },
     {
@@ -4053,7 +4183,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_lib_reviewstate_loadreviewstate",
-      "community": 123,
+      "community": 13,
       "norm_label": "loadreviewstate()"
     },
     {
@@ -4063,7 +4193,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_lib_reviewstate_savereviewstate",
-      "community": 123,
+      "community": 13,
       "norm_label": "savereviewstate()"
     },
     {
@@ -4073,7 +4203,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_lib_reviewstate_checkandrequestreview",
-      "community": 123,
+      "community": 13,
       "norm_label": "checkandrequestreview()"
     },
     {
@@ -4090,17 +4220,17 @@
       "label": "buildSessionFromDraft()",
       "file_type": "code",
       "source_file": "src/lib/sessionDraft.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "_origin": "ast",
       "id": "src_lib_sessiondraft_buildsessionfromdraft",
-      "community": 5,
+      "community": 3,
       "norm_label": "buildsessionfromdraft()"
     },
     {
       "label": "validateDraft()",
       "file_type": "code",
       "source_file": "src/lib/sessionDraft.ts",
-      "source_location": "L41",
+      "source_location": "L46",
       "_origin": "ast",
       "id": "src_lib_sessiondraft_validatedraft",
       "community": 5,
@@ -4133,7 +4263,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "src_lib_sessions_folder",
-      "community": 134,
+      "community": 123,
       "norm_label": "folder"
     },
     {
@@ -4143,7 +4273,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_lib_sessions_sessionsdata",
-      "community": 3,
+      "community": 133,
       "norm_label": "sessionsdata"
     },
     {
@@ -4157,10 +4287,20 @@
       "norm_label": "runspeeds"
     },
     {
+      "label": "RunInclines",
+      "file_type": "code",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L38",
+      "_origin": "ast",
+      "id": "src_lib_sessions_runinclines",
+      "community": 5,
+      "norm_label": "runinclines"
+    },
+    {
       "label": "SpinValues",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L36",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "src_lib_sessions_spinvalues",
       "community": 5,
@@ -4170,7 +4310,7 @@
       "label": "DEFAULT_SPIN_VALUES",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L47",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "src_lib_sessions_default_spin_values",
       "community": 5,
@@ -4180,7 +4320,7 @@
       "label": "spinValueForPhase()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L54",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "src_lib_sessions_spinvalueforphase",
       "community": 5,
@@ -4190,27 +4330,47 @@
       "label": "Session",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L66",
+      "source_location": "L77",
       "_origin": "ast",
       "id": "src_lib_sessions_session",
       "community": 5,
       "norm_label": "session"
     },
     {
+      "label": "walkEffortForPhase()",
+      "file_type": "code",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L86",
+      "_origin": "ast",
+      "id": "src_lib_sessions_walkeffortforphase",
+      "community": 13,
+      "norm_label": "walkeffortforphase()"
+    },
+    {
       "label": "speedForPhase()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L71",
+      "source_location": "L90",
       "_origin": "ast",
       "id": "src_lib_sessions_speedforphase",
       "community": 5,
       "norm_label": "speedforphase()"
     },
     {
+      "label": "inclineForPhase()",
+      "file_type": "code",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L102",
+      "_origin": "ast",
+      "id": "src_lib_sessions_inclineforphase",
+      "community": 5,
+      "norm_label": "inclineforphase()"
+    },
+    {
       "label": "withActivityValues()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L85",
+      "source_location": "L116",
       "_origin": "ast",
       "id": "src_lib_sessions_withactivityvalues",
       "community": 5,
@@ -4220,7 +4380,7 @@
       "label": "getSessionSegments()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L93",
+      "source_location": "L124",
       "_origin": "ast",
       "id": "src_lib_sessions_getsessionsegments",
       "community": 5,
@@ -4230,7 +4390,7 @@
       "label": "getDefaultSessions()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L123",
+      "source_location": "L167",
       "_origin": "ast",
       "id": "src_lib_sessions_getdefaultsessions",
       "community": 5,
@@ -4240,7 +4400,7 @@
       "label": "createDefaultFolder()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L187",
+      "source_location": "L232",
       "_origin": "ast",
       "id": "src_lib_sessions_createdefaultfolder",
       "community": 5,
@@ -4250,7 +4410,7 @@
       "label": "migrateSessionsToFolders()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L196",
+      "source_location": "L241",
       "_origin": "ast",
       "id": "src_lib_sessions_migratesessionstofolders",
       "community": 5,
@@ -4260,17 +4420,17 @@
       "label": "loadSessions()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L221",
+      "source_location": "L266",
       "_origin": "ast",
       "id": "src_lib_sessions_loadsessions",
-      "community": 3,
+      "community": 5,
       "norm_label": "loadsessions()"
     },
     {
       "label": "saveSessions()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L232",
+      "source_location": "L277",
       "_origin": "ast",
       "id": "src_lib_sessions_savesessions",
       "community": 3,
@@ -4280,27 +4440,27 @@
       "label": "newId()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L236",
+      "source_location": "L281",
       "_origin": "ast",
       "id": "src_lib_sessions_newid",
-      "community": 5,
+      "community": 3,
       "norm_label": "newid()"
     },
     {
       "label": "deleteSessionById()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L240",
+      "source_location": "L285",
       "_origin": "ast",
       "id": "src_lib_sessions_deletesessionbyid",
-      "community": 3,
+      "community": 5,
       "norm_label": "deletesessionbyid()"
     },
     {
       "label": "validateFolderName()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L247",
+      "source_location": "L292",
       "_origin": "ast",
       "id": "src_lib_sessions_validatefoldername",
       "community": 134,
@@ -4310,17 +4470,17 @@
       "label": "createFolder()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L263",
+      "source_location": "L308",
       "_origin": "ast",
       "id": "src_lib_sessions_createfolder",
-      "community": 5,
+      "community": 3,
       "norm_label": "createfolder()"
     },
     {
       "label": "renameFolder()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L272",
+      "source_location": "L317",
       "_origin": "ast",
       "id": "src_lib_sessions_renamefolder",
       "community": 3,
@@ -4330,17 +4490,17 @@
       "label": "moveSessionToFolder()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L292",
+      "source_location": "L337",
       "_origin": "ast",
       "id": "src_lib_sessions_movesessiontofolder",
-      "community": 3,
+      "community": 9,
       "norm_label": "movesessiontofolder()"
     },
     {
       "label": "deleteFolder()",
       "file_type": "code",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L305",
+      "source_location": "L350",
       "_origin": "ast",
       "id": "src_lib_sessions_deletefolder",
       "community": 3,
@@ -4363,7 +4523,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_lib_settings_themekey",
-      "community": 7,
+      "community": 133,
       "norm_label": "themekey"
     },
     {
@@ -4423,7 +4583,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_settingscontext",
-      "community": 7,
+      "community": 0,
       "norm_label": "settingscontext.tsx"
     },
     {
@@ -4433,7 +4593,7 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_lib_settingscontext_settingscontextvalue",
-      "community": 7,
+      "community": 0,
       "norm_label": "settingscontextvalue"
     },
     {
@@ -4443,7 +4603,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_lib_settingscontext_settingscontext",
-      "community": 7,
+      "community": 0,
       "norm_label": "settingscontext"
     },
     {
@@ -4453,7 +4613,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_lib_settingscontext_usesettings",
-      "community": 3,
+      "community": 9,
       "norm_label": "usesettings()"
     },
     {
@@ -4463,7 +4623,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_speech",
-      "community": 13,
+      "community": 1,
       "norm_label": "speech.ts"
     },
     {
@@ -4473,7 +4633,7 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_lib_speech_language_codes",
-      "community": 13,
+      "community": 1,
       "norm_label": "language_codes"
     },
     {
@@ -4483,7 +4643,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_lib_speech_speak",
-      "community": 13,
+      "community": 1,
       "norm_label": "speak()"
     },
     {
@@ -4493,7 +4653,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_lib_speech_speakphase",
-      "community": 13,
+      "community": 1,
       "norm_label": "speakphase()"
     },
     {
@@ -4503,7 +4663,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_lib_speech_speakprepare",
-      "community": 13,
+      "community": 1,
       "norm_label": "speakprepare()"
     },
     {
@@ -4513,8 +4673,28 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "src_lib_speech_speakcomplete",
-      "community": 13,
+      "community": 1,
       "norm_label": "speakcomplete()"
+    },
+    {
+      "label": "speakMidpoint()",
+      "file_type": "code",
+      "source_file": "src/lib/speech.ts",
+      "source_location": "L36",
+      "_origin": "ast",
+      "id": "src_lib_speech_speakmidpoint",
+      "community": 1,
+      "norm_label": "speakmidpoint()"
+    },
+    {
+      "label": "isSpeaking()",
+      "file_type": "code",
+      "source_file": "src/lib/speech.ts",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "src_lib_speech_isspeaking",
+      "community": 1,
+      "norm_label": "isspeaking()"
     },
     {
       "label": "speedUnit.ts",
@@ -4523,7 +4703,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_speedunit",
-      "community": 125,
+      "community": 13,
       "norm_label": "speedunit.ts"
     },
     {
@@ -4533,7 +4713,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_lib_speedunit_todisplay",
-      "community": 126,
+      "community": 5,
       "norm_label": "todisplay()"
     },
     {
@@ -4543,7 +4723,7 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_lib_speedunit_fromdisplay",
-      "community": 125,
+      "community": 13,
       "norm_label": "fromdisplay()"
     },
     {
@@ -4553,7 +4733,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "src_lib_speedunit_formatspeed",
-      "community": 127,
+      "community": 13,
       "norm_label": "formatspeed()"
     },
     {
@@ -4597,13 +4777,93 @@
       "norm_label": "computetimersnapshot()"
     },
     {
+      "label": "walkPresets.ts",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets",
+      "community": 5,
+      "norm_label": "walkpresets.ts"
+    },
+    {
+      "label": "WalkPresetStructure",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets_walkpresetstructure",
+      "community": 5,
+      "norm_label": "walkpresetstructure"
+    },
+    {
+      "label": "WalkPreset",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L13",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets_walkpreset",
+      "community": 5,
+      "norm_label": "walkpreset"
+    },
+    {
+      "label": "WALK_PRESETS",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets_walk_presets",
+      "community": 5,
+      "norm_label": "walk_presets"
+    },
+    {
+      "label": "ALL_LEVELS",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets_all_levels",
+      "community": 5,
+      "norm_label": "all_levels"
+    },
+    {
+      "label": "WALK_SPEED_PRESETS",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L52",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets_walk_speed_presets",
+      "community": 5,
+      "norm_label": "walk_speed_presets"
+    },
+    {
+      "label": "walkPresetTotalSeconds()",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L61",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets_walkpresettotalseconds",
+      "community": 126,
+      "norm_label": "walkpresettotalseconds()"
+    },
+    {
+      "label": "findMatchingWalkPreset()",
+      "file_type": "code",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L66",
+      "_origin": "ast",
+      "id": "src_lib_walkpresets_findmatchingwalkpreset",
+      "community": 5,
+      "norm_label": "findmatchingwalkpreset()"
+    },
+    {
       "label": "workout.ts",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_workout",
-      "community": 5,
+      "community": 13,
       "norm_label": "workout.ts"
     },
     {
@@ -4630,7 +4890,7 @@
       "label": "Interval",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "_origin": "ast",
       "id": "src_lib_workout_interval",
       "community": 5,
@@ -4640,27 +4900,27 @@
       "label": "WorkoutConfig",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L25",
+      "source_location": "L27",
       "_origin": "ast",
       "id": "src_lib_workout_workoutconfig",
-      "community": 5,
+      "community": 13,
       "norm_label": "workoutconfig"
     },
     {
       "label": "PHASE_META",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "src_lib_workout_phase_meta",
-      "community": 5,
+      "community": 13,
       "norm_label": "phase_meta"
     },
     {
       "label": "intervalsToSegments()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L42",
+      "source_location": "L44",
       "_origin": "ast",
       "id": "src_lib_workout_intervalstosegments",
       "community": 5,
@@ -4670,7 +4930,7 @@
       "label": "expandWorkout()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L57",
+      "source_location": "L59",
       "_origin": "ast",
       "id": "src_lib_workout_expandworkout",
       "community": 5,
@@ -4680,7 +4940,7 @@
       "label": "expandCircuit()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L83",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "src_lib_workout_expandcircuit",
       "community": 5,
@@ -4690,7 +4950,7 @@
       "label": "reindexSegments()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L122",
+      "source_location": "L124",
       "_origin": "ast",
       "id": "src_lib_workout_reindexsegments",
       "community": 13,
@@ -4700,7 +4960,7 @@
       "label": "totalDuration()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L133",
+      "source_location": "L135",
       "_origin": "ast",
       "id": "src_lib_workout_totalduration",
       "community": 13,
@@ -4710,7 +4970,7 @@
       "label": "segmentIndexAt()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L137",
+      "source_location": "L139",
       "_origin": "ast",
       "id": "src_lib_workout_segmentindexat",
       "community": 13,
@@ -4720,37 +4980,37 @@
       "label": "ConvertToEasyResult",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L144",
+      "source_location": "L146",
       "_origin": "ast",
       "id": "src_lib_workout_converttoeasyresult",
-      "community": 5,
+      "community": 13,
       "norm_label": "converttoeasyresult"
     },
     {
       "label": "computeRoundsForTargetDuration()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L149",
+      "source_location": "L151",
       "_origin": "ast",
       "id": "src_lib_workout_computeroundsfortargetduration",
-      "community": 5,
+      "community": 13,
       "norm_label": "computeroundsfortargetduration()"
     },
     {
       "label": "buildIntervalsFromEasy()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L159",
+      "source_location": "L161",
       "_origin": "ast",
       "id": "src_lib_workout_buildintervalsfromeasy",
-      "community": 5,
+      "community": 13,
       "norm_label": "buildintervalsfromeasy()"
     },
     {
       "label": "tryConvertToEasy()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L170",
+      "source_location": "L172",
       "_origin": "ast",
       "id": "src_lib_workout_tryconverttoeasy",
       "community": 5,
@@ -4760,7 +5020,7 @@
       "label": "fmtDuration()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L215",
+      "source_location": "L217",
       "_origin": "ast",
       "id": "src_lib_workout_fmtduration",
       "community": 126,
@@ -4770,40 +5030,40 @@
       "label": "fmtTimer()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L224",
+      "source_location": "L226",
       "_origin": "ast",
       "id": "src_lib_workout_fmttimer",
-      "community": 127,
+      "community": 13,
       "norm_label": "fmttimer()"
     },
     {
       "label": "fmtSpeed()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L236",
+      "source_location": "L238",
       "_origin": "ast",
       "id": "src_lib_workout_fmtspeed",
-      "community": 5,
+      "community": 13,
       "norm_label": "fmtspeed()"
     },
     {
       "label": "convertKmhToMph()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L244",
+      "source_location": "L246",
       "_origin": "ast",
       "id": "src_lib_workout_convertkmhtomph",
-      "community": 127,
+      "community": 13,
       "norm_label": "convertkmhtomph()"
     },
     {
       "label": "convertMphToKmh()",
       "file_type": "code",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L245",
+      "source_location": "L247",
       "_origin": "ast",
       "id": "src_lib_workout_convertmphtokmh",
-      "community": 125,
+      "community": 13,
       "norm_label": "convertmphtokmh()"
     },
     {
@@ -4893,24 +5153,24 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_screens_editsessionscreen",
-      "community": 126,
+      "community": 5,
       "norm_label": "editsessionscreen.tsx"
     },
     {
       "label": "getIntervalDisplaySpeed()",
       "file_type": "code",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L33",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "src_screens_editsessionscreen_getintervaldisplayspeed",
-      "community": 126,
+      "community": 5,
       "norm_label": "getintervaldisplayspeed()"
     },
     {
       "label": "Props",
       "file_type": "code",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L39",
+      "source_location": "L40",
       "_origin": "ast",
       "id": "src_screens_editsessionscreen_props",
       "community": 5,
@@ -4920,20 +5180,20 @@
       "label": "EditSessionScreen()",
       "file_type": "code",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L46",
+      "source_location": "L47",
       "_origin": "ast",
       "id": "src_screens_editsessionscreen_editsessionscreen",
-      "community": 126,
+      "community": 5,
       "norm_label": "editsessionscreen()"
     },
     {
       "label": "makeStyles()",
       "file_type": "code",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L585",
+      "source_location": "L663",
       "_origin": "ast",
       "id": "src_screens_editsessionscreen_makestyles",
-      "community": 126,
+      "community": 5,
       "norm_label": "makestyles()"
     },
     {
@@ -5033,7 +5293,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_screens_sessioncompletescreen",
-      "community": 127,
+      "community": 13,
       "norm_label": "sessioncompletescreen.tsx"
     },
     {
@@ -5043,7 +5303,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_screens_sessioncompletescreen_fmtstattime",
-      "community": 127,
+      "community": 13,
       "norm_label": "fmtstattime()"
     },
     {
@@ -5053,7 +5313,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_screens_sessioncompletescreen_props",
-      "community": 127,
+      "community": 13,
       "norm_label": "props"
     },
     {
@@ -5063,7 +5323,7 @@
       "source_location": "L29",
       "_origin": "ast",
       "id": "src_screens_sessioncompletescreen_statcard",
-      "community": 127,
+      "community": 13,
       "norm_label": "statcard()"
     },
     {
@@ -5073,7 +5333,7 @@
       "source_location": "L39",
       "_origin": "ast",
       "id": "src_screens_sessioncompletescreen_sessioncompletescreen",
-      "community": 127,
+      "community": 13,
       "norm_label": "sessioncompletescreen()"
     },
     {
@@ -5083,7 +5343,7 @@
       "source_location": "L217",
       "_origin": "ast",
       "id": "src_screens_sessioncompletescreen_makestyles",
-      "community": 127,
+      "community": 13,
       "norm_label": "makestyles()"
     },
     {
@@ -5093,7 +5353,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen",
-      "community": 3,
+      "community": 9,
       "norm_label": "sessionslistscreen.tsx"
     },
     {
@@ -5103,47 +5363,47 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_sessionslistscreen",
-      "community": 3,
+      "community": 9,
       "norm_label": "sessionslistscreen()"
     },
     {
       "label": "makeStyles()",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L313",
+      "source_location": "L321",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_makestyles",
-      "community": 127,
+      "community": 9,
       "norm_label": "makestyles()"
     },
     {
       "label": "SwipeDuplicateAction",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L517",
+      "source_location": "L525",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_swipeduplicateaction",
-      "community": 3,
+      "community": 9,
       "norm_label": "swipeduplicateaction"
     },
     {
       "label": "SwipeMoveToFolderAction()",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L546",
+      "source_location": "L554",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_swipemovetofolderaction",
-      "community": 3,
+      "community": 9,
       "norm_label": "swipemovetofolderaction()"
     },
     {
       "label": "SessionSwipeRow()",
       "file_type": "code",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L575",
+      "source_location": "L583",
       "_origin": "ast",
       "id": "src_screens_sessionslistscreen_sessionswiperow",
-      "community": 3,
+      "community": 9,
       "norm_label": "sessionswiperow()"
     },
     {
@@ -5183,7 +5443,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_screens_workoutscreen",
-      "community": 127,
+      "community": 13,
       "norm_label": "workoutscreen.tsx"
     },
     {
@@ -5193,7 +5453,7 @@
       "source_location": "L33",
       "_origin": "ast",
       "id": "src_screens_workoutscreen_extend_options",
-      "community": 127,
+      "community": 13,
       "norm_label": "extend_options"
     },
     {
@@ -5203,17 +5463,17 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "src_screens_workoutscreen_workoutscreen",
-      "community": 127,
+      "community": 13,
       "norm_label": "workoutscreen()"
     },
     {
       "label": "makeStyles()",
       "file_type": "code",
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L479",
+      "source_location": "L486",
       "_origin": "ast",
       "id": "src_screens_workoutscreen_makestyles",
-      "community": 127,
+      "community": 13,
       "norm_label": "makestyles()"
     },
     {
@@ -5223,7 +5483,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_theme",
-      "community": 7,
+      "community": 133,
       "norm_label": "theme.ts"
     },
     {
@@ -5243,7 +5503,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_theme_tidal",
-      "community": 7,
+      "community": 133,
       "norm_label": "tidal"
     },
     {
@@ -5253,7 +5513,7 @@
       "source_location": "L44",
       "_origin": "ast",
       "id": "src_theme_daybreak",
-      "community": 7,
+      "community": 133,
       "norm_label": "daybreak"
     },
     {
@@ -5263,7 +5523,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "src_theme_theme_tokens",
-      "community": 127,
+      "community": 0,
       "norm_label": "theme_tokens"
     },
     {
@@ -5273,7 +5533,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "src_theme_themepreview",
-      "community": 7,
+      "community": 133,
       "norm_label": "themepreview"
     },
     {
@@ -5283,7 +5543,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "src_theme_theme_previews",
-      "community": 7,
+      "community": 133,
       "norm_label": "theme_previews"
     },
     {
@@ -5293,7 +5553,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "src_theme_themecontextvalue",
-      "community": 7,
+      "community": 133,
       "norm_label": "themecontextvalue"
     },
     {
@@ -5303,7 +5563,7 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "src_theme_themecontext",
-      "community": 7,
+      "community": 0,
       "norm_label": "themecontext"
     },
     {
@@ -5323,7 +5583,7 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "src_theme_withopacity",
-      "community": 126,
+      "community": 5,
       "norm_label": "withopacity()"
     },
     {
@@ -5343,7 +5603,7 @@
       "source_location": "L127",
       "_origin": "ast",
       "id": "src_theme_selectedborder",
-      "community": 126,
+      "community": 5,
       "norm_label": "selectedborder()"
     },
     {
@@ -5373,7 +5633,7 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "src_theme_glowshadow",
-      "community": 126,
+      "community": 127,
       "norm_label": "glowshadow()"
     },
     {
@@ -5383,7 +5643,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_typography",
-      "community": 131,
+      "community": 5,
       "norm_label": "typography.ts"
     },
     {
@@ -5393,7 +5653,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_typography_typography",
-      "community": 131,
+      "community": 5,
       "norm_label": "typography"
     },
     {
@@ -17116,7 +17376,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L80",
+      "source_location": "L84",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "package_dependencies_react"
@@ -17470,7 +17730,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_components_activitytypeicon",
@@ -18094,7 +18354,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
-      "source_location": "L32",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_components_editsession_intervalswiperow",
       "target": "src_components_editsession_intervalswiperow_intervalswipeduplicateaction",
@@ -18104,7 +18364,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
-      "source_location": "L61",
+      "source_location": "L64",
       "weight": 1.0,
       "source": "src_components_editsession_intervalswiperow",
       "target": "src_components_editsession_intervalswiperow_intervalswiperow",
@@ -18124,7 +18384,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
-      "source_location": "L120",
+      "source_location": "L127",
       "weight": 1.0,
       "source": "src_components_editsession_intervalswiperow",
       "target": "src_components_editsession_intervalswiperow_styles",
@@ -18212,7 +18472,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_components_editsession_intervalswiperow",
@@ -18235,7 +18495,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/EditSession/IntervalSwipeRow.tsx",
-      "source_location": "L69",
+      "source_location": "L73",
       "weight": 1.0,
       "source": "src_components_editsession_intervalswiperow_intervalswiperow",
       "target": "src_lib_i18n_usetranslation"
@@ -18595,6 +18855,343 @@
       "source": "src_screens_editsessionscreen",
       "target": "src_components_editsession_timepresetstrip_timepresetstrip",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_components_editsession_walkpresetlist_levels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_components_editsession_walkpresetlist_makestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_components_editsession_walkpresetlist_props",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_i18n",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_i18n_usetranslation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_presets_presetlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_settingscontext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_settingscontext_usesettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_speedunit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_speedunit_todisplay",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_walkpresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_walkpresets_walk_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_walkpresets_walkpresettotalseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_workout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_lib_workout_fmtduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_theme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_theme_selectedbg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_theme_themetokens",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist",
+      "target": "src_theme_usetheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/EditSessionScreen.tsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_screens_editsessionscreen",
+      "target": "src_components_editsession_walkpresetlist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_props",
+      "target": "src_lib_presets_presetlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_components_editsession_walkpresetlist_makestyles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_lib_i18n_usetranslation"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_lib_settingscontext_usesettings"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_lib_speedunit_todisplay"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_lib_walkpresets_walkpresettotalseconds"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_lib_workout_fmtduration"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_theme_selectedbg"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/components/EditSession/WalkPresetList.tsx",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_components_editsession_walkpresetlist_walkpresetlist",
+      "target": "src_theme_usetheme"
     },
     {
       "relation": "contains",
@@ -19411,7 +20008,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L26",
+      "source_location": "L29",
       "weight": 1.0,
       "source": "src_components_intervalrow",
       "target": "src_components_intervalrow_intervalrow",
@@ -19431,7 +20028,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L119",
+      "source_location": "L139",
       "weight": 1.0,
       "source": "src_components_intervalrow",
       "target": "src_components_intervalrow_makestyles",
@@ -19563,7 +20160,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L36",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_components_intervalrow_intervalrow",
       "target": "src_components_intervalrow_makestyles",
@@ -19575,7 +20172,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L35",
+      "source_location": "L39",
       "weight": 1.0,
       "source": "src_components_intervalrow_intervalrow",
       "target": "src_lib_i18n_usetranslation"
@@ -19586,7 +20183,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L112",
+      "source_location": "L132",
       "weight": 1.0,
       "source": "src_components_intervalrow_intervalrow",
       "target": "src_lib_workout_fmtduration"
@@ -19597,7 +20194,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L34",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_components_intervalrow_intervalrow",
       "target": "src_theme_usetheme"
@@ -19608,7 +20205,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L45",
+      "source_location": "L49",
       "weight": 1.0,
       "source": "src_components_intervalrow_intervalrow",
       "target": "src_theme_withopacity"
@@ -19619,7 +20216,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L135",
+      "source_location": "L155",
       "weight": 1.0,
       "source": "src_components_intervalrow_makestyles",
       "target": "src_theme_glowshadow"
@@ -19630,7 +20227,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/IntervalRow.tsx",
-      "source_location": "L134",
+      "source_location": "L154",
       "weight": 1.0,
       "source": "src_components_intervalrow_makestyles",
       "target": "src_theme_withopacity"
@@ -21316,7 +21913,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_components_settingstoggle",
@@ -21360,7 +21957,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_components_settingstoggle_settingstoggle",
@@ -22034,7 +22631,7 @@
       "context": "export",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_editsessiontypes",
@@ -22067,7 +22664,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_editsessiontypes_localinterval",
@@ -22078,7 +22675,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessiondraft",
       "target": "src_hooks_editsessiontypes_localinterval",
@@ -22089,7 +22686,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L67",
+      "source_location": "L72",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_hooks_editsessiontypes_localinterval",
@@ -22144,7 +22741,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_editsessiontypes_tolocal",
@@ -22167,7 +22764,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/hooks/useIntervalListEdit.ts",
-      "source_location": "L37",
+      "source_location": "L39",
       "weight": 1.0,
       "source": "src_hooks_useintervallistedit_useintervallistedit",
       "target": "src_hooks_editsessiontypes_tolocal"
@@ -22199,7 +22796,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_editsessiontypes_timefield",
@@ -22210,7 +22807,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessiondraft",
       "target": "src_hooks_editsessiontypes_timefield",
@@ -22221,7 +22818,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L68",
+      "source_location": "L73",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_hooks_editsessiontypes_timefield",
@@ -22254,7 +22851,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L18",
+      "source_location": "L19",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_editsessiontypes_savepayload",
@@ -22265,7 +22862,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L92",
+      "source_location": "L103",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_hooks_editsessiontypes_savepayload",
@@ -22350,7 +22947,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usecircuitmodeedit",
@@ -22372,7 +22969,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L20",
+      "source_location": "L21",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usecircuitmodeedit_usecircuitmodeedit",
@@ -22384,7 +22981,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L141",
+      "source_location": "L153",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_hooks_usecircuitmodeedit_usecircuitmodeedit"
@@ -22471,7 +23068,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useIntervalListEdit.ts",
-      "source_location": "L39",
+      "source_location": "L41",
       "weight": 1.0,
       "source": "src_hooks_useintervallistedit_useintervallistedit",
       "target": "src_hooks_usedraft_usedraft"
@@ -22493,7 +23090,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L45",
+      "source_location": "L68",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit_usespeedandspinedit",
       "target": "src_hooks_usedraft_usedraft"
@@ -22609,7 +23206,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useeasymodeedit",
@@ -22642,7 +23239,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L19",
+      "source_location": "L20",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useeasymodeedit_useeasymodeedit",
@@ -22654,7 +23251,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L140",
+      "source_location": "L152",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_hooks_useeasymodeedit_useeasymodeedit"
@@ -22663,7 +23260,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useeditsession_circuit_phases",
@@ -22673,7 +23270,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L32",
+      "source_location": "L33",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useeditsession_editsessiondraft",
@@ -22683,7 +23280,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L56",
+      "source_location": "L61",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useeditsession_editsessioninterface",
@@ -22693,7 +23290,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L29",
+      "source_location": "L30",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useeditsession_phases",
@@ -22703,7 +23300,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L95",
+      "source_location": "L106",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useeditsession_useeditsession",
@@ -22714,7 +23311,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useintervallistedit",
@@ -22725,7 +23322,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_useintervallistedit_useintervallistedit",
@@ -22736,7 +23333,7 @@
       "context": "export",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L26",
+      "source_location": "L27",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usepickerstate",
@@ -22747,7 +23344,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usepickerstate_editsessionpicker",
@@ -22758,7 +23355,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usepickerstate_pickervalues",
@@ -22769,7 +23366,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usepickerstate_usepickerstate",
@@ -22780,7 +23377,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usespeedandspinedit",
@@ -22791,7 +23388,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_hooks_usespeedandspinedit_usespeedandspinedit",
@@ -22959,7 +23556,29 @@
       "source_location": "L4",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
+      "target": "src_lib_sessions_inclineforphase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession",
       "target": "src_lib_sessions_newid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_sessions_runinclines",
       "confidence_score": 1.0
     },
     {
@@ -23022,7 +23641,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_speedunit",
@@ -23033,7 +23652,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_speedunit_todisplay",
@@ -23047,7 +23666,7 @@
       "source_location": "L12",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
-      "target": "src_lib_workout",
+      "target": "src_lib_walkpresets",
       "confidence_score": 1.0
     },
     {
@@ -23056,6 +23675,50 @@
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
       "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_walkpresets_findmatchingwalkpreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_walkpresets_walk_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_walkpresets_walkpresettotalseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession",
+      "target": "src_lib_workout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L13",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_workout_computeroundsfortargetduration",
@@ -23066,7 +23729,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_workout_expandcircuit",
@@ -23077,7 +23740,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_workout_interval",
@@ -23088,7 +23751,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_workout_phase",
@@ -23099,7 +23762,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_workout_segment",
@@ -23110,7 +23773,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L12",
+      "source_location": "L13",
       "weight": 1.0,
       "source": "src_hooks_useeditsession",
       "target": "src_lib_workout_totalduration",
@@ -23132,7 +23795,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L45",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessiondraft",
       "target": "src_lib_presets_presetlevel",
@@ -23143,10 +23806,10 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L43",
+      "source_location": "L45",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessiondraft",
-      "target": "src_lib_sessions_runspeeds",
+      "target": "src_lib_sessions_runinclines",
       "confidence_score": 1.0
     },
     {
@@ -23157,6 +23820,17 @@
       "source_location": "L44",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessiondraft",
+      "target": "src_lib_sessions_runspeeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession_editsessiondraft",
       "target": "src_lib_sessions_spinvalues",
       "confidence_score": 1.0
     },
@@ -23165,7 +23839,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessiondraft",
       "target": "src_lib_workout_segment",
@@ -23176,7 +23850,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L58",
+      "source_location": "L63",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_hooks_usepickerstate_editsessionpicker",
@@ -23187,7 +23861,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L75",
+      "source_location": "L80",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_hooks_usepickerstate_pickervalues",
@@ -23198,7 +23872,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L77",
+      "source_location": "L82",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_lib_presets_presetlevel",
@@ -23209,7 +23883,18 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L60",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession_editsessioninterface",
+      "target": "src_lib_sessions_runinclines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_lib_sessions_runspeeds",
@@ -23220,7 +23905,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L86",
+      "source_location": "L93",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_lib_sessions_spinvalues",
@@ -23231,7 +23916,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L63",
+      "source_location": "L68",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_editsessioninterface",
       "target": "src_lib_workout_phase",
@@ -23243,7 +23928,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L142",
+      "source_location": "L154",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_hooks_useintervallistedit_useintervallistedit"
@@ -23254,7 +23939,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L168",
+      "source_location": "L180",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_hooks_usepickerstate_usepickerstate"
@@ -23265,7 +23950,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L143",
+      "source_location": "L155",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_hooks_usespeedandspinedit_usespeedandspinedit"
@@ -23276,7 +23961,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L180",
+      "source_location": "L192",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_lib_appalert_appalert"
@@ -23287,7 +23972,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L407",
+      "source_location": "L457",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_lib_intensitypresets_findmatchingintensitypresetforintervals"
@@ -23298,7 +23983,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L233",
+      "source_location": "L249",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_lib_sessions_getsessionsegments"
@@ -23309,7 +23994,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L228",
+      "source_location": "L461",
+      "weight": 1.0,
+      "source": "src_hooks_useeditsession_useeditsession",
+      "target": "src_lib_walkpresets_findmatchingwalkpreset"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/hooks/useEditSession.ts",
+      "source_location": "L244",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_lib_workout_expandcircuit"
@@ -23320,7 +24016,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useEditSession.ts",
-      "source_location": "L419",
+      "source_location": "L473",
       "weight": 1.0,
       "source": "src_hooks_useeditsession_useeditsession",
       "target": "src_lib_workout_totalduration"
@@ -23342,7 +24038,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L69",
+      "source_location": "L71",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_hooks_useeditsession_useeditsession"
@@ -23461,7 +24157,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L57",
+      "source_location": "L60",
       "weight": 1.0,
       "source": "src_hooks_useworkoutsession_useworkoutsession",
       "target": "src_hooks_usehapticburst_usehapticburst"
@@ -23490,7 +24186,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useIntervalListEdit.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_hooks_useintervallistedit",
       "target": "src_hooks_useintervallistedit_useintervallistedit",
@@ -23589,7 +24285,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useIntervalListEdit.ts",
-      "source_location": "L30",
+      "source_location": "L32",
       "weight": 1.0,
       "source": "src_hooks_useintervallistedit_intervallistedit",
       "target": "src_lib_workout_tryconverttoeasy",
@@ -23601,7 +24297,7 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "src/hooks/useIntervalListEdit.ts",
-      "source_location": "L142",
+      "source_location": "L153",
       "weight": 1.0,
       "source": "src_hooks_useintervallistedit_useintervallistedit",
       "target": "src_lib_workout_tryconverttoeasy"
@@ -23610,7 +24306,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L64",
+      "source_location": "L69",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_activepicker",
@@ -23620,7 +24316,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L80",
+      "source_location": "L87",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_commitresult",
@@ -23630,7 +24326,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L37",
+      "source_location": "L38",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_countcolumns",
@@ -23640,7 +24336,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L23",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_decimal_labels",
@@ -23650,7 +24346,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_decodecount",
@@ -23660,7 +24356,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_decodeduration",
@@ -23670,7 +24366,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L43",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "src_hooks_usepickerstate",
+      "target": "src_hooks_usepickerstate_decodeincline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_decodeminutesonly",
@@ -23680,7 +24386,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_decodepower",
@@ -23690,7 +24396,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_decoderesistance",
@@ -23700,7 +24406,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L62",
+      "source_location": "L67",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_decodespeeddisplay",
@@ -23710,7 +24416,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L30",
+      "source_location": "L31",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_durationcolumns",
@@ -23720,7 +24426,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L96",
+      "source_location": "L105",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_editsessionpicker",
@@ -23730,7 +24436,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L38",
+      "source_location": "L39",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_encodecount",
@@ -23740,7 +24446,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_encodeduration",
@@ -23750,7 +24456,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L42",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "src_hooks_usepickerstate",
+      "target": "src_hooks_usepickerstate_encodeincline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L43",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_encodeminutesonly",
@@ -23760,7 +24476,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L50",
+      "source_location": "L51",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_encodepower",
@@ -23770,7 +24486,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_encoderesistance",
@@ -23780,7 +24496,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L57",
+      "source_location": "L62",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_encodespeeddisplay",
@@ -23790,7 +24506,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L107",
+      "source_location": "L116",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_has_separator",
@@ -23800,7 +24516,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L24",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_hooks_usepickerstate",
+      "target": "src_hooks_usepickerstate_incline_labels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "src_hooks_usepickerstate",
+      "target": "src_hooks_usepickerstate_inclinecolumns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L25",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_kmh_whole",
@@ -23820,7 +24556,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L41",
+      "source_location": "L42",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_minutesonlycolumns",
@@ -23830,7 +24566,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L25",
+      "source_location": "L26",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_mph_whole",
@@ -23850,7 +24586,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L103",
+      "source_location": "L112",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_pickervalues",
@@ -23860,7 +24596,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L21",
+      "source_location": "L22",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_power_labels",
@@ -23870,7 +24606,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_powercolumns",
@@ -23890,7 +24626,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L45",
+      "source_location": "L46",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_resistancecolumns",
@@ -23920,7 +24656,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L53",
+      "source_location": "L58",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_speedcolumns",
@@ -23930,7 +24666,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_target_duration_labels",
@@ -23940,7 +24676,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L112",
+      "source_location": "L121",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_hooks_usepickerstate_usepickerstate",
@@ -23977,6 +24713,17 @@
       "weight": 1.0,
       "source": "src_hooks_usepickerstate",
       "target": "src_lib_sessions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_hooks_usepickerstate",
+      "target": "src_lib_sessions_runinclines",
       "confidence_score": 1.0
     },
     {
@@ -24050,7 +24797,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L156",
+      "source_location": "L168",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate_usepickerstate",
       "target": "src_hooks_usepickerstate_durationcolumns",
@@ -24061,7 +24808,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L147",
+      "source_location": "L157",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate_usepickerstate",
       "target": "src_hooks_usepickerstate_countcolumns",
@@ -24072,7 +24819,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L149",
+      "source_location": "L159",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate_usepickerstate",
       "target": "src_hooks_usepickerstate_minutesonlycolumns",
@@ -24083,7 +24830,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L151",
+      "source_location": "L161",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate_usepickerstate",
       "target": "src_hooks_usepickerstate_resistancecolumns",
@@ -24094,7 +24841,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L153",
+      "source_location": "L163",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate_usepickerstate",
       "target": "src_hooks_usepickerstate_powercolumns",
@@ -24105,7 +24852,18 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/usePickerState.ts",
-      "source_location": "L155",
+      "source_location": "L165",
+      "weight": 1.0,
+      "source": "src_hooks_usepickerstate_usepickerstate",
+      "target": "src_hooks_usepickerstate_inclinecolumns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/usePickerState.ts",
+      "source_location": "L167",
       "weight": 1.0,
       "source": "src_hooks_usepickerstate_usepickerstate",
       "target": "src_hooks_usepickerstate_speedcolumns",
@@ -24149,7 +24907,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L88",
+      "source_location": "L99",
       "weight": 1.0,
       "source": "src_hooks_useworkoutsession_useworkoutsession",
       "target": "src_hooks_useprestartcountdown_useprestartcountdown"
@@ -24518,7 +25276,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit",
       "target": "src_hooks_usespeedandspinedit_speedandspinedit",
@@ -24528,7 +25286,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L26",
+      "source_location": "L33",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit",
       "target": "src_hooks_usespeedandspinedit_usespeedandspinedit",
@@ -24597,6 +25355,17 @@
       "source_location": "L9",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit",
+      "target": "src_lib_presets_findmatchinginclinepreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_hooks_usespeedandspinedit",
       "target": "src_lib_presets_findmatchingspeedpreset",
       "confidence_score": 1.0
     },
@@ -24609,6 +25378,17 @@
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit",
       "target": "src_lib_presets_findmatchingspinpreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_hooks_usespeedandspinedit",
+      "target": "src_lib_presets_incline_presets",
       "confidence_score": 1.0
     },
     {
@@ -24674,6 +25454,17 @@
       "source_location": "L5",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit",
+      "target": "src_lib_sessions_runinclines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_hooks_usespeedandspinedit",
       "target": "src_lib_sessions_runspeeds",
       "confidence_score": 1.0
     },
@@ -24700,11 +25491,33 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_hooks_usespeedandspinedit",
+      "target": "src_lib_walkpresets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_hooks_usespeedandspinedit",
+      "target": "src_lib_walkpresets_walk_speed_presets",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L17",
+      "source_location": "L20",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit_speedandspinedit",
       "target": "src_lib_presets_presetlevel",
@@ -24715,7 +25528,18 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L15",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_hooks_usespeedandspinedit_speedandspinedit",
+      "target": "src_lib_sessions_runinclines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
+      "source_location": "L16",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit_speedandspinedit",
       "target": "src_lib_sessions_runspeeds",
@@ -24726,7 +25550,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L16",
+      "source_location": "L19",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit_speedandspinedit",
       "target": "src_lib_sessions_spinvalues",
@@ -24738,7 +25562,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L38",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "src_hooks_usespeedandspinedit_usespeedandspinedit",
+      "target": "src_lib_presets_findmatchinginclinepreset"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
+      "source_location": "L57",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit_usespeedandspinedit",
       "target": "src_lib_presets_findmatchingspeedpreset"
@@ -24749,7 +25584,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useSpeedAndSpinEdit.ts",
-      "source_location": "L42",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "src_hooks_usespeedandspinedit_usespeedandspinedit",
       "target": "src_lib_presets_findmatchingspinpreset"
@@ -24922,7 +25757,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L63",
+      "source_location": "L66",
       "weight": 1.0,
       "source": "src_hooks_useworkoutsession_useworkoutsession",
       "target": "src_hooks_usetimerengine_usetimerengine"
@@ -25089,6 +25924,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession",
+      "target": "src_lib_workout_totalduration",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -25149,7 +25995,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L86",
+      "source_location": "L89",
       "weight": 1.0,
       "source": "src_hooks_useworkoutsession_useworkoutsession",
       "target": "src_lib_audio_configureaudiosession"
@@ -25160,7 +26006,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "src_hooks_useworkoutsession_useworkoutsession",
       "target": "src_lib_audio_useworkoutaudio"
@@ -25171,7 +26017,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L53",
+      "source_location": "L56",
       "weight": 1.0,
       "source": "src_hooks_useworkoutsession_useworkoutsession",
       "target": "src_lib_i18n_getcongratsmessages"
@@ -25182,10 +26028,21 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useWorkoutSession.ts",
-      "source_location": "L168",
+      "source_location": "L180",
       "weight": 1.0,
       "source": "src_hooks_useworkoutsession_useworkoutsession",
       "target": "src_lib_workout_reindexsegments"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/hooks/useWorkoutSession.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "src_hooks_useworkoutsession_useworkoutsession",
+      "target": "src_lib_workout_totalduration"
     },
     {
       "relation": "imports",
@@ -25204,7 +26061,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L76",
+      "source_location": "L81",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_hooks_useworkoutsession_useworkoutsession"
@@ -25514,7 +26371,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L99",
+      "source_location": "L104",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_appalert_appalert"
@@ -25523,7 +26380,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L21",
+      "source_location": "L24",
       "weight": 1.0,
       "source": "src_lib_audio",
       "target": "src_lib_audio_audiosettings",
@@ -25533,7 +26390,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L30",
+      "source_location": "L33",
       "weight": 1.0,
       "source": "src_lib_audio",
       "target": "src_lib_audio_configureaudiosession",
@@ -25563,7 +26420,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L48",
+      "source_location": "L52",
       "weight": 1.0,
       "source": "src_lib_audio",
       "target": "src_lib_audio_useworkoutaudio",
@@ -25573,7 +26430,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L38",
+      "source_location": "L41",
       "weight": 1.0,
       "source": "src_lib_audio",
       "target": "src_lib_audio_workoutaudiocues",
@@ -25620,7 +26477,29 @@
       "source_location": "L5",
       "weight": 1.0,
       "source": "src_lib_audio",
+      "target": "src_lib_speech_isspeaking",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/audio.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_audio",
       "target": "src_lib_speech_speakcomplete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/audio.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_audio",
+      "target": "src_lib_speech_speakmidpoint",
       "confidence_score": 1.0
     },
     {
@@ -25672,7 +26551,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L91",
+      "source_location": "L95",
       "weight": 1.0,
       "source": "src_lib_audio_useworkoutaudio",
       "target": "src_lib_audio_configureaudiosession",
@@ -25682,7 +26561,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L40",
+      "source_location": "L43",
       "weight": 1.0,
       "source": "src_lib_audio_workoutaudiocues",
       "target": "src_lib_audio_workoutaudiocues_oncountdown",
@@ -25692,7 +26571,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L42",
+      "source_location": "L45",
       "weight": 1.0,
       "source": "src_lib_audio_workoutaudiocues",
       "target": "src_lib_audio_workoutaudiocues_onfinish",
@@ -25702,30 +26581,10 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L41",
+      "source_location": "L47",
       "weight": 1.0,
       "source": "src_lib_audio_workoutaudiocues",
-      "target": "src_lib_audio_workoutaudiocues_onprepare",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/audio.ts",
-      "source_location": "L43",
-      "weight": 1.0,
-      "source": "src_lib_audio_workoutaudiocues",
-      "target": "src_lib_audio_workoutaudiocues_onprestarttick",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "method",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/audio.ts",
-      "source_location": "L39",
-      "weight": 1.0,
-      "source": "src_lib_audio_workoutaudiocues",
-      "target": "src_lib_audio_workoutaudiocues_ontransition",
+      "target": "src_lib_audio_workoutaudiocues_onmidpoint",
       "confidence_score": 1.0
     },
     {
@@ -25735,6 +26594,36 @@
       "source_location": "L44",
       "weight": 1.0,
       "source": "src_lib_audio_workoutaudiocues",
+      "target": "src_lib_audio_workoutaudiocues_onprepare",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/audio.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_lib_audio_workoutaudiocues",
+      "target": "src_lib_audio_workoutaudiocues_onprestarttick",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/audio.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "src_lib_audio_workoutaudiocues",
+      "target": "src_lib_audio_workoutaudiocues_ontransition",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/audio.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "src_lib_audio_workoutaudiocues",
       "target": "src_lib_audio_workoutaudiocues_startkeepalive",
       "confidence_score": 1.0
     },
@@ -25742,7 +26631,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L45",
+      "source_location": "L49",
       "weight": 1.0,
       "source": "src_lib_audio_workoutaudiocues",
       "target": "src_lib_audio_workoutaudiocues_stopkeepalive",
@@ -25753,7 +26642,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L39",
+      "source_location": "L42",
       "weight": 1.0,
       "source": "src_lib_audio_workoutaudiocues_ontransition",
       "target": "src_lib_workout_phase",
@@ -25764,7 +26653,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L41",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "src_lib_audio_workoutaudiocues_onprepare",
       "target": "src_lib_workout_phase",
@@ -25775,11 +26664,22 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/audio.ts",
-      "source_location": "L109",
+      "source_location": "L126",
       "weight": 1.0,
       "source": "src_lib_audio_useworkoutaudio",
       "target": "src_lib_audio_workoutaudiocues_stopkeepalive",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/audio.ts",
+      "source_location": "L113",
+      "weight": 1.0,
+      "source": "src_lib_audio_useworkoutaudio",
+      "target": "src_lib_speech_isspeaking"
     },
     {
       "relation": "contains",
@@ -26282,7 +27182,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L49",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_lib_i18n_usetranslation"
@@ -26370,7 +27270,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L598",
+      "source_location": "L606",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen_sessionswiperow",
       "target": "src_lib_i18n_usetranslation"
@@ -26381,7 +27281,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L553",
+      "source_location": "L561",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen_swipemovetofolderaction",
       "target": "src_lib_i18n_usetranslation"
@@ -26715,7 +27615,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L233",
+      "source_location": "L278",
       "weight": 1.0,
       "source": "src_lib_sessions_savesessions",
       "target": "src_lib_jsonfile_writejsonfile"
@@ -26809,7 +27709,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L42",
+      "source_location": "L61",
       "weight": 1.0,
       "source": "src_lib_presets",
       "target": "src_lib_presets_all_levels",
@@ -26819,7 +27719,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L44",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "src_lib_presets",
+      "target": "src_lib_presets_findmatchinginclinepreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/presets.ts",
+      "source_location": "L63",
       "weight": 1.0,
       "source": "src_lib_presets",
       "target": "src_lib_presets_findmatchingspeedpreset",
@@ -26829,10 +27739,30 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L52",
+      "source_location": "L82",
       "weight": 1.0,
       "source": "src_lib_presets",
       "target": "src_lib_presets_findmatchingspinpreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/presets.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "src_lib_presets",
+      "target": "src_lib_presets_incline_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/presets.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_presets",
+      "target": "src_lib_presets_inclinepreset",
       "confidence_score": 1.0
     },
     {
@@ -26849,7 +27779,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L23",
+      "source_location": "L30",
       "weight": 1.0,
       "source": "src_lib_presets",
       "target": "src_lib_presets_speed_presets",
@@ -26869,7 +27799,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L33",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_lib_presets",
       "target": "src_lib_presets_spin_presets",
@@ -26879,7 +27809,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/presets.ts",
-      "source_location": "L12",
+      "source_location": "L19",
       "weight": 1.0,
       "source": "src_lib_presets",
       "target": "src_lib_presets_spinpreset",
@@ -26894,6 +27824,17 @@
       "weight": 1.0,
       "source": "src_lib_presets",
       "target": "src_lib_sessions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/presets.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_presets",
+      "target": "src_lib_sessions_runinclines",
       "confidence_score": 1.0
     },
     {
@@ -26919,6 +27860,61 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessionDraft.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_sessiondraft",
+      "target": "src_lib_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessionDraft.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_sessiondraft",
+      "target": "src_lib_presets_presetlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_sessions",
+      "target": "src_lib_presets_presetlevel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_presets_presetlevel",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -26938,6 +27934,17 @@
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_presets_spin_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_sessions",
+      "target": "src_lib_presets_incline_presets",
       "confidence_score": 1.0
     },
     {
@@ -27384,7 +28391,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L129",
+      "source_location": "L134",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_reviewstate_checkandrequestreview"
@@ -27393,7 +28400,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessionDraft.ts",
-      "source_location": "L4",
+      "source_location": "L5",
       "weight": 1.0,
       "source": "src_lib_sessiondraft",
       "target": "src_lib_sessiondraft_buildsessionfromdraft",
@@ -27403,7 +28410,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessionDraft.ts",
-      "source_location": "L41",
+      "source_location": "L46",
       "weight": 1.0,
       "source": "src_lib_sessiondraft",
       "target": "src_lib_sessiondraft_validatedraft",
@@ -27429,6 +28436,17 @@
       "weight": 1.0,
       "source": "src_lib_sessiondraft",
       "target": "src_lib_sessions_newid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessionDraft.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_sessiondraft",
+      "target": "src_lib_sessions_runinclines",
       "confidence_score": 1.0
     },
     {
@@ -27492,7 +28510,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/sessionDraft.ts",
-      "source_location": "L16",
+      "source_location": "L20",
       "weight": 1.0,
       "source": "src_lib_sessiondraft_buildsessionfromdraft",
       "target": "src_lib_sessions_newid"
@@ -27501,7 +28519,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L187",
+      "source_location": "L232",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_createdefaultfolder",
@@ -27511,7 +28529,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L263",
+      "source_location": "L308",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_createfolder",
@@ -27521,7 +28539,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L47",
+      "source_location": "L58",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_default_spin_values",
@@ -27531,7 +28549,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L305",
+      "source_location": "L350",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_deletefolder",
@@ -27541,7 +28559,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L240",
+      "source_location": "L285",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_deletesessionbyid",
@@ -27571,7 +28589,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L123",
+      "source_location": "L167",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_getdefaultsessions",
@@ -27581,7 +28599,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L93",
+      "source_location": "L124",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_getsessionsegments",
@@ -27591,7 +28609,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L221",
+      "source_location": "L102",
+      "weight": 1.0,
+      "source": "src_lib_sessions",
+      "target": "src_lib_sessions_inclineforphase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L266",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_loadsessions",
@@ -27601,7 +28629,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L196",
+      "source_location": "L241",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_migratesessionstofolders",
@@ -27611,7 +28639,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L292",
+      "source_location": "L337",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_movesessiontofolder",
@@ -27621,7 +28649,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L236",
+      "source_location": "L281",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_newid",
@@ -27631,10 +28659,20 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L272",
+      "source_location": "L317",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_renamefolder",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "src_lib_sessions",
+      "target": "src_lib_sessions_runinclines",
       "confidence_score": 1.0
     },
     {
@@ -27651,7 +28689,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L232",
+      "source_location": "L277",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_savesessions",
@@ -27661,7 +28699,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L66",
+      "source_location": "L77",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_session",
@@ -27681,7 +28719,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L71",
+      "source_location": "L90",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_speedforphase",
@@ -27691,7 +28729,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L54",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_spinvalueforphase",
@@ -27701,7 +28739,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L36",
+      "source_location": "L47",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_spinvalues",
@@ -27711,7 +28749,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L247",
+      "source_location": "L292",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_validatefoldername",
@@ -27721,7 +28759,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L85",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "src_lib_sessions",
+      "target": "src_lib_sessions_walkeffortforphase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L116",
       "weight": 1.0,
       "source": "src_lib_sessions",
       "target": "src_lib_sessions_withactivityvalues",
@@ -27819,6 +28867,17 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_sessions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/navigation.ts",
       "source_location": "L1",
       "weight": 1.0,
@@ -27951,11 +29010,44 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_sessions_runspeeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets_walkpreset",
+      "target": "src_lib_sessions_runspeeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
       "source_location": "L15",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_lib_sessions_runspeeds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/EditSessionScreen.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_screens_editsessionscreen",
+      "target": "src_lib_sessions_runinclines",
       "confidence_score": 1.0
     },
     {
@@ -27974,7 +29066,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L111",
+      "source_location": "L155",
       "weight": 1.0,
       "source": "src_lib_sessions_getsessionsegments",
       "target": "src_lib_sessions_spinvalueforphase",
@@ -27997,7 +29089,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L378",
+      "source_location": "L405",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_lib_sessions_spinvalueforphase"
@@ -28029,7 +29121,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_props",
       "target": "src_lib_sessions_session",
@@ -28080,11 +29172,33 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen",
+      "target": "src_lib_sessions_walkeffortforphase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/screens/WorkoutScreen.tsx",
+      "source_location": "L244",
+      "weight": 1.0,
+      "source": "src_screens_workoutscreen_workoutscreen",
+      "target": "src_lib_sessions_walkeffortforphase"
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L105",
+      "source_location": "L137",
       "weight": 1.0,
       "source": "src_lib_sessions_getsessionsegments",
       "target": "src_lib_sessions_speedforphase",
@@ -28106,7 +29220,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L35",
+      "source_location": "L36",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_getintervaldisplayspeed",
       "target": "src_lib_sessions_speedforphase",
@@ -28117,7 +29231,40 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L104",
+      "source_location": "L143",
+      "weight": 1.0,
+      "source": "src_lib_sessions_getsessionsegments",
+      "target": "src_lib_sessions_inclineforphase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/EditSessionScreen.tsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_screens_editsessionscreen",
+      "target": "src_lib_sessions_inclineforphase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/screens/EditSessionScreen.tsx",
+      "source_location": "L411",
+      "weight": 1.0,
+      "source": "src_screens_editsessionscreen_editsessionscreen",
+      "target": "src_lib_sessions_inclineforphase"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sessions.ts",
+      "source_location": "L136",
       "weight": 1.0,
       "source": "src_lib_sessions_getsessionsegments",
       "target": "src_lib_sessions_withactivityvalues",
@@ -28129,7 +29276,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L95",
+      "source_location": "L126",
       "weight": 1.0,
       "source": "src_lib_sessions_getsessionsegments",
       "target": "src_lib_workout_expandcircuit"
@@ -28140,7 +29287,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L99",
+      "source_location": "L130",
       "weight": 1.0,
       "source": "src_lib_sessions_getsessionsegments",
       "target": "src_lib_workout_expandworkout"
@@ -28151,7 +29298,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L98",
+      "source_location": "L129",
       "weight": 1.0,
       "source": "src_lib_sessions_getsessionsegments",
       "target": "src_lib_workout_intervalstosegments"
@@ -28173,7 +29320,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L53",
+      "source_location": "L58",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_sessions_getsessionsegments"
@@ -28183,7 +29330,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L224",
+      "source_location": "L269",
       "weight": 1.0,
       "source": "src_lib_sessions_loadsessions",
       "target": "src_lib_sessions_getdefaultsessions",
@@ -28194,7 +29341,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L224",
+      "source_location": "L269",
       "weight": 1.0,
       "source": "src_lib_sessions_loadsessions",
       "target": "src_lib_sessions_createdefaultfolder",
@@ -28205,7 +29352,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L203",
+      "source_location": "L248",
       "weight": 1.0,
       "source": "src_lib_sessions_migratesessionstofolders",
       "target": "src_lib_sessions_createdefaultfolder",
@@ -28216,7 +29363,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L227",
+      "source_location": "L272",
       "weight": 1.0,
       "source": "src_lib_sessions_loadsessions",
       "target": "src_lib_sessions_migratesessionstofolders",
@@ -28227,7 +29374,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L241",
+      "source_location": "L286",
       "weight": 1.0,
       "source": "src_lib_sessions_deletesessionbyid",
       "target": "src_lib_sessions_loadsessions",
@@ -28315,7 +29462,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L243",
+      "source_location": "L288",
       "weight": 1.0,
       "source": "src_lib_sessions_deletesessionbyid",
       "target": "src_lib_sessions_savesessions",
@@ -28381,7 +29528,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L265",
+      "source_location": "L310",
       "weight": 1.0,
       "source": "src_lib_sessions_createfolder",
       "target": "src_lib_sessions_newid",
@@ -28436,7 +29583,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sessions.ts",
-      "source_location": "L278",
+      "source_location": "L323",
       "weight": 1.0,
       "source": "src_lib_sessions_renamefolder",
       "target": "src_lib_sessions_validatefoldername",
@@ -28769,7 +29916,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L48",
+      "source_location": "L49",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_lib_settingscontext_usesettings"
@@ -28866,6 +30013,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/speech.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_lib_speech",
+      "target": "src_lib_speech_isspeaking",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/speech.ts",
       "source_location": "L6",
       "weight": 1.0,
       "source": "src_lib_speech",
@@ -28890,6 +30047,16 @@
       "weight": 1.0,
       "source": "src_lib_speech",
       "target": "src_lib_speech_speakcomplete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/speech.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_lib_speech",
+      "target": "src_lib_speech_speakmidpoint",
       "confidence_score": 1.0
     },
     {
@@ -29090,7 +30257,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L542",
+      "source_location": "L585",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_lib_speedunit_todisplay"
@@ -29100,7 +30267,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L36",
+      "source_location": "L37",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_getintervaldisplayspeed",
       "target": "src_lib_speedunit_todisplay",
@@ -29145,7 +30312,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L239",
+      "source_location": "L244",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_speedunit_formatspeed"
@@ -29239,8 +30406,78 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_walkpresets_all_levels",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_walkpresets_findmatchingwalkpreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_walkpresets_walk_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_walkpresets_walk_speed_presets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_walkpresets_walkpreset",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_walkpresets_walkpresetstructure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/walkPresets.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "src_lib_walkpresets",
+      "target": "src_lib_walkpresets_walkpresettotalseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L159",
+      "source_location": "L161",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_buildintervalsfromeasy",
@@ -29250,7 +30487,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L149",
+      "source_location": "L151",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_computeroundsfortargetduration",
@@ -29260,7 +30497,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L244",
+      "source_location": "L246",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_convertkmhtomph",
@@ -29270,7 +30507,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L245",
+      "source_location": "L247",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_convertmphtokmh",
@@ -29280,7 +30517,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L144",
+      "source_location": "L146",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_converttoeasyresult",
@@ -29290,7 +30527,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L83",
+      "source_location": "L85",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_expandcircuit",
@@ -29300,7 +30537,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L57",
+      "source_location": "L59",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_expandworkout",
@@ -29310,7 +30547,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L215",
+      "source_location": "L217",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_fmtduration",
@@ -29320,7 +30557,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L236",
+      "source_location": "L238",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_fmtspeed",
@@ -29330,7 +30567,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L224",
+      "source_location": "L226",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_fmttimer",
@@ -29340,7 +30577,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_interval",
@@ -29350,7 +30587,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L42",
+      "source_location": "L44",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_intervalstosegments",
@@ -29370,7 +30607,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L33",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_phase_meta",
@@ -29380,7 +30617,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L122",
+      "source_location": "L124",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_reindexsegments",
@@ -29400,7 +30637,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L137",
+      "source_location": "L139",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_segmentindexat",
@@ -29410,7 +30647,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L133",
+      "source_location": "L135",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_totalduration",
@@ -29420,7 +30657,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L170",
+      "source_location": "L172",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_tryconverttoeasy",
@@ -29430,7 +30667,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/workout.ts",
-      "source_location": "L25",
+      "source_location": "L27",
       "weight": 1.0,
       "source": "src_lib_workout",
       "target": "src_lib_workout_workoutconfig",
@@ -29552,7 +30789,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L59",
+      "source_location": "L64",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_workout_totalduration"
@@ -29574,7 +30811,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L241",
+      "source_location": "L245",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_lib_workout_fmtduration"
@@ -29618,7 +30855,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L157",
+      "source_location": "L162",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_lib_workout_fmttimer"
@@ -29755,7 +30992,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_screens_editsessionscreen_editsessionscreen",
@@ -29765,7 +31002,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L33",
+      "source_location": "L34",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_screens_editsessionscreen_getintervaldisplayspeed",
@@ -29775,7 +31012,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L585",
+      "source_location": "L663",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_screens_editsessionscreen_makestyles",
@@ -29785,7 +31022,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L39",
+      "source_location": "L40",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen",
       "target": "src_screens_editsessionscreen_props",
@@ -29884,7 +31121,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L375",
+      "source_location": "L402",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_screens_editsessionscreen_getintervaldisplayspeed",
@@ -29895,7 +31132,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_screens_editsessionscreen_makestyles",
@@ -29907,7 +31144,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L259",
+      "source_location": "L263",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_theme_selectedborder"
@@ -29918,7 +31155,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L47",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_theme_usetheme"
@@ -29929,7 +31166,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L232",
+      "source_location": "L236",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_editsessionscreen",
       "target": "src_theme_withopacity"
@@ -29940,7 +31177,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L785",
+      "source_location": "L863",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_makestyles",
       "target": "src_theme_buttonshadow"
@@ -29951,7 +31188,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L734",
+      "source_location": "L812",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_makestyles",
       "target": "src_theme_selectedborder"
@@ -29962,7 +31199,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/EditSessionScreen.tsx",
-      "source_location": "L745",
+      "source_location": "L823",
       "weight": 1.0,
       "source": "src_screens_editsessionscreen_makestyles",
       "target": "src_theme_withopacity"
@@ -30388,7 +31625,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L313",
+      "source_location": "L321",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_makestyles",
@@ -30408,7 +31645,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L575",
+      "source_location": "L583",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_sessionswiperow",
@@ -30418,7 +31655,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L517",
+      "source_location": "L525",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_swipeduplicateaction",
@@ -30428,7 +31665,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L546",
+      "source_location": "L554",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen",
       "target": "src_screens_sessionslistscreen_swipemovetofolderaction",
@@ -30528,7 +31765,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/SessionsListScreen.tsx",
-      "source_location": "L329",
+      "source_location": "L337",
       "weight": 1.0,
       "source": "src_screens_sessionslistscreen_makestyles",
       "target": "src_theme_buttonshadow"
@@ -30633,7 +31870,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L479",
+      "source_location": "L486",
       "weight": 1.0,
       "source": "src_screens_workoutscreen",
       "target": "src_screens_workoutscreen_makestyles",
@@ -30743,7 +31980,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L206",
+      "source_location": "L211",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_workoutscreen",
       "target": "src_theme_withopacity"
@@ -30754,7 +31991,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/screens/WorkoutScreen.tsx",
-      "source_location": "L679",
+      "source_location": "L686",
       "weight": 1.0,
       "source": "src_screens_workoutscreen_makestyles",
       "target": "src_theme_buttonshadow"
@@ -40193,5 +41430,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5514ce76ee32ee6a1d54d8a8c627be905a173313"
+  "built_at_commit": "f9e4e6eb4d071daf0e726ecf675cab12b1556b01"
 }
