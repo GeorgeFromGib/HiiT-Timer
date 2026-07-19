@@ -1,6 +1,5 @@
 {
   "0": "purchases.ts",
-  "1": "useWorkoutSession.ts",
   "2": "dependencies",
   "3": "ThemeTokens",
   "4": "expo",
@@ -68,7 +67,6 @@
   "66": "Activity Type Icons Design",
   "67": "Spinning: Show Resistance & Power in Next-Up Row",
   "68": "Spinning: Combine R and W into One Pill",
-  "69": "EditSessionScreen.tsx",
   "70": "Sound Off Setting Implementation Plan",
   "71": "Per-Interval Speed Implementation Plan",
   "72": "Session Complete Screen Implementation Plan",
@@ -123,14 +121,11 @@
   "121": "task-4-fix-report.md",
   "122": "i18n.ts",
   "123": "useEditSession.ts",
-  "124": "speedUnit.ts",
   "125": "FolderHeader.tsx",
   "126": "App.tsx",
   "127": "Session",
-  "128": "SessionCard.tsx",
   "129": "package.json",
   "131": "IntervalSwipeRow.tsx",
   "133": "useTheme",
-  "134": "Session",
-  "136": "SessionsListScreen.tsx"
+  "134": "Session"
 }
