@@ -25,7 +25,7 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/AppDelegate.swift": {
-    "mtime": 1784226490.6595492,
+    "mtime": 1784476861.8895578,
     "ast_hash": "7b4732bf9de8da05ae1ebcf616bdb672",
     "semantic_hash": ""
   },
@@ -35,7 +35,7 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/Contents.json": {
-    "mtime": 1784226490.596609,
+    "mtime": 1784476861.8266094,
     "ast_hash": "e753dae9a3ae1e8aeb8f44742ea0614b",
     "semantic_hash": ""
   },
@@ -45,17 +45,17 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenBackground.colorset/Contents.json": {
-    "mtime": 1784226490.5979793,
+    "mtime": 1784476861.8277586,
     "ast_hash": "f6f8bf5ba47b872d1c259aed54d7735e",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/Contents.json": {
-    "mtime": 1784226490.5994785,
+    "mtime": 1784476861.8292098,
     "ast_hash": "a84d44e2229df0082c16210906e94575",
     "semantic_hash": ""
   },
   "ios/Podfile.properties.json": {
-    "mtime": 1784226490.6692467,
+    "mtime": 1784476861.8983202,
     "ast_hash": "955f7192d4f15f1636684369fcec97ee",
     "semantic_hash": ""
   },
@@ -985,22 +985,22 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png": {
-    "mtime": 1784226490.5957232,
+    "mtime": 1784476861.8260686,
     "ast_hash": "2dd2b6b54a7c5286ffeea0f3ece700eb",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image.png": {
-    "mtime": 1784226490.6015532,
+    "mtime": 1784476861.8304904,
     "ast_hash": "6f87b0a871a1756a75db60656668ff29",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@2x.png": {
-    "mtime": 1784226490.6008816,
+    "mtime": 1784476861.8303664,
     "ast_hash": "8633af12c656bf5c5bb1df971a874053",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@3x.png": {
-    "mtime": 1784226490.6009576,
+    "mtime": 1784476861.8304858,
     "ast_hash": "283870fcb8877b6b15b06517bbd4c89b",
     "semantic_hash": ""
   },
