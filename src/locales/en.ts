@@ -87,10 +87,6 @@ export const en = {
     roundAbbr: 'rnd',
     circuit: 'SET',
     nextCircuit: 'NEXT SET',
-    effort: {
-      easy:  'Easy',
-      brisk: 'Brisk',
-    },
   },
   complete: {
     eyebrow:       'WORKOUT COMPLETE',
@@ -237,11 +233,6 @@ export const en = {
     inclinePresets:   'INCLINE PRESETS',
     treadmillIncline: 'INCLINE (%)',
     useIncline:       'Use Incline',
-    walkPresets:            'WALK PRESETS',
-    walkPresetContinuous:   'Continuous',
-    walkPresetRounds:       '%{count} rounds',
-    walkPresetIntervalDetail: '%{warmup} warmup + %{rounds}× (%{work} brisk / %{rest} easy) + %{cooldown} cooldown',
-    walkPresetLevel: 'Level %{level} - %{name}',
   },
   picker: {
     rounds: 'rounds',
@@ -265,7 +256,6 @@ export const en = {
     overwriteSpeedMessage: 'Applying this preset will replace your current speed settings.',
     overwriteSpinMessage:  'Applying this preset will replace your current resistance and power settings.',
     overwriteInclineMessage: 'Applying this preset will replace your current incline settings.',
-    overwriteWalkMessage: 'Applying this preset will replace your current timing and speed settings.',
     apply: 'Apply',
     cancel: 'Cancel',
     unsavedTitle: 'Unsaved changes',
@@ -325,14 +315,6 @@ export const en = {
       circuitRest: 'Prepare for break',
       finish:      'Get ready to finish',
     },
-  },
-  walkPresets: {
-    l1: { name: 'First Steps',      cue: 'A pace you could hold a conversation at' },
-    l2: { name: 'Settling In',      cue: 'Same easy, conversational pace' },
-    l3: { name: 'Finding Rhythm',   cue: 'First taste of effort variation — brisk means breathing a bit harder' },
-    l4: { name: 'Picking Up Pace',  cue: 'The ratio shifts toward more brisk time' },
-    l5: { name: 'Steady Progress',  cue: '50/50 easy-brisk split' },
-    l6: { name: 'Confident Walker', cue: 'Brisk becomes the dominant pace — bridges into Treadmill sessions' },
   },
   defaultSessions: {
     example1: 'Standard Example',

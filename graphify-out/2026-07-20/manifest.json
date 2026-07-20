@@ -1,0 +1,1327 @@
+{
+  "App.tsx": {
+    "mtime": 1784580509.4263253,
+    "ast_hash": "dbd4904f546ce37d3e169d989a7daf15",
+    "semantic_hash": ""
+  },
+  "app.json": {
+    "mtime": 1784476721.2239866,
+    "ast_hash": "499ff5ff499db2ca348cec9660d1a265",
+    "semantic_hash": ""
+  },
+  "babel.config.js": {
+    "mtime": 1781122724.782734,
+    "ast_hash": "8fc7a520543679a79421ba4e2dbcfe90",
+    "semantic_hash": ""
+  },
+  "eas.json": {
+    "mtime": 1780242345.4343371,
+    "ast_hash": "7ef904e8cdc0b3ef60ba4bfe18d3938c",
+    "semantic_hash": ""
+  },
+  "index.ts": {
+    "mtime": 1781122724.7936811,
+    "ast_hash": "ec272625d982c51e9e043082a9d0c225",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/AppDelegate.swift": {
+    "mtime": 1784476861.8895578,
+    "ast_hash": "7b4732bf9de8da05ae1ebcf616bdb672",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/ClearHiiT-Bridging-Header.h": {
+    "mtime": 1783156540.1227677,
+    "ast_hash": "15ff0b9e396e448453a3401293a1ee14",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/Contents.json": {
+    "mtime": 1784476861.8266094,
+    "ast_hash": "e753dae9a3ae1e8aeb8f44742ea0614b",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/Contents.json": {
+    "mtime": 1783156540.1260977,
+    "ast_hash": "96cbaeb138eab0aceebfdf0022c7d835",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/SplashScreenBackground.colorset/Contents.json": {
+    "mtime": 1784476861.8277586,
+    "ast_hash": "f6f8bf5ba47b872d1c259aed54d7735e",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/Contents.json": {
+    "mtime": 1784476861.8292098,
+    "ast_hash": "a84d44e2229df0082c16210906e94575",
+    "semantic_hash": ""
+  },
+  "ios/Podfile.properties.json": {
+    "mtime": 1784476861.8983202,
+    "ast_hash": "955f7192d4f15f1636684369fcec97ee",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1784580509.4281948,
+    "ast_hash": "585c48cad4cd77f1bf404ac9c86793e1",
+    "semantic_hash": ""
+  },
+  "scripts/generate-audio.js": {
+    "mtime": 1782487275.5124466,
+    "ast_hash": "e0a4cbdd3b5a5c25078e76b0fc73da94",
+    "semantic_hash": ""
+  },
+  "src/components/ActivityTypeIcon.tsx": {
+    "mtime": 1784477483.0837553,
+    "ast_hash": "1e56f208378ccc44a412110c466e1fc9",
+    "semantic_hash": ""
+  },
+  "src/components/DeleteFolderModal.tsx": {
+    "mtime": 1783702454.2036357,
+    "ast_hash": "b37777206996040a409a0c1d4205372a",
+    "semantic_hash": ""
+  },
+  "src/components/DragHandle.tsx": {
+    "mtime": 1781342137.5504568,
+    "ast_hash": "264e5c581f989da494ccc16d1b16eb68",
+    "semantic_hash": ""
+  },
+  "src/components/EditSession/IntervalSwipeRow.tsx": {
+    "mtime": 1784483439.649817,
+    "ast_hash": "e2fa0580b62eeeae986ce697fbe1e4f9",
+    "semantic_hash": ""
+  },
+  "src/components/EditSession/PresetStrip.tsx": {
+    "mtime": 1784226318.1323853,
+    "ast_hash": "83e47f9db54e953382d49c3e4e41f6e2",
+    "semantic_hash": ""
+  },
+  "src/components/FolderHeader.tsx": {
+    "mtime": 1783702454.206188,
+    "ast_hash": "22c764bd8c8815204e45255c98f46f55",
+    "semantic_hash": ""
+  },
+  "src/components/GhostBtn.tsx": {
+    "mtime": 1784229355.0567212,
+    "ast_hash": "61195bf449aace6f4a6ced2b2fddbbee",
+    "semantic_hash": ""
+  },
+  "src/components/IntervalRow.tsx": {
+    "mtime": 1784483428.8315918,
+    "ast_hash": "d99ea62391cdcc15661fd0d6b5abb1c8",
+    "semantic_hash": ""
+  },
+  "src/components/MoveToFolderSheet.tsx": {
+    "mtime": 1784229355.0569704,
+    "ast_hash": "5cb0d8785eb7bb91835bb42d94c0da8d",
+    "semantic_hash": ""
+  },
+  "src/components/PaywallModal.tsx": {
+    "mtime": 1783156540.137216,
+    "ast_hash": "d8900e896f77da152ec157670a545047",
+    "semantic_hash": ""
+  },
+  "src/components/PhaseStrip.tsx": {
+    "mtime": 1781122724.8056214,
+    "ast_hash": "4020aa3d10b959562174bf3863bd4429",
+    "semantic_hash": ""
+  },
+  "src/components/PickerModal.tsx": {
+    "mtime": 1784229355.0576305,
+    "ast_hash": "2f6f1010fa2be288fea864db6f6f3503",
+    "semantic_hash": ""
+  },
+  "src/components/ScreenHeader.tsx": {
+    "mtime": 1784229355.0578792,
+    "ast_hash": "c1fd7c64665e701490b82f38813bd6bd",
+    "semantic_hash": ""
+  },
+  "src/components/SessionCard.tsx": {
+    "mtime": 1784229355.058121,
+    "ast_hash": "7d3ae49900d96637509b71bfcf5598a8",
+    "semantic_hash": ""
+  },
+  "src/components/SettingsRow.tsx": {
+    "mtime": 1781342137.5519114,
+    "ast_hash": "b49d7f291c48bb6d5569dfc94da3e81b",
+    "semantic_hash": ""
+  },
+  "src/components/SettingsSection.tsx": {
+    "mtime": 1781342137.5520453,
+    "ast_hash": "ca1ac4c4e96725830fa7a41a93091536",
+    "semantic_hash": ""
+  },
+  "src/components/SettingsToggle.tsx": {
+    "mtime": 1784229355.058559,
+    "ast_hash": "630a4ddedb792d62acf15e358f06201b",
+    "semantic_hash": ""
+  },
+  "src/components/ThemeCard.tsx": {
+    "mtime": 1781342137.5523329,
+    "ast_hash": "75cedbc92e0f9f8a3106c46b782dd9fd",
+    "semantic_hash": ""
+  },
+  "src/components/VolumeRow.tsx": {
+    "mtime": 1781342137.5524943,
+    "ast_hash": "3e52491cb0e3ff8441f2657fdd654c47",
+    "semantic_hash": ""
+  },
+  "src/components/WheelColumn.tsx": {
+    "mtime": 1783451183.0600004,
+    "ast_hash": "7ca771a65d4a732daf610f0a01f72125",
+    "semantic_hash": ""
+  },
+  "src/components/WorkoutIcon.tsx": {
+    "mtime": 1782561183.4443216,
+    "ast_hash": "6f2262ebda58f426c63f47455c6d84a5",
+    "semantic_hash": ""
+  },
+  "src/components/svgStroke.ts": {
+    "mtime": 1781122724.8109925,
+    "ast_hash": "26644eccc105706ca3120e5d34e3f70d",
+    "semantic_hash": ""
+  },
+  "src/hooks/editSessionTypes.ts": {
+    "mtime": 1782561183.4445245,
+    "ast_hash": "a623342177f02fae3bdacc4461b00d0e",
+    "semantic_hash": ""
+  },
+  "src/hooks/useCircuitModeEdit.ts": {
+    "mtime": 1782561183.4451282,
+    "ast_hash": "9a1b6330db3d06c6408633a5d3231aae",
+    "semantic_hash": ""
+  },
+  "src/hooks/useDraft.ts": {
+    "mtime": 1782561183.4454384,
+    "ast_hash": "859fd4161e7245788ad106144fb71cde",
+    "semantic_hash": ""
+  },
+  "src/hooks/useEasyModeEdit.ts": {
+    "mtime": 1784226318.1359472,
+    "ast_hash": "8a1af57b9676c33b2e471136f6f4c566",
+    "semantic_hash": ""
+  },
+  "src/hooks/useEditSession.ts": {
+    "mtime": 1784580509.428516,
+    "ast_hash": "2540f8b7fc276f1e8da781361c0f537d",
+    "semantic_hash": ""
+  },
+  "src/hooks/useGatedAction.ts": {
+    "mtime": 1781546989.798051,
+    "ast_hash": "5d77306f973f1d31f80dda9f4ae83ce1",
+    "semantic_hash": ""
+  },
+  "src/hooks/usePickerState.ts": {
+    "mtime": 1784483350.3029046,
+    "ast_hash": "1da1bcb3bd69cd51057156d730ef6932",
+    "semantic_hash": ""
+  },
+  "src/hooks/usePreStartCountdown.ts": {
+    "mtime": 1784580509.4289794,
+    "ast_hash": "b9031eaeb562a799837a44f917f59b07",
+    "semantic_hash": ""
+  },
+  "src/hooks/usePremiumState.ts": {
+    "mtime": 1783156540.1395886,
+    "ast_hash": "c6b406335febd603e2512b591ec30780",
+    "semantic_hash": ""
+  },
+  "src/hooks/useTimerEngine.ts": {
+    "mtime": 1784580509.4295022,
+    "ast_hash": "5468bf2942a1856161f98eaf5e400fbd",
+    "semantic_hash": ""
+  },
+  "src/hooks/useWorkoutSession.ts": {
+    "mtime": 1784580509.4304426,
+    "ast_hash": "b7e621734d6afb3380d725b518ec771f",
+    "semantic_hash": ""
+  },
+  "src/lib/alerts.ts": {
+    "mtime": 1784226318.1384199,
+    "ast_hash": "668f3710096299478c13586a3e78add1",
+    "semantic_hash": ""
+  },
+  "src/lib/audio.ts": {
+    "mtime": 1784580509.4311857,
+    "ast_hash": "e43e52d5bff065c7940801485a3d2d77",
+    "semantic_hash": ""
+  },
+  "src/lib/i18n.ts": {
+    "mtime": 1781727623.719704,
+    "ast_hash": "cf0240d4ec8de55924b19c9629ec9ba7",
+    "semantic_hash": ""
+  },
+  "src/lib/premiumContext.ts": {
+    "mtime": 1783156540.1402886,
+    "ast_hash": "bb44990629433aebf1f0637caa669a93",
+    "semantic_hash": ""
+  },
+  "src/lib/presets.ts": {
+    "mtime": 1784483950.5165355,
+    "ast_hash": "277bd05723e5a818a3a4c7a84897b19a",
+    "semantic_hash": ""
+  },
+  "src/lib/purchases.ts": {
+    "mtime": 1783776767.8244476,
+    "ast_hash": "5f7000627f232e7c860b56f65e622d7d",
+    "semantic_hash": ""
+  },
+  "src/lib/reviewState.ts": {
+    "mtime": 1781380979.141299,
+    "ast_hash": "314b70226cf0e8b0fb2dd5bed1cb7dfc",
+    "semantic_hash": ""
+  },
+  "src/lib/sessionDraft.ts": {
+    "mtime": 1784580509.4323254,
+    "ast_hash": "fe86df0bce85284f0f04441e511c365a",
+    "semantic_hash": ""
+  },
+  "src/lib/sessions.ts": {
+    "mtime": 1784580509.4346952,
+    "ast_hash": "7214b9240cd77704a9fbeeec81eaf293",
+    "semantic_hash": ""
+  },
+  "src/lib/settings.ts": {
+    "mtime": 1783776767.8251054,
+    "ast_hash": "25f7818d48a9e8815183fe173e1a95b6",
+    "semantic_hash": ""
+  },
+  "src/lib/settingsContext.tsx": {
+    "mtime": 1781122724.8165965,
+    "ast_hash": "f19a1e41f7b6841786292adf7297cbfe",
+    "semantic_hash": ""
+  },
+  "src/lib/speech.ts": {
+    "mtime": 1784482130.9512608,
+    "ast_hash": "21ab6e65f999487481603e121aab713f",
+    "semantic_hash": ""
+  },
+  "src/lib/speedUnit.ts": {
+    "mtime": 1782561183.4472363,
+    "ast_hash": "abb7ec4afc024488df29cc2646e1426d",
+    "semantic_hash": ""
+  },
+  "src/lib/timerComputation.ts": {
+    "mtime": 1784580509.4352129,
+    "ast_hash": "f20383abf024bdd5c26c21197ae563b3",
+    "semantic_hash": ""
+  },
+  "src/lib/workout.ts": {
+    "mtime": 1784483241.7617586,
+    "ast_hash": "d014b637e14495fc02ac397d0086f22d",
+    "semantic_hash": ""
+  },
+  "src/locales/en.ts": {
+    "mtime": 1784580509.438213,
+    "ast_hash": "9cd7e74b1350186b88cfc54aa764cc17",
+    "semantic_hash": ""
+  },
+  "src/locales/es.ts": {
+    "mtime": 1784580509.438533,
+    "ast_hash": "e0f2e558497cfdd04a3dec63c2de64d0",
+    "semantic_hash": ""
+  },
+  "src/locales/fr.ts": {
+    "mtime": 1784580509.4388056,
+    "ast_hash": "0334853d9f5f904642bf049db04795d2",
+    "semantic_hash": ""
+  },
+  "src/navigation.ts": {
+    "mtime": 1784580509.439043,
+    "ast_hash": "699ea956ed8de174059602d7c64029cd",
+    "semantic_hash": ""
+  },
+  "src/screens/EditSessionScreen.tsx": {
+    "mtime": 1784580509.4393466,
+    "ast_hash": "0f1867d33525ee7cdee2e6481a6c40cb",
+    "semantic_hash": ""
+  },
+  "src/screens/FoldersScreen.tsx": {
+    "mtime": 1784229355.059292,
+    "ast_hash": "bd98bb1908fe38757dedf512df15b7c9",
+    "semantic_hash": ""
+  },
+  "src/screens/PrivacyPolicyScreen.tsx": {
+    "mtime": 1781871136.0895777,
+    "ast_hash": "fb8a31b8cfe5cea3e72cfb8dfa3c08bb",
+    "semantic_hash": ""
+  },
+  "src/screens/SessionCompleteScreen.tsx": {
+    "mtime": 1784229355.0595863,
+    "ast_hash": "3fcfa5af2963f133c5eb70fc5d72be88",
+    "semantic_hash": ""
+  },
+  "src/screens/SessionsListScreen.tsx": {
+    "mtime": 1784477530.2976017,
+    "ast_hash": "638220ff87edf6a50752dd53ec054f2d",
+    "semantic_hash": ""
+  },
+  "src/screens/SettingsScreen.tsx": {
+    "mtime": 1784229355.060354,
+    "ast_hash": "e609df36767941dea14522980167a733",
+    "semantic_hash": ""
+  },
+  "src/screens/WorkoutScreen.tsx": {
+    "mtime": 1784580509.439637,
+    "ast_hash": "fb3a60059b627d25b415be26e7b5f4fa",
+    "semantic_hash": ""
+  },
+  "src/theme.ts": {
+    "mtime": 1783432056.3566036,
+    "ast_hash": "6be0b788c000244b999308c0e0fa2dae",
+    "semantic_hash": ""
+  },
+  "src/typography.ts": {
+    "mtime": 1781122724.8218954,
+    "ast_hash": "941037d901cb0d77c805260bb9d6e7aa",
+    "semantic_hash": ""
+  },
+  "tsconfig.json": {
+    "mtime": 1782080113.5413496,
+    "ast_hash": "a5df9ddad82c56de332cbb7d00dd294b",
+    "semantic_hash": ""
+  },
+  ".superpowers/brainstorm/7333-1781124267/content/edit-run-mode.html": {
+    "mtime": 1781342137.5424767,
+    "ast_hash": "5f2039cbf57f8b6ca84d22c8a3034995",
+    "semantic_hash": ""
+  },
+  ".superpowers/brainstorm/7333-1781124267/content/edit-run-type.html": {
+    "mtime": 1781342137.542926,
+    "ast_hash": "2ddc593df257a49b9b7c05e7a784d69d",
+    "semantic_hash": ""
+  },
+  ".superpowers/brainstorm/7333-1781124267/content/speed-display.html": {
+    "mtime": 1781342137.5431933,
+    "ast_hash": "bebf4b212e23cff6d26e16d038469072",
+    "semantic_hash": ""
+  },
+  ".superpowers/brainstorm/7333-1781124267/content/waiting-1.html": {
+    "mtime": 1781342137.5434432,
+    "ast_hash": "44b3ae034f564b8ed722d684a274336d",
+    "semantic_hash": ""
+  },
+  ".superpowers/brainstorm/7333-1781124267/content/waiting-2.html": {
+    "mtime": 1781342137.5438862,
+    "ast_hash": "c830486986b4f4631d3bb30fd3a5bf76",
+    "semantic_hash": ""
+  },
+  ".superpowers/brainstorm/7333-1781124267/content/workout-run.html": {
+    "mtime": 1781342137.5445614,
+    "ast_hash": "23e543c3492c53b32bcab17d86d8ff1e",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/circuit-rest-task1-brief.md": {
+    "mtime": 1782502803.6003153,
+    "ast_hash": "371be3e415619ac5ae21be178bc8abc6",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/circuit-rest-task1-report.md": {
+    "mtime": 1782502998.4342625,
+    "ast_hash": "42bd3284f55628b08c4ae3591a64cc99",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/circuit-rest-task2-brief.md": {
+    "mtime": 1782503162.3873615,
+    "ast_hash": "447c90f9096b206849017082c0767949",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/circuit-rest-task2-report.md": {
+    "mtime": 1782503453.1041305,
+    "ast_hash": "ac402c024c7662639ecb50c6545accd1",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/progress.md": {
+    "mtime": 1783449908.92027,
+    "ast_hash": "0936a011cb16b8119a879cb2dea02649",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-1-brief.md": {
+    "mtime": 1783446403.005841,
+    "ast_hash": "d32c124ae45013add8ef0b33fa821fc4",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-1-report.md": {
+    "mtime": 1783446517.891892,
+    "ast_hash": "8594882e7521d0563d1ab3b23f6cf6c6",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-2-brief.md": {
+    "mtime": 1783446927.2094407,
+    "ast_hash": "654a111a901320257b6eebccd2c18594",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-2-report.md": {
+    "mtime": 1783447002.0664911,
+    "ast_hash": "b8abdd234fe5ef51acef45c1c242bc7d",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-3-brief.md": {
+    "mtime": 1783447112.4425592,
+    "ast_hash": "b03625b718ab1aca642fa1f5a2ba7812",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-3-report.md": {
+    "mtime": 1783447213.9348686,
+    "ast_hash": "dd2bccb2db01c0b79ffb9307dd9422b4",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-4-brief.md": {
+    "mtime": 1783447318.2888634,
+    "ast_hash": "dc492f56331274cf09fff537fe3e6d2b",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-4-fix-report.md": {
+    "mtime": 1782552611.1176865,
+    "ast_hash": "1e9d7443b85864dd6192715ef265067e",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-4-report.md": {
+    "mtime": 1783447457.8881552,
+    "ast_hash": "60705a0b7ac270351e698d4a14d90250",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-5-brief.md": {
+    "mtime": 1783447578.3623354,
+    "ast_hash": "e27d9166c6c2bfb0090deae38d20ddb5",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-5-report.md": {
+    "mtime": 1783447676.634942,
+    "ast_hash": "386a2aa7a64e4d4383859ac8b730e8fd",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-6-brief.md": {
+    "mtime": 1783447774.5638335,
+    "ast_hash": "7404b563cbdc70ef910a08d7ffa23b05",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-6-report.md": {
+    "mtime": 1783447867.1626394,
+    "ast_hash": "c3fd3118f39092d369c1364d497be7f4",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-7-brief.md": {
+    "mtime": 1783447999.8738055,
+    "ast_hash": "5b51809e1ff6dfb1ea2efa83115aaebb",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-7-report.md": {
+    "mtime": 1783448522.5563052,
+    "ast_hash": "0052deee885fa179c46c8e6dbea9cdf5",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-8-brief.md": {
+    "mtime": 1783448792.4804447,
+    "ast_hash": "4d5698e6696266bfa45d974b3bf188ea",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-8-report.md": {
+    "mtime": 1783449026.3318384,
+    "ast_hash": "84803c47bdda668a05597c5450b1d94b",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-9-brief.md": {
+    "mtime": 1782501361.5450644,
+    "ast_hash": "b5612896009e1cba688214c57c748384",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/task-9-report.md": {
+    "mtime": 1782501424.6027393,
+    "ast_hash": "5f695f9078b0c601ff73cd4738e666a7",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1780242345.4360542,
+    "ast_hash": "0168b78417bf60f34fd1233c69591023",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1784406295.5643265,
+    "ast_hash": "fbe5d95e315ea86c940605da3c48b336",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1780242345.4345443,
+    "ast_hash": "34350728d473c1dc0da78810b76d1e70",
+    "semantic_hash": ""
+  },
+  "apple store assets/STORE_DESCRIPTION.md": {
+    "mtime": 1784276561.189211,
+    "ast_hash": "17f5c5f084a1df05d32532d59ffaf36b",
+    "semantic_hash": ""
+  },
+  "design/default-presets.md": {
+    "mtime": 1781342137.5458882,
+    "ast_hash": "47b625ad05f84085dd7244710a659f23",
+    "semantic_hash": ""
+  },
+  "docs/architectural-opportunities.md": {
+    "mtime": 1782561183.438127,
+    "ast_hash": "1ea67b11138065d6fdfe0b1f7757d524",
+    "semantic_hash": ""
+  },
+  "docs/refactoring-opportunities.md": {
+    "mtime": 1781122724.7838483,
+    "ast_hash": "ffb02a080baa81644cdf54dc6ba05abf",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-05-done-congratulatory-message.md": {
+    "mtime": 1781122724.7841916,
+    "ast_hash": "4f72992538313b7cb8678f3e753943f9",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-05-finished-state.md": {
+    "mtime": 1781122724.7845223,
+    "ast_hash": "4c82fa6b30ca3a1a5b43b59e019539a6",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-07-countdown-flash-toggle.md": {
+    "mtime": 1781122724.784775,
+    "ast_hash": "f2e9ab70f29da35c5335a9dce3a5d3a1",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-07-done-letters-animation.md": {
+    "mtime": 1781122724.7850127,
+    "ast_hash": "8d0760a78d65aac8b62ccb0417e622a6",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-07-sound-off-setting.md": {
+    "mtime": 1781122724.7854958,
+    "ast_hash": "d9e8324ef03b05a579bfecbc32239b0c",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-10-iap-premium-unlock.md": {
+    "mtime": 1781122724.7857246,
+    "ast_hash": "9b6635d89a38f8d65078bf08df843631",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-10-run-hiit-type.md": {
+    "mtime": 1781342137.5461316,
+    "ast_hash": "1a95b1966308172e14e08ddba0517e67",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-10-splash-screen-loading.md": {
+    "mtime": 1781122724.7862778,
+    "ast_hash": "3e11b38092d4d3b49a75e1a823859228",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-12-interval-presets.md": {
+    "mtime": 1781342137.5464063,
+    "ast_hash": "b2df5d0cd5707bc3cd035dbc3f0ad62d",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-12-paywall.md": {
+    "mtime": 1781342137.546729,
+    "ast_hash": "61b6dfb105b1c1e8d0f1edd9c0dc70d3",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-12-per-interval-speed.md": {
+    "mtime": 1781342137.5470438,
+    "ast_hash": "5bf0dee92ed54e6a7830878db61a6c8f",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-14-expo-iap-implementation.md": {
+    "mtime": 1781528708.1296308,
+    "ast_hash": "c8486c857139726fb636894fd8a3788d",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-16-localization-en-es.md": {
+    "mtime": 1781648151.5990055,
+    "ast_hash": "5f5132250c50d82d8e3bdc8c53a0b720",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-16-phone-locale-speed-unit.md": {
+    "mtime": 1781643241.747517,
+    "ast_hash": "dc7b1cecb53dbd77357bbaf2a3324cbc",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-17-architecture-fixes.md": {
+    "mtime": 1781705296.0467143,
+    "ast_hash": "af6b00ce18a3619fd09b7fcee2a526e3",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-17-session-complete-screen.md": {
+    "mtime": 1781732288.5594532,
+    "ast_hash": "bbb1aa43556bf2c6b44feeb6f0b25494",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-17-session-progression-intelligence.md": {
+    "mtime": 1781719324.1344645,
+    "ast_hash": "1b138d18caba848782ae8862df39fc3f",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-18-default-session-names-i18n.md": {
+    "mtime": 1781815339.5927005,
+    "ast_hash": "aa3ac5369ca5af0e54f2b035de51a963",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-18-sessions-list-hint-text.md": {
+    "mtime": 1781817113.2807665,
+    "ast_hash": "59ae15a402ef364b4c1fd76f83b8c012",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-26-circuit-session.md": {
+    "mtime": 1782561183.4384108,
+    "ast_hash": "1f22807ffe8f2189b1d37ba300f47bf8",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-26-smart-add-interval.md": {
+    "mtime": 1782561183.4387388,
+    "ast_hash": "3719e8eb4d211b7ff59c36c8e1f415f7",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-26-useEditSession-mode-split.md": {
+    "mtime": 1782561183.4394479,
+    "ast_hash": "b28cfbed7a1f150d2317621ab6a168ac",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-27-activity-type-dropdown.md": {
+    "mtime": 1782561183.4396396,
+    "ast_hash": "6c60bd4f8dabb93acca64dd7c7d43b46",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-27-activity-type-icons.md": {
+    "mtime": 1782582897.454887,
+    "ast_hash": "5b81df96c0f88e73a74929633f4b396d",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-27-spinning-next-up-resistance-power.md": {
+    "mtime": 1782582897.4551337,
+    "ast_hash": "9735f5ecd61c8718205d7fb87eb8b7bf",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-27-spinning-session.md": {
+    "mtime": 1782582897.4555635,
+    "ast_hash": "c90950f3f985f1a71aa5b36b1c73df09",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-27-spinning-single-pill.md": {
+    "mtime": 1782582897.4559255,
+    "ast_hash": "bd860c5148babebd5b4d31f9d4a462af",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-27-sustained-haptic-burst.md": {
+    "mtime": 1782585355.194065,
+    "ast_hash": "9c6b8af3972807633bd4c2d27bb460b0",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-27-workout-header-activity-icon.md": {
+    "mtime": 1782582897.4563258,
+    "ast_hash": "c043d9baca9002041549fd7ce635f5b9",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-06-28-voice-announcements.md": {
+    "mtime": 1783156540.119479,
+    "ast_hash": "0d4d720b655b4d2c9f07d764c11b9937",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-07-04-prepare-voice-prompts.md": {
+    "mtime": 1783432056.3430967,
+    "ast_hash": "81fe427f0de8ebaf32798d19f2b119d2",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-07-04-sessions-folder-system.md": {
+    "mtime": 1783702454.1283827,
+    "ast_hash": "0317dcbe6c6d0ccf4a699ebc777f6548",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-05-done-congratulatory-message-design.md": {
+    "mtime": 1781122724.7867422,
+    "ast_hash": "5130c2e45face39b9baf6b2708cd17f3",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-05-finished-state-design.md": {
+    "mtime": 1781122724.7875881,
+    "ast_hash": "a67e55b860094e18b1abbf2f0bb448f4",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-07-countdown-flash-design.md": {
+    "mtime": 1781122724.7877884,
+    "ast_hash": "f18295a77a40d30cf25d926398b02924",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-07-countdown-flash-toggle-design.md": {
+    "mtime": 1781122724.7890399,
+    "ast_hash": "6c5932a512daa9011f4a7891b4d15a23",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-07-done-letters-animation-design.md": {
+    "mtime": 1781122724.789689,
+    "ast_hash": "28d78abcb5b83350958d1ecaf58f9188",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-07-sound-off-setting-design.md": {
+    "mtime": 1781122724.7900894,
+    "ast_hash": "efb3d56f742c9fb172c0bab519022e32",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-09-extend-interval-design.md": {
+    "mtime": 1781122724.79059,
+    "ast_hash": "d21498c46f6cdc16f79cb0ae501a1cbe",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-10-iap-premium-unlock-plan.md": {
+    "mtime": 1781122724.7914188,
+    "ast_hash": "099f1b6bead64f541e938dd550ce9fe9",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-10-premium-mock-interface-design.md": {
+    "mtime": 1781122724.7915618,
+    "ast_hash": "8ac09380b9366b12a22706fedb00043f",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-10-run-hiit-type-design.md": {
+    "mtime": 1781342137.547472,
+    "ast_hash": "4cff9b1a28209e1d3238d0e67fd6f0b6",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-10-splash-screen-loading-design.md": {
+    "mtime": 1781122724.7917771,
+    "ast_hash": "2617d49415ba84d92626c693c389cfd6",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-11-interval-presets-design.md": {
+    "mtime": 1781342137.54775,
+    "ast_hash": "761586fe739d9a2b3ae0c36c09a7d301",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-12-paywall-design.md": {
+    "mtime": 1781342137.5480242,
+    "ast_hash": "a30251f2f7505fdb53646378b4461811",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-12-per-interval-speed-design.md": {
+    "mtime": 1781342137.5484333,
+    "ast_hash": "4b31e18403310349a09ea9925f4f6157",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-12-preset-selection-persistence-design.md": {
+    "mtime": 1781342137.5486615,
+    "ast_hash": "dc02fafc38a387e70eafe979aa855f02",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-13-review-prompt-design.md": {
+    "mtime": 1781342137.548809,
+    "ast_hash": "b78a68e8a39c923b1774ab90062b9c5e",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-14-expo-iap-implementation-design.md": {
+    "mtime": 1781528708.130032,
+    "ast_hash": "7c47650756925eec7c7e3e658eecaa3f",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-15-tada-finish-sound-design.md": {
+    "mtime": 1781528708.1302943,
+    "ast_hash": "87820eeb82bb04e09625a2ccc3bbb386",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-16-localization-en-es-design.md": {
+    "mtime": 1781648151.5993273,
+    "ast_hash": "a119d9f15dceec83b31667497bb5767d",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-16-phone-locale-speed-unit-design.md": {
+    "mtime": 1781643241.7477252,
+    "ast_hash": "bb608d32afa4827601a97dabbaf98665",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-17-session-complete-screen-design.md": {
+    "mtime": 1781732288.5596144,
+    "ast_hash": "ee400322800b356b2ba2a97a6d212bee",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-17-session-progression-intelligence-design.md": {
+    "mtime": 1781719411.790614,
+    "ast_hash": "868b26aa3cd87c734a062ebb3ef4587b",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-18-default-session-names-i18n-design.md": {
+    "mtime": 1781815242.58669,
+    "ast_hash": "fadeb36dabb80f835bdcb19e02e2e21b",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-18-sessions-list-hint-text-design.md": {
+    "mtime": 1781817000.5415504,
+    "ast_hash": "46949315e4412af6b9d532da029ae504",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-19-confetti-toggle-design.md": {
+    "mtime": 1781871136.0878043,
+    "ast_hash": "4202a12a90185da4e497387ece9b9c20",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-19-settings-footer-privacy-policy-design.md": {
+    "mtime": 1781827858.9932609,
+    "ast_hash": "cbb967b5a25642bac89aa7a2ff079e14",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-26-circuit-session-design.md": {
+    "mtime": 1782561183.4398475,
+    "ast_hash": "af018ef43191386e992cfe8d9437d856",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-26-smart-add-interval-design.md": {
+    "mtime": 1782561183.440518,
+    "ast_hash": "85f292654d45618e2b373da689350e09",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-26-useEditSession-mode-split-design.md": {
+    "mtime": 1782561183.4408872,
+    "ast_hash": "0da82ff2c9ba359621b8afa016a576fe",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-27-activity-type-dropdown-design.md": {
+    "mtime": 1782561183.4411287,
+    "ast_hash": "e12f5bf74b7cd0db3667838328fb0fd1",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-27-activity-type-icons-design.md": {
+    "mtime": 1782582897.4567878,
+    "ast_hash": "04dc474344426bb6a054b7fa4217103a",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-27-spinning-next-up-resistance-power-design.md": {
+    "mtime": 1782582897.4572651,
+    "ast_hash": "5315ad2671c9666f179df113b4cb6a15",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-27-spinning-session-design.md": {
+    "mtime": 1782582897.4576795,
+    "ast_hash": "5839626a9be1160cca93ff4b9aeba1f9",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-27-spinning-single-pill-design.md": {
+    "mtime": 1782582897.458361,
+    "ast_hash": "44be5610d527a4a7ff6c0d3de13404a6",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-27-sustained-haptic-burst-design.md": {
+    "mtime": 1782585355.1943052,
+    "ast_hash": "c0e24af8d9e654e68136f4ec4896ab1f",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-27-workout-header-activity-icon-design.md": {
+    "mtime": 1782582897.4590168,
+    "ast_hash": "4d924c4fa9b0e2a8492557b05baff2c8",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-06-28-voice-announcements-design.md": {
+    "mtime": 1783156540.119856,
+    "ast_hash": "4a93d85d48d4670041d6f0c5c6d8ff59",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-04-prepare-voice-prompts-design.md": {
+    "mtime": 1783432056.3446555,
+    "ast_hash": "e64e4ade27b849a3a0555bb620d3c6f1",
+    "semantic_hash": ""
+  },
+  "docs/updates-since-2026-06-24 1.0.8 (6).md": {
+    "mtime": 1782586139.0330474,
+    "ast_hash": "1e48de0c018f396a7deac6412fdbc8e9",
+    "semantic_hash": ""
+  },
+  "docs/updates-since-2026-06-28 1.0.8 (7).md": {
+    "mtime": 1783156540.1200986,
+    "ast_hash": "5062dea5ff7971ccc528306c77de8476",
+    "semantic_hash": ""
+  },
+  "13 Pro - 1.png": {
+    "mtime": 1781342137.5455666,
+    "ast_hash": "dbd6ea1aaaeb12acadcb24ff751f1dbd",
+    "semantic_hash": ""
+  },
+  "assets/android-icon-background.png": {
+    "mtime": 1780242345.4454489,
+    "ast_hash": "2d65569cc0e2afdcea0af9f9902d4173",
+    "semantic_hash": ""
+  },
+  "assets/android-icon-foreground.png": {
+    "mtime": 1780242345.445886,
+    "ast_hash": "72e71a9c846c6aa4ae32476641a00e18",
+    "semantic_hash": ""
+  },
+  "assets/android-icon-monochrome.png": {
+    "mtime": 1780242345.4461222,
+    "ast_hash": "1e097dab989759fc0b69440092ca22cd",
+    "semantic_hash": ""
+  },
+  "assets/favicon.png": {
+    "mtime": 1780242345.445661,
+    "ast_hash": "d9f444efbdfbe7931aa93beada07318a",
+    "semantic_hash": ""
+  },
+  "assets/hiit-icon-dark.png": {
+    "mtime": 1781122724.7708657,
+    "ast_hash": "c630527ce07845158019a0cfd3d5cc52",
+    "semantic_hash": ""
+  },
+  "assets/hiit-icon-tinted.png": {
+    "mtime": 1781122724.779359,
+    "ast_hash": "115425b0c32f2e1dfd53fd95e7c60d8d",
+    "semantic_hash": ""
+  },
+  "assets/hiit-icon.png": {
+    "mtime": 1781821991.5593712,
+    "ast_hash": "53fe82e9b7e6c2bf51422f52435f4b4c",
+    "semantic_hash": ""
+  },
+  "assets/hiit-splash-dark.png": {
+    "mtime": 1781531047.133822,
+    "ast_hash": "6a4d715e8e30405976b4829e92a70a1c",
+    "semantic_hash": ""
+  },
+  "assets/hiit-splash.png": {
+    "mtime": 1781122724.7823122,
+    "ast_hash": "f2fd6a5a5f129d63f4bf3ecc88d56345",
+    "semantic_hash": ""
+  },
+  "assets/icon.png": {
+    "mtime": 1780242345.4452505,
+    "ast_hash": "cb975bba2216ce10a60e6c0ffe9941a2",
+    "semantic_hash": ""
+  },
+  "assets/splash-icon.png": {
+    "mtime": 1780242345.4463253,
+    "ast_hash": "97dae5a0e62ad8551d8a31897b425e63",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png": {
+    "mtime": 1784476861.8260686,
+    "ast_hash": "2dd2b6b54a7c5286ffeea0f3ece700eb",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image.png": {
+    "mtime": 1784476861.8304904,
+    "ast_hash": "6f87b0a871a1756a75db60656668ff29",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@2x.png": {
+    "mtime": 1784476861.8303664,
+    "ast_hash": "8633af12c656bf5c5bb1df971a874053",
+    "semantic_hash": ""
+  },
+  "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@3x.png": {
+    "mtime": 1784476861.8304858,
+    "ast_hash": "283870fcb8877b6b15b06517bbd4c89b",
+    "semantic_hash": ""
+  },
+  "assets/audio/chime.wav": {
+    "mtime": 1781122724.7594752,
+    "ast_hash": "de40f15bedfee87bfcbba07211c2708e",
+    "semantic_hash": ""
+  },
+  "assets/audio/finish.wav": {
+    "mtime": 1782487284.9000385,
+    "ast_hash": "6af9d139dfaa89d92848dfe6cf138b3e",
+    "semantic_hash": ""
+  },
+  "assets/audio/high.wav": {
+    "mtime": 1782487284.8985984,
+    "ast_hash": "0029a889fe845a7110165f78c3b55ac2",
+    "semantic_hash": ""
+  },
+  "assets/audio/keepalive.wav": {
+    "mtime": 1782487284.8940003,
+    "ast_hash": "c92601f06421d4371af018980f449527",
+    "semantic_hash": ""
+  },
+  "assets/audio/low.wav": {
+    "mtime": 1782487284.8990488,
+    "ast_hash": "7da6a71dfe46c97f80bcff70cca1faee",
+    "semantic_hash": ""
+  },
+  "assets/audio/tick.wav": {
+    "mtime": 1782487284.8995264,
+    "ast_hash": "f269f97327f4b7da9754e668eee4dda1",
+    "semantic_hash": ""
+  },
+  "src/components/TrialStatusPill.tsx": {
+    "mtime": 1783702454.2095788,
+    "ast_hash": "510a966f2450e7a2c1cc056f7d355ac5",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-07-folder-icons-design.md": {
+    "mtime": 1783702454.1313884,
+    "ast_hash": "c60c2fd17fd188b4c9199ad423ccf70e",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-07-07-folder-icons.md": {
+    "mtime": 1783702454.1300082,
+    "ast_hash": "b40f77b1d91ee58b9cd7ad29194dbbca",
+    "semantic_hash": ""
+  },
+  "src/lib/folderIcons.ts": {
+    "mtime": 1784477496.1313717,
+    "ast_hash": "d973d74b59a511b584c7e33a3c2f7086",
+    "semantic_hash": ""
+  },
+  "src/components/FolderIcon.tsx": {
+    "mtime": 1784477488.209232,
+    "ast_hash": "21ac34535e8fe5fa2f86ebc9f1658e15",
+    "semantic_hash": ""
+  },
+  "src/components/FolderIconPicker.tsx": {
+    "mtime": 1783702454.2073114,
+    "ast_hash": "4d605b31abfef1f2b924e7e723b6bace",
+    "semantic_hash": ""
+  },
+  ".superpowers/sdd/final-review-fix-report.md": {
+    "mtime": 1783449661.8170464,
+    "ast_hash": "e9e771bd0fe65cccf2e63ecf75b95f85",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-07-10-onboarding-modal-design.md": {
+    "mtime": 1783776767.8113203,
+    "ast_hash": "4b2c0a00ce4266d8da997c8c8dcb738c",
+    "semantic_hash": ""
+  },
+  "src/components/FolderEditModal.tsx": {
+    "mtime": 1784226318.1329823,
+    "ast_hash": "b6cfd0729b6c8f0fdd5166d1ac45c0f9",
+    "semantic_hash": ""
+  },
+  "src/components/OnboardingModal.tsx": {
+    "mtime": 1784271255.6727738,
+    "ast_hash": "6a74948c6894f64c573c7d6dccddab6f",
+    "semantic_hash": ""
+  },
+  "src/components/activityIconShapes.ts": {
+    "mtime": 1784477473.5483444,
+    "ast_hash": "77e2f776974f59d0bc11b5c565bee216",
+    "semantic_hash": ""
+  },
+  "src/hooks/useHapticBurst.ts": {
+    "mtime": 1783776767.8226407,
+    "ast_hash": "681e456928ba5797497f9c18ad37921a",
+    "semantic_hash": ""
+  },
+  "src/hooks/useIntervalListEdit.ts": {
+    "mtime": 1784483304.8228178,
+    "ast_hash": "f00b019f301b1f4ff8cc251d61fb0f17",
+    "semantic_hash": ""
+  },
+  "src/hooks/useSpeedAndSpinEdit.ts": {
+    "mtime": 1784484897.7249143,
+    "ast_hash": "37524b6796e2ebfc2ef2e2ce6bfa9f6b",
+    "semantic_hash": ""
+  },
+  "src/lib/jsonFile.ts": {
+    "mtime": 1783776767.8239207,
+    "ast_hash": "7ea347c8230a6fa66f69d7bf0a3e4e29",
+    "semantic_hash": ""
+  },
+  "src/components/EditSession/TimePresetStrip.tsx": {
+    "mtime": 1784226318.1325774,
+    "ast_hash": "3d417107f1e248c9d2e5743819fc3105",
+    "semantic_hash": ""
+  },
+  "src/lib/intensityPresets.ts": {
+    "mtime": 1784271916.0174341,
+    "ast_hash": "0d42c03bc14b384cf3ff0f1c4d16bffb",
+    "semantic_hash": ""
+  },
+  "src/hooks/useSettingsState.ts": {
+    "mtime": 1784580509.4292326,
+    "ast_hash": "9f845b4bc8fcfd77d571c69d7eb46685",
+    "semantic_hash": ""
+  },
+  "src/components/AppAlertIcon.tsx": {
+    "mtime": 1784226318.1297708,
+    "ast_hash": "0f65bdb25d56fdc03253b9e0bceeac70",
+    "semantic_hash": ""
+  },
+  "src/components/AppAlertModal.tsx": {
+    "mtime": 1784229355.056452,
+    "ast_hash": "14275dda0db71a30e0c0a7c7379d1fd4",
+    "semantic_hash": ""
+  },
+  "src/lib/appAlert.ts": {
+    "mtime": 1784226318.13866,
+    "ast_hash": "7928862d00c9d1b364edda75248def53",
+    "semantic_hash": ""
+  },
+  "src/lib/walkPresets.ts": {
+    "mtime": 1784580509.4356823,
+    "ast_hash": "2124fc8fca6538ce43d0a362ce98de23",
+    "semantic_hash": ""
+  },
+  "jest.setup.ts": {
+    "mtime": 1784565790.1661534,
+    "ast_hash": "e631c06fe9e1a26d383b2eb69c0d43bf",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useCircuitModeEdit.test.ts": {
+    "mtime": 1784566148.0129209,
+    "ast_hash": "578a381696fc90e25834752c12b1a6a7",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useDraft.test.ts": {
+    "mtime": 1784566197.1326134,
+    "ast_hash": "259d682db138b4b8bf326fa05f22bc6a",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useEasyModeEdit.test.ts": {
+    "mtime": 1784566337.9535975,
+    "ast_hash": "c443bb5aebfe72ea8d874d73396acdc0",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useEditSession.test.ts": {
+    "mtime": 1784580437.3774145,
+    "ast_hash": "9936b41d947ced11c73932ed1b25e601",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useGatedAction.test.tsx": {
+    "mtime": 1784566216.53475,
+    "ast_hash": "ff464555137e2e5e7dac2edc421d6788",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useHapticBurst.test.ts": {
+    "mtime": 1784566220.1933231,
+    "ast_hash": "221249b05dbec826d63adbc11756525b",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useIntervalListEdit.test.ts": {
+    "mtime": 1784566231.9950597,
+    "ast_hash": "28438bb13341f3f2553e502cc0f5f879",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/usePickerState.test.ts": {
+    "mtime": 1784566421.337088,
+    "ast_hash": "48c402256a8c61acb0cc9bf0d73ac62a",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/usePreStartCountdown.test.ts": {
+    "mtime": 1784565931.9444306,
+    "ast_hash": "8043ae71ead05857fa0985c6974c4188",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/usePremiumState.test.ts": {
+    "mtime": 1784566705.5561264,
+    "ast_hash": "7d0d278848022264147f88131e879665",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useSettingsState.test.ts": {
+    "mtime": 1784566772.8681924,
+    "ast_hash": "92a82fc1c57363121e566221f03162b0",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useSpeedAndSpinEdit.test.ts": {
+    "mtime": 1784566286.028874,
+    "ast_hash": "e6df23944b0617f0a6ec35b7b3d398fc",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useTimerEngine.test.ts": {
+    "mtime": 1784566323.7818322,
+    "ast_hash": "ed3346427be448d57b75f2f093262e6f",
+    "semantic_hash": ""
+  },
+  "src/hooks/__tests__/useWorkoutSession.test.ts": {
+    "mtime": 1784568519.7887166,
+    "ast_hash": "64267177289bb3eb35fbfd3b3eefd8e4",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/alerts.test.ts": {
+    "mtime": 1784566255.0284286,
+    "ast_hash": "08d993e6b724b760e7f68cb2efd0e52d",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/appAlert.test.ts": {
+    "mtime": 1784566264.7109509,
+    "ast_hash": "b62d93b4e33877313307f2a324346f16",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/audio.test.ts": {
+    "mtime": 1784566466.1254647,
+    "ast_hash": "485c190f456eb887158a1b5e2dc79bfa",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/folderIcons.test.ts": {
+    "mtime": 1784566094.01441,
+    "ast_hash": "5fdee3cecaae6da46d42c53b66cc0049",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/i18n.test.tsx": {
+    "mtime": 1784566133.733753,
+    "ast_hash": "27bb4734c49eb8e520ad817da9ba5960",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/intensityPresets.test.ts": {
+    "mtime": 1784566101.4648883,
+    "ast_hash": "5e78abdf03a0d26f78f38034b94c8e63",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/jsonFile.test.ts": {
+    "mtime": 1784566082.3952606,
+    "ast_hash": "9bf9ac2458104aacf9fd714afc5f02eb",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/premiumContext.test.tsx": {
+    "mtime": 1784566106.0749977,
+    "ast_hash": "af627064031a81862e8d1c303b280049",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/presets.test.ts": {
+    "mtime": 1784566112.1856554,
+    "ast_hash": "ed208bb172aeb637b5c14bec2616ccbe",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/purchases.test.ts": {
+    "mtime": 1784566393.3138115,
+    "ast_hash": "c0a39a360a0da4cc2c269448ffae04d1",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/reviewState.test.ts": {
+    "mtime": 1784566233.1382003,
+    "ast_hash": "2eb12079cf57c8a285918e5b3e7d5e83",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/sessionDraft.test.ts": {
+    "mtime": 1784580402.9956245,
+    "ast_hash": "e8bb91d1d5206229eeaadfd2f7fc20da",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/sessionStats.test.ts": {
+    "mtime": 1784566184.169675,
+    "ast_hash": "5ab9a717028e22c3def8016853d9ea58",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/sessions.test.ts": {
+    "mtime": 1784580392.6416218,
+    "ast_hash": "cd28987c3fbf85a24e9c8f35e44a3e8a",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/settings.test.ts": {
+    "mtime": 1784566099.823848,
+    "ast_hash": "cee155902c04c9a06fad10cd5ee9e2ad",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/settingsContext.test.tsx": {
+    "mtime": 1784566110.1011305,
+    "ast_hash": "e165404c73b7083f374c838231a28862",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/speech.test.ts": {
+    "mtime": 1784566156.884432,
+    "ast_hash": "7d6f6a9b03b1acbfdbf7e4fe6f3a12af",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/speedUnit.test.ts": {
+    "mtime": 1784566120.0657403,
+    "ast_hash": "f73d95f55af97415eafdcd07905b2384",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/timerComputation.test.ts": {
+    "mtime": 1784566130.478216,
+    "ast_hash": "2fd49d05385263fcd2e88166c0a56e35",
+    "semantic_hash": ""
+  },
+  "src/lib/__tests__/workout.test.ts": {
+    "mtime": 1784565756.3804538,
+    "ast_hash": "627f55dd83184664f42aaab594ca8ecb",
+    "semantic_hash": ""
+  },
+  "src/lib/sessionStats.ts": {
+    "mtime": 1784539233.4988976,
+    "ast_hash": "ef66ebe191c839a8574a1ae3cf3c41bb",
+    "semantic_hash": ""
+  }
+}

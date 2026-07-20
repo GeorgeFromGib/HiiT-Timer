@@ -49,6 +49,23 @@ export interface WorkoutAudioCues {
   stopKeepAlive(): void;
 }
 
+// Each cue below reads a different subset of AudioSettings' toggles: soundOff is a
+// global kill switch, soundCues/voiceCues/finalCountdownBeep gate specific cue
+// categories independently of each other. Named here so each cue's actual gate is
+// visible in one place instead of inlined ad hoc (and inconsistently) at each call
+// site. NOTE: soundCues does not gate onCountdown (finalCountdownBeep-only) or
+// onPrepare/onMidpoint (voiceCues-only) — preserved as-is from the prior inline
+// logic; this consolidation does not change which flags gate which cue.
+function soundCuesEnabled(s: AudioSettings): boolean {
+  return !s.soundOff && s.soundCues;
+}
+function voiceCuesEnabled(s: AudioSettings): boolean {
+  return !s.soundOff && s.voiceCues;
+}
+function finalCountdownBeepEnabled(s: AudioSettings): boolean {
+  return !s.soundOff && s.finalCountdownBeep;
+}
+
 export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
@@ -131,7 +148,7 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
   return useMemo<WorkoutAudioCues>(() => ({
     onTransition(to) {
       const s = settingsRef.current;
-      if (!to || s.soundOff || !s.soundCues) return;
+      if (!to || !soundCuesEnabled(s)) return;
       if (s.voiceCues) {
         speakPhase(to, s.language);
       } else {
@@ -140,16 +157,16 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     },
     onCountdown() {
       const s = settingsRef.current;
-      if (!s.soundOff && s.finalCountdownBeep) playCue('tick', s.soundVolume / 100);
+      if (finalCountdownBeepEnabled(s)) playCue('tick', s.soundVolume / 100);
     },
     onPrepare(nextPhase) {
       const s = settingsRef.current;
-      if (!s.voiceCues || s.soundOff) return;
+      if (!voiceCuesEnabled(s)) return;
       speakPrepare(nextPhase, s.language);
     },
     onFinish() {
       const s = settingsRef.current;
-      if (!s.soundOff && s.soundCues) {
+      if (soundCuesEnabled(s)) {
         if (s.voiceCues) {
           speakComplete(s.language, stopKeepAlive);
           return;
@@ -161,11 +178,11 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     },
     onPreStartTick() {
       const s = settingsRef.current;
-      if (!s.soundOff && s.soundCues) playCue('tick', s.soundVolume / 100);
+      if (soundCuesEnabled(s)) playCue('tick', s.soundVolume / 100);
     },
     onMidpoint() {
       const s = settingsRef.current;
-      if (!s.voiceCues || s.soundOff) return;
+      if (!voiceCuesEnabled(s)) return;
       waitForCuesToClear(Date.now() + MIDPOINT_MAX_WAIT_MS).then(() => {
         speakMidpoint(settingsRef.current.language);
       });

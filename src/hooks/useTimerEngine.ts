@@ -17,7 +17,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Segment, segmentIndexAt, totalDuration } from '../lib/workout';
-import { computeTimerSnapshot } from '../lib/timerComputation';
+import { computeTimerSnapshot, computeBeatSchedule } from '../lib/timerComputation';
 
 export interface TimerState {
   status: 'idle' | 'running' | 'paused' | 'finished';
@@ -86,13 +86,14 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
 
   // Schedule precise setTimeout for the prepare callback and countdown beats (3, 2, 1)
   // still in the future. Using setTimeout instead of polling eliminates the ±200ms jitter
-  // that comes from detecting beats inside the 200ms tick interval.
+  // that comes from detecting beats inside the 200ms tick interval. The delay math itself
+  // lives in computeBeatSchedule (timerComputation.ts) — this just orchestrates timeouts
+  // against the live segment refs.
   const scheduleBeats = (segIndex: number, remainingSeconds: number) => {
     clearBeats();
+    const { prepareDelayMs, beats } = computeBeatSchedule(remainingSeconds);
 
-    // Schedule prepare callback at 5 seconds before segment end
-    if (remainingSeconds >= 5) {
-      const delayMs = (remainingSeconds - 5) * 1000;
+    if (prepareDelayMs !== null) {
       beatTimeoutsRef.current.push(
         setTimeout(() => {
           if (statusRef.current === 'running') {
@@ -109,23 +110,19 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
 
             if (nextSeg) cbRef.current.onPrepare?.(nextSeg);
           }
-        }, delayMs),
+        }, prepareDelayMs),
       );
     }
 
-    // Schedule countdown beats (3, 2, 1)
-    [3, 2, 1].forEach((beat) => {
-      const delayMs = (remainingSeconds - beat) * 1000;
-      if (delayMs >= 0) {
-        beatTimeoutsRef.current.push(
-          setTimeout(() => {
-            if (statusRef.current === 'running') {
-              const seg = segmentsRef.current[segIndex];
-              if (seg) cbRef.current.onCountdown?.(beat, seg);
-            }
-          }, delayMs),
-        );
-      }
+    beats.forEach(({ beat, delayMs }) => {
+      beatTimeoutsRef.current.push(
+        setTimeout(() => {
+          if (statusRef.current === 'running') {
+            const seg = segmentsRef.current[segIndex];
+            if (seg) cbRef.current.onCountdown?.(beat, seg);
+          }
+        }, delayMs),
+      );
     });
   };
 

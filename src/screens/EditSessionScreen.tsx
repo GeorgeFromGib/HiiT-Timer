@@ -26,7 +26,6 @@ import { i18n, type Language, useTranslation } from '../lib/i18n';
 import { appAlert } from '../lib/appAlert';
 import PresetStrip from '../components/EditSession/PresetStrip';
 import TimePresetStrip from '../components/EditSession/TimePresetStrip';
-import WalkPresetList from '../components/EditSession/WalkPresetList';
 import IntervalSwipeRow from '../components/EditSession/IntervalSwipeRow';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import { SettingsToggle } from '../components/SettingsToggle';
@@ -65,7 +64,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     openInclinePicker, openIntervalInclinePicker, clearIntervalIncline, setInclineEnabled,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     commitPicker, dismissPicker,
-    applyDurationPreset, openCustomLengthPicker, applySpeedPreset, applyInclinePreset, applySpinPreset, applyWalkPreset,
+    applyDurationPreset, openCustomLengthPicker, applySpeedPreset, applyInclinePreset, applySpinPreset,
     setActivityLabel,
     buildSavePayload,
   } = useEditSession(existing, onBack, activityType, folderId);
@@ -74,7 +73,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     name, isAdvanced, isCircuit, isSpinning, fieldValues, rounds, intervals,
     previewSegments, previewTotal,
     activityType: draftActivityType, runSpeeds, runInclines, inclineEnabled, spinValues,
-    activeTimingPreset, targetLengthMinutes, activeSpeedPreset, activeInclinePreset, activeSpinPreset, activeWalkPreset, hasChanges,
+    activeTimingPreset, targetLengthMinutes, activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges,
     circuitWarmup, circuitCooldown, circuitRest, circuitCount,
   } = draft;
   const isRun = draftActivityType === 'run';
@@ -420,29 +419,18 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           ) : (
             <>
               {/* Easy mode timing */}
-              {!isWalk && (
-                <View style={styles.fieldGroup}>
-                  <Text style={styles.fieldLabel}>{t('edit.sessionLength')}</Text>
-                  <TimePresetStrip
-                    minutes={targetLengthMinutes}
-                    belowMin={previewTotal > 0 && previewTotal < MIN_TARGET_DURATION_MINUTES * 60}
-                    onCustom={openCustomLengthPicker}
-                  />
-                </View>
-              )}
+              <View style={styles.fieldGroup}>
+                <Text style={styles.fieldLabel}>{t('edit.sessionLength')}</Text>
+                <TimePresetStrip
+                  minutes={targetLengthMinutes}
+                  belowMin={previewTotal > 0 && previewTotal < MIN_TARGET_DURATION_MINUTES * 60}
+                  onCustom={openCustomLengthPicker}
+                />
+              </View>
 
               <View style={styles.fieldGroup}>
-                {isWalk ? (
-                  <>
-                    <Text style={styles.fieldLabel}>{t('edit.walkPresets')}</Text>
-                    <WalkPresetList activePreset={activeWalkPreset} onApply={applyWalkPreset} />
-                  </>
-                ) : (
-                  <>
-                    <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
-                    <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
-                  </>
-                )}
+                <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
+                <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
 
                 <Text style={[styles.fieldLabel, { marginTop: 8 }]}>
                   {t('edit.intervalSetup')}{previewTotal > 0 ? <Text style={styles.intervalSetupTotal}>{' '}[{fmtDuration(previewTotal)}]</Text> : null}
@@ -570,9 +558,12 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           {hasSpeed && !isAdvanced && !isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
-              {!isWalk && (
-                <PresetStrip onApply={applySpeedPreset} activePreset={activeSpeedPreset} lowLabel={t('edit.presetBriskWalk')} highLabel={t('edit.presetHardRun')} />
-              )}
+              <PresetStrip
+                onApply={applySpeedPreset}
+                activePreset={activeSpeedPreset}
+                lowLabel={isWalk ? undefined : t('edit.presetBriskWalk')}
+                highLabel={isWalk ? undefined : t('edit.presetHardRun')}
+              />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => {
                   const isPhaseDisabled = (field === 'warmupSpeed' && fieldValues.warmup === 0)

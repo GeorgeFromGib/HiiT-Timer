@@ -7,10 +7,9 @@ import {
   DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES, DEFAULT_SPIN_VALUES,
 } from '../lib/sessions';
 import {
-  type PresetLevel, SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS,
+  type PresetLevel, SPEED_PRESETS, WALK_SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS,
   findMatchingSpeedPreset, findMatchingInclinePreset, findMatchingSpinPreset,
 } from '../lib/presets';
-import { WALK_SPEED_PRESETS } from '../lib/walkPresets';
 
 export interface SpeedAndSpinEdit {
   runSpeeds:          RunSpeeds;

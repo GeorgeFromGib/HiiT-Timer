@@ -89,10 +89,6 @@ export const es: typeof en = {
     roundAbbr: 'rda',
     circuit: 'SERIE',
     nextCircuit: 'PRÓXIMA SERIE',
-    effort: {
-      easy:  'Fácil',
-      brisk: 'Enérgico',
-    },
   },
   complete: {
     eyebrow:       'ENTRENAMIENTO COMPLETO',
@@ -239,11 +235,6 @@ export const es: typeof en = {
     inclinePresets:   'PREAJUSTES DE INCLINACIÓN',
     treadmillIncline: 'INCLINACIÓN (%)',
     useIncline:       'Usar Inclinación',
-    walkPresets:            'PREAJUSTES DE CAMINATA',
-    walkPresetContinuous:   'Continuo',
-    walkPresetRounds:       '%{count} rondas',
-    walkPresetIntervalDetail: '%{warmup} calentamiento + %{rounds}× (%{work} enérgico / %{rest} fácil) + %{cooldown} enfriamiento',
-    walkPresetLevel: 'Nivel %{level} - %{name}',
   },
   picker: {
     rounds: 'rondas',
@@ -267,7 +258,6 @@ export const es: typeof en = {
     overwriteSpeedMessage: 'Aplicar este preajuste reemplazará tus ajustes de velocidad actuales.',
     overwriteSpinMessage:  'Aplicar este preajuste reemplazará tus ajustes de resistencia y potencia actuales.',
     overwriteInclineMessage: 'Aplicar este preajuste reemplazará tus ajustes de inclinación actuales.',
-    overwriteWalkMessage: 'Aplicar este preajuste reemplazará tus ajustes de tiempo y velocidad actuales.',
     apply: 'Aplicar',
     cancel: 'Cancelar',
     unsavedTitle: 'Cambios sin guardar',
@@ -327,14 +317,6 @@ export const es: typeof en = {
       circuitRest: 'Prepárate para el descanso',
       finish:      'Prepárate para terminar',
     },
-  },
-  walkPresets: {
-    l1: { name: 'Primeros Pasos',        cue: 'Un ritmo al que podrías mantener una conversación' },
-    l2: { name: 'Asentando el Paso',     cue: 'El mismo ritmo fácil y conversacional' },
-    l3: { name: 'Encontrando el Ritmo',  cue: 'Primer contacto con la variación de esfuerzo — enérgico significa respirar un poco más fuerte' },
-    l4: { name: 'Aumentando el Ritmo',   cue: 'La proporción se inclina hacia más tiempo enérgico' },
-    l5: { name: 'Progreso Constante',    cue: 'División 50/50 entre fácil y enérgico' },
-    l6: { name: 'Caminante Confiado',    cue: 'El ritmo enérgico predomina — el puente hacia las sesiones de Cinta de correr' },
   },
   defaultSessions: {
     example1: 'Ejemplo Estándar',

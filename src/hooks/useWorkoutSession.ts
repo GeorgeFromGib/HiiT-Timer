@@ -6,21 +6,13 @@ import { useHapticBurst } from './useHapticBurst';
 import { reindexSegments, Segment, totalDuration } from '../lib/workout';
 import { DEFAULT_SETTINGS, type Settings } from '../lib/settings';
 import { getCongratsMessages } from '../lib/i18n';
+import {
+  ZERO_STATS, applySkip, applySkipBack, applyExtend, applyAddRound,
+  type SessionStats,
+} from '../lib/sessionStats';
 
+export type { SessionStats };
 export type WorkoutStatus = 'idle' | 'preStart' | 'running' | 'paused' | 'finished';
-
-// Session-summary deltas caused by skip/skipBack/extend/addRound — what
-// SessionCompleteScreen needs to recap "what actually happened" vs. the plan.
-export interface SessionStats {
-  skippedCount:      number;
-  skippedSecs:       number;
-  skippedWorkSecs:   number;
-  extendedSecs:      number;
-  addedRoundSecs:    number;
-  skipBackSecs:      number;
-  skipBackWorkSecs:  number;
-  skipBackWorkCount: number;
-}
 
 export interface WorkoutSession {
   status: WorkoutStatus;
@@ -116,14 +108,7 @@ export function useWorkoutSession(
     }
   }, [countdown, state.status, pause, resume, hapticBurst]);
 
-  const [skippedCount,      setSkippedCount]      = useState(0);
-  const [skippedSecs,       setSkippedSecs]       = useState(0);
-  const [skippedWorkSecs,   setSkippedWorkSecs]   = useState(0);
-  const [extendedSecs,      setExtendedSecs]      = useState(0);
-  const [addedRoundSecs,    setAddedRoundSecs]    = useState(0);
-  const [skipBackSecs,      setSkipBackSecs]      = useState(0);
-  const [skipBackWorkSecs,  setSkipBackWorkSecs]  = useState(0);
-  const [skipBackWorkCount, setSkipBackWorkCount] = useState(0);
+  const [stats, setStats] = useState<SessionStats>(ZERO_STATS);
 
   const reset = useCallback(() => {
     hapticBurst.cancel();
@@ -131,43 +116,27 @@ export function useWorkoutSession(
     cues.stopKeepAlive();
     engineReset();
     midpointFiredRef.current = false;
-    setSkippedCount(0);
-    setSkippedSecs(0);
-    setSkippedWorkSecs(0);
-    setExtendedSecs(0);
-    setAddedRoundSecs(0);
-    setSkipBackSecs(0);
-    setSkipBackWorkSecs(0);
-    setSkipBackWorkCount(0);
+    setStats(ZERO_STATS);
   }, [countdown, cues, engineReset, hapticBurst]);
 
   const skip = useCallback(() => {
-    setSkippedCount(c => c + 1);
-    setSkippedSecs(s => s + Math.ceil(state.remainingInSegment));
+    if (state.status === 'idle' || state.status === 'finished') return;
     const seg = getSegments()[state.currentIndex];
-    if (seg && seg.phase === 'work') {
-      setSkippedWorkSecs(s => s + Math.ceil(state.remainingInSegment));
-    }
+    setStats(s => applySkip(s, seg, state.remainingInSegment));
     engineSkip();
-  }, [engineSkip, getSegments, state.remainingInSegment, state.currentIndex]);
+  }, [engineSkip, getSegments, state.remainingInSegment, state.currentIndex, state.status]);
 
   const skipBack = useCallback(() => {
     const segs = getSegments();
     const seg = segs[state.currentIndex];
-    if (seg) {
-      const prevSeg = segs[state.currentIndex - 1];
-      const backSecs = Math.ceil(state.elapsed - (prevSeg ? prevSeg.startAt : 0));
-      setSkipBackSecs(s => s + backSecs);
-      if (seg.phase === 'work') {
-        setSkipBackWorkSecs(s => s + backSecs);
-        setSkipBackWorkCount(c => c + 1);
-      }
-    }
+    const prevSeg = segs[state.currentIndex - 1];
+    const backSecs = Math.ceil(state.elapsed - (prevSeg ? prevSeg.startAt : 0));
+    setStats(s => applySkipBack(s, seg, backSecs));
     engineSkipBack();
   }, [engineSkipBack, getSegments, state.currentIndex, state.elapsed]);
 
   const extend = useCallback((secs: number): Segment[] => {
-    setExtendedSecs(s => s + secs);
+    setStats(s => applyExtend(s, secs));
     return engineExtend(secs);
   }, [engineExtend]);
 
@@ -180,7 +149,7 @@ export function useWorkoutSession(
     const inserted = reindexSegments(segsToInsert, insertionCursor, before.length);
     const afterCursor = inserted.length ? inserted[inserted.length - 1].endAt : insertionCursor;
     const recalcAfter = reindexSegments(after, afterCursor, before.length + inserted.length);
-    setAddedRoundSecs(s => s + segsToInsert.reduce((sum, seg) => sum + seg.duration, 0));
+    setStats(s => applyAddRound(s, segsToInsert.reduce((sum, seg) => sum + seg.duration, 0)));
     return replaceSegments([...before, ...inserted, ...recalcAfter]);
   }, [getSegments, replaceSegments]);
 
@@ -192,10 +161,7 @@ export function useWorkoutSession(
     remainingInSegment: state.remainingInSegment,
     remainingTotal: state.remainingTotal,
     congratsMsg,
-    stats: {
-      skippedCount, skippedSecs, skippedWorkSecs, extendedSecs,
-      addedRoundSecs, skipBackSecs, skipBackWorkSecs, skipBackWorkCount,
-    },
+    stats,
     handlePlayPause,
     reset,
     skip,

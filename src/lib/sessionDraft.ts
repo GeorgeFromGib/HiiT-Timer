@@ -1,6 +1,5 @@
 import { newId, type Session, type RunSpeeds, type RunInclines, type SpinValues } from './sessions';
 import { type Interval } from './workout';
-import { type PresetLevel } from './presets';
 
 export function buildSessionFromDraft(
   mode: 'easy' | 'advanced' | 'circuit',
@@ -15,7 +14,6 @@ export function buildSessionFromDraft(
   runInclines: RunInclines,
   inclineEnabled: boolean,
   folderId: string,
-  walkPresetLevel?: PresetLevel | null,
 ): Session {
   const base = { id: existingId ?? newId(), name, folderId };
   if (mode === 'circuit') {
@@ -34,7 +32,7 @@ export function buildSessionFromDraft(
   }
   const activityProps =
     activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds, runInclines, inclineEnabled } :
-    activityType === 'walk'     ? { activityType: 'walk'     as const, runSpeeds, walkPresetLevel: walkPresetLevel ?? undefined } :
+    activityType === 'walk'     ? { activityType: 'walk'     as const, runSpeeds } :
     activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues: spinValues! } :
     {};
   if (mode === 'easy') {

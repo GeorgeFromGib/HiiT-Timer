@@ -32,7 +32,7 @@ import SettingsScreen from './src/screens/SettingsScreen';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import OnboardingModal, { CURRENT_ONBOARDING_VERSION } from './src/components/OnboardingModal';
 import AppAlertModal from './src/components/AppAlertModal';
-import type { Route } from './src/navigation';
+import { useNavigationStack } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { type ThemeKey } from './src/lib/settings';
 import { SettingsContext } from './src/lib/settingsContext';
@@ -63,18 +63,9 @@ export default function App() {
 
   const [audioReady, setAudioReady] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [route, setRouteState] = useState<Route>({ name: 'Sessions' });
-  const [previousRoute, setPreviousRoute] = useState<Route>({ name: 'Sessions' });
+  const { route, navigate, goBack, resetTo } = useNavigationStack({ name: 'Sessions' });
   const { settings, loading: settingsLoading, updateSettings } = useSettingsState();
   const premiumState = usePremiumState();
-
-  const setRoute = (newRoute: Route) => {
-    // Don't update previous route when navigating back to it
-    if (newRoute.name !== previousRoute.name) {
-      setPreviousRoute(route);
-    }
-    setRouteState(newRoute);
-  };
 
   useEffect(() => {
     configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));
@@ -86,7 +77,7 @@ export default function App() {
     // Set initial route based on folder settings — a one-shot decision made when
     // settings finish loading, not a reactive response to later settings changes.
     if (!settings.hideFolders) {
-      setRouteState({ name: 'Folders' });
+      resetTo({ name: 'Folders' });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingsLoading]);
@@ -101,7 +92,6 @@ export default function App() {
 
   if (!fontsLoaded || !audioReady) return null;
 
-  const goBack = () => setRoute(previousRoute);
   const themeKey = settings.theme;
   const T = THEME_TOKENS[themeKey];
 
@@ -126,27 +116,27 @@ export default function App() {
       {route.name === 'Settings' && (
         <RouteScreen>
           <SettingsScreen
-            onBack={() => setRoute(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
-            onPrivacyPolicy={() => setRoute({ name: 'PrivacyPolicy' })}
+            onBack={() => navigate(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
+            onPrivacyPolicy={() => navigate({ name: 'PrivacyPolicy' })}
           />
         </RouteScreen>
       )}
       {route.name === 'PrivacyPolicy' && (
         <RouteScreen>
-          <PrivacyPolicyScreen onBack={() => setRoute({ name: 'Settings' })} />
+          <PrivacyPolicyScreen onBack={goBack} />
         </RouteScreen>
       )}
       {route.name === 'Folders' && (
-        <RouteScreen><FoldersScreen onNavigate={setRoute} /></RouteScreen>
+        <RouteScreen><FoldersScreen onNavigate={navigate} /></RouteScreen>
       )}
       {route.name === 'Sessions' && (
-        <RouteScreen><SessionsListScreen folderId={route.folderId} onNavigate={setRoute} /></RouteScreen>
+        <RouteScreen><SessionsListScreen folderId={route.folderId} onNavigate={navigate} /></RouteScreen>
       )}
       <OnboardingModal
         visible={showOnboarding}
         onConfirm={showFolders => {
           setShowOnboarding(false);
-          setRoute(showFolders ? { name: 'Folders' } : { name: 'Sessions' });
+          resetTo(showFolders ? { name: 'Folders' } : { name: 'Sessions' });
         }}
       />
       <AppAlertModal />

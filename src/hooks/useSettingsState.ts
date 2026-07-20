@@ -11,6 +11,28 @@ export interface SettingsState {
   updateSettings: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
 }
 
+// The single place that owns "use the saved value if the user manually set it,
+// otherwise fall back to the device's auto-detected default" for speedUnit/language.
+function resolveAutoDetected(saved: Settings): Settings {
+  return {
+    ...saved,
+    speedUnit: saved.speedUnitIsManuallySet ? saved.speedUnit : detectSpeedUnit(),
+    language:  saved.languageIsManuallySet  ? saved.language  : detectLanguage(),
+  };
+}
+
+// The single place that records "the user explicitly picked this" for the two
+// fields that carry a manual-override flag alongside their value.
+function withManualOverride<K extends keyof Settings>(prev: Settings, key: K, value: Settings[K]): Settings {
+  if (key === ('speedUnit' satisfies keyof Settings)) {
+    return { ...prev, speedUnit: value as Settings['speedUnit'], speedUnitIsManuallySet: true };
+  }
+  if (key === ('language' satisfies keyof Settings)) {
+    return { ...prev, language: value as Settings['language'], languageIsManuallySet: true };
+  }
+  return { ...prev, [key]: value };
+}
+
 export function useSettingsState(): SettingsState {
   const [settings, setSettings] = useState<Settings>({
     ...DEFAULT_SETTINGS,
@@ -20,27 +42,22 @@ export function useSettingsState(): SettingsState {
 
   useEffect(() => {
     loadSettings().then(s => {
-      const resolved: Settings = {
-        ...s,
-        speedUnit: s.speedUnitIsManuallySet ? s.speedUnit : detectSpeedUnit(),
-        language:  s.languageIsManuallySet  ? s.language  : detectLanguage(),
-      };
-      i18n.locale = resolved.language;
+      const resolved = resolveAutoDetected(s);
       setSettings(resolved);
       setLoading(false);
       if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
     });
   }, []);
 
+  // Single place the i18n locale global gets synced from settings — replaces two
+  // separate imperative `i18n.locale = ...` writes that could drift out of step.
+  useEffect(() => {
+    i18n.locale = settings.language;
+  }, [settings.language]);
+
   function updateSettings<K extends keyof Settings>(key: K, value: Settings[K]) {
-    if (key === ('language' satisfies keyof Settings)) i18n.locale = value as 'en' | 'es';
     setSettings(prev => {
-      const next: Settings =
-        key === ('speedUnit' satisfies keyof Settings)
-          ? { ...prev, speedUnit: value as 'km' | 'miles', speedUnitIsManuallySet: true }
-          : key === ('language' satisfies keyof Settings)
-            ? { ...prev, language: value as 'en' | 'es', languageIsManuallySet: true }
-            : { ...prev, [key]: value };
+      const next = withManualOverride(prev, key, value);
       saveSettings(next);
       return next;
     });
