@@ -14,6 +14,7 @@ import { useSettings } from '../lib/settingsContext';
 import { useTranslation } from '../lib/i18n';
 import { usePremium } from '../lib/premiumContext';
 import { setForceNextReview } from '../lib/reviewState';
+import { checkForUpdate } from '../lib/versionCheck';
 import { SettingsToggle } from '../components/SettingsToggle';
 import { SettingsRow } from '../components/SettingsRow';
 import { SettingsSection } from '../components/SettingsSection';
@@ -244,6 +245,11 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
                   onChange={v => updateSettings('onboardingVersion', v ? 0 : CURRENT_ONBOARDING_VERSION)}
                 />
               }
+            />
+            <SettingsRow
+              label="Force update prompt"
+              sub="Show the update-available alert now (iOS only)"
+              right={<Pressable onPress={() => checkForUpdate(true)} style={styles.devBtn}><Text style={styles.devBtnText}>Trigger</Text></Pressable>}
               last
             />
           </SettingsSection>

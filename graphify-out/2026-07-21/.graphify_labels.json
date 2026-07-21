@@ -122,7 +122,6 @@
   "120": "ClearHiiT-Bridging-Header.h",
   "121": "task-4-fix-report.md",
   "122": "i18n.ts",
-  "123": "useEditSession.ts",
   "124": "react",
   "125": "FolderHeader.tsx",
   "126": "App.tsx",
@@ -133,12 +132,10 @@
   "131": "IntervalSwipeRow.tsx",
   "132": "PickerModal.tsx",
   "133": "useTheme",
-  "134": "Session",
   "135": "reviewState.ts",
   "136": "useHapticBurst.ts",
   "138": "typography.ts",
   "140": "scripts",
   "141": "package.json",
-  "142": "jest",
-  "146": "useIntervalListEdit.test.ts"
+  "142": "jest"
 }

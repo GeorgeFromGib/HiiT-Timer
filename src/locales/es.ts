@@ -279,6 +279,10 @@ export const es: typeof en = {
     shortWarmupCooldownMessage: 'No se recomiendan periodos de calentamiento o enfriamiento inferiores a 5 minutos.',
     roundsChangeLengthTitle: 'La duración de la sesión cambiará',
     roundsChangeLengthMessage: 'Cambiar el número de rondas cambiará la duración de tu sesión.',
+    updateAvailableTitle: 'Actualización disponible',
+    updateAvailableMessage: 'Hay una nueva versión (%{version}) de Clear HiiT disponible.',
+    updateNow: 'Actualizar ahora',
+    later: 'Más tarde',
   },
   validation: {
     noWorkIntervals: 'No se encontraron intervalos de trabajo.',

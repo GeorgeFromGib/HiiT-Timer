@@ -279,6 +279,10 @@ export const fr: typeof en = {
     shortWarmupCooldownMessage: 'Les périodes d\'échauffement et de récupération de moins de 5 minutes ne sont pas recommandées.',
     roundsChangeLengthTitle: 'La durée de la séance va changer',
     roundsChangeLengthMessage: 'Modifier le nombre de tours changera la durée de votre séance.',
+    updateAvailableTitle: 'Mise à jour disponible',
+    updateAvailableMessage: 'Une nouvelle version (%{version}) de Clear HiiT est disponible.',
+    updateNow: 'Mettre à jour',
+    later: 'Plus tard',
   },
   validation: {
     noWorkIntervals: 'Aucun intervalle de travail trouvé.',

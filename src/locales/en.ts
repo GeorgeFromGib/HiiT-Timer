@@ -277,6 +277,10 @@ export const en = {
     shortWarmupCooldownMessage: 'Warm-up and cool-down periods of less than 5 minutes are not recommended.',
     roundsChangeLengthTitle: 'Session length will change',
     roundsChangeLengthMessage: 'Changing the number of rounds will change your session length.',
+    updateAvailableTitle: 'Update available',
+    updateAvailableMessage: 'A new version (%{version}) of Clear HiiT is available.',
+    updateNow: 'Update Now',
+    later: 'Later',
   },
   validation: {
     noWorkIntervals: 'No work intervals found.',

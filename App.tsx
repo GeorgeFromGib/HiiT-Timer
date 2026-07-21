@@ -40,6 +40,7 @@ import { PremiumContext } from './src/lib/premiumContext';
 import { usePremiumState } from './src/hooks/usePremiumState';
 import { useSettingsState } from './src/hooks/useSettingsState';
 import { configureAudioSession } from './src/lib/audio';
+import { checkForUpdate } from './src/lib/versionCheck';
 
 function RouteScreen({ children }: { children: ReactNode }) {
   const { themeKey } = useTheme();
@@ -69,6 +70,10 @@ export default function App() {
 
   useEffect(() => {
     configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));
+  }, []);
+
+  useEffect(() => {
+    checkForUpdate();
   }, []);
 
   useEffect(() => {
