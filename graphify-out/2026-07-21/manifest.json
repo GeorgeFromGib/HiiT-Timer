@@ -25,7 +25,7 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/AppDelegate.swift": {
-    "mtime": 1784476861.8895578,
+    "mtime": 1784637386.9164336,
     "ast_hash": "7b4732bf9de8da05ae1ebcf616bdb672",
     "semantic_hash": ""
   },
@@ -35,7 +35,7 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/Contents.json": {
-    "mtime": 1784476861.8266094,
+    "mtime": 1784637386.8633363,
     "ast_hash": "e753dae9a3ae1e8aeb8f44742ea0614b",
     "semantic_hash": ""
   },
@@ -45,17 +45,17 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenBackground.colorset/Contents.json": {
-    "mtime": 1784476861.8277586,
+    "mtime": 1784637386.8644655,
     "ast_hash": "f6f8bf5ba47b872d1c259aed54d7735e",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/Contents.json": {
-    "mtime": 1784476861.8292098,
+    "mtime": 1784637386.8654053,
     "ast_hash": "a84d44e2229df0082c16210906e94575",
     "semantic_hash": ""
   },
   "ios/Podfile.properties.json": {
-    "mtime": 1784476861.8983202,
+    "mtime": 1784637386.9293895,
     "ast_hash": "955f7192d4f15f1636684369fcec97ee",
     "semantic_hash": ""
   },
@@ -195,13 +195,13 @@
     "semantic_hash": ""
   },
   "src/hooks/useEasyModeEdit.ts": {
-    "mtime": 1784226318.1359472,
-    "ast_hash": "8a1af57b9676c33b2e471136f6f4c566",
+    "mtime": 1784638961.4304442,
+    "ast_hash": "40425dd6c1fdb8599b104f53247d0781",
     "semantic_hash": ""
   },
   "src/hooks/useEditSession.ts": {
-    "mtime": 1784580509.428516,
-    "ast_hash": "2540f8b7fc276f1e8da781361c0f537d",
+    "mtime": 1784638977.089751,
+    "ast_hash": "845c87199ccf2d58930e8476b2507e9b",
     "semantic_hash": ""
   },
   "src/hooks/useGatedAction.ts": {
@@ -255,8 +255,8 @@
     "semantic_hash": ""
   },
   "src/lib/presets.ts": {
-    "mtime": 1784580616.3949397,
-    "ast_hash": "7d1e1511d347e16acc0438a85e216221",
+    "mtime": 1784638281.311605,
+    "ast_hash": "caf971a6fbd9339882428c8530e01e3e",
     "semantic_hash": ""
   },
   "src/lib/purchases.ts": {
@@ -330,8 +330,8 @@
     "semantic_hash": ""
   },
   "src/screens/EditSessionScreen.tsx": {
-    "mtime": 1784580509.4393466,
-    "ast_hash": "0f1867d33525ee7cdee2e6481a6c40cb",
+    "mtime": 1784639410.084428,
+    "ast_hash": "28761d64bd80e1e79fff724bf3dd962f",
     "semantic_hash": ""
   },
   "src/screens/FoldersScreen.tsx": {
@@ -985,22 +985,22 @@
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/AppIcon.appiconset/App-Icon-1024x1024@1x.png": {
-    "mtime": 1784476861.8260686,
+    "mtime": 1784637386.8628776,
     "ast_hash": "2dd2b6b54a7c5286ffeea0f3ece700eb",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image.png": {
-    "mtime": 1784476861.8304904,
+    "mtime": 1784637386.8668356,
     "ast_hash": "6f87b0a871a1756a75db60656668ff29",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@2x.png": {
-    "mtime": 1784476861.8303664,
+    "mtime": 1784637386.8667858,
     "ast_hash": "8633af12c656bf5c5bb1df971a874053",
     "semantic_hash": ""
   },
   "ios/ClearHiiT/Images.xcassets/SplashScreenLogo.imageset/image@3x.png": {
-    "mtime": 1784476861.8304858,
+    "mtime": 1784637386.8667889,
     "ast_hash": "283870fcb8877b6b15b06517bbd4c89b",
     "semantic_hash": ""
   },
@@ -1115,8 +1115,8 @@
     "semantic_hash": ""
   },
   "src/lib/intensityPresets.ts": {
-    "mtime": 1784271916.0174341,
-    "ast_hash": "0d42c03bc14b384cf3ff0f1c4d16bffb",
+    "mtime": 1784638932.9406333,
+    "ast_hash": "0e294aeb61a08f0f3983ef6f503a2219",
     "semantic_hash": ""
   },
   "src/hooks/useSettingsState.ts": {
