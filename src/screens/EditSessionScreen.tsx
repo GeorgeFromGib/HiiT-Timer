@@ -250,31 +250,32 @@ export default function EditSessionScreen({ session: existing, activityType, fol
             </View>
           </View>
 
-          {/* Mode toggle — hidden for circuit sessions */}
+          {/* Mode toggle — hidden for circuit sessions; Use Incline toggle shares the line, right-aligned, Treadmill only */}
           {!isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.setupMode')}</Text>
-              <View style={styles.modeToggleRow}>
-                <Text style={[styles.modeToggleLabel, { color: !isAdvanced ? T.accent : T.subText }]}>{t('edit.easy')}</Text>
-                <Switch
-                  value={isAdvanced}
-                  onValueChange={toggleMode}
-                  trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
-                  thumbColor={T.accent}
-                />
-                <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>{t('edit.advanced')}</Text>
-              </View>
-            </View>
-          )}
-
-          {/* Use Incline toggle — Treadmill only; opts a session out of incline entirely */}
-          {isRun && (
-            <View style={styles.fieldGroup}>
-              <View style={styles.configRow}>
-                <View style={[styles.configRowInline, { justifyContent: 'space-between' }]}>
-                  <Text style={styles.fieldLabel}>{t('edit.useIncline')}</Text>
-                  <SettingsToggle value={inclineEnabled} onChange={setInclineEnabled} />
+              <View style={[styles.modeToggleRow, { justifyContent: 'space-between' }]}>
+                <View style={styles.modeToggleRow}>
+                  <Text style={[styles.modeToggleLabel, { color: !isAdvanced ? T.accent : T.subText }]}>{t('edit.easy')}</Text>
+                  <Switch
+                    value={isAdvanced}
+                    onValueChange={toggleMode}
+                    trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
+                    thumbColor={T.accent}
+                  />
+                  <Text style={[styles.modeToggleLabel, { color: isAdvanced ? T.accent : T.subText }]}>{t('edit.advanced')}</Text>
                 </View>
+                {isRun && (
+                  <View style={styles.modeToggleRow}>
+                    <Text style={[styles.modeToggleLabel, { color: inclineEnabled ? T.accent : T.subText }]}>{t('edit.useIncline')}</Text>
+                    <Switch
+                      value={inclineEnabled}
+                      onValueChange={setInclineEnabled}
+                      trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
+                      thumbColor={T.accent}
+                    />
+                  </View>
+                )}
               </View>
             </View>
           )}

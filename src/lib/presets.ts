@@ -39,12 +39,12 @@ export const SPEED_PRESETS: Record<PresetLevel, SpeedPreset> = {
 // Same 1–6 levels as SPEED_PRESETS, walking-appropriate paces — drives the speed preset dial
 // for Outdoor Walk sessions instead of Treadmill's SPEED_PRESETS.
 export const WALK_SPEED_PRESETS: Record<PresetLevel, SpeedPreset> = {
-  '1': { warmupSpeed: 4.0, workSpeed: 4.0, restSpeed: 4.0, cooldownSpeed: 4.0 },
-  '2': { warmupSpeed: 4.0, workSpeed: 4.0, restSpeed: 4.0, cooldownSpeed: 4.0 },
-  '3': { warmupSpeed: 4.5, workSpeed: 5.5, restSpeed: 4.5, cooldownSpeed: 4.5 },
-  '4': { warmupSpeed: 4.8, workSpeed: 5.8, restSpeed: 4.8, cooldownSpeed: 4.8 },
-  '5': { warmupSpeed: 5.0, workSpeed: 6.2, restSpeed: 5.0, cooldownSpeed: 5.0 },
-  '6': { warmupSpeed: 5.3, workSpeed: 6.8, restSpeed: 5.3, cooldownSpeed: 5.3 },
+  '1': { warmupSpeed: 3.5, workSpeed: 4.8, restSpeed: 3.8, cooldownSpeed: 3.5 },
+  '2': { warmupSpeed: 4.0, workSpeed: 5.8, restSpeed: 4.3, cooldownSpeed: 4.0 },
+  '3': { warmupSpeed: 4.5, workSpeed: 6.5, restSpeed: 4.8, cooldownSpeed: 4.3 },
+  '4': { warmupSpeed: 5.0, workSpeed: 7.2, restSpeed: 5.2, cooldownSpeed: 4.5 },
+  '5': { warmupSpeed: 5.2, workSpeed: 8.0, restSpeed: 5.5, cooldownSpeed: 4.8 },
+  '6': { warmupSpeed: 5.5, workSpeed: 8.8, restSpeed: 5.8, cooldownSpeed: 5.0 },
 };
 
 // Levels map to spinning intensity zones: Recovery → Easy Endurance → Steady Tempo → Threshold → VO2 Push → Max Sprint

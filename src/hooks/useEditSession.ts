@@ -8,7 +8,7 @@ import {
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel } from '../lib/presets';
-import { INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
+import { INTENSITY_PRESETS, WALK_INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
 import {
   totalDuration, expandCircuit, computeRoundsForTargetDuration,
   type Interval, type Phase, type Segment,
@@ -141,7 +141,7 @@ export function useEditSession(
   const initialName = useRef(existing?.name ?? '').current;
 
   // Mode sub-hooks
-  const easyEdit     = useEasyModeEdit(existing);
+  const easyEdit     = useEasyModeEdit(existing, activityType);
   const circuitEdit  = useCircuitModeEdit(existing);
   const intervalEdit = useIntervalListEdit(existing);
   const speedSpinEdit = useSpeedAndSpinEdit(existing, activityType);
@@ -289,7 +289,7 @@ export function useEditSession(
   }
 
   function applyDurationPreset(level: PresetLevel) {
-    const p = INTENSITY_PRESETS[level];
+    const p = (activityType === 'walk' ? WALK_INTENSITY_PRESETS : INTENSITY_PRESETS)[level];
     const doApply = () => {
       const rounds = computeRoundsForTargetDuration(
         easyEdit.fieldValues.warmup, p.work, p.rest, easyEdit.fieldValues.cooldown,

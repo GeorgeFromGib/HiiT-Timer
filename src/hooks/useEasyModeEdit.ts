@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { useDraft } from './useDraft';
 import { type Session } from '../lib/sessions';
 import { type PresetLevel } from '../lib/presets';
-import { findMatchingIntensityPreset } from '../lib/intensityPresets';
+import { findMatchingIntensityPreset, WALK_INTENSITY_PRESETS, INTENSITY_PRESETS } from '../lib/intensityPresets';
 import { type TimeField } from './editSessionTypes';
 
 type EasyConfig = { warmup: number; high: number; low: number; rounds: number; cooldown: number };
@@ -25,7 +25,10 @@ export interface EasyModeEdit {
 
 const DEFAULTS = { warmup: 30, work: 30, rest: 15, rounds: 4, cooldown: 30 };
 
-export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
+export function useEasyModeEdit(
+  initial: Session | undefined,
+  activityType?: 'run' | 'walk' | 'spinning',
+): EasyModeEdit {
   const initW  = initial?.mode === 'easy' ? initial.config.warmup   : DEFAULTS.warmup;
   const initWk = initial?.mode === 'easy' ? initial.config.high     : DEFAULTS.work;
   const initR  = initial?.mode === 'easy' ? initial.config.low      : DEFAULTS.rest;
@@ -38,9 +41,11 @@ export function useEasyModeEdit(initial: Session | undefined): EasyModeEdit {
   const [rounds_,  setRounds_]  = useState(initRd);
   const [cooldown, setCooldown] = useState(initC);
 
+  const intensityPresetSource = activityType === 'walk' ? WALK_INTENSITY_PRESETS : INTENSITY_PRESETS;
+
   const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() =>
     initial?.mode === 'easy'
-      ? findMatchingIntensityPreset(initial.config.high, initial.config.low)
+      ? findMatchingIntensityPreset(initial.config.high, initial.config.low, intensityPresetSource)
       : null
   );
 
