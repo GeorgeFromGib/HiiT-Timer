@@ -1323,5 +1323,10 @@
     "mtime": 1784644906.7479784,
     "ast_hash": "f5206d39247753d7fa53ea3626b1fa06",
     "semantic_hash": ""
+  },
+  "src/lib/__tests__/versionCheck.test.ts": {
+    "mtime": 1784645400.6235058,
+    "ast_hash": "0d9a48c67036d00d8e3e1dbd38c2eefe",
+    "semantic_hash": ""
   }
 }
