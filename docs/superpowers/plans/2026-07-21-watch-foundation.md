@@ -6,7 +6,7 @@
 
 **Goal:** Add a minimal, buildable watchOS App target to the existing `ClearHiiT` Xcode project, proving the scaffolding works end-to-end (target exists, builds, installs on a paired watch simulator) before any real feature code (Core Data/CloudKit sync, session engine, HealthKit) is written on top of it.
 
-**Architecture:** A second Xcode target, `ClearHiiTWatch`, is added directly to `ios/ClearHiiT.xcodeproj` via Xcode's target wizard and embedded in the existing `ClearHiiT` companion app via the auto-generated "Embed Watch Content" build phase. No CocoaPods, no Expo config-plugin involvement — the watch target uses only first-party Apple frameworks (SwiftUI to start; Core Data/CloudKit/HealthKit/WatchConnectivity come in later plans).
+**Architecture:** A second Xcode target, `ClearHiiTWatch Watch App` (product name entered in the Xcode wizard; bundle id `com.georgefromgib.hiittimer.watchkitapp`), is added directly to `ios/ClearHiiT.xcodeproj` via Xcode's target wizard and embedded in the existing `ClearHiiT` companion app via the auto-generated "Embed Watch Content" build phase. No CocoaPods, no Expo config-plugin involvement — the watch target uses only first-party Apple frameworks (SwiftUI to start; Core Data/CloudKit/HealthKit/WatchConnectivity come in later plans).
 
 **Tech Stack:** Xcode 26.6, Swift 5.x/SwiftUI, watchOS Simulator (via `xcrun simctl`), no third-party dependencies.
 
@@ -64,20 +64,22 @@ Expected: no error (or "already booted" if the iPhone sim was already running).
 
 ---
 
-### Task 2: Add the `ClearHiiTWatch` target in Xcode
+### Task 2: Add the `ClearHiiTWatch Watch App` target in Xcode
+
+> **Deviation note (recorded during execution):** the plan originally specified product name `ClearHiiTWatch`. The target was actually created with product name `ClearHiiTWatch Watch App` (Xcode's default suggestion), which is what the target, scheme, app bundle, and folder are named below. The bundle identifier, team, and watchOS deployment target all landed exactly as specified — only the display/target name has the extra " Watch App" suffix. Confirmed via `xcodebuild -showBuildSettings`: `DEVELOPMENT_TEAM = KM666T7T27`, `PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.watchkitapp`, `WATCHOS_DEPLOYMENT_TARGET = 10.0`.
 
 **Files:**
 - Modify: `ios/ClearHiiT.xcodeproj/project.pbxproj` (via Xcode GUI — do not hand-edit)
-- Create: `ios/ClearHiiTWatch/ClearHiiTWatchApp.swift`
-- Create: `ios/ClearHiiTWatch/ContentView.swift`
-- Create: `ios/ClearHiiTWatch/Assets.xcassets/`
-- Create: `ios/ClearHiiTWatch/Preview Content/Preview Assets.xcassets/`
+- Create: `ios/ClearHiiTWatch Watch App/ClearHiiTWatchApp.swift`
+- Create: `ios/ClearHiiTWatch Watch App/ContentView.swift`
+- Create: `ios/ClearHiiTWatch Watch App/Assets.xcassets/`
+- Create: `ios/ClearHiiTWatch Watch App/Preview Content/Preview Assets.xcassets/`
 
 **Interfaces:**
 - Consumes: existing `ClearHiiT` target (team `KM666T7T27`, bundle id `com.georgefromgib.hiittimer`, iOS deployment target `16.4`).
-- Produces: new target `ClearHiiTWatch` (scheme `ClearHiiTWatch`), bundle id `com.georgefromgib.hiittimer.watchkitapp`, embedded in `ClearHiiT` via the "Embed Watch Content" build phase. Later plans add files under `ios/ClearHiiTWatch/`.
+- Produces: new target `ClearHiiTWatch Watch App` (scheme `ClearHiiTWatch Watch App`), bundle id `com.georgefromgib.hiittimer.watchkitapp`, embedded in `ClearHiiT` via the "Embed Watch Content" build phase. Later plans add files under `ios/ClearHiiTWatch Watch App/`.
 
-- [ ] **Step 1 (manual, human only): Create the target in Xcode**
+- [x] **Step 1 (manual, human only): Create the target in Xcode** — DONE by George. Product Name entered was `ClearHiiTWatch Watch App` (see deviation note above); all other fields matched.
 
 1. Open `ios/ClearHiiT.xcworkspace` in Xcode.
 2. File → New → Target…
@@ -94,15 +96,12 @@ Expected: no error (or "already booted" if the iPhone sim was already running).
 5. Click Finish. When Xcode prompts "Activate scheme?", click **Activate**.
 6. Select the new `ClearHiiTWatch` target → General tab → confirm **Minimum Deployments** watchOS version. Set it to `10.0` if the wizard defaulted to something newer.
 
-- [ ] **Step 2: Verify the target and scheme exist**
-
-Run: `cd ios && xcodebuild -list -project ClearHiiT.xcodeproj`
-Expected:
+- [x] **Step 2: Verify the target and scheme exist** — DONE. Actual output:
 ```
 Information about project "ClearHiiT":
     Targets:
         ClearHiiT
-        ClearHiiTWatch
+        ClearHiiTWatch Watch App
 
     Build Configurations:
         Debug
@@ -110,35 +109,32 @@ Information about project "ClearHiiT":
 
     Schemes:
         ClearHiiT
-        ClearHiiTWatch
+        ClearHiiTWatch Watch App
 ```
 
-- [ ] **Step 3: Verify build settings landed correctly**
-
-Run: `cd ios && xcodebuild -showBuildSettings -project ClearHiiT.xcodeproj -target ClearHiiTWatch | grep -E "PRODUCT_BUNDLE_IDENTIFIER|DEVELOPMENT_TEAM|WATCHOS_DEPLOYMENT_TARGET"`
-Expected:
+- [x] **Step 3: Verify build settings landed correctly** — DONE. Actual output (target name substituted per the deviation note above):
 ```
 DEVELOPMENT_TEAM = KM666T7T27
 PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.watchkitapp
 WATCHOS_DEPLOYMENT_TARGET = 10.0
 ```
-If any value doesn't match, go back to Step 1.6 and fix it in Xcode before continuing — later plans (CloudKit container, HealthKit entitlements) depend on the bundle identifier being exact.
+All values match the plan's required constraints exactly.
 
 ---
 
 ### Task 3: Customize the smoke-test screen and build for the watch simulator
 
 **Files:**
-- Modify: `ios/ClearHiiTWatch/ContentView.swift`
+- Modify: `ios/ClearHiiTWatch Watch App/ContentView.swift`
 
 **Interfaces:**
-- Consumes: `ClearHiiTWatch` target from Task 2.
+- Consumes: `ClearHiiTWatch Watch App` target from Task 2.
 - Produces: a distinguishable on-screen string (`"ClearHiiT Watch — Foundation OK"`) that Task 4 verifies visually.
 
 - [ ] **Step 1: Read the generated file**
 
 Xcode's watchOS App template generates `ContentView.swift` with a `Text("Hello, World!")`. Confirm the exact generated content before editing:
-Run: `cat "ios/ClearHiiTWatch/ContentView.swift"`
+Run: `cat "ios/ClearHiiTWatch Watch App/ContentView.swift"`
 
 - [ ] **Step 2: Replace the placeholder text**
 
@@ -148,10 +144,12 @@ Text("ClearHiiT Watch — Foundation OK")
     .multilineTextAlignment(.center)
 ```
 
-- [ ] **Step 3: Build for the watch simulator**
+- [x] **Step 3: Build for the watch simulator** — DONE (corrected command; see deviation note).
 
-Run: `cd ios && xcodebuild build -project ClearHiiT.xcodeproj -scheme ClearHiiTWatch -destination "platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)" 2>&1 | tail -20`
-Expected: last line `** BUILD SUCCEEDED **`.
+> **Deviation note (recorded during execution):** the plan originally specified `-project ClearHiiT.xcodeproj`. This repo integrates CocoaPods (`ios/Podfile`, `ios/Pods/`), and Xcode only wires the Pods-generated module maps through the `.xcworkspace`, not the bare `.xcodeproj`. Building with `-project` failed with `module map file ... not found` / `no such module 'Expo'` errors for the main `ClearHiiT` target (which the watch scheme also builds/embeds). Fixed by building via `-workspace` instead. Task 5 Step 1's phone-target build command below is corrected the same way.
+
+Run: `cd ios && xcodebuild build -workspace ClearHiiT.xcworkspace -scheme "ClearHiiTWatch Watch App" -destination "platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)" 2>&1 | tail -20`
+Expected: last line `** BUILD SUCCEEDED **`. Confirmed.
 
 ---
 
@@ -165,8 +163,8 @@ Expected: last line `** BUILD SUCCEEDED **`.
 
 - [ ] **Step 1: Locate the built .app bundle**
 
-Run: `find ~/Library/Developer/Xcode/DerivedData -iname "ClearHiiTWatch.app" -path "*watchsimulator*" 2>/dev/null | head -1`
-Expected: a path like `.../Build/Products/Debug-watchsimulator/ClearHiiTWatch.app`. Call this `<APP_PATH>`.
+Run: `find ~/Library/Developer/Xcode/DerivedData -iname "ClearHiiTWatch Watch App.app" -path "*watchsimulator*" 2>/dev/null | head -1`
+Expected: a path like `.../Build/Products/Debug-watchsimulator/ClearHiiTWatch Watch App.app`. Call this `<APP_PATH>`.
 
 - [ ] **Step 2: Install it on the watch simulator**
 
@@ -188,7 +186,7 @@ Then read the resulting PNG (e.g. with the Read tool) and confirm it shows the t
 ### Task 5: Regression-check the phone app and commit
 
 **Files:**
-- Add: `ios/ClearHiiTWatch/` (all files from Task 2)
+- Add: `ios/ClearHiiTWatch Watch App/` (all files from Task 2)
 - Modify: `ios/ClearHiiT.xcodeproj/project.pbxproj`
 
 **Interfaces:**
@@ -197,17 +195,17 @@ Then read the resulting PNG (e.g. with the Read tool) and confirm it shows the t
 
 - [ ] **Step 1: Confirm the existing phone target still builds unaffected**
 
-Run: `cd ios && xcodebuild build -project ClearHiiT.xcodeproj -scheme ClearHiiT -destination "platform=iOS Simulator,name=iPhone 17 Pro" 2>&1 | tail -20`
+Run: `cd ios && xcodebuild build -workspace ClearHiiT.xcworkspace -scheme ClearHiiT -destination "platform=iOS Simulator,name=iPhone 17 Pro" 2>&1 | tail -20`
 Expected: last line `** BUILD SUCCEEDED **`. If this fails but Task 3's watch build succeeded, the target-embedding step (Task 2, Step 1) broke the container app — investigate the "Embed Watch Content" build phase on the `ClearHiiT` target before continuing.
 
 - [ ] **Step 2: Review what changed**
 
 Run: `git status`
-Expected: new untracked directory `ios/ClearHiiTWatch/` and a modified `ios/ClearHiiT.xcodeproj/project.pbxproj`. No changes outside `ios/`.
+Expected: new untracked directory `ios/ClearHiiTWatch Watch App/` and a modified `ios/ClearHiiT.xcodeproj/project.pbxproj`. No changes outside `ios/`.
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add ios/ClearHiiTWatch ios/ClearHiiT.xcodeproj/project.pbxproj
-git commit -m "feat: scaffold ClearHiiTWatch target as watch app foundation"
+git add "ios/ClearHiiTWatch Watch App" ios/ClearHiiT.xcodeproj/project.pbxproj
+git commit -m "feat: scaffold ClearHiiTWatch Watch App target as watch app foundation"
 ```
