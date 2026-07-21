@@ -1,7 +1,7 @@
 {
   "App.tsx": {
-    "mtime": 1784644343.0421894,
-    "ast_hash": "dbd4904f546ce37d3e169d989a7daf15",
+    "mtime": 1784644784.435757,
+    "ast_hash": "745746aec73290c6c4dc7822ca9de4aa",
     "semantic_hash": ""
   },
   "app.json": {
@@ -310,18 +310,18 @@
     "semantic_hash": ""
   },
   "src/locales/en.ts": {
-    "mtime": 1784644343.1241097,
-    "ast_hash": "9cd7e74b1350186b88cfc54aa764cc17",
+    "mtime": 1784644754.427969,
+    "ast_hash": "a4418a39e89bf6de6f044cbe4727e3d9",
     "semantic_hash": ""
   },
   "src/locales/es.ts": {
-    "mtime": 1784644343.1246583,
-    "ast_hash": "e0f2e558497cfdd04a3dec63c2de64d0",
+    "mtime": 1784644761.049722,
+    "ast_hash": "3ccd3d4e608dd07735fd2fc37fad366b",
     "semantic_hash": ""
   },
   "src/locales/fr.ts": {
-    "mtime": 1784644343.1251159,
-    "ast_hash": "0334853d9f5f904642bf049db04795d2",
+    "mtime": 1784644764.778189,
+    "ast_hash": "81e42c98fc0ab1c59a308ecde5d1d716",
     "semantic_hash": ""
   },
   "src/navigation.ts": {
@@ -355,8 +355,8 @@
     "semantic_hash": ""
   },
   "src/screens/SettingsScreen.tsx": {
-    "mtime": 1784229355.060354,
-    "ast_hash": "e609df36767941dea14522980167a733",
+    "mtime": 1784644916.361055,
+    "ast_hash": "e37205ae83ea75c5084acca93e95631d",
     "semantic_hash": ""
   },
   "src/screens/WorkoutScreen.tsx": {
@@ -1317,6 +1317,11 @@
   "src/lib/sessionStats.ts": {
     "mtime": 1784644343.1194887,
     "ast_hash": "ef66ebe191c839a8574a1ae3cf3c41bb",
+    "semantic_hash": ""
+  },
+  "src/lib/versionCheck.ts": {
+    "mtime": 1784644906.7479784,
+    "ast_hash": "f5206d39247753d7fa53ea3626b1fa06",
     "semantic_hash": ""
   }
 }
