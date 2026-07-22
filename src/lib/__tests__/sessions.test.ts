@@ -23,6 +23,7 @@ import {
   type SpinValues,
 } from '../sessions';
 import { SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS } from '../presets';
+import { NativeModules } from 'react-native';
 
 describe('spinValueForPhase', () => {
   const values: SpinValues = {
@@ -254,6 +255,20 @@ describe('loadSessions / saveSessions', () => {
     };
     await saveSessions(data);
     expect(await loadSessions()).toEqual(data);
+  });
+
+  it('mirrors the saved data to the native workout sync bridge', async () => {
+    const syncMock = jest.fn();
+    NativeModules.WorkoutSync = { syncSessionsData: syncMock };
+
+    const data: SessionsData = {
+      folders: [{ id: 'f1', name: 'Folder 1', createdAt: 1 }],
+      sessions: [{ id: 's1', name: 'S1', folderId: 'f1', mode: 'advanced', intervals: [] }],
+    };
+    await saveSessions(data);
+
+    expect(syncMock).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(syncMock.mock.calls[0][0])).toEqual(data);
   });
 
   it('migrates an old-format array of sessions without folderId into a default folder', async () => {

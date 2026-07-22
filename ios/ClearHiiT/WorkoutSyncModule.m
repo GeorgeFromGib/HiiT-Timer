@@ -4,4 +4,6 @@
 
 RCT_EXTERN_METHOD(ping)
 
+RCT_EXTERN_METHOD(syncSessionsData:(NSString *)json)
+
 @end

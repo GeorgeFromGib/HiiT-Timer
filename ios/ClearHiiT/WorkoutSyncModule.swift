@@ -9,6 +9,11 @@ class WorkoutSync: NSObject {
   }
 
   @objc
+  func syncSessionsData(_ json: String) {
+    WorkoutStore.shared.applySessionsDataJSON(json)
+  }
+
+  @objc
   static func requiresMainQueueSetup() -> Bool {
     return false
   }

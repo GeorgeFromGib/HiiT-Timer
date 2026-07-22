@@ -1,4 +1,5 @@
 import { NativeModules } from 'react-native';
+import type { SessionsData } from './sessions';
 
 export function ping(): void {
   try {
@@ -8,5 +9,13 @@ export function ping(): void {
     NativeModules.WorkoutSync?.ping();
   } catch (e) {
     console.warn('workoutSync: ping failed', e);
+  }
+}
+
+export function syncSessionsData(data: SessionsData): void {
+  try {
+    NativeModules.WorkoutSync?.syncSessionsData(JSON.stringify(data));
+  } catch (e) {
+    console.warn('workoutSync: syncSessionsData failed', e);
   }
 }

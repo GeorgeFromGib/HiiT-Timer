@@ -1,4 +1,5 @@
 import { readJsonFile, writeJsonFile } from './jsonFile';
+import { syncSessionsData } from './workoutSync';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
 import { i18n, type Language } from './i18n';
@@ -268,6 +269,7 @@ export async function loadSessions(language: Language = 'en'): Promise<SessionsD
 
 export async function saveSessions(data: SessionsData): Promise<void> {
   writeJsonFile(SESSIONS_FILE, data);
+  syncSessionsData(data);
 }
 
 export function newId(): string {
