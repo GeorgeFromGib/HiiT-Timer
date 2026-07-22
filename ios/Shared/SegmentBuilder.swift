@@ -18,3 +18,30 @@ func expandWorkout(_ cfg: WorkoutConfig) -> [Segment] {
     return seg
   }
 }
+
+func intervalsToSegments(_ intervals: [IntervalDTO]) -> [Segment] {
+  var cursor: Double = 0
+  return intervals.enumerated().map { i, iv in
+    let seg = Segment(phase: iv.type, duration: iv.dur, startAt: cursor, endAt: cursor + iv.dur, index: i)
+    cursor += iv.dur
+    return seg
+  }
+}
+
+func speedForPhase(_ phase: Phase, _ speeds: RunSpeeds) -> Double {
+  switch phase {
+  case .warmup: return speeds.warmupSpeed
+  case .work: return speeds.workSpeed
+  case .rest, .circuitRest, .finish: return speeds.restSpeed
+  case .cooldown: return speeds.cooldownSpeed
+  }
+}
+
+func inclineForPhase(_ phase: Phase, _ inclines: RunInclines) -> Double {
+  switch phase {
+  case .warmup: return inclines.warmupIncline
+  case .work: return inclines.workIncline
+  case .rest, .circuitRest, .finish: return inclines.restIncline
+  case .cooldown: return inclines.cooldownIncline
+  }
+}

@@ -23,6 +23,27 @@ struct WorkoutConfig: Codable {
   let cooldown: Double
 }
 
+struct IntervalDTO: Codable {
+  let type: Phase
+  let dur: Double
+  let speed: Double?
+  let incline: Double?
+}
+
+struct RunSpeeds: Codable {
+  let warmupSpeed: Double
+  let workSpeed: Double
+  let restSpeed: Double
+  let cooldownSpeed: Double
+}
+
+struct RunInclines: Codable {
+  let warmupIncline: Double
+  let workIncline: Double
+  let restIncline: Double
+  let cooldownIncline: Double
+}
+
 let phaseWord: [Phase: String] = [
   .warmup: "WARM UP",
   .work: "WORK",
