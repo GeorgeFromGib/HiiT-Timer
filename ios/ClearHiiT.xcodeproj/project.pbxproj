@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		5E21ECBB30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
+		5E21ECBC30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */; };
+		5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
+		5E21ECBE30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */; };
 		5E59C9B0300FC72B00C04775 /* ClearHiiTWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5E59C9B7300FD7F300C04775 /* WorkoutSyncModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */; };
 		5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */; };
@@ -58,6 +62,8 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ClearHiiT/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ClearHiiT/Info.plist; sourceTree = "<group>"; };
 		5BC979914E5CC35A94F8AAEA /* Pods-ClearHiiT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.debug.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.debug.xcconfig"; sourceTree = "<group>"; };
+		5E21ECB930114F6A003B942C /* WorkoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutStore.swift; path = Shared/WorkoutStore.swift; sourceTree = "<group>"; };
+		5E21ECBA30114F6A003B942C /* WorkoutModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WorkoutModel.xcdatamodel; sourceTree = "<group>"; };
 		5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ClearHiiTWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WorkoutSyncModule.m; path = ClearHiiT/WorkoutSyncModule.m; sourceTree = "<group>"; };
 		5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSyncModule.swift; path = ClearHiiT/WorkoutSyncModule.swift; sourceTree = "<group>"; };
@@ -98,6 +104,8 @@
 		13B07FAE1A68108700A75B9A /* ClearHiiT */ = {
 			isa = PBXGroup;
 			children = (
+				5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */,
+				5E21ECB930114F6A003B942C /* WorkoutStore.swift */,
 				5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */,
 				5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */,
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
@@ -445,6 +453,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E21ECBB30114F6B003B942C /* WorkoutStore.swift in Sources */,
+				5E21ECBC30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */,
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				5E59C9B7300FD7F300C04775 /* WorkoutSyncModule.m in Sources */,
 				5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */,
@@ -456,6 +466,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */,
+				5E21ECBE30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,6 +824,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5E21ECBA30114F6A003B942C /* WorkoutModel.xcdatamodel */,
+			);
+			currentVersion = 5E21ECBA30114F6A003B942C /* WorkoutModel.xcdatamodel */;
+			name = WorkoutModel.xcdatamodeld;
+			path = Shared/WorkoutModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 83CBB9F71A601CBA00E9B192 /* Project object */;
 }
