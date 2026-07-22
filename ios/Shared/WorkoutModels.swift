@@ -44,6 +44,26 @@ struct RunInclines: Codable {
   let cooldownIncline: Double
 }
 
+struct SessionDTO: Codable {
+  let id: String
+  let name: String
+  let folderId: String
+  let activityType: String?
+  let runSpeeds: RunSpeeds?
+  let runInclines: RunInclines?
+  let inclineEnabled: Bool?
+  let mode: String
+  let config: WorkoutConfig?
+  let intervals: [IntervalDTO]?
+
+  /// v1 supports Standard (no activityType) and Treadmill (activityType == "run")
+  /// sessions in easy or advanced mode. Circuit mode and walk/spinning activity
+  /// types sync to Core Data but aren't runnable on the watch until v2.
+  var isRunnableInV1: Bool {
+    (mode == "easy" || mode == "advanced") && (activityType == nil || activityType == "run")
+  }
+}
+
 let phaseWord: [Phase: String] = [
   .warmup: "WARM UP",
   .work: "WORK",

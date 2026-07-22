@@ -45,3 +45,34 @@ func inclineForPhase(_ phase: Phase, _ inclines: RunInclines) -> Double {
   case .cooldown: return inclines.cooldownIncline
   }
 }
+
+func segmentsForSession(_ session: SessionDTO) -> [Segment] {
+  let base: [Segment]
+  if session.mode == "advanced" {
+    base = intervalsToSegments(session.intervals ?? [])
+  } else {
+    base = expandWorkout(session.config ?? WorkoutConfig(warmup: 0, high: 0, low: 0, rounds: 0, cooldown: 0))
+  }
+
+  guard session.activityType == "run", let speeds = session.runSpeeds else { return base }
+  let overrides = session.mode == "advanced" ? session.intervals : nil
+  let inclineEnabled = session.inclineEnabled != false
+
+  return base.enumerated().map { i, seg in
+    var s = seg
+    let override = overrides?.indices.contains(i) == true ? overrides?[i] : nil
+    s.speed = override?.speed ?? speedForPhase(seg.phase, speeds)
+    if inclineEnabled, let inclines = session.runInclines {
+      s.incline = override?.incline ?? inclineForPhase(seg.phase, inclines)
+    }
+    return s
+  }
+}
+
+func decodeRunnableSessions(fromJSONBlobs blobs: [String]) -> [SessionDTO] {
+  let decoder = JSONDecoder()
+  return blobs.compactMap { json in
+    guard let data = json.data(using: .utf8) else { return nil }
+    return try? decoder.decode(SessionDTO.self, from: data)
+  }.filter { $0.isRunnableInV1 }
+}
