@@ -88,3 +88,17 @@ final class WorkoutStore {
     return (folderCount, sessionCount)
   }
 }
+
+extension WorkoutStore {
+  func fetchRunnableSessions() -> [SessionDTO] {
+    let context = container.viewContext
+    let request = NSFetchRequest<NSManagedObject>(entityName: "SessionRecord")
+    let records = (try? context.fetch(request)) ?? []
+    let blobs = records.compactMap { $0.value(forKey: "json") as? String }
+    return decodeRunnableSessions(fromJSONBlobs: blobs)
+  }
+
+  func fetchSession(id: String) -> SessionDTO? {
+    fetchRunnableSessions().first { $0.id == id }
+  }
+}
