@@ -1,25 +1,23 @@
-//
-//  ContentView.swift
-//  ClearHiiTWatch Watch App
-//
-//  Created by George Gaskin on 21/07/2026.
-//
-
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("ClearHiiT Watch — Foundation OK")
-                .multilineTextAlignment(.center)
-        }
-        .padding()
+  @State private var counts: (folders: Int, sessions: Int) = (0, 0)
+
+  var body: some View {
+    VStack {
+      Image(systemName: "icloud")
+        .imageScale(.large)
+        .foregroundStyle(.tint)
+      Text("Folders: \(counts.folders)\nSessions: \(counts.sessions)")
+        .multilineTextAlignment(.center)
     }
+    .padding()
+    .onAppear {
+      counts = WorkoutStore.shared.fetchCounts()
+    }
+  }
 }
 
 #Preview {
-    ContentView()
+  ContentView()
 }
