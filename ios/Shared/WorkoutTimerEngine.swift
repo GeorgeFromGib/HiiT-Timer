@@ -31,6 +31,10 @@ final class WorkoutTimerEngine: ObservableObject {
     self.state = TimerState(remainingTotal: total)
   }
 
+  deinit {
+    timer?.invalidate()
+  }
+
   private func computeElapsed() -> Double {
     state.status == .running ? accumulated + now().timeIntervalSince(resumeEpoch) : accumulated
   }
