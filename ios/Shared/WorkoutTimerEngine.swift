@@ -67,6 +67,15 @@ final class WorkoutTimerEngine: ObservableObject {
     state = TimerState(remainingTotal: total)
   }
 
+  func skip() {
+    guard state.status == .running || state.status == .paused else { return }
+    let elapsed = computeElapsed()
+    guard let seg = segments.first(where: { elapsed >= $0.startAt && elapsed < $0.endAt }) else { return }
+    accumulated = seg.endAt
+    resumeEpoch = now()
+    tick()
+  }
+
   private func scheduleTimer() {
     timer?.invalidate()
     timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in self?.tick() }

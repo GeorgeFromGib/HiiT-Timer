@@ -81,4 +81,47 @@ final class WorkoutTimerEngineTests: XCTestCase {
     XCTAssertEqual(engine.state.status, .finished)
     XCTAssertEqual(engine.state.currentIndex, -1)
   }
+
+  func test_skip_jumpsToStartOfNextSegment() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.start()
+    now = now.addingTimeInterval(3) // still in warmup (segment 0, ends at 10)
+    engine.tick()
+    engine.skip()
+    XCTAssertEqual(engine.state.currentIndex, 1) // landed exactly on segment 1's start
+    XCTAssertEqual(engine.state.elapsed, 10, accuracy: 0.001)
+  }
+
+  func test_skip_onLastSegment_finishesWorkout() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    var finishCount = 0
+    engine.onFinish = { finishCount += 1 }
+    engine.start()
+    now = now.addingTimeInterval(32) // in the cooldown segment (index 2, ends at 35)
+    engine.tick()
+    engine.skip()
+    XCTAssertEqual(engine.state.status, .finished)
+    XCTAssertEqual(finishCount, 1)
+  }
+
+  func test_skip_beforeStart_isNoOp() {
+    let engine = WorkoutTimerEngine(segments: makeSegments())
+    engine.skip()
+    XCTAssertEqual(engine.state.status, .idle)
+  }
+
+  func test_onTransition_firesOnceWithFromAndToSegments() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    var transitions: [(Int?, Int?)] = []
+    engine.onTransition = { from, to in transitions.append((from?.index, to?.index)) }
+    engine.start() // fires (nil, 0)
+    now = now.addingTimeInterval(11) // fires (0, 1)
+    engine.tick()
+    engine.tick() // same segment, must not fire again
+    XCTAssertEqual(transitions.map(\.0), [nil, 0])
+    XCTAssertEqual(transitions.map(\.1), [0, 1])
+  }
 }
