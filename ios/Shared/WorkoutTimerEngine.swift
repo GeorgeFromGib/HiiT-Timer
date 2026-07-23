@@ -73,6 +73,7 @@ final class WorkoutTimerEngine: ObservableObject {
   }
 
   func tick() {
+    guard state.status != .finished else { return }
     let elapsed = min(computeElapsed(), total)
 
     guard let seg = segments.first(where: { elapsed >= $0.startAt && elapsed < $0.endAt }) else {

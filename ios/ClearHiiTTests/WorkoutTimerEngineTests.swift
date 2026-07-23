@@ -66,4 +66,19 @@ final class WorkoutTimerEngineTests: XCTestCase {
     XCTAssertEqual(engine.state.status, .finished)
     XCTAssertEqual(finishCount, 1)
   }
+
+  func test_tick_afterFinish_isNoOpAndDoesNotRefireTransition() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    var transitionCount = 0
+    engine.onTransition = { _, _ in transitionCount += 1 }
+    engine.start()
+    now = now.addingTimeInterval(999)
+    engine.tick() // finishes; fires exactly one onTransition (to nil)
+    let transitionsAfterFinish = transitionCount
+    engine.tick() // must be a complete no-op
+    XCTAssertEqual(transitionCount, transitionsAfterFinish)
+    XCTAssertEqual(engine.state.status, .finished)
+    XCTAssertEqual(engine.state.currentIndex, -1)
+  }
 }
