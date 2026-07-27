@@ -19,18 +19,27 @@ struct SessionRunView: View {
       Text(segment.map { phaseWord[$0.phase] ?? "" } ?? "")
         .font(.headline)
 
-      Text(fmtTimer(state.remainingInSegment))
-        .font(.system(size: 40, weight: .bold, design: .rounded))
-        .monospacedDigit()
-
-      if let speed = segment?.speed {
-        Text(String(format: "%.1f km/h", speed))
-          .font(.title3)
-      }
-      if let incline = segment?.incline {
-        Text(String(format: "%.0f%% incline", incline))
-          .font(.footnote)
+      if session.isTreadmill, let speed = segment?.speed {
+        Text(String(format: "%.1f", speed))
+          .font(.system(size: 44, weight: .bold, design: .rounded))
+          .monospacedDigit()
+        Text("km/h")
+          .font(.caption2)
           .foregroundStyle(.secondary)
+
+        Text(fmtTimer(state.remainingInSegment))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
+          .monospacedDigit()
+
+        if let incline = segment?.incline {
+          Text(String(format: "%.0f%% incline", incline))
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+        }
+      } else {
+        Text(fmtTimer(state.remainingInSegment))
+          .font(.system(size: 40, weight: .bold, design: .rounded))
+          .monospacedDigit()
       }
 
       HStack {
