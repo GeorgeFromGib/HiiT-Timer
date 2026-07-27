@@ -36,12 +36,14 @@ struct SessionRunView: View {
           .font(.system(size: 50, weight: .bold, design: .rounded))
           .monospacedDigit()
 
-        Text(String(format: "%.1f", speed))
-          .font(.system(size: 30, weight: .semibold, design: .rounded))
-          .monospacedDigit()
-        Text("km/h")
-          .font(.caption2)
-          .foregroundStyle(.secondary)
+        HStack(alignment: .lastTextBaseline, spacing: 4) {
+          Text(String(format: "%.1f", speed))
+            .font(.system(size: 30, weight: .semibold, design: .rounded))
+            .monospacedDigit()
+          Text("km/h")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
 
         if let incline = segment?.incline {
           Text(String(format: "%.0f%% incline", incline))
