@@ -51,3 +51,6 @@ ios/LocalFrameworks/
 
 # large store assets
 apple store assets/screenshots.zip
+
+# graphify knowledge graph (regenerated, not source)
+graphify-out/
