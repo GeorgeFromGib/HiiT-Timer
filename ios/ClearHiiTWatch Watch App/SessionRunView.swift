@@ -20,16 +20,16 @@ struct SessionRunView: View {
         .font(.headline)
 
       if session.isTreadmill, let speed = segment?.speed {
-        Text(String(format: "%.1f", speed))
+        Text(fmtTimer(state.remainingInSegment))
           .font(.system(size: 44, weight: .bold, design: .rounded))
+          .monospacedDigit()
+
+        Text(String(format: "%.1f", speed))
+          .font(.system(size: 22, weight: .semibold, design: .rounded))
           .monospacedDigit()
         Text("km/h")
           .font(.caption2)
           .foregroundStyle(.secondary)
-
-        Text(fmtTimer(state.remainingInSegment))
-          .font(.system(size: 22, weight: .semibold, design: .rounded))
-          .monospacedDigit()
 
         if let incline = segment?.incline {
           Text(String(format: "%.0f%% incline", incline))
@@ -56,7 +56,6 @@ struct SessionRunView: View {
       }
     }
     .padding()
-    .navigationTitle(session.name)
   }
 }
 
