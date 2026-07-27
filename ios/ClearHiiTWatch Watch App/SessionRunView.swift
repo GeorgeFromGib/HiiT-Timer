@@ -33,7 +33,7 @@ struct SessionRunView: View {
 
       if session.isTreadmill, let speed = segment?.speed {
         Text(fmtTimer(state.remainingInSegment))
-          .font(.system(size: 44, weight: .bold, design: .rounded))
+          .font(.system(size: 50, weight: .bold, design: .rounded))
           .monospacedDigit()
 
         Text(String(format: "%.1f", speed))
@@ -50,7 +50,7 @@ struct SessionRunView: View {
         }
       } else {
         Text(fmtTimer(state.remainingInSegment))
-          .font(.system(size: 40, weight: .bold, design: .rounded))
+          .font(.system(size: 46, weight: .bold, design: .rounded))
           .monospacedDigit()
       }
 
