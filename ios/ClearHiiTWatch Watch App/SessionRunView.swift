@@ -25,7 +25,7 @@ struct SessionRunView: View {
           .monospacedDigit()
 
         Text(String(format: "%.1f", speed))
-          .font(.system(size: 22, weight: .semibold, design: .rounded))
+          .font(.system(size: 30, weight: .semibold, design: .rounded))
           .monospacedDigit()
         Text("km/h")
           .font(.caption2)
@@ -33,7 +33,7 @@ struct SessionRunView: View {
 
         if let incline = segment?.incline {
           Text(String(format: "%.0f%% incline", incline))
-            .font(.footnote)
+            .font(.system(size: 20, weight: .medium, design: .rounded))
             .foregroundStyle(.secondary)
         }
       } else {
