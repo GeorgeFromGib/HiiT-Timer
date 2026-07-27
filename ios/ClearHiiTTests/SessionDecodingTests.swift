@@ -33,6 +33,26 @@ final class SessionDecodingTests: XCTestCase {
     XCTAssertFalse(spinning.isRunnableInV1)
   }
 
+  func test_isTreadmill_trueOnlyForRunActivityType() {
+    let standard = SessionDTO(id: "1", name: "S", folderId: "f", activityType: nil,
+                               runSpeeds: nil, runInclines: nil, inclineEnabled: nil,
+                               mode: "easy", config: WorkoutConfig(warmup: 0, high: 20, low: 10, rounds: 3, cooldown: 0),
+                               intervals: nil)
+    let treadmill = SessionDTO(id: "2", name: "T", folderId: "f", activityType: "run",
+                                runSpeeds: RunSpeeds(warmupSpeed: 3, workSpeed: 9, restSpeed: 4, cooldownSpeed: 3),
+                                runInclines: nil, inclineEnabled: false,
+                                mode: "advanced", config: nil,
+                                intervals: [IntervalDTO(type: .work, dur: 20, speed: nil, incline: nil)])
+    let walk = SessionDTO(id: "3", name: "W", folderId: "f", activityType: "walk",
+                           runSpeeds: RunSpeeds(warmupSpeed: 3, workSpeed: 5, restSpeed: 3, cooldownSpeed: 3),
+                           runInclines: nil, inclineEnabled: nil,
+                           mode: "easy", config: WorkoutConfig(warmup: 0, high: 20, low: 10, rounds: 3, cooldown: 0),
+                           intervals: nil)
+    XCTAssertFalse(standard.isTreadmill)
+    XCTAssertTrue(treadmill.isTreadmill)
+    XCTAssertFalse(walk.isTreadmill)
+  }
+
   func test_segmentsForSession_standardHasNoSpeed() {
     let session = SessionDTO(id: "1", name: "S", folderId: "f", activityType: nil,
                               runSpeeds: nil, runInclines: nil, inclineEnabled: nil,

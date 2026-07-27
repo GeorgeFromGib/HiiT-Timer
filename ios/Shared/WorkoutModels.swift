@@ -62,6 +62,10 @@ struct SessionDTO: Codable {
   var isRunnableInV1: Bool {
     (mode == "easy" || mode == "advanced") && (activityType == nil || activityType == "run")
   }
+
+  var isTreadmill: Bool {
+    activityType == "run"
+  }
 }
 
 let phaseWord: [Phase: String] = [
