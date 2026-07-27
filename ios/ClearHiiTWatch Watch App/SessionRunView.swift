@@ -36,19 +36,21 @@ struct SessionRunView: View {
           .font(.system(size: 50, weight: .bold, design: .rounded))
           .monospacedDigit()
 
-        HStack(alignment: .lastTextBaseline, spacing: 4) {
-          Text(String(format: "%.1f", speed))
-            .font(.system(size: 30, weight: .semibold, design: .rounded))
-            .monospacedDigit()
-          Text("km/h")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-        }
-
-        if let incline = segment?.incline {
-          Text(String(format: "%.0f%% incline", incline))
-            .font(.system(size: 20, weight: .medium, design: .rounded))
-            .foregroundStyle(.secondary)
+        HStack {
+          HStack(alignment: .lastTextBaseline, spacing: 4) {
+            Text(String(format: "%.1f", speed))
+              .font(.system(size: 30, weight: .semibold, design: .rounded))
+              .monospacedDigit()
+            Text("km/h")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+          if let incline = segment?.incline {
+            Spacer()
+            Text(String(format: "%.0f%% inc", incline))
+              .font(.system(size: 20, weight: .medium, design: .rounded))
+              .foregroundStyle(.secondary)
+          }
         }
       } else {
         Text(fmtTimer(state.remainingInSegment))
