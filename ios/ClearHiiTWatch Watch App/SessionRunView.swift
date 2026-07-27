@@ -1,6 +1,17 @@
 import SwiftUI
 import Combine
 
+/// Matches THEME_TOKENS.tidal.phases in src/theme.ts — the watch has no
+/// theme system, so it always uses the phone's dark (tidal) palette.
+let phaseColor: [Phase: Color] = [
+  .warmup:      Color(red: 1.0, green: 0.541, blue: 0.239),
+  .work:        Color(red: 1.0, green: 0.353, blue: 0.373),
+  .rest:        Color(red: 0.373, green: 0.827, blue: 0.541),
+  .cooldown:    Color(red: 0.275, green: 0.651, blue: 1.0),
+  .circuitRest: Color(red: 0.690, green: 0.416, blue: 0.941),
+  .finish:      Color(red: 0.353, green: 0.478, blue: 0.502),
+]
+
 struct SessionRunView: View {
   let session: SessionDTO
 
@@ -18,6 +29,7 @@ struct SessionRunView: View {
     VStack(spacing: 8) {
       Text(segment.map { phaseWord[$0.phase] ?? "" } ?? "")
         .font(.headline)
+        .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
 
       if session.isTreadmill, let speed = segment?.speed {
         Text(fmtTimer(state.remainingInSegment))
