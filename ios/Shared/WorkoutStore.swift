@@ -60,12 +60,27 @@ final class WorkoutStore {
         }
       }
 
+      // The incoming payload is always the full current library, so anything
+      // not present in it was deleted on the authoring device and should be
+      // mirrored as a deletion here too.
+      let incomingFolderIds = Set(folders.compactMap { $0["id"] as? String })
+      let incomingSessionIds = Set(sessions.compactMap { $0["id"] as? String })
+      self.deleteRecords(entityName: "FolderRecord", excludingIds: incomingFolderIds, in: context)
+      self.deleteRecords(entityName: "SessionRecord", excludingIds: incomingSessionIds, in: context)
+
       do {
         try context.save()
       } catch {
         print("[WorkoutStore] applySessionsDataJSON: save failed: \(error)")
       }
     }
+  }
+
+  private func deleteRecords(entityName: String, excludingIds ids: Set<String>, in context: NSManagedObjectContext) {
+    let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
+    request.predicate = NSPredicate(format: "NOT (id IN %@)", ids)
+    guard let stale = try? context.fetch(request) else { return }
+    stale.forEach { context.delete($0) }
   }
 
   private func fetchOrCreate(entityName: String, id: String, in context: NSManagedObjectContext) -> NSManagedObject {
@@ -93,6 +108,7 @@ extension WorkoutStore {
   func fetchRunnableSessions() -> [SessionDTO] {
     let context = container.viewContext
     let request = NSFetchRequest<NSManagedObject>(entityName: "SessionRecord")
+    request.sortDescriptors = [NSSortDescriptor(key: "updatedAt", ascending: false)]
     let records = (try? context.fetch(request)) ?? []
     let blobs = records.compactMap { $0.value(forKey: "json") as? String }
     return decodeRunnableSessions(fromJSONBlobs: blobs)

@@ -69,10 +69,21 @@ func segmentsForSession(_ session: SessionDTO) -> [Segment] {
   }
 }
 
+/// `blobs` is expected newest-first (see WorkoutStore.fetchRunnableSessions' sort
+/// descriptor); CloudKit doesn't enforce uniqueness on the `id` field, so two
+/// devices writing independently before their first sync can each produce a
+/// SessionRecord with the same id, which CloudKit then merges as separate rows.
 func decodeRunnableSessions(fromJSONBlobs blobs: [String]) -> [SessionDTO] {
   let decoder = JSONDecoder()
-  return blobs.compactMap { json in
-    guard let data = json.data(using: .utf8) else { return nil }
-    return try? decoder.decode(SessionDTO.self, from: data)
-  }.filter { $0.isRunnableInV1 }
+  var seenIds = Set<String>()
+  var result: [SessionDTO] = []
+  for json in blobs {
+    guard let data = json.data(using: .utf8),
+          let session = try? decoder.decode(SessionDTO.self, from: data),
+          session.isRunnableInV1,
+          !seenIds.contains(session.id) else { continue }
+    seenIds.insert(session.id)
+    result.append(session)
+  }
+  return result
 }
