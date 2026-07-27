@@ -68,6 +68,7 @@ struct SessionRunView: View {
         Button("Skip") { engineHolder.engine.skip() }
           .disabled(state.status == .idle || state.status == .finished)
       }
+      .controlSize(.small)
     }
     .padding()
   }
