@@ -12,6 +12,14 @@ let phaseColor: [Phase: Color] = [
   .finish:      Color(red: 0.353, green: 0.478, blue: 0.502),
 ]
 
+/// Matches THEME_TOKENS.tidal's button tokens in src/theme.ts (accent,
+/// btnGlyph, ghostBg, hairline, subText) — same rationale as phaseColor above.
+private let controlAccent = Color(red: 0.229, green: 0.839, blue: 0.776)
+private let controlGlyph = Color(red: 0.024, green: 0.075, blue: 0.102)
+private let controlGhostBg = Color.white.opacity(0.05)
+private let controlHairline = Color.white.opacity(0.10)
+private let controlSubText = Color.white.opacity(0.72)
+
 /// Matches src/locales/en.ts's `congrats` list — the watch has no i18n system,
 /// so this is a small English-only subset for the done screen.
 let congratsMessages = [
@@ -23,12 +31,18 @@ let congratsMessages = [
   "Session closed.",
 ]
 
+private enum RunningPage: Hashable {
+  case controls
+  case timer
+}
+
 struct SessionRunView: View {
   let session: SessionDTO
 
   @StateObject private var engineHolder: EngineHolder
   @State private var countdown: Int?
   @State private var countdownTask: Task<Void, Never>?
+  @State private var runningPage: RunningPage = .timer
   @Environment(\.dismiss) private var dismiss
 
   init(session: SessionDTO) {
@@ -62,80 +76,114 @@ struct SessionRunView: View {
       Text(session.name)
         .font(.headline)
         .multilineTextAlignment(.center)
-      Button("Start", action: beginCountdown)
-        .controlSize(.small)
+      Button(action: beginCountdown) {
+        Text("Start")
+          .font(.headline)
+          .foregroundStyle(controlGlyph)
+          .padding(.horizontal, 20)
+          .padding(.vertical, 8)
+          .background(controlAccent)
+          .clipShape(Capsule())
+      }
+      .buttonStyle(.plain)
     }
     .padding()
   }
 
   private func runningView(state: TimerState, segment: Segment?) -> some View {
-    VStack(spacing: 8) {
-      Text(segment?.activityLabel ?? segment.map { phaseWord[$0.phase] ?? "" } ?? "")
-        .font(.headline)
-        .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
-
-      if session.isTreadmill, let speed = segment?.speed {
-        Text(fmtTimer(state.remainingInSegment))
-          .font(.system(size: 50, weight: .bold, design: .rounded))
-          .monospacedDigit()
-
-        HStack {
-          HStack(alignment: .lastTextBaseline, spacing: 4) {
-            Text(String(format: "%.1f", speed))
-              .font(.system(size: 30, weight: .semibold, design: .rounded))
-              .monospacedDigit()
-            Text("km/h")
-              .font(.caption2)
-              .foregroundStyle(.secondary)
-          }
-          if let incline = segment?.incline {
-            Spacer()
-            Text(String(format: "%.0f%% inc", incline))
-              .font(.system(size: 20, weight: .medium, design: .rounded))
-              .foregroundStyle(.secondary)
-          }
-        }
-      } else {
-        Text(fmtTimer(state.remainingInSegment))
-          .font(.system(size: 46, weight: .bold, design: .rounded))
-          .monospacedDigit()
-      }
-
-      if session.mode == "circuit", let circuitNumber = segment?.circuitNumber {
-        Text("Circuit \(circuitNumber) / \(session.circuits ?? circuitNumber)")
-          .font(.caption2)
-          .foregroundStyle(.secondary)
-      }
-
-      if session.mode == "circuit" {
-        let upNext = upNextExercises(engineHolder.segments, currentIndex: state.currentIndex)
-        if !upNext.isEmpty {
-          ScrollView {
-            VStack(alignment: .leading, spacing: 2) {
-              ForEach(upNext, id: \.self) { name in
-                Text(name)
-                  .font(.caption2)
-                  .foregroundStyle(.secondary)
-              }
-            }
-          }
-          .frame(maxHeight: 50)
-        }
-      }
-
-      HStack {
-        Button(state.status == .running ? "Pause" : "Resume") {
+    TabView(selection: $runningPage) {
+      HStack(spacing: 16) {
+        Button {
           switch state.status {
           case .running: engineHolder.pause()
           case .paused: engineHolder.resume()
           case .idle, .finished: break
           }
+        } label: {
+          Image(systemName: state.status == .running ? "pause.fill" : "play.fill")
+            .font(.title3)
+            .foregroundStyle(controlGlyph)
+            .frame(width: 50, height: 50)
+            .background(controlAccent)
+            .clipShape(Circle())
         }
-        Button("Skip") { engineHolder.engine.skip() }
+        .buttonStyle(.plain)
+
+        Button {
+          engineHolder.engine.skip()
+        } label: {
+          Image(systemName: "forward.end.fill")
+            .font(.title3)
+            .foregroundStyle(controlSubText)
+            .frame(width: 44, height: 44)
+            .background(controlGhostBg)
+            .clipShape(Circle())
+            .overlay(Circle().stroke(controlHairline, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
       }
-      .controlSize(.small)
+      .padding()
+      .tag(RunningPage.controls)
+
+      VStack(spacing: 8) {
+        Text(segment?.activityLabel ?? segment.map { phaseWord[$0.phase] ?? "" } ?? "")
+          .font(.system(size: 22, weight: .bold, design: .rounded))
+          .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
+          .multilineTextAlignment(.center)
+
+        if session.isTreadmill, let speed = segment?.speed {
+          Text(fmtTimer(state.remainingInSegment))
+            .font(.system(size: 50, weight: .bold, design: .rounded))
+            .monospacedDigit()
+
+          HStack {
+            HStack(alignment: .lastTextBaseline, spacing: 4) {
+              Text(String(format: "%.1f", speed))
+                .font(.system(size: 30, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+              Text("km/h")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+            if let incline = segment?.incline {
+              Spacer()
+              Text(String(format: "%.0f%% inc", incline))
+                .font(.system(size: 20, weight: .medium, design: .rounded))
+                .foregroundStyle(.secondary)
+            }
+          }
+        } else {
+          Text(fmtTimer(state.remainingInSegment))
+            .font(.system(size: 46, weight: .bold, design: .rounded))
+            .monospacedDigit()
+        }
+
+        if session.mode == "circuit", let circuitNumber = segment?.circuitNumber {
+          Text("Circuit \(circuitNumber) / \(session.circuits ?? circuitNumber)")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
+
+        if session.mode == "circuit" {
+          let upNext = upNextExercises(engineHolder.segments, currentIndex: state.currentIndex)
+          if !upNext.isEmpty {
+            ScrollView {
+              VStack(alignment: .leading, spacing: 2) {
+                ForEach(Array(upNext.enumerated()), id: \.offset) { index, name in
+                  Text(index == 0 ? "Nxt: \(name)" : name)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                }
+              }
+            }
+            .frame(maxHeight: 50)
+          }
+        }
+      }
+      .padding()
+      .tag(RunningPage.timer)
     }
-    .padding()
+    .tabViewStyle(.page)
   }
 
   /// Shows 3, 2, 1 (one second each) purely as watch-local UI, then starts
@@ -181,8 +229,16 @@ struct SessionDoneView: View {
       Text(congratsMessage)
         .font(.headline)
         .multilineTextAlignment(.center)
-      Button("Done", action: onDone)
-        .controlSize(.small)
+      Button(action: onDone) {
+        Text("Done")
+          .font(.headline)
+          .foregroundStyle(controlGlyph)
+          .padding(.horizontal, 20)
+          .padding(.vertical, 8)
+          .background(controlAccent)
+          .clipShape(Capsule())
+      }
+      .buttonStyle(.plain)
     }
     .padding()
   }
