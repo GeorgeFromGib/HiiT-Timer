@@ -91,15 +91,17 @@ struct SessionRunView: View {
   }
 
   private func runningView(state: TimerState, segment: Segment?) -> some View {
-    TabView(selection: $runningPage) {
+    func togglePause() {
+      switch state.status {
+      case .running: engineHolder.pause()
+      case .paused: engineHolder.resume()
+      case .idle, .finished: break
+      }
+    }
+
+    return TabView(selection: $runningPage) {
       HStack(spacing: 16) {
-        Button {
-          switch state.status {
-          case .running: engineHolder.pause()
-          case .paused: engineHolder.resume()
-          case .idle, .finished: break
-          }
-        } label: {
+        Button(action: togglePause) {
           Image(systemName: state.status == .running ? "pause.fill" : "play.fill")
             .font(.title3)
             .foregroundStyle(controlGlyph)
@@ -199,6 +201,17 @@ struct SessionRunView: View {
       .tag(RunningPage.timer)
     }
     .tabViewStyle(.page)
+    .overlay {
+      // Always present regardless of which page is showing, so Double Tap
+      // pauses/resumes from either the controls or timer page.
+      // handGestureShortcut requires watchOS 11 (deployment target is 10.0).
+      if #available(watchOS 11.0, *) {
+        Button(action: togglePause) { EmptyView() }
+          .handGestureShortcut(.primaryAction)
+          .opacity(0)
+          .allowsHitTesting(false)
+      }
+    }
   }
 
   /// Shows 3, 2, 1 (one second each) purely as watch-local UI, then starts
