@@ -31,64 +31,67 @@ struct SessionRunView: View {
 
   init(session: SessionDTO) {
     self.session = session
-    _engineHolder = StateObject(wrappedValue: EngineHolder(segments: segmentsForSession(session)))
+    _engineHolder = StateObject(wrappedValue: EngineHolder(session: session, segments: segmentsForSession(session)))
   }
 
   var body: some View {
     let state = engineHolder.engine.state
     let segment = engineHolder.currentSegment
 
-    if state.status == .finished {
-      SessionDoneView(congratsMessage: engineHolder.congratsMessage, onDone: { dismiss() })
-    } else {
-      VStack(spacing: 8) {
-        Text(segment.map { phaseWord[$0.phase] ?? "" } ?? "")
-          .font(.headline)
-          .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
+    Group {
+      if state.status == .finished {
+        SessionDoneView(congratsMessage: engineHolder.congratsMessage, onDone: { dismiss() })
+      } else {
+        VStack(spacing: 8) {
+          Text(segment.map { phaseWord[$0.phase] ?? "" } ?? "")
+            .font(.headline)
+            .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
 
-        if session.isTreadmill, let speed = segment?.speed {
-          Text(fmtTimer(state.remainingInSegment))
-            .font(.system(size: 50, weight: .bold, design: .rounded))
-            .monospacedDigit()
+          if session.isTreadmill, let speed = segment?.speed {
+            Text(fmtTimer(state.remainingInSegment))
+              .font(.system(size: 50, weight: .bold, design: .rounded))
+              .monospacedDigit()
+
+            HStack {
+              HStack(alignment: .lastTextBaseline, spacing: 4) {
+                Text(String(format: "%.1f", speed))
+                  .font(.system(size: 30, weight: .semibold, design: .rounded))
+                  .monospacedDigit()
+                Text("km/h")
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+              }
+              if let incline = segment?.incline {
+                Spacer()
+                Text(String(format: "%.0f%% inc", incline))
+                  .font(.system(size: 20, weight: .medium, design: .rounded))
+                  .foregroundStyle(.secondary)
+              }
+            }
+          } else {
+            Text(fmtTimer(state.remainingInSegment))
+              .font(.system(size: 46, weight: .bold, design: .rounded))
+              .monospacedDigit()
+          }
 
           HStack {
-            HStack(alignment: .lastTextBaseline, spacing: 4) {
-              Text(String(format: "%.1f", speed))
-                .font(.system(size: 30, weight: .semibold, design: .rounded))
-                .monospacedDigit()
-              Text("km/h")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            Button(state.status == .running ? "Pause" : "Start") {
+              switch state.status {
+              case .idle: engineHolder.start()
+              case .running: engineHolder.pause()
+              case .paused: engineHolder.resume()
+              case .finished: break
+              }
             }
-            if let incline = segment?.incline {
-              Spacer()
-              Text(String(format: "%.0f%% inc", incline))
-                .font(.system(size: 20, weight: .medium, design: .rounded))
-                .foregroundStyle(.secondary)
-            }
+            Button("Skip") { engineHolder.engine.skip() }
+              .disabled(state.status == .idle || state.status == .finished)
           }
-        } else {
-          Text(fmtTimer(state.remainingInSegment))
-            .font(.system(size: 46, weight: .bold, design: .rounded))
-            .monospacedDigit()
+          .controlSize(.small)
         }
-
-        HStack {
-          Button(state.status == .running ? "Pause" : "Start") {
-            switch state.status {
-            case .idle: engineHolder.engine.start()
-            case .running: engineHolder.engine.pause()
-            case .paused: engineHolder.engine.resume()
-            case .finished: break
-            }
-          }
-          Button("Skip") { engineHolder.engine.skip() }
-            .disabled(state.status == .idle || state.status == .finished)
-        }
-        .controlSize(.small)
+        .padding()
       }
-      .padding()
     }
+    .onDisappear { engineHolder.discardIfUnfinished() }
   }
 }
 
@@ -121,11 +124,17 @@ private final class EngineHolder: ObservableObject {
   @Published private(set) var currentSegment: Segment?
   let congratsMessage: String = congratsMessages.randomElement() ?? ""
   private var cancellable: AnyCancellable?
+  private let workoutSession: WorkoutSessionCoordinator
 
-  init(segments: [Segment]) {
+  init(session: SessionDTO, segments: [Segment]) {
     let engine = WorkoutTimerEngine(segments: segments)
     self.engine = engine
     self.currentSegment = segments.first
+    self.workoutSession = WorkoutSessionCoordinator(
+      recorder: HealthKitWorkoutManager(),
+      activityType: hkActivityType(for: session)
+    )
+    workoutSession.requestAuthorization { _ in }
     engine.onTransition = { [weak self] _, to in
       self?.currentSegment = to
       if let phase = to?.phase {
@@ -134,9 +143,29 @@ private final class EngineHolder: ObservableObject {
     }
     engine.onFinish = { [weak self] in
       HapticsController.play(for: .finish)
+      self?.workoutSession.handle(status: .finished)
     }
     cancellable = engine.objectWillChange.sink { [weak self] in
       self?.objectWillChange.send()
     }
+  }
+
+  func start() {
+    engine.start()
+    workoutSession.handle(status: .running)
+  }
+
+  func pause() {
+    engine.pause()
+    workoutSession.handle(status: .paused)
+  }
+
+  func resume() {
+    engine.resume()
+    workoutSession.handle(status: .running)
+  }
+
+  func discardIfUnfinished() {
+    workoutSession.discardIfUnfinished()
   }
 }
