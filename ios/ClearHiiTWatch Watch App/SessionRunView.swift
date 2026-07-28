@@ -27,6 +27,8 @@ struct SessionRunView: View {
   let session: SessionDTO
 
   @StateObject private var engineHolder: EngineHolder
+  @State private var countdown: Int?
+  @State private var countdownTask: Task<Void, Never>?
   @Environment(\.dismiss) private var dismiss
 
   init(session: SessionDTO) {
@@ -41,57 +43,105 @@ struct SessionRunView: View {
     Group {
       if state.status == .finished {
         SessionDoneView(congratsMessage: engineHolder.congratsMessage, onDone: { dismiss() })
+      } else if let countdown {
+        CountdownView(count: countdown)
+      } else if state.status == .idle {
+        readyView
       } else {
-        VStack(spacing: 8) {
-          Text(segment.map { phaseWord[$0.phase] ?? "" } ?? "")
-            .font(.headline)
-            .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
-
-          if session.isTreadmill, let speed = segment?.speed {
-            Text(fmtTimer(state.remainingInSegment))
-              .font(.system(size: 50, weight: .bold, design: .rounded))
-              .monospacedDigit()
-
-            HStack {
-              HStack(alignment: .lastTextBaseline, spacing: 4) {
-                Text(String(format: "%.1f", speed))
-                  .font(.system(size: 30, weight: .semibold, design: .rounded))
-                  .monospacedDigit()
-                Text("km/h")
-                  .font(.caption2)
-                  .foregroundStyle(.secondary)
-              }
-              if let incline = segment?.incline {
-                Spacer()
-                Text(String(format: "%.0f%% inc", incline))
-                  .font(.system(size: 20, weight: .medium, design: .rounded))
-                  .foregroundStyle(.secondary)
-              }
-            }
-          } else {
-            Text(fmtTimer(state.remainingInSegment))
-              .font(.system(size: 46, weight: .bold, design: .rounded))
-              .monospacedDigit()
-          }
-
-          HStack {
-            Button(state.status == .running ? "Pause" : "Start") {
-              switch state.status {
-              case .idle: engineHolder.start()
-              case .running: engineHolder.pause()
-              case .paused: engineHolder.resume()
-              case .finished: break
-              }
-            }
-            Button("Skip") { engineHolder.engine.skip() }
-              .disabled(state.status == .idle || state.status == .finished)
-          }
-          .controlSize(.small)
-        }
-        .padding()
+        runningView(state: state, segment: segment)
       }
     }
-    .onDisappear { engineHolder.discardIfUnfinished() }
+    .onDisappear {
+      countdownTask?.cancel()
+      engineHolder.discardIfUnfinished()
+    }
+  }
+
+  private var readyView: some View {
+    VStack(spacing: 12) {
+      Text(session.name)
+        .font(.headline)
+        .multilineTextAlignment(.center)
+      Button("Start", action: beginCountdown)
+        .controlSize(.small)
+    }
+    .padding()
+  }
+
+  private func runningView(state: TimerState, segment: Segment?) -> some View {
+    VStack(spacing: 8) {
+      Text(segment.map { phaseWord[$0.phase] ?? "" } ?? "")
+        .font(.headline)
+        .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
+
+      if session.isTreadmill, let speed = segment?.speed {
+        Text(fmtTimer(state.remainingInSegment))
+          .font(.system(size: 50, weight: .bold, design: .rounded))
+          .monospacedDigit()
+
+        HStack {
+          HStack(alignment: .lastTextBaseline, spacing: 4) {
+            Text(String(format: "%.1f", speed))
+              .font(.system(size: 30, weight: .semibold, design: .rounded))
+              .monospacedDigit()
+            Text("km/h")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+          if let incline = segment?.incline {
+            Spacer()
+            Text(String(format: "%.0f%% inc", incline))
+              .font(.system(size: 20, weight: .medium, design: .rounded))
+              .foregroundStyle(.secondary)
+          }
+        }
+      } else {
+        Text(fmtTimer(state.remainingInSegment))
+          .font(.system(size: 46, weight: .bold, design: .rounded))
+          .monospacedDigit()
+      }
+
+      HStack {
+        Button(state.status == .running ? "Pause" : "Resume") {
+          switch state.status {
+          case .running: engineHolder.pause()
+          case .paused: engineHolder.resume()
+          case .idle, .finished: break
+          }
+        }
+        Button("Skip") { engineHolder.engine.skip() }
+      }
+      .controlSize(.small)
+    }
+    .padding()
+  }
+
+  /// Shows 3, 2, 1 (one second each) purely as watch-local UI, then starts
+  /// the engine — HealthKit recording and the timer both begin only once the
+  /// countdown reaches zero, matching what the wearer sees on screen.
+  private func beginCountdown() {
+    countdown = 3
+    countdownTask = Task { @MainActor in
+      for n in [2, 1] {
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        guard !Task.isCancelled else { return }
+        countdown = n
+      }
+      try? await Task.sleep(nanoseconds: 1_000_000_000)
+      guard !Task.isCancelled else { return }
+      countdown = nil
+      engineHolder.start()
+    }
+  }
+}
+
+private struct CountdownView: View {
+  let count: Int
+
+  var body: some View {
+    Text("\(count)")
+      .font(.system(size: 60, weight: .bold, design: .rounded))
+      .monospacedDigit()
   }
 }
 
@@ -132,7 +182,8 @@ private final class EngineHolder: ObservableObject {
     self.currentSegment = segments.first
     self.workoutSession = WorkoutSessionCoordinator(
       recorder: HealthKitWorkoutManager(),
-      activityType: hkActivityType(for: session)
+      activityType: hkActivityType(for: session),
+      engine: engine
     )
     workoutSession.requestAuthorization { _ in }
     engine.onTransition = { [weak self] _, to in
@@ -141,9 +192,8 @@ private final class EngineHolder: ObservableObject {
         HapticsController.play(for: phase)
       }
     }
-    engine.onFinish = { [weak self] in
+    engine.onFinish = {
       HapticsController.play(for: .finish)
-      self?.workoutSession.handle(status: .finished)
     }
     cancellable = engine.objectWillChange.sink { [weak self] in
       self?.objectWillChange.send()
@@ -152,17 +202,14 @@ private final class EngineHolder: ObservableObject {
 
   func start() {
     engine.start()
-    workoutSession.handle(status: .running)
   }
 
   func pause() {
     engine.pause()
-    workoutSession.handle(status: .paused)
   }
 
   func resume() {
     engine.resume()
-    workoutSession.handle(status: .running)
   }
 
   func discardIfUnfinished() {
