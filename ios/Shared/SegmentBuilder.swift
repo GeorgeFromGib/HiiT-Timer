@@ -28,6 +28,46 @@ func intervalsToSegments(_ intervals: [IntervalDTO]) -> [Segment] {
   }
 }
 
+/// Ports src/lib/workout.ts's expandCircuit() — repeats `intervals` for each of
+/// `circuits` rounds, tagging every segment in round N with circuitNumber N,
+/// with a circuitRest between rounds (never after the last) and warmup/cooldown
+/// bookending the whole thing.
+func expandCircuit(
+  _ intervals: [IntervalDTO],
+  circuits: Int,
+  warmup: Double,
+  cooldown: Double,
+  circuitRest: Double
+) -> [Segment] {
+  var raw: [(phase: Phase, duration: Double, activityLabel: String?, circuitNumber: Int?)] = []
+
+  if warmup > 0 {
+    raw.append((.warmup, warmup, nil, nil))
+  }
+
+  for c in 0..<circuits {
+    for iv in intervals {
+      raw.append((iv.type, iv.dur, iv.activityLabel, c + 1))
+    }
+    if c + 1 < circuits && circuitRest > 0 {
+      raw.append((.circuitRest, circuitRest, nil, nil))
+    }
+  }
+
+  if cooldown > 0 {
+    raw.append((.cooldown, cooldown, nil, nil))
+  }
+
+  var cursor: Double = 0
+  return raw.enumerated().map { i, s in
+    var seg = Segment(phase: s.phase, duration: s.duration, startAt: cursor, endAt: cursor + s.duration, index: i)
+    seg.activityLabel = s.activityLabel
+    seg.circuitNumber = s.circuitNumber
+    cursor += s.duration
+    return seg
+  }
+}
+
 func speedForPhase(_ phase: Phase, _ speeds: RunSpeeds) -> Double {
   switch phase {
   case .warmup: return speeds.warmupSpeed
@@ -47,6 +87,16 @@ func inclineForPhase(_ phase: Phase, _ inclines: RunInclines) -> Double {
 }
 
 func segmentsForSession(_ session: SessionDTO) -> [Segment] {
+  if session.mode == "circuit" {
+    return expandCircuit(
+      session.intervals ?? [],
+      circuits: session.circuits ?? 0,
+      warmup: session.warmup ?? 0,
+      cooldown: session.cooldown ?? 0,
+      circuitRest: session.circuitRest ?? 0
+    )
+  }
+
   let base: [Segment]
   if session.mode == "advanced" {
     base = intervalsToSegments(session.intervals ?? [])

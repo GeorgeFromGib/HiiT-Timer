@@ -13,6 +13,8 @@ struct Segment: Equatable {
   let index: Int
   var speed: Double? = nil
   var incline: Double? = nil
+  var activityLabel: String? = nil
+  var circuitNumber: Int? = nil
 }
 
 struct WorkoutConfig: Codable {
@@ -28,6 +30,7 @@ struct IntervalDTO: Codable {
   let dur: Double
   let speed: Double?
   let incline: Double?
+  var activityLabel: String? = nil
 }
 
 struct RunSpeeds: Codable {
@@ -55,12 +58,17 @@ struct SessionDTO: Codable {
   let mode: String
   let config: WorkoutConfig?
   let intervals: [IntervalDTO]?
+  var circuits: Int? = nil
+  var warmup: Double? = nil
+  var cooldown: Double? = nil
+  var circuitRest: Double? = nil
 
-  /// v1 supports Standard (no activityType) and Treadmill (activityType == "run")
-  /// sessions in easy or advanced mode. Circuit mode and walk/spinning activity
-  /// types sync to Core Data but aren't runnable on the watch until v2.
+  /// Standard (no activityType) and Treadmill (activityType == "run") sessions
+  /// run in easy or advanced mode; Circuit sessions run via their own
+  /// circuits/warmup/cooldown/circuitRest fields. Walk/spinning activity types
+  /// still sync to Core Data but aren't runnable on the watch yet.
   var isRunnableInV1: Bool {
-    (mode == "easy" || mode == "advanced") && (activityType == nil || activityType == "run")
+    mode == "circuit" || ((mode == "easy" || mode == "advanced") && (activityType == nil || activityType == "run"))
   }
 
   var isTreadmill: Bool {

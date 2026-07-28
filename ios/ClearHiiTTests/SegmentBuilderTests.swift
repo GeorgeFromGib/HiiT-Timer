@@ -38,4 +38,32 @@ final class SegmentBuilderTests: XCTestCase {
     XCTAssertEqual(speedForPhase(.rest, speeds), 4)
     XCTAssertEqual(speedForPhase(.circuitRest, speeds), 4) // maps to restSpeed, same as TS
   }
+
+  // MARK: - expandCircuit (mirrors src/lib/__tests__/workout.test.ts's `expandCircuit` suite)
+
+  private let circuitIntervals = [
+    IntervalDTO(type: .work, dur: 30, speed: nil, incline: nil, activityLabel: "Push-ups"),
+    IntervalDTO(type: .rest, dur: 10, speed: nil, incline: nil),
+  ]
+
+  func test_expandCircuit_repeatsIntervalListPerCircuit_taggingCircuitNumber() {
+    let segs = expandCircuit(circuitIntervals, circuits: 2, warmup: 60, cooldown: 60, circuitRest: 20)
+    XCTAssertEqual(segs.map(\.phase), [.warmup, .work, .rest, .circuitRest, .work, .rest, .cooldown])
+    XCTAssertEqual(segs.filter { $0.phase == .work }.map(\.circuitNumber), [1, 2])
+  }
+
+  func test_expandCircuit_doesNotAddCircuitRestAfterFinalCircuit() {
+    let segs = expandCircuit(circuitIntervals, circuits: 1, warmup: 0, cooldown: 0, circuitRest: 20)
+    XCTAssertFalse(segs.contains { $0.phase == .circuitRest })
+  }
+
+  func test_expandCircuit_omitsCircuitRestBetweenCircuitsWhenCircuitRestIsZero() {
+    let segs = expandCircuit(circuitIntervals, circuits: 2, warmup: 0, cooldown: 0, circuitRest: 0)
+    XCTAssertFalse(segs.contains { $0.phase == .circuitRest })
+  }
+
+  func test_expandCircuit_carriesActivityLabelOntoEachSegment() {
+    let segs = expandCircuit(circuitIntervals, circuits: 1, warmup: 0, cooldown: 0, circuitRest: 0)
+    XCTAssertEqual(segs[0].activityLabel, "Push-ups")
+  }
 }
