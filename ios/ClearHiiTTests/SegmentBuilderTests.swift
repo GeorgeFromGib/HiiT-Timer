@@ -66,4 +66,31 @@ final class SegmentBuilderTests: XCTestCase {
     let segs = expandCircuit(circuitIntervals, circuits: 1, warmup: 0, cooldown: 0, circuitRest: 0)
     XCTAssertEqual(segs[0].activityLabel, "Push-ups")
   }
+
+  // MARK: - upNextExercises
+
+  func test_upNextExercises_listsRemainingExercisesInCurrentCircuit() {
+    let intervals = [
+      IntervalDTO(type: .work, dur: 30, speed: nil, incline: nil, activityLabel: "Push-ups"),
+      IntervalDTO(type: .rest, dur: 10, speed: nil, incline: nil),
+      IntervalDTO(type: .work, dur: 30, speed: nil, incline: nil, activityLabel: "Squats"),
+      IntervalDTO(type: .rest, dur: 10, speed: nil, incline: nil),
+    ]
+    let segs = expandCircuit(intervals, circuits: 2, warmup: 0, cooldown: 0, circuitRest: 20)
+    let upNext = upNextExercises(segs, currentIndex: 0)
+    XCTAssertEqual(upNext, ["Squats"])
+  }
+
+  func test_upNextExercises_emptyOnLastExerciseOfCircuit() {
+    let intervals = [IntervalDTO(type: .work, dur: 30, speed: nil, incline: nil, activityLabel: "Push-ups")]
+    let segs = expandCircuit(intervals, circuits: 1, warmup: 0, cooldown: 0, circuitRest: 0)
+    let upNext = upNextExercises(segs, currentIndex: 0)
+    XCTAssertTrue(upNext.isEmpty)
+  }
+
+  func test_upNextExercises_emptyForNonCircuitSegment() {
+    let segs = expandWorkout(WorkoutConfig(warmup: 10, high: 20, low: 10, rounds: 1, cooldown: 0))
+    let upNext = upNextExercises(segs, currentIndex: 0)
+    XCTAssertTrue(upNext.isEmpty)
+  }
 }

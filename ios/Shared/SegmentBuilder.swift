@@ -119,6 +119,17 @@ func segmentsForSession(_ session: SessionDTO) -> [Segment] {
   }
 }
 
+/// Exercises still to come in the wearer's current circuit round, in display
+/// order — backs the Crown-scrollable "up next" list on SessionRunView. Empty
+/// once the last exercise of the round is reached, or for non-circuit segments.
+func upNextExercises(_ segments: [Segment], currentIndex: Int) -> [String] {
+  guard let current = segments.first(where: { $0.index == currentIndex }),
+        let circuitNumber = current.circuitNumber else { return [] }
+  return segments
+    .filter { $0.circuitNumber == circuitNumber && $0.index > currentIndex }
+    .compactMap(\.activityLabel)
+}
+
 /// `blobs` is expected newest-first (see WorkoutStore.fetchRunnableSessions' sort
 /// descriptor); CloudKit doesn't enforce uniqueness on the `id` field, so two
 /// devices writing independently before their first sync can each produce a

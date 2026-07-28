@@ -70,7 +70,7 @@ struct SessionRunView: View {
 
   private func runningView(state: TimerState, segment: Segment?) -> some View {
     VStack(spacing: 8) {
-      Text(segment.map { phaseWord[$0.phase] ?? "" } ?? "")
+      Text(segment?.activityLabel ?? segment.map { phaseWord[$0.phase] ?? "" } ?? "")
         .font(.headline)
         .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
 
@@ -99,6 +99,28 @@ struct SessionRunView: View {
         Text(fmtTimer(state.remainingInSegment))
           .font(.system(size: 46, weight: .bold, design: .rounded))
           .monospacedDigit()
+      }
+
+      if session.mode == "circuit", let circuitNumber = segment?.circuitNumber {
+        Text("Circuit \(circuitNumber) / \(session.circuits ?? circuitNumber)")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+      }
+
+      if session.mode == "circuit" {
+        let upNext = upNextExercises(engineHolder.segments, currentIndex: state.currentIndex)
+        if !upNext.isEmpty {
+          ScrollView {
+            VStack(alignment: .leading, spacing: 2) {
+              ForEach(upNext, id: \.self) { name in
+                Text(name)
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+              }
+            }
+          }
+          .frame(maxHeight: 50)
+        }
       }
 
       HStack {
@@ -171,6 +193,7 @@ struct SessionDoneView: View {
 /// segment for haptics and the speed/incline display.
 private final class EngineHolder: ObservableObject {
   let engine: WorkoutTimerEngine
+  let segments: [Segment]
   @Published private(set) var currentSegment: Segment?
   let congratsMessage: String = congratsMessages.randomElement() ?? ""
   private var cancellable: AnyCancellable?
@@ -179,6 +202,7 @@ private final class EngineHolder: ObservableObject {
   init(session: SessionDTO, segments: [Segment]) {
     let engine = WorkoutTimerEngine(segments: segments)
     self.engine = engine
+    self.segments = segments
     self.currentSegment = segments.first
     self.workoutSession = WorkoutSessionCoordinator(
       recorder: HealthKitWorkoutManager(),
