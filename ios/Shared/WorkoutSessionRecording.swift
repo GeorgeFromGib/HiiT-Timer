@@ -14,17 +14,24 @@ func hkActivityType(for session: SessionDTO) -> HKWorkoutActivityType {
 }
 
 /// Mirrors WorkoutTimerEngine's status onto a WorkoutSessionRecording exactly
-/// once per transition, so callers can pass every status change through
-/// `handle(status:)` without worrying about redundant HealthKit calls.
+/// once per transition. Pass `engine:` to wire this up automatically off the
+/// engine's `onStatusChange` — every start/pause/resume/finish then reaches
+/// `handle(status:)` with no separate call needed at the use site.
+/// `handle(status:)` stays reachable directly too; that's what the unit tests
+/// below use to exercise it without a real WorkoutTimerEngine.
 final class WorkoutSessionCoordinator {
   private let recorder: WorkoutSessionRecording
   private let activityType: HKWorkoutActivityType
   private var didStart = false
   private var didEnd = false
 
-  init(recorder: WorkoutSessionRecording, activityType: HKWorkoutActivityType) {
+  init(recorder: WorkoutSessionRecording, activityType: HKWorkoutActivityType, engine: WorkoutTimerEngine? = nil) {
     self.recorder = recorder
     self.activityType = activityType
+    // Strong self is safe (and required for this to survive past init): the
+    // coordinator never stores `engine`, so there's no retain cycle, and the
+    // engine's closure is what keeps this coordinator alive for its lifetime.
+    engine?.onStatusChange = { [self] status in handle(status: status) }
   }
 
   func requestAuthorization(_ completion: @escaping (Bool) -> Void) {

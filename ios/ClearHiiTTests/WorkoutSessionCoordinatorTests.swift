@@ -119,4 +119,64 @@ final class WorkoutSessionCoordinatorTests: XCTestCase {
                               intervals: nil)
     XCTAssertEqual(hkActivityType(for: session), .highIntensityIntervalTraining)
   }
+
+  // MARK: - Wired to a real WorkoutTimerEngine (engine: in init)
+
+  func makeEngineSegments() -> [Segment] {
+    [
+      Segment(phase: .warmup, duration: 10, startAt: 0, endAt: 10, index: 0),
+      Segment(phase: .work, duration: 20, startAt: 10, endAt: 30, index: 1),
+    ]
+  }
+
+  func test_wiredToEngine_start_startsRecorderWithActivityType() {
+    let recorder = FakeRecorder()
+    let now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeEngineSegments(), now: { now })
+    let coordinator = WorkoutSessionCoordinator(recorder: recorder, activityType: .running, engine: engine)
+    _ = coordinator
+
+    engine.start()
+    XCTAssertEqual(recorder.startedActivityType, .running)
+  }
+
+  func test_wiredToEngine_pauseThenResume_forwardsToRecorderWithoutManualHandleCalls() {
+    let recorder = FakeRecorder()
+    let now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeEngineSegments(), now: { now })
+    let coordinator = WorkoutSessionCoordinator(recorder: recorder, activityType: .running, engine: engine)
+    _ = coordinator
+
+    engine.start()
+    engine.pause()
+    engine.resume()
+    XCTAssertEqual(recorder.pauseCount, 1)
+    XCTAssertEqual(recorder.resumeCount, 1)
+  }
+
+  func test_wiredToEngine_pauseWhileAlreadyPaused_doesNotRefireRecorderPause() {
+    let recorder = FakeRecorder()
+    let now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeEngineSegments(), now: { now })
+    let coordinator = WorkoutSessionCoordinator(recorder: recorder, activityType: .running, engine: engine)
+    _ = coordinator
+
+    engine.start()
+    engine.pause()
+    engine.pause() // no-op on the engine (already paused) — must not re-signal the coordinator
+    XCTAssertEqual(recorder.pauseCount, 1)
+  }
+
+  func test_wiredToEngine_tickPastTotalDuration_endsWithSaveTrue() {
+    let recorder = FakeRecorder()
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeEngineSegments(), now: { now })
+    let coordinator = WorkoutSessionCoordinator(recorder: recorder, activityType: .running, engine: engine)
+    _ = coordinator
+
+    engine.start()
+    now = now.addingTimeInterval(999)
+    engine.tick()
+    XCTAssertEqual(recorder.endCalls, [true])
+  }
 }

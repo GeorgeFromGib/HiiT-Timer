@@ -114,4 +114,4 @@ add the lesson as a one-line rule under ## Lessons, so it never happens again.
 
 ## Lessons
 
-- (Claude adds rules here)
+- For Swift builds/tests (`xcodebuild`), always pass `-workspace ios/ClearHiiT.xcworkspace`, never `-project ios/ClearHiiT.xcodeproj` — the bare `.xcodeproj` skips CocoaPods' `Pods.xcodeproj`, causing "module map not found" / "No such module 'Expo'" errors unrelated to any code change.

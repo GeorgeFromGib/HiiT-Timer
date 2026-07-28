@@ -15,6 +15,10 @@ final class WorkoutTimerEngine: ObservableObject {
 
   var onTransition: ((Segment?, Segment?) -> Void)?
   var onFinish: (() -> Void)?
+  /// Fires once per genuine status change (never on a no-op start/pause/resume).
+  /// WorkoutSessionCoordinator subscribes to this to keep a HealthKit session
+  /// mirrored to this engine without every call site needing to say so twice.
+  var onStatusChange: ((TimerState.Status) -> Void)?
 
   private var segments: [Segment]
   private let total: Double
@@ -44,6 +48,7 @@ final class WorkoutTimerEngine: ObservableObject {
     resumeEpoch = now()
     lastIndex = -1
     state.status = .running
+    onStatusChange?(.running)
     scheduleTimer()
     tick()
   }
@@ -54,6 +59,7 @@ final class WorkoutTimerEngine: ObservableObject {
     state.status = .paused
     timer?.invalidate()
     timer = nil
+    onStatusChange?(.paused)
   }
 
   func resume() {
@@ -61,6 +67,7 @@ final class WorkoutTimerEngine: ObservableObject {
     resumeEpoch = now()
     state.status = .running
     scheduleTimer()
+    onStatusChange?(.running)
   }
 
   func reset() {
@@ -96,6 +103,7 @@ final class WorkoutTimerEngine: ObservableObject {
         timer?.invalidate()
         timer = nil
         onTransition?(prev, nil)
+        onStatusChange?(.finished)
         onFinish?()
       }
       state.elapsed = elapsed
