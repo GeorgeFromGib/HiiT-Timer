@@ -22,7 +22,6 @@
 		5E21ECFD301217A5003B942C /* WorkoutTimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */; };
 		5E21ECFE301217A5003B942C /* WorkoutTimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */; };
 		5E21ECFF301217A5003B942C /* WorkoutTimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */; };
-		7F78E029BE910236C0C63DC2 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5E59C9B0300FC72B00C04775 /* ClearHiiTWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -553,7 +552,6 @@
 				5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */,
 				5E21ECD4301161A2003B942C /* WorkoutModels.swift in Sources */,
 				5E21ECD03011611D003B942C /* SegmentBuilder.swift in Sources */,
-				7F78E029BE910236C0C63DC2 /* WorkoutSessionRecording.swift in Sources */,
 				6BE48FB26572879EE7F20157 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
