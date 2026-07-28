@@ -39,6 +39,27 @@ final class SegmentBuilderTests: XCTestCase {
     XCTAssertEqual(speedForPhase(.circuitRest, speeds), 4) // maps to restSpeed, same as TS
   }
 
+  // MARK: - resistanceForPhase / powerForPhase (mirrors src/lib/sessions.ts's spinValueForPhase)
+
+  private let spinValues = SpinValuesDTO(
+    warmupResistance: 3, warmupPower: 85,
+    workResistance: 5, workPower: 120,
+    restResistance: 2, restPower: 60,
+    cooldownResistance: 3, cooldownPower: 85
+  )
+
+  func test_resistanceForPhase_mapsEachPhase() {
+    XCTAssertEqual(resistanceForPhase(.work, spinValues), 5)
+    XCTAssertEqual(resistanceForPhase(.rest, spinValues), 2)
+    XCTAssertEqual(resistanceForPhase(.circuitRest, spinValues), 2) // maps to restResistance, same as TS
+  }
+
+  func test_powerForPhase_mapsEachPhase() {
+    XCTAssertEqual(powerForPhase(.work, spinValues), 120)
+    XCTAssertEqual(powerForPhase(.rest, spinValues), 60)
+    XCTAssertEqual(powerForPhase(.circuitRest, spinValues), 60) // maps to restPower, same as TS
+  }
+
   // MARK: - expandCircuit (mirrors src/lib/__tests__/workout.test.ts's `expandCircuit` suite)
 
   private let circuitIntervals = [

@@ -152,6 +152,21 @@ struct SessionRunView: View {
                 .foregroundStyle(.secondary)
             }
           }
+        } else if session.isSpinning, let resistance = segment?.resistance, let power = segment?.power {
+          Text(fmtTimer(state.remainingInSegment))
+            .font(.system(size: 50, weight: .bold, design: .rounded))
+            .monospacedDigit()
+
+          HStack(alignment: .lastTextBaseline, spacing: 4) {
+            Text("R\(Int(resistance))")
+              .font(.system(size: 24, weight: .semibold, design: .rounded))
+              .monospacedDigit()
+            Text("·")
+              .foregroundStyle(.secondary)
+            Text("\(Int(power))W")
+              .font(.system(size: 24, weight: .semibold, design: .rounded))
+              .monospacedDigit()
+          }
         } else {
           Text(fmtTimer(state.remainingInSegment))
             .font(.system(size: 46, weight: .bold, design: .rounded))

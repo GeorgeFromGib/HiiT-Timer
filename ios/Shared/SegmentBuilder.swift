@@ -86,6 +86,26 @@ func inclineForPhase(_ phase: Phase, _ inclines: RunInclines) -> Double {
   }
 }
 
+/// Ports src/lib/sessions.ts's spinValueForPhase (resistance half).
+func resistanceForPhase(_ phase: Phase, _ values: SpinValuesDTO) -> Double {
+  switch phase {
+  case .warmup: return values.warmupResistance
+  case .work: return values.workResistance
+  case .rest, .circuitRest, .finish: return values.restResistance
+  case .cooldown: return values.cooldownResistance
+  }
+}
+
+/// Ports src/lib/sessions.ts's spinValueForPhase (power half).
+func powerForPhase(_ phase: Phase, _ values: SpinValuesDTO) -> Double {
+  switch phase {
+  case .warmup: return values.warmupPower
+  case .work: return values.workPower
+  case .rest, .circuitRest, .finish: return values.restPower
+  case .cooldown: return values.cooldownPower
+  }
+}
+
 func segmentsForSession(_ session: SessionDTO) -> [Segment] {
   if session.mode == "circuit" {
     return expandCircuit(
@@ -104,19 +124,33 @@ func segmentsForSession(_ session: SessionDTO) -> [Segment] {
     base = expandWorkout(session.config ?? WorkoutConfig(warmup: 0, high: 0, low: 0, rounds: 0, cooldown: 0))
   }
 
-  guard session.activityType == "run", let speeds = session.runSpeeds else { return base }
   let overrides = session.mode == "advanced" ? session.intervals : nil
-  let inclineEnabled = session.inclineEnabled != false
 
-  return base.enumerated().map { i, seg in
-    var s = seg
-    let override = overrides?.indices.contains(i) == true ? overrides?[i] : nil
-    s.speed = override?.speed ?? speedForPhase(seg.phase, speeds)
-    if inclineEnabled, let inclines = session.runInclines {
-      s.incline = override?.incline ?? inclineForPhase(seg.phase, inclines)
+  if session.activityType == "run", let speeds = session.runSpeeds {
+    let inclineEnabled = session.inclineEnabled != false
+    return base.enumerated().map { i, seg in
+      var s = seg
+      let override = overrides?.indices.contains(i) == true ? overrides?[i] : nil
+      s.speed = override?.speed ?? speedForPhase(seg.phase, speeds)
+      if inclineEnabled, let inclines = session.runInclines {
+        s.incline = override?.incline ?? inclineForPhase(seg.phase, inclines)
+      }
+      return s
     }
-    return s
   }
+
+  if session.activityType == "spinning" {
+    let sv = session.spinValues ?? defaultSpinValues
+    return base.enumerated().map { i, seg in
+      var s = seg
+      let override = overrides?.indices.contains(i) == true ? overrides?[i] : nil
+      s.resistance = override?.resistance ?? resistanceForPhase(seg.phase, sv)
+      s.power = override?.power ?? powerForPhase(seg.phase, sv)
+      return s
+    }
+  }
+
+  return base
 }
 
 /// Exercises still to come in the wearer's current circuit round, in display

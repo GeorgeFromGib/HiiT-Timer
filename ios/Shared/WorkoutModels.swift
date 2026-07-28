@@ -15,6 +15,8 @@ struct Segment: Equatable {
   var incline: Double? = nil
   var activityLabel: String? = nil
   var circuitNumber: Int? = nil
+  var resistance: Double? = nil
+  var power: Double? = nil
 }
 
 struct WorkoutConfig: Codable {
@@ -31,7 +33,29 @@ struct IntervalDTO: Codable {
   let speed: Double?
   let incline: Double?
   var activityLabel: String? = nil
+  var resistance: Double? = nil
+  var power: Double? = nil
 }
+
+/// Mirrors src/lib/sessions.ts's SpinValues.
+struct SpinValuesDTO: Codable {
+  let warmupResistance: Double
+  let warmupPower: Double
+  let workResistance: Double
+  let workPower: Double
+  let restResistance: Double
+  let restPower: Double
+  let cooldownResistance: Double
+  let cooldownPower: Double
+}
+
+/// Mirrors src/lib/sessions.ts's DEFAULT_SPIN_VALUES.
+let defaultSpinValues = SpinValuesDTO(
+  warmupResistance: 3, warmupPower: 85,
+  workResistance: 5, workPower: 120,
+  restResistance: 2, restPower: 60,
+  cooldownResistance: 3, cooldownPower: 85
+)
 
 struct RunSpeeds: Codable {
   let warmupSpeed: Double
@@ -62,17 +86,22 @@ struct SessionDTO: Codable {
   var warmup: Double? = nil
   var cooldown: Double? = nil
   var circuitRest: Double? = nil
+  var spinValues: SpinValuesDTO? = nil
 
-  /// Standard (no activityType) and Treadmill (activityType == "run") sessions
-  /// run in easy or advanced mode; Circuit sessions run via their own
-  /// circuits/warmup/cooldown/circuitRest fields. Walk/spinning activity types
-  /// still sync to Core Data but aren't runnable on the watch yet.
+  /// Standard (no activityType), Treadmill (activityType == "run"), and
+  /// Spinning (activityType == "spinning") sessions run in easy or advanced
+  /// mode; Circuit sessions run via their own circuits/warmup/cooldown/circuitRest
+  /// fields. Walk still syncs to Core Data but isn't runnable on the watch yet.
   var isRunnableInV1: Bool {
-    mode == "circuit" || ((mode == "easy" || mode == "advanced") && (activityType == nil || activityType == "run"))
+    mode == "circuit" || ((mode == "easy" || mode == "advanced") && (activityType == nil || activityType == "run" || activityType == "spinning"))
   }
 
   var isTreadmill: Bool {
     activityType == "run"
+  }
+
+  var isSpinning: Bool {
+    activityType == "spinning"
   }
 }
 
