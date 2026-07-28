@@ -33,5 +33,9 @@
     <true/>
     <key>WKCompanionAppBundleIdentifier</key>
     <string>com.georgefromgib.hiittimer</string>
+    <key>NSHealthShareUsageDescription</key>
+    <string>ClearHiiT reads your heart rate during a workout to record it to Health.</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>ClearHiiT saves your completed workouts, heart rate, and calories to Health.</string>
   </dict>
 </plist>
