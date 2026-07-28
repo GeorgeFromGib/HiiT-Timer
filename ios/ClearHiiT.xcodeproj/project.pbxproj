@@ -11,6 +11,8 @@
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
+		89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
+		30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		5E21ECBB30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
 		5E21ECBC30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */; };
 		5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
@@ -81,6 +83,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ClearHiiT/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ClearHiiT/Info.plist; sourceTree = "<group>"; };
 		5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSessionRecording.swift; path = Shared/WorkoutSessionRecording.swift; sourceTree = "<group>"; };
+		16819D9A253946278285B595 /* RecentSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecentSessionStore.swift; path = Shared/RecentSessionStore.swift; sourceTree = "<group>"; };
 		5BC979914E5CC35A94F8AAEA /* Pods-ClearHiiT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.debug.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.debug.xcconfig"; sourceTree = "<group>"; };
 		5E21ECB930114F6A003B942C /* WorkoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutStore.swift; path = Shared/WorkoutStore.swift; sourceTree = "<group>"; };
 		5E21ECBA30114F6A003B942C /* WorkoutModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WorkoutModel.xcdatamodel; sourceTree = "<group>"; };
@@ -103,7 +106,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5E59C9C1300FC72C00C04775 /* Exceptions for "ClearHiiTWatch Watch App" folder in "ClearHiiTWatch Watch App" target */ = {
+		5E59C9C1300FC72C00C04775 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -113,29 +116,8 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5E21ECC430115DB0003B942C /* ClearHiiTTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = ClearHiiTTests;
-			sourceTree = "<group>";
-		};
-		5E59C9A7300FC71F00C04775 /* ClearHiiTWatch Watch App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				5E59C9C1300FC72C00C04775 /* Exceptions for "ClearHiiTWatch Watch App" folder in "ClearHiiTWatch Watch App" target */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = "ClearHiiTWatch Watch App";
-			sourceTree = "<group>";
-		};
+		5E21ECC430115DB0003B942C /* ClearHiiTTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ClearHiiTTests; sourceTree = "<group>"; };
+		5E59C9A7300FC71F00C04775 /* ClearHiiTWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E59C9C1300FC72C00C04775 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ClearHiiTWatch Watch App"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,6 +153,7 @@
 				5E21ECD3301161A2003B942C /* WorkoutModels.swift */,
 				5E21ECCE3011611D003B942C /* SegmentBuilder.swift */,
 				5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */,
+				16819D9A253946278285B595 /* RecentSessionStore.swift */,
 				5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */,
 				5E21ECB930114F6A003B942C /* WorkoutStore.swift */,
 				5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */,
@@ -574,6 +557,7 @@
 				5E21ECD6301161A2003B942C /* WorkoutModels.swift in Sources */,
 				5E21ECD130116142003B942C /* SegmentBuilder.swift in Sources */,
 				5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */,
+				89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -585,6 +569,7 @@
 				5E21ECD5301161A2003B942C /* WorkoutModels.swift in Sources */,
 				5E21ECCF3011611D003B942C /* SegmentBuilder.swift in Sources */,
 				5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */,
+				30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */,
 				5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */,
 				5E21ECBE30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */,
 			);
