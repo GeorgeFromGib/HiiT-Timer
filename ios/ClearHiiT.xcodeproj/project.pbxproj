@@ -22,6 +22,9 @@
 		5E21ECFD301217A5003B942C /* WorkoutTimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */; };
 		5E21ECFE301217A5003B942C /* WorkoutTimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */; };
 		5E21ECFF301217A5003B942C /* WorkoutTimerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */; };
+		7F78E029BE910236C0C63DC2 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
+		5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
+		5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5E59C9B0300FC72B00C04775 /* ClearHiiTWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5E59C9B7300FD7F300C04775 /* WorkoutSyncModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */; };
 		5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */; };
@@ -84,6 +87,7 @@
 		5E21ECCE3011611D003B942C /* SegmentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SegmentBuilder.swift; path = Shared/SegmentBuilder.swift; sourceTree = "<group>"; };
 		5E21ECD3301161A2003B942C /* WorkoutModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutModels.swift; path = Shared/WorkoutModels.swift; sourceTree = "<group>"; };
 		5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutTimerEngine.swift; path = Shared/WorkoutTimerEngine.swift; sourceTree = "<group>"; };
+		5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSessionRecording.swift; path = Shared/WorkoutSessionRecording.swift; sourceTree = "<group>"; };
 		5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ClearHiiTWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WorkoutSyncModule.m; path = ClearHiiT/WorkoutSyncModule.m; sourceTree = "<group>"; };
 		5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSyncModule.swift; path = ClearHiiT/WorkoutSyncModule.swift; sourceTree = "<group>"; };
@@ -154,6 +158,7 @@
 				5E21ECFC301217A5003B942C /* WorkoutTimerEngine.swift */,
 				5E21ECD3301161A2003B942C /* WorkoutModels.swift */,
 				5E21ECCE3011611D003B942C /* SegmentBuilder.swift */,
+				5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */,
 				5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */,
 				5E21ECB930114F6A003B942C /* WorkoutStore.swift */,
 				5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */,
@@ -548,6 +553,7 @@
 				5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */,
 				5E21ECD4301161A2003B942C /* WorkoutModels.swift in Sources */,
 				5E21ECD03011611D003B942C /* SegmentBuilder.swift in Sources */,
+				7F78E029BE910236C0C63DC2 /* WorkoutSessionRecording.swift in Sources */,
 				6BE48FB26572879EE7F20157 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -559,6 +565,7 @@
 				5E21ECFD301217A5003B942C /* WorkoutTimerEngine.swift in Sources */,
 				5E21ECD6301161A2003B942C /* WorkoutModels.swift in Sources */,
 				5E21ECD130116142003B942C /* SegmentBuilder.swift in Sources */,
+				5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +576,7 @@
 				5E21ECFF301217A5003B942C /* WorkoutTimerEngine.swift in Sources */,
 				5E21ECD5301161A2003B942C /* WorkoutModels.swift in Sources */,
 				5E21ECCF3011611D003B942C /* SegmentBuilder.swift in Sources */,
+				5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */,
 				5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */,
 				5E21ECBE30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */,
 			);
