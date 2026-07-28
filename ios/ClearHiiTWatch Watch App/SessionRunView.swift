@@ -128,6 +128,12 @@ struct SessionRunView: View {
       .tag(RunningPage.controls)
 
       VStack(spacing: 8) {
+        if state.status == .paused {
+          Image(systemName: "pause.circle.fill")
+            .font(.title3)
+            .foregroundStyle(controlSubText)
+        }
+
         Text(segment?.activityLabel ?? segment.map { phaseWord[$0.phase] ?? "" } ?? "")
           .font(.system(size: 22, weight: .bold, design: .rounded))
           .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
