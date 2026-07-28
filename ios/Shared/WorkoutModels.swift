@@ -105,6 +105,8 @@ struct SessionDTO: Codable {
   }
 }
 
+extension SessionDTO: Identifiable {}
+
 let phaseWord: [Phase: String] = [
   .warmup: "WARM UP",
   .work: "WORK",

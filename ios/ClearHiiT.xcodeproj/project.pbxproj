@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		0ADE5215E96F488D9CCEB900 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
+		30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
-		89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
-		30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		5E21ECBB30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
 		5E21ECBC30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */; };
 		5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
@@ -31,6 +31,8 @@
 		5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */; };
 		6BE48FB26572879EE7F20157 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851A8468A13AA3E4E66E311C /* ExpoModulesProvider.swift */; };
 		7A02214D275B7F78B2F4B793 /* libPods-ClearHiiT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 607D2C8DDBF7A757ED66172D /* libPods-ClearHiiT.a */; };
+		4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
+		89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		940573A346E2812B92EF2A8B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DF74C6B9E34469B729A27019 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		E139F4CC671CD0B627E31440 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DF74C6B9E34469B729A27019 /* PrivacyInfo.xcprivacy */; };
@@ -82,8 +84,9 @@
 		13B07F961A680F5B00A75B9A /* ClearHiiT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClearHiiT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ClearHiiT/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ClearHiiT/Info.plist; sourceTree = "<group>"; };
-		5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSessionRecording.swift; path = Shared/WorkoutSessionRecording.swift; sourceTree = "<group>"; };
 		16819D9A253946278285B595 /* RecentSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecentSessionStore.swift; path = Shared/RecentSessionStore.swift; sourceTree = "<group>"; };
+		60CCE433F70F4E54A7E917F2 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeepLink.swift; path = Shared/DeepLink.swift; sourceTree = "<group>"; };
+		5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSessionRecording.swift; path = Shared/WorkoutSessionRecording.swift; sourceTree = "<group>"; };
 		5BC979914E5CC35A94F8AAEA /* Pods-ClearHiiT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.debug.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.debug.xcconfig"; sourceTree = "<group>"; };
 		5E21ECB930114F6A003B942C /* WorkoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutStore.swift; path = Shared/WorkoutStore.swift; sourceTree = "<group>"; };
 		5E21ECBA30114F6A003B942C /* WorkoutModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WorkoutModel.xcdatamodel; sourceTree = "<group>"; };
@@ -154,6 +157,7 @@
 				5E21ECCE3011611D003B942C /* SegmentBuilder.swift */,
 				5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */,
 				16819D9A253946278285B595 /* RecentSessionStore.swift */,
+				60CCE433F70F4E54A7E917F2 /* DeepLink.swift */,
 				5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */,
 				5E21ECB930114F6A003B942C /* WorkoutStore.swift */,
 				5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */,
@@ -558,6 +562,7 @@
 				5E21ECD130116142003B942C /* SegmentBuilder.swift in Sources */,
 				5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */,
 				89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */,
+				4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -570,6 +575,7 @@
 				5E21ECCF3011611D003B942C /* SegmentBuilder.swift in Sources */,
 				5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */,
 				30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */,
+				0ADE5215E96F488D9CCEB900 /* DeepLink.swift in Sources */,
 				5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */,
 				5E21ECBE30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */,
 			);

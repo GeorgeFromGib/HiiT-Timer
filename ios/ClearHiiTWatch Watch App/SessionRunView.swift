@@ -38,15 +38,18 @@ private enum RunningPage: Hashable {
 
 struct SessionRunView: View {
   let session: SessionDTO
+  var autoStart: Bool = false
 
   @StateObject private var engineHolder: EngineHolder
   @State private var countdown: Int?
   @State private var countdownTask: Task<Void, Never>?
   @State private var runningPage: RunningPage = .timer
+  @State private var hasAutoStarted = false
   @Environment(\.dismiss) private var dismiss
 
-  init(session: SessionDTO) {
+  init(session: SessionDTO, autoStart: Bool = false) {
     self.session = session
+    self.autoStart = autoStart
     _engineHolder = StateObject(wrappedValue: EngineHolder(session: session, segments: segmentsForSession(session)))
   }
 
@@ -63,6 +66,12 @@ struct SessionRunView: View {
         readyView
       } else {
         runningView(state: state, segment: segment)
+      }
+    }
+    .onAppear {
+      if autoStart && !hasAutoStarted {
+        hasAutoStarted = true
+        beginCountdown()
       }
     }
     .onDisappear {
@@ -288,12 +297,15 @@ private final class EngineHolder: ObservableObject {
   let congratsMessage: String = congratsMessages.randomElement() ?? ""
   private var cancellable: AnyCancellable?
   private let workoutSession: WorkoutSessionCoordinator
+  private let session: SessionDTO
+  private let recentSessionStore = RecentSessionStore()
 
   init(session: SessionDTO, segments: [Segment]) {
     let engine = WorkoutTimerEngine(segments: segments)
     self.engine = engine
     self.segments = segments
     self.currentSegment = segments.first
+    self.session = session
     self.workoutSession = WorkoutSessionCoordinator(
       recorder: HealthKitWorkoutManager(),
       activityType: hkActivityType(for: session),
@@ -315,6 +327,7 @@ private final class EngineHolder: ObservableObject {
   }
 
   func start() {
+    recentSessionStore.record(id: session.id, name: session.name)
     engine.start()
   }
 
