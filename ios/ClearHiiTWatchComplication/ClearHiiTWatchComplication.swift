@@ -34,10 +34,6 @@ struct RecentSessionWidgetEntryView: View {
         Image(systemName: "play.fill")
       }
       .widgetURL(deepLinkURL)
-    case .accessoryCorner:
-      Image(systemName: "play.fill")
-        .widgetLabel(entry.recentSession?.name ?? "Start a workout")
-        .widgetURL(deepLinkURL)
     case .accessoryInline:
       Text(entry.recentSession?.name ?? "Start a workout")
         .widgetURL(deepLinkURL)
@@ -68,6 +64,6 @@ struct ClearHiiTWatchComplication: Widget {
     }
     .configurationDisplayName("Last Workout")
     .description("One-tap restart for your most recently run session.")
-    .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryCorner, .accessoryInline])
+    .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
   }
 }
