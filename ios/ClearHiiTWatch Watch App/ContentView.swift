@@ -1,4 +1,5 @@
 import SwiftUI
+import WidgetKit
 
 struct ContentView: View {
   @State private var deepLinkedSession: SessionDTO?
@@ -14,6 +15,11 @@ struct ContentView: View {
       guard let id = sessionId(fromDeepLinkURL: url),
             let session = WorkoutStore.shared.fetchSession(id: id) else { return }
       deepLinkedSession = session
+    }
+    .onAppear {
+      // Ensures the complication reflects the latest installed code/content
+      // rather than a stale cached render from before this launch.
+      WidgetCenter.shared.reloadTimelines(ofKind: recentSessionWidgetKind)
     }
   }
 }
