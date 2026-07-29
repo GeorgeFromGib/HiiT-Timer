@@ -30,7 +30,6 @@ struct RecentSessionWidgetEntryView: View {
     switch family {
     case .accessoryCircular, .accessoryCorner:
       Image(systemName: "play.fill")
-        .font(.title3)
         .widgetURL(deepLinkURL)
     case .accessoryInline:
       Text(entry.recentSession?.name ?? "Start a workout")
