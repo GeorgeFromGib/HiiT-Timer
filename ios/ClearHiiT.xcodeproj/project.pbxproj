@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		0ADE5215E96F488D9CCEB900 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
+		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
 		5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5E21ECBB30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
@@ -29,9 +30,12 @@
 		5E59C9B0300FC72B00C04775 /* ClearHiiTWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5E59C9B7300FD7F300C04775 /* WorkoutSyncModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */; };
 		5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */; };
+		5EDC6723301A07D700D89195 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC6722301A07D700D89195 /* WidgetKit.framework */; };
+		5EDC6725301A07D700D89195 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC6724301A07D700D89195 /* SwiftUI.framework */; };
+		5EDC6732301A07DA00D89195 /* ClearHiiTWatchComplicationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5EDC6721301A07D700D89195 /* ClearHiiTWatchComplicationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5EDC6738301A095400D89195 /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		6BE48FB26572879EE7F20157 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851A8468A13AA3E4E66E311C /* ExpoModulesProvider.swift */; };
 		7A02214D275B7F78B2F4B793 /* libPods-ClearHiiT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 607D2C8DDBF7A757ED66172D /* libPods-ClearHiiT.a */; };
-		4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
 		89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		940573A346E2812B92EF2A8B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DF74C6B9E34469B729A27019 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -53,6 +57,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5E59C9A5300FC71E00C04775;
 			remoteInfo = "ClearHiiTWatch Watch App";
+		};
+		5EDC6730301A07DA00D89195 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5EDC6720301A07D700D89195;
+			remoteInfo = ClearHiiTWatchComplicationExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -78,6 +89,17 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5EDC6733301A07DA00D89195 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5EDC6732301A07DA00D89195 /* ClearHiiTWatchComplicationExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -85,7 +107,6 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ClearHiiT/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ClearHiiT/Info.plist; sourceTree = "<group>"; };
 		16819D9A253946278285B595 /* RecentSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecentSessionStore.swift; path = Shared/RecentSessionStore.swift; sourceTree = "<group>"; };
-		60CCE433F70F4E54A7E917F2 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeepLink.swift; path = Shared/DeepLink.swift; sourceTree = "<group>"; };
 		5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSessionRecording.swift; path = Shared/WorkoutSessionRecording.swift; sourceTree = "<group>"; };
 		5BC979914E5CC35A94F8AAEA /* Pods-ClearHiiT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.debug.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.debug.xcconfig"; sourceTree = "<group>"; };
 		5E21ECB930114F6A003B942C /* WorkoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutStore.swift; path = Shared/WorkoutStore.swift; sourceTree = "<group>"; };
@@ -97,7 +118,11 @@
 		5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ClearHiiTWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WorkoutSyncModule.m; path = ClearHiiT/WorkoutSyncModule.m; sourceTree = "<group>"; };
 		5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSyncModule.swift; path = ClearHiiT/WorkoutSyncModule.swift; sourceTree = "<group>"; };
+		5EDC6721301A07D700D89195 /* ClearHiiTWatchComplicationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ClearHiiTWatchComplicationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EDC6722301A07D700D89195 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5EDC6724301A07D700D89195 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		607D2C8DDBF7A757ED66172D /* libPods-ClearHiiT.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClearHiiT.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		60CCE433F70F4E54A7E917F2 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeepLink.swift; path = Shared/DeepLink.swift; sourceTree = "<group>"; };
 		66B9101AB6E6A35A4F6690D0 /* Pods-ClearHiiT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.release.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.release.xcconfig"; sourceTree = "<group>"; };
 		851A8468A13AA3E4E66E311C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ClearHiiT/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ClearHiiT/SplashScreen.storyboard; sourceTree = "<group>"; };
@@ -116,11 +141,19 @@
 			);
 			target = 5E59C9A5300FC71E00C04775 /* ClearHiiTWatch Watch App */;
 		};
+		5EDC6737301A07DA00D89195 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5EDC6720301A07D700D89195 /* ClearHiiTWatchComplicationExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5E21ECC430115DB0003B942C /* ClearHiiTTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ClearHiiTTests; sourceTree = "<group>"; };
 		5E59C9A7300FC71F00C04775 /* ClearHiiTWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E59C9C1300FC72C00C04775 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ClearHiiTWatch Watch App"; sourceTree = "<group>"; };
+		5EDC6726301A07D700D89195 /* ClearHiiTWatchComplication */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5EDC6737301A07DA00D89195 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ClearHiiTWatchComplication; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +176,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5EDC671E301A07D700D89195 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EDC6725301A07D700D89195 /* SwiftUI.framework in Frameworks */,
+				5EDC6723301A07D700D89195 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +229,8 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				607D2C8DDBF7A757ED66172D /* libPods-ClearHiiT.a */,
+				5EDC6722301A07D700D89195 /* WidgetKit.framework */,
+				5EDC6724301A07D700D89195 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -213,6 +257,7 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				5E59C9A7300FC71F00C04775 /* ClearHiiTWatch Watch App */,
 				5E21ECC430115DB0003B942C /* ClearHiiTTests */,
+				5EDC6726301A07D700D89195 /* ClearHiiTWatchComplication */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				2991BC921B780019884F21E1 /* Pods */,
@@ -229,6 +274,7 @@
 				13B07F961A680F5B00A75B9A /* ClearHiiT.app */,
 				5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */,
 				5E21ECC330115DB0003B942C /* ClearHiiTTests.xctest */,
+				5EDC6721301A07D700D89195 /* ClearHiiTWatchComplicationExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -307,10 +353,12 @@
 				5E59C9A2300FC71E00C04775 /* Sources */,
 				5E59C9A3300FC71E00C04775 /* Frameworks */,
 				5E59C9A4300FC71E00C04775 /* Resources */,
+				5EDC6733301A07DA00D89195 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5EDC6731301A07DA00D89195 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				5E59C9A7300FC71F00C04775 /* ClearHiiTWatch Watch App */,
@@ -319,6 +367,28 @@
 			productName = "ClearHiiTWatch Watch App";
 			productReference = 5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		5EDC6720301A07D700D89195 /* ClearHiiTWatchComplicationExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EDC6736301A07DA00D89195 /* Build configuration list for PBXNativeTarget "ClearHiiTWatchComplicationExtension" */;
+			buildPhases = (
+				5EDC671D301A07D700D89195 /* Sources */,
+				5EDC671E301A07D700D89195 /* Frameworks */,
+				5EDC671F301A07D700D89195 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				5EDC6726301A07D700D89195 /* ClearHiiTWatchComplication */,
+			);
+			name = ClearHiiTWatchComplicationExtension;
+			packageProductDependencies = (
+			);
+			productName = ClearHiiTWatchComplicationExtension;
+			productReference = 5EDC6721301A07D700D89195 /* ClearHiiTWatchComplicationExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -337,6 +407,9 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					5E59C9A5300FC71E00C04775 = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					5EDC6720301A07D700D89195 = {
 						CreatedOnToolsVersion = 26.6;
 					};
 				};
@@ -359,6 +432,7 @@
 				13B07F861A680F5B00A75B9A /* ClearHiiT */,
 				5E59C9A5300FC71E00C04775 /* ClearHiiTWatch Watch App */,
 				5E21ECC230115DB0003B942C /* ClearHiiTTests */,
+				5EDC6720301A07D700D89195 /* ClearHiiTWatchComplicationExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -387,6 +461,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				E139F4CC671CD0B627E31440 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5EDC671F301A07D700D89195 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -581,6 +662,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5EDC671D301A07D700D89195 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EDC6738301A095400D89195 /* RecentSessionStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -593,6 +682,11 @@
 			isa = PBXTargetDependency;
 			target = 5E59C9A5300FC71E00C04775 /* ClearHiiTWatch Watch App */;
 			targetProxy = 5E59C9AE300FC72B00C04775 /* PBXContainerItemProxy */;
+		};
+		5EDC6731301A07DA00D89195 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5EDC6720301A07D700D89195 /* ClearHiiTWatchComplicationExtension */;
+			targetProxy = 5EDC6730301A07DA00D89195 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -849,6 +943,105 @@
 			};
 			name = Release;
 		};
+		5EDC6734301A07DA00D89195 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ClearHiiTWatchComplication/ClearHiiTWatchComplication.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = KM666T7T27;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ClearHiiTWatchComplication/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ClearHiiTWatchComplication;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.watchkitapp.ClearHiiTWatchComplication;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		5EDC6735301A07DA00D89195 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = ClearHiiTWatchComplication/ClearHiiTWatchComplication.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = KM666T7T27;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ClearHiiTWatchComplication/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ClearHiiTWatchComplication;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.watchkitapp.ClearHiiTWatchComplication;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1009,6 +1202,15 @@
 			buildConfigurations = (
 				5E59C9B2300FC72B00C04775 /* Debug */,
 				5E59C9B3300FC72B00C04775 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5EDC6736301A07DA00D89195 /* Build configuration list for PBXNativeTarget "ClearHiiTWatchComplicationExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EDC6734301A07DA00D89195 /* Debug */,
+				5EDC6735301A07DA00D89195 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
