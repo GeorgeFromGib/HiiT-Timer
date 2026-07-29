@@ -28,9 +28,12 @@ struct RecentSessionWidgetEntryView: View {
 
   var body: some View {
     switch family {
-    case .accessoryCircular:
+    case .accessoryCircular, .accessoryCorner:
       Image(systemName: "play.fill")
         .font(.title3)
+        .widgetURL(deepLinkURL)
+    case .accessoryInline:
+      Text(entry.recentSession?.name ?? "Start a workout")
         .widgetURL(deepLinkURL)
     default:
       HStack(spacing: 4) {
@@ -59,6 +62,6 @@ struct ClearHiiTWatchComplication: Widget {
     }
     .configurationDisplayName("Last Workout")
     .description("One-tap restart for your most recently run session.")
-    .supportedFamilies([.accessoryCircular, .accessoryRectangular])
+    .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryCorner, .accessoryInline])
   }
 }
