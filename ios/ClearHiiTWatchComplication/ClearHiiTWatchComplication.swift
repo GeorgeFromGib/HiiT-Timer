@@ -28,8 +28,15 @@ struct RecentSessionWidgetEntryView: View {
 
   var body: some View {
     switch family {
-    case .accessoryCircular, .accessoryCorner:
+    case .accessoryCircular:
+      ZStack {
+        AccessoryWidgetBackground()
+        Image(systemName: "play.fill")
+      }
+      .widgetURL(deepLinkURL)
+    case .accessoryCorner:
       Image(systemName: "play.fill")
+        .widgetLabel(entry.recentSession?.name ?? "Start a workout")
         .widgetURL(deepLinkURL)
     case .accessoryInline:
       Text(entry.recentSession?.name ?? "Start a workout")
