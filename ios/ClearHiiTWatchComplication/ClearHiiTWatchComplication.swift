@@ -38,10 +38,9 @@ struct RecentSessionWidgetEntryView: View {
       Text(entry.recentSession?.name ?? "Start a workout")
         .widgetURL(deepLinkURL)
     default:
-      HStack(spacing: 4) {
+      ZStack {
+        AccessoryWidgetBackground()
         Image(systemName: "play.fill")
-        Text(entry.recentSession?.name ?? "Start a workout")
-          .lineLimit(1)
       }
       .widgetURL(deepLinkURL)
     }
