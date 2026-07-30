@@ -124,4 +124,24 @@ final class WorkoutTimerEngineTests: XCTestCase {
     XCTAssertEqual(transitions.map(\.0), [nil, 0])
     XCTAssertEqual(transitions.map(\.1), [0, 1])
   }
+
+  func test_start_atElapsed_resumesMidSegment() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.start(atElapsed: 15) // 15s in, inside the "work" segment (index 1, 10...30)
+    XCTAssertEqual(engine.state.status, .running)
+    XCTAssertEqual(engine.state.currentIndex, 1)
+    XCTAssertEqual(engine.state.elapsed, 15, accuracy: 0.001)
+    XCTAssertEqual(engine.state.remainingInSegment, 15, accuracy: 0.001)
+  }
+
+  func test_start_atElapsed_pastTotalDuration_finishesImmediately() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    var finishCount = 0
+    engine.onFinish = { finishCount += 1 }
+    engine.start(atElapsed: 999)
+    XCTAssertEqual(engine.state.status, .finished)
+    XCTAssertEqual(finishCount, 1)
+  }
 }

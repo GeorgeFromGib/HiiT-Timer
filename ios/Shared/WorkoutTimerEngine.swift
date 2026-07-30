@@ -43,8 +43,8 @@ final class WorkoutTimerEngine: ObservableObject {
     state.status == .running ? accumulated + now().timeIntervalSince(resumeEpoch) : accumulated
   }
 
-  func start() {
-    accumulated = 0
+  func start(atElapsed: Double = 0) {
+    accumulated = atElapsed
     resumeEpoch = now()
     lastIndex = -1
     state.status = .running
