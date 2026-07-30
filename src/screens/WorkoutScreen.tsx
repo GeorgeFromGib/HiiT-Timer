@@ -29,6 +29,7 @@ import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import GhostBtn  from '../components/GhostBtn';
 import SessionCompleteScreen from './SessionCompleteScreen';
 import { checkAndRequestReview } from '../lib/reviewState';
+import { updateLiveSession, clearLiveSession, shouldBroadcastLiveSession } from '../lib/liveSessionSync';
 
 const EXTEND_OPTIONS = [5, 10] as const;
 
@@ -122,6 +123,25 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const [flashing, setFlashing] = useState(false);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
+
+  const lastLiveSyncRef = useRef<number | null>(null);
+  const lastLiveStatusRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (status === 'running' || status === 'paused') {
+      const now = Date.now();
+      if (shouldBroadcastLiveSession(lastLiveStatusRef.current, status, lastLiveSyncRef.current, now)) {
+        updateLiveSession(session.id, session.name, elapsed, status);
+        lastLiveSyncRef.current = now;
+        lastLiveStatusRef.current = status;
+      }
+    } else if (lastLiveStatusRef.current !== null) {
+      clearLiveSession();
+      lastLiveStatusRef.current = null;
+      lastLiveSyncRef.current = null;
+    }
+  }, [status, elapsed, session.id, session.name]);
+
+  useEffect(() => () => clearLiveSession(), []);
 
   const reviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
