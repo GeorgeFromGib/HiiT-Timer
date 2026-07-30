@@ -8,6 +8,7 @@ struct TimerState: Equatable {
   var currentIndex: Int = -1
   var remainingInSegment: Double = 0
   var remainingTotal: Double = 0
+  var segmentEndDate: Date? = nil
 }
 
 final class WorkoutTimerEngine: ObservableObject {
@@ -57,6 +58,7 @@ final class WorkoutTimerEngine: ObservableObject {
     guard state.status == .running else { return }
     accumulated = computeElapsed()
     state.status = .paused
+    state.segmentEndDate = nil
     timer?.invalidate()
     timer = nil
     onStatusChange?(.paused)
@@ -110,6 +112,7 @@ final class WorkoutTimerEngine: ObservableObject {
       state.currentIndex = -1
       state.remainingInSegment = 0
       state.remainingTotal = 0
+      state.segmentEndDate = nil
       lastIndex = -1
       return
     }
@@ -124,5 +127,6 @@ final class WorkoutTimerEngine: ObservableObject {
     state.currentIndex = seg.index
     state.remainingInSegment = seg.endAt - elapsed
     state.remainingTotal = total - elapsed
+    state.segmentEndDate = state.status == .running ? now().addingTimeInterval(state.remainingInSegment) : nil
   }
 }

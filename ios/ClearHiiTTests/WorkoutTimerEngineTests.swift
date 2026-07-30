@@ -144,4 +144,37 @@ final class WorkoutTimerEngineTests: XCTestCase {
     XCTAssertEqual(engine.state.status, .finished)
     XCTAssertEqual(finishCount, 1)
   }
+
+  func test_tick_whileRunning_setsSegmentEndDateToNowPlusRemaining() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.start()
+    now = now.addingTimeInterval(12) // inside "work" segment (10...30), remainingInSegment = 18
+    engine.tick()
+    XCTAssertEqual(engine.state.segmentEndDate, now.addingTimeInterval(18))
+  }
+
+  func test_segmentEndDate_isNilWhenIdle() {
+    let engine = WorkoutTimerEngine(segments: makeSegments())
+    XCTAssertNil(engine.state.segmentEndDate)
+  }
+
+  func test_segmentEndDate_isNilAfterPause() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.start()
+    now = now.addingTimeInterval(5)
+    engine.tick()
+    engine.pause()
+    XCTAssertNil(engine.state.segmentEndDate)
+  }
+
+  func test_segmentEndDate_isNilAfterFinish() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.start()
+    now = now.addingTimeInterval(999) // past total duration (35s)
+    engine.tick()
+    XCTAssertNil(engine.state.segmentEndDate)
+  }
 }
