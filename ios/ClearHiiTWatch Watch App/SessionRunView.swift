@@ -39,6 +39,7 @@ private enum RunningPage: Hashable {
 struct SessionRunView: View {
   let session: SessionDTO
   var autoStart: Bool = false
+  var resumeElapsed: Double? = nil
 
   @StateObject private var engineHolder: EngineHolder
   @State private var countdown: Int?
@@ -47,9 +48,10 @@ struct SessionRunView: View {
   @State private var hasAutoStarted = false
   @Environment(\.dismiss) private var dismiss
 
-  init(session: SessionDTO, autoStart: Bool = false) {
+  init(session: SessionDTO, autoStart: Bool = false, resumeElapsed: Double? = nil) {
     self.session = session
     self.autoStart = autoStart
+    self.resumeElapsed = resumeElapsed
     _engineHolder = StateObject(wrappedValue: EngineHolder(session: session, segments: segmentsForSession(session)))
   }
 
@@ -69,8 +71,11 @@ struct SessionRunView: View {
       }
     }
     .onAppear {
-      if autoStart && !hasAutoStarted {
-        hasAutoStarted = true
+      guard !hasAutoStarted else { return }
+      hasAutoStarted = true
+      if let resumeElapsed {
+        engineHolder.start(atElapsed: resumeElapsed)
+      } else if autoStart {
         beginCountdown()
       }
     }
@@ -326,9 +331,9 @@ private final class EngineHolder: ObservableObject {
     }
   }
 
-  func start() {
+  func start(atElapsed: Double = 0) {
     recentSessionStore.record(id: session.id, name: session.name)
-    engine.start()
+    engine.start(atElapsed: atElapsed)
   }
 
   func pause() {
