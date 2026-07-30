@@ -33,18 +33,13 @@ struct RecentSessionWidgetEntryView: View {
   var body: some View {
     Group {
       switch family {
-      case .accessoryCircular:
-        ZStack {
-          AccessoryWidgetBackground()
-          Image(systemName: "play.fill")
-        }
       case .accessoryInline:
         Text(entry.recentSession?.name ?? "Start a workout")
       default:
-        ZStack {
-          AccessoryWidgetBackground()
-          Image(systemName: "play.fill")
-        }
+        Image("ComplicationIcon")
+          .resizable()
+          .scaledToFit()
+          .clipShape(Circle())
       }
     }
     .widgetURL(deepLinkURL)
