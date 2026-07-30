@@ -64,6 +64,6 @@ struct ClearHiiTWatchComplication: Widget {
     }
     .configurationDisplayName("Last Workout")
     .description("One-tap restart for your most recently run session.")
-    .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline])
+    .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryCorner, .accessoryInline])
   }
 }
