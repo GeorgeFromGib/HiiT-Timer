@@ -26,6 +26,9 @@ struct ContentView: View {
       WidgetCenter.shared.reloadTimelines(ofKind: recentSessionWidgetKind)
       checkForResumableSession()
     }
+    .onChange(of: connectivity.liveSession) { _, _ in
+      checkForResumableSession()
+    }
     .confirmationDialog(
       "Resume \"\(resumeOffer?.name ?? "")\" from iPhone?",
       isPresented: Binding(get: { resumeOffer != nil }, set: { if !$0 { resumeOffer = nil } }),
