@@ -47,6 +47,7 @@ struct SessionRunView: View {
   @State private var runningPage: RunningPage = .timer
   @State private var hasAutoStarted = false
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.isLuminanceReduced) private var isLuminanceReduced
 
   init(session: SessionDTO, autoStart: Bool = false, resumeElapsed: Double? = nil) {
     self.session = session
@@ -113,7 +114,11 @@ struct SessionRunView: View {
       }
     }
 
-    return TabView(selection: $runningPage) {
+    if isLuminanceReduced {
+      return AnyView(alwaysOnView(state: state, segment: segment))
+    }
+
+    return AnyView(TabView(selection: $runningPage) {
       HStack(spacing: 16) {
         Button(action: togglePause) {
           Image(systemName: state.status == .running ? "pause.fill" : "play.fill")
@@ -231,7 +236,38 @@ struct SessionRunView: View {
           .opacity(0)
           .allowsHitTesting(false)
       }
+    })
+  }
+
+  /// Always-On Display rendering: just the interval name and a countdown that
+  /// keeps ticking on its own. `Text(timerInterval:)` is drawn by the system's
+  /// low-power text renderer, so it stays accurate even though watchOS
+  /// throttles this view's own re-render cycle to roughly once a minute while
+  /// the wrist is lowered — a plain `Text(fmtTimer(...))` bound to
+  /// `@Published` state would visibly freeze. Controls, the up-next list, and
+  /// treadmill/spin metrics are omitted: none are interactive or essential
+  /// while the wrist is down, per Apple's Always-On Display guidance to
+  /// minimize what's drawn.
+  private func alwaysOnView(state: TimerState, segment: Segment?) -> some View {
+    VStack(spacing: 8) {
+      Text(segment?.activityLabel ?? segment.map { phaseWord[$0.phase] ?? "" } ?? "")
+        .font(.system(size: 20, weight: .semibold, design: .rounded))
+        .foregroundStyle(.primary)
+        .multilineTextAlignment(.center)
+
+      if state.status == .running, let endDate = state.segmentEndDate {
+        Text(timerInterval: Date.now...endDate, countsDown: true)
+          .font(.system(size: 40, weight: .bold, design: .rounded))
+          .foregroundStyle(.primary)
+          .monospacedDigit()
+      } else {
+        Text(fmtTimer(state.remainingInSegment))
+          .font(.system(size: 40, weight: .bold, design: .rounded))
+          .foregroundStyle(.secondary)
+          .monospacedDigit()
+      }
     }
+    .padding()
   }
 
   /// Shows 3, 2, 1 (one second each) purely as watch-local UI, then starts
