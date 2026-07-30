@@ -14,6 +14,8 @@
 		4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
 		5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
+		E1A2B3C4D5E64F708192A3B4 /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
+		F2B3C4D5E6F708192A3B4C5D /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
 		5E21ECBB30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
 		5E21ECBC30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */; };
 		5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
@@ -108,6 +110,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ClearHiiT/Info.plist; sourceTree = "<group>"; };
 		16819D9A253946278285B595 /* RecentSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecentSessionStore.swift; path = Shared/RecentSessionStore.swift; sourceTree = "<group>"; };
 		5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSessionRecording.swift; path = Shared/WorkoutSessionRecording.swift; sourceTree = "<group>"; };
+		7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveSessionState.swift; path = Shared/LiveSessionState.swift; sourceTree = "<group>"; };
 		5BC979914E5CC35A94F8AAEA /* Pods-ClearHiiT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.debug.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.debug.xcconfig"; sourceTree = "<group>"; };
 		5E21ECB930114F6A003B942C /* WorkoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutStore.swift; path = Shared/WorkoutStore.swift; sourceTree = "<group>"; };
 		5E21ECBA30114F6A003B942C /* WorkoutModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WorkoutModel.xcdatamodel; sourceTree = "<group>"; };
@@ -198,6 +201,7 @@
 				5E21ECD3301161A2003B942C /* WorkoutModels.swift */,
 				5E21ECCE3011611D003B942C /* SegmentBuilder.swift */,
 				5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */,
+				7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */,
 				16819D9A253946278285B595 /* RecentSessionStore.swift */,
 				60CCE433F70F4E54A7E917F2 /* DeepLink.swift */,
 				5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */,
@@ -644,6 +648,7 @@
 				5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */,
 				89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */,
 				4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */,
+				E1A2B3C4D5E64F708192A3B4 /* LiveSessionState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -657,6 +662,7 @@
 				5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */,
 				30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */,
 				0ADE5215E96F488D9CCEB900 /* DeepLink.swift in Sources */,
+				F2B3C4D5E6F708192A3B4C5D /* LiveSessionState.swift in Sources */,
 				5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */,
 				5E21ECBE30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */,
 			);
