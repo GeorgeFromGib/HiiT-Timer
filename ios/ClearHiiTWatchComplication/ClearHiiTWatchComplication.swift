@@ -27,23 +27,24 @@ struct RecentSessionWidgetEntryView: View {
   let entry: RecentSessionEntry
 
   var body: some View {
-    switch family {
-    case .accessoryCircular:
-      ZStack {
-        AccessoryWidgetBackground()
-        Image(systemName: "play.fill")
+    Group {
+      switch family {
+      case .accessoryCircular:
+        ZStack {
+          AccessoryWidgetBackground()
+          Image(systemName: "play.fill")
+        }
+      case .accessoryInline:
+        Text(entry.recentSession?.name ?? "Start a workout")
+      default:
+        ZStack {
+          AccessoryWidgetBackground()
+          Image(systemName: "play.fill")
+        }
       }
-      .widgetURL(deepLinkURL)
-    case .accessoryInline:
-      Text(entry.recentSession?.name ?? "Start a workout")
-        .widgetURL(deepLinkURL)
-    default:
-      ZStack {
-        AccessoryWidgetBackground()
-        Image(systemName: "play.fill")
-      }
-      .widgetURL(deepLinkURL)
     }
+    .widgetURL(deepLinkURL)
+    .containerBackground(.clear, for: .widget)
   }
 
   private var deepLinkURL: URL? {
