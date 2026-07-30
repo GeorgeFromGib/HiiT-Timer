@@ -13,6 +13,10 @@ struct RecentSessionProvider: TimelineProvider {
   }
 
   func getSnapshot(in context: Context, completion: @escaping (RecentSessionEntry) -> Void) {
+    if context.isPreview {
+      completion(placeholder(in: context))
+      return
+    }
     completion(RecentSessionEntry(date: Date(), recentSession: RecentSessionStore().fetch()))
   }
 
