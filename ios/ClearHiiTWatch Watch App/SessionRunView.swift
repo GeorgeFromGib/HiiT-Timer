@@ -256,7 +256,7 @@ struct SessionRunView: View {
         .multilineTextAlignment(.center)
 
       if state.status == .running, let endDate = state.segmentEndDate {
-        Text(timerInterval: Date.now...endDate, countsDown: true)
+        Text(timerInterval: Date.now...endDate, countsDown: true, showsHours: false)
           .font(.system(size: 40, weight: .bold, design: .rounded))
           .foregroundStyle(.primary)
           .monospacedDigit()
