@@ -255,7 +255,7 @@ struct SessionRunView: View {
         .foregroundStyle(.primary)
         .multilineTextAlignment(.center)
 
-      if state.status == .running, let endDate = state.segmentEndDate {
+      if state.status == .running, let endDate = state.segmentEndDate, endDate > Date.now {
         Text(timerInterval: Date.now...endDate, countsDown: true, showsHours: false)
           .font(.system(size: 40, weight: .bold, design: .rounded))
           .foregroundStyle(.primary)
