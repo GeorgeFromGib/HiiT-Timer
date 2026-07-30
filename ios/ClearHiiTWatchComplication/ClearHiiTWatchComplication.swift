@@ -37,6 +37,7 @@ struct RecentSessionWidgetEntryView: View {
         Text(entry.recentSession?.name ?? "Start a workout")
       default:
         Image("ComplicationIcon")
+          .renderingMode(.original)
           .resizable()
           .scaledToFit()
           .clipShape(Circle())
