@@ -5,12 +5,13 @@ import HealthKit
 /// (ios/Shared/WorkoutSessionRecording.swift) for the tested start/pause/
 /// resume/end call sequencing — this class wraps the untestable HealthKit
 /// APIs themselves and is verified manually on a paired watch.
-final class HealthKitWorkoutManager: WorkoutSessionRecording {
+final class HealthKitWorkoutManager: NSObject, WorkoutSessionRecording, HKLiveWorkoutBuilderDelegate {
   static let isAvailable = HKHealthStore.isHealthDataAvailable()
 
   private let healthStore = HKHealthStore()
   private var session: HKWorkoutSession?
   private var builder: HKLiveWorkoutBuilder?
+  private var latestStats = WorkoutLiveStats()
   var onStatsUpdate: ((WorkoutLiveStats) -> Void)?
 
   func requestAuthorization(_ completion: @escaping (Bool) -> Void) {
@@ -35,8 +36,10 @@ final class HealthKitWorkoutManager: WorkoutSessionRecording {
     guard let session = try? HKWorkoutSession(healthStore: healthStore, configuration: config) else { return }
     let builder = session.associatedWorkoutBuilder()
     builder.dataSource = HKLiveWorkoutDataSource(healthStore: healthStore, workoutConfiguration: config)
+    builder.delegate = self
     self.session = session
     self.builder = builder
+    self.latestStats = WorkoutLiveStats()
     let startDate = Date()
     session.startActivity(with: startDate)
     builder.beginCollection(withStart: startDate) { _, _ in }
@@ -65,4 +68,28 @@ final class HealthKitWorkoutManager: WorkoutSessionRecording {
       }
     }
   }
+
+  // MARK: - HKLiveWorkoutBuilderDelegate
+
+  func workoutBuilder(_ workoutBuilder: HKLiveWorkoutBuilder, didCollectDataOf collectedTypes: Set<HKSampleType>) {
+    var heartRate: Double?
+    var activeEnergy: Double?
+    for type in collectedTypes {
+      guard let quantityType = type as? HKQuantityType,
+            let statistics = workoutBuilder.statistics(for: quantityType) else { continue }
+      switch quantityType.identifier {
+      case HKQuantityTypeIdentifier.heartRate.rawValue:
+        heartRate = statistics.mostRecentQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
+      case HKQuantityTypeIdentifier.activeEnergyBurned.rawValue:
+        activeEnergy = statistics.sumQuantity()?.doubleValue(for: .kilocalorie())
+      default:
+        break
+      }
+    }
+    latestStats = mergingLiveStats(latestStats, heartRate: heartRate, activeEnergy: activeEnergy)
+    let stats = latestStats
+    DispatchQueue.main.async { [weak self] in self?.onStatsUpdate?(stats) }
+  }
+
+  func workoutBuilderDidCollectEvent(_ workoutBuilder: HKLiveWorkoutBuilder) {}
 }
