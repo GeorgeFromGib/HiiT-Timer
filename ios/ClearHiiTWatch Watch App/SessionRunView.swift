@@ -200,31 +200,25 @@ struct SessionRunView: View {
             .monospacedDigit()
         }
 
-        if engineHolder.liveStats.heartRate != nil || engineHolder.liveStats.activeEnergy != nil {
-          HStack(spacing: 16) {
-            if let heartRate = engineHolder.liveStats.heartRate {
-              HStack(spacing: 4) {
-                Image(systemName: "heart.fill")
-                  .font(.system(size: 16))
-                  .foregroundStyle(.red)
-                Text("\(Int(heartRate.rounded()))")
-                  .font(.system(size: 20, weight: .semibold, design: .rounded))
-                  .monospacedDigit()
-              }
-            }
-            if let activeEnergy = engineHolder.liveStats.activeEnergy {
-              HStack(spacing: 4) {
-                Image(systemName: "flame.fill")
-                  .font(.system(size: 16))
-                  .foregroundStyle(.orange)
-                Text("\(Int(activeEnergy.rounded()))")
-                  .font(.system(size: 20, weight: .semibold, design: .rounded))
-                  .monospacedDigit()
-              }
-            }
+        HStack(spacing: 16) {
+          HStack(spacing: 4) {
+            Image(systemName: "heart.fill")
+              .font(.system(size: 16))
+              .foregroundStyle(.red)
+            Text(engineHolder.liveStats.heartRate.map { "\(Int($0.rounded()))" } ?? "--")
+              .font(.system(size: 20, weight: .semibold, design: .rounded))
+              .monospacedDigit()
           }
-          .foregroundStyle(.secondary)
+          HStack(spacing: 4) {
+            Image(systemName: "flame.fill")
+              .font(.system(size: 16))
+              .foregroundStyle(.orange)
+            Text(engineHolder.liveStats.activeEnergy.map { "\(Int($0.rounded()))" } ?? "--")
+              .font(.system(size: 20, weight: .semibold, design: .rounded))
+              .monospacedDigit()
+          }
         }
+        .foregroundStyle(.secondary)
 
         if session.mode == "circuit", let circuitNumber = segment?.circuitNumber {
           Text("Circuit \(circuitNumber) / \(session.circuits ?? circuitNumber)")
