@@ -34,8 +34,7 @@ export interface RunSpeeds {
 
 export const DEFAULT_RUN_SPEEDS: RunSpeeds = SPEED_PRESETS['3'];
 
-// Treadmill-only incline axis (% grade), kept separate from RunSpeeds since RunSpeeds is
-// shared with Outdoor Walk, which has no incline control.
+// Treadmill-only incline axis (% grade), kept separate from RunSpeeds.
 export interface RunInclines {
   warmupIncline:   number;
   workIncline:     number;
@@ -76,8 +75,8 @@ export function spinValueForPhase(phase: Phase, values: SpinValues): { resistanc
 }
 
 export type Session =
-  | { id: string; name: string; folderId: string; activityType?: 'run' | 'walk' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
-  | { id: string; name: string; folderId: string; activityType?: 'run' | 'walk' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
+  | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
+  | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
   | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
@@ -134,12 +133,6 @@ export function getSessionSegments(session: Session): Segment[] {
     return withActivityValues(base, overrides, (phase, iv) => ({
       speed:   iv?.speed   ?? speedForPhase(phase, runSpeeds),
       incline: iv?.incline ?? inclineForPhase(phase, runInclines),
-    }));
-  }
-  if (session.activityType === 'walk' && session.runSpeeds) {
-    const runSpeeds = session.runSpeeds;
-    return withActivityValues(base, overrides, (phase, iv) => ({
-      speed: iv?.speed ?? speedForPhase(phase, runSpeeds),
     }));
   }
   if (session.activityType === 'spinning') {

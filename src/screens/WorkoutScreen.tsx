@@ -79,7 +79,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
     setFlashing(true);
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
-  }, session.mode !== 'circuit' && session.activityType === 'walk');
+  });
 
   const reset = useCallback(() => {
     resetEngine();

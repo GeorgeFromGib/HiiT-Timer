@@ -198,7 +198,6 @@ export const fr: typeof en = {
     activityType: "TYPE D'ACTIVITÉ",
     general: 'Standard',
     run: 'Tapis de course',
-    walk: 'Marche en extérieur',
     setupMode: 'MODE DE CONFIGURATION',
     easy: 'Facile',
     advanced: 'Avancé',

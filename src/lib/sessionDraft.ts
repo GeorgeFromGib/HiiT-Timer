@@ -6,7 +6,7 @@ export function buildSessionFromDraft(
   name: string,
   easyConfig: { warmup: number; high: number; low: number; rounds: number; cooldown: number },
   intervals: Interval[],
-  activityType: 'run' | 'walk' | 'spinning' | undefined,
+  activityType: 'run' | 'spinning' | undefined,
   runSpeeds: RunSpeeds,
   existingId: string | undefined,
   circuitData: { warmup: number; cooldown: number; circuits: number; circuitRest: number } | undefined,
@@ -32,7 +32,6 @@ export function buildSessionFromDraft(
   }
   const activityProps =
     activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds, runInclines, inclineEnabled } :
-    activityType === 'walk'     ? { activityType: 'walk'     as const, runSpeeds } :
     activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues: spinValues! } :
     {};
   if (mode === 'easy') {

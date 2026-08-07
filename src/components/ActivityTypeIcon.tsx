@@ -5,7 +5,7 @@ import { BASE_SVG_STROKE } from './svgStroke';
 import { ACTIVITY_ICON_SHAPES } from './activityIconShapes';
 
 interface Props {
-  activityType?: 'run' | 'walk' | 'spinning';
+  activityType?: 'run' | 'spinning';
   mode: 'easy' | 'advanced' | 'circuit';
   size?: number;
 }
@@ -18,8 +18,6 @@ export default function ActivityTypeIcon({ activityType, mode, size = 16 }: Prop
     color = T.phases.warmup;
   } else if (activityType === 'run') {
     color = T.phases.cooldown;
-  } else if (activityType === 'walk') {
-    color = T.phases.circuitRest;
   } else if (activityType === 'spinning') {
     color = T.phases.rest;
   } else {
@@ -41,17 +39,6 @@ export default function ActivityTypeIcon({ activityType, mode, size = 16 }: Prop
   if (activityType === 'run') {
     // Running figure
     const shape = ACTIVITY_ICON_SHAPES.run;
-    return (
-      <Svg width={size} height={size} viewBox="0 0 24 24">
-        {shape.circles!.map(c => <Circle key={`${c.cx},${c.cy}`} {...c} {...p} />)}
-        {shape.paths.map(d => <Path key={d} {...p} d={d} />)}
-      </Svg>
-    );
-  }
-
-  if (activityType === 'walk') {
-    // Walking figure
-    const shape = ACTIVITY_ICON_SHAPES.walk;
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24">
         {shape.circles!.map(c => <Circle key={`${c.cx},${c.cy}`} {...c} {...p} />)}

@@ -65,18 +65,6 @@ describe('buildSessionFromDraft', () => {
     });
   });
 
-  it('builds a walk session', () => {
-    const session = buildSessionFromDraft(
-      'easy', 'Evening Walk', easyConfig, intervals, 'walk', runSpeeds,
-      undefined, undefined, undefined, runInclines, false, 'folder1',
-    );
-    expect(session).toMatchObject({
-      activityType: 'walk',
-      runSpeeds,
-      mode: 'easy',
-    });
-  });
-
   it('builds a spinning session when spinValues is provided', () => {
     const session = buildSessionFromDraft(
       'advanced', 'Spin Class', easyConfig, intervals, 'spinning', runSpeeds,

@@ -4,7 +4,7 @@ import { useAppAlert, dismissAppAlert } from '../../lib/appAlert';
 import {
   type Session, DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES, DEFAULT_SPIN_VALUES,
 } from '../../lib/sessions';
-import { SPEED_PRESETS, WALK_SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS } from '../../lib/presets';
+import { SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS } from '../../lib/presets';
 
 const runSession = (overrides: Partial<Session> = {}): Session => ({
   id: 'run-1', name: 'Run', folderId: 'default', mode: 'easy', activityType: 'run',
@@ -44,7 +44,7 @@ describe('useSpeedAndSpinEdit', () => {
   });
 
   it('seeds runSpeeds/runInclines/inclineEnabled and detects the matching preset for a run session', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     expect(result.current.runSpeeds).toEqual(SPEED_PRESETS['3']);
     expect(result.current.runInclines).toEqual(INCLINE_PRESETS['3']);
     expect(result.current.inclineEnabled).toBe(true);
@@ -54,7 +54,7 @@ describe('useSpeedAndSpinEdit', () => {
 
   it('respects an explicit inclineEnabled: false on the existing run session', async () => {
     const { result } = await renderHook(() =>
-      useSpeedAndSpinEdit(runSession({ inclineEnabled: false }), 'run')
+      useSpeedAndSpinEdit(runSession({ inclineEnabled: false }))
     );
     expect(result.current.inclineEnabled).toBe(false);
   });
@@ -68,23 +68,13 @@ describe('useSpeedAndSpinEdit', () => {
   });
 
   it('falls back to defaults for a circuit-mode session regardless of activityType', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(circuitSession, 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(circuitSession));
     expect(result.current.runSpeeds).toEqual(DEFAULT_RUN_SPEEDS);
     expect(result.current.activeSpeedPreset).toBeNull();
   });
 
-  it('uses walk speed presets when activityType is "walk"', async () => {
-    const walkSpeeds = WALK_SPEED_PRESETS['4'];
-    const session = runSession({ activityType: 'walk', runSpeeds: walkSpeeds, runInclines: undefined });
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(session, 'walk'));
-    expect(result.current.runSpeeds).toEqual(walkSpeeds);
-    expect(result.current.activeSpeedPreset).toBe('4');
-    // Walk sessions don't seed runInclines (activityType !== 'run')
-    expect(result.current.runInclines).toEqual(DEFAULT_RUN_INCLINES);
-  });
-
   it('setRunSpeed updates one field, marks the preset as custom, and flips hasChanges', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     await act(async () => result.current.setRunSpeed('workSpeed', 99));
     expect(result.current.runSpeeds.workSpeed).toBe(99);
     expect(result.current.runSpeeds.warmupSpeed).toBe(SPEED_PRESETS['3'].warmupSpeed);
@@ -93,14 +83,14 @@ describe('useSpeedAndSpinEdit', () => {
   });
 
   it('setRunIncline updates one field and clears the active incline preset', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     await act(async () => result.current.setRunIncline('workIncline', 8));
     expect(result.current.runInclines.workIncline).toBe(8);
     expect(result.current.activeInclinePreset).toBeNull();
   });
 
   it('setInclineEnabled toggles the flag directly', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     await act(async () => result.current.setInclineEnabled(false));
     expect(result.current.inclineEnabled).toBe(false);
     expect(result.current.hasChanges).toBe(true);
@@ -124,7 +114,7 @@ describe('useSpeedAndSpinEdit', () => {
   });
 
   it('applySpeedPreset prompts a confirmation alert when speeds are dirty, and applies on confirm', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     await act(async () => result.current.setRunSpeed('workSpeed', 1));
 
     await act(async () => result.current.applySpeedPreset('5'));
@@ -142,7 +132,7 @@ describe('useSpeedAndSpinEdit', () => {
   });
 
   it('applySpeedPreset cancel button leaves state unchanged', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     await act(async () => result.current.setRunSpeed('workSpeed', 1));
     await act(async () => result.current.applySpeedPreset('5'));
 
@@ -153,7 +143,7 @@ describe('useSpeedAndSpinEdit', () => {
   });
 
   it('applyInclinePreset prompts when incline is dirty, and applies on confirm', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     await act(async () => result.current.setRunIncline('workIncline', 20));
 
     await act(async () => result.current.applyInclinePreset('6'));
@@ -183,7 +173,7 @@ describe('useSpeedAndSpinEdit', () => {
   });
 
   it('applying a preset after a previous confirm no longer prompts (dirty flag reset)', async () => {
-    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    const { result } = await renderHook(() => useSpeedAndSpinEdit(runSession()));
     await act(async () => result.current.setRunSpeed('workSpeed', 1));
     await act(async () => result.current.applySpeedPreset('5'));
 

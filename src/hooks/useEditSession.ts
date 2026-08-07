@@ -8,7 +8,7 @@ import {
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel } from '../lib/presets';
-import { INTENSITY_PRESETS, WALK_INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
+import { INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
 import {
   totalDuration, expandCircuit, computeRoundsForTargetDuration,
   type Interval, type Phase, type Segment,
@@ -39,7 +39,7 @@ export interface EditSessionDraft {
   intervals:           LocalInterval[];
   previewSegments:     Segment[];
   previewTotal:        number;
-  activityType:        'run' | 'walk' | 'spinning' | undefined;
+  activityType:        'run' | 'spinning' | undefined;
   runSpeeds:           RunSpeeds;
   runInclines:         RunInclines;
   inclineEnabled:      boolean;
@@ -103,7 +103,7 @@ export interface EditSessionInterface {
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
-  initialActivityType?: 'general' | 'run' | 'walk' | 'circuit' | 'spinning',
+  initialActivityType?: 'general' | 'run' | 'circuit' | 'spinning',
   folderId?: string,
 ): EditSessionInterface {
   const sessionFolderId = existing?.folderId ?? folderId ?? 'default';
@@ -115,10 +115,9 @@ export function useEditSession(
     return 'easy';
   });
 
-  const [activityType] = useState<'run' | 'walk' | 'spinning' | undefined>(() => {
+  const [activityType] = useState<'run' | 'spinning' | undefined>(() => {
     if (existing && existing.mode !== 'circuit') return existing.activityType;
     if (!existing && initialActivityType === 'run') return 'run';
-    if (!existing && initialActivityType === 'walk') return 'walk';
     if (!existing && initialActivityType === 'spinning') return 'spinning';
     return undefined;
   });
@@ -141,10 +140,10 @@ export function useEditSession(
   const initialName = useRef(existing?.name ?? '').current;
 
   // Mode sub-hooks
-  const easyEdit     = useEasyModeEdit(existing, activityType);
+  const easyEdit     = useEasyModeEdit(existing);
   const circuitEdit  = useCircuitModeEdit(existing);
   const intervalEdit = useIntervalListEdit(existing);
-  const speedSpinEdit = useSpeedAndSpinEdit(existing, activityType);
+  const speedSpinEdit = useSpeedAndSpinEdit(existing);
 
   // Derived from each sub-hook's own preset checkpoint — not manually flagged at each call site.
   const timingDirty = mode === 'advanced' ? intervalEdit.isTimingDirty
@@ -289,7 +288,7 @@ export function useEditSession(
   }
 
   function applyDurationPreset(level: PresetLevel) {
-    const p = (activityType === 'walk' ? WALK_INTENSITY_PRESETS : INTENSITY_PRESETS)[level];
+    const p = INTENSITY_PRESETS[level];
     const doApply = () => {
       const rounds = computeRoundsForTargetDuration(
         easyEdit.fieldValues.warmup, p.work, p.rest, easyEdit.fieldValues.cooldown,

@@ -38,7 +38,7 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 
 interface Props {
   session?: Session;
-  activityType?: 'general' | 'run' | 'walk' | 'circuit' | 'spinning';
+  activityType?: 'general' | 'run' | 'circuit' | 'spinning';
   folderId?: string;
   onBack: () => void;
 }
@@ -77,8 +77,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     circuitWarmup, circuitCooldown, circuitRest, circuitCount,
   } = draft;
   const isRun = draftActivityType === 'run';
-  const isWalk = draftActivityType === 'walk';
-  const hasSpeed = isRun || isWalk;
+  const hasSpeed = isRun;
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
   const addPhaseOptions: Phase[] = isCircuit
@@ -194,7 +193,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           right={
             <ActivityTypeIcon
               mode={isCircuit ? 'circuit' : 'easy'}
-              activityType={draftActivityType === 'run' ? 'run' : draftActivityType === 'walk' ? 'walk' : draftActivityType === 'spinning' ? 'spinning' : undefined}
+              activityType={draftActivityType === 'run' ? 'run' : draftActivityType === 'spinning' ? 'spinning' : undefined}
               size={32}
             />
           }
@@ -244,7 +243,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                   {fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}
                 </Text>
                 <Text style={styles.previewMeta}>
-                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : isWalk ? t('edit.walk') : isSpinning ? t('edit.spinning') : t('edit.general')}
+                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : isSpinning ? t('edit.spinning') : t('edit.general')}
                 </Text>
               </View>
             </View>
@@ -356,8 +355,8 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <PresetStrip
                       onApply={applySpeedPreset}
                       activePreset={activeSpeedPreset}
-                      lowLabel={isWalk ? undefined : t('edit.presetBriskWalk')}
-                      highLabel={isWalk ? undefined : t('edit.presetHardRun')}
+                      lowLabel={t('edit.presetBriskWalk')}
+                      highLabel={t('edit.presetHardRun')}
                     />
                   </>
                 )}
@@ -562,8 +561,8 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               <PresetStrip
                 onApply={applySpeedPreset}
                 activePreset={activeSpeedPreset}
-                lowLabel={isWalk ? undefined : t('edit.presetBriskWalk')}
-                highLabel={isWalk ? undefined : t('edit.presetHardRun')}
+                lowLabel={t('edit.presetBriskWalk')}
+                highLabel={t('edit.presetHardRun')}
               />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => {

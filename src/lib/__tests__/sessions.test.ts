@@ -151,19 +151,7 @@ describe('getSessionSegments', () => {
     expect(segs[0].speed).toBe(99);
   });
 
-  it('applies walk speed but never incline for a walk session', () => {
-    const session: Session = {
-      id: '1', name: 'Walk', folderId: 'f', mode: 'easy', activityType: 'walk',
-      config: { warmup: 10, high: 20, low: 5, rounds: 1, cooldown: 10 },
-      runSpeeds: DEFAULT_RUN_SPEEDS,
-    };
-    const segs = getSessionSegments(session);
-    const work = segs.find(s => s.phase === 'work')!;
-    expect(work.speed).toBe(DEFAULT_RUN_SPEEDS.workSpeed);
-    expect(work.incline).toBeUndefined();
-  });
-
-  it('falls back to base segments for a run/walk session missing runSpeeds', () => {
+  it('falls back to base segments for a run session missing runSpeeds', () => {
     const session: Session = {
       id: '1', name: 'Run', folderId: 'f', mode: 'easy', activityType: 'run',
       config: { warmup: 10, high: 20, low: 5, rounds: 1, cooldown: 10 },

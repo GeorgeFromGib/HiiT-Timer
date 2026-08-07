@@ -198,7 +198,6 @@ export const es: typeof en = {
     activityType: 'TIPO DE ACTIVIDAD',
     general: 'Estándar',
     run: 'Cinta de correr',
-    walk: 'Caminata al aire libre',
     setupMode: 'MODO DE CONFIGURACIÓN',
     easy: 'Fácil',
     advanced: 'Avanzado',

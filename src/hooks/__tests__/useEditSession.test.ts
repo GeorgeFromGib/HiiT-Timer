@@ -140,12 +140,9 @@ describe('useEditSession — initial state (new session)', () => {
     expect(d.intervals).toEqual([]);
   });
 
-  it('initialActivityType "run"/"walk"/"spinning" seed activityType for a new easy session', async () => {
+  it('initialActivityType "run"/"spinning" seed activityType for a new easy session', async () => {
     const run = await renderHook(() => useEditSession(undefined, onBack, 'run'));
     expect(run.result.current.draft.activityType).toBe('run');
-
-    const walk = await renderHook(() => useEditSession(undefined, onBack, 'walk'));
-    expect(walk.result.current.draft.activityType).toBe('walk');
 
     const spin = await renderHook(() => useEditSession(undefined, onBack, 'spinning'));
     expect(spin.result.current.draft.activityType).toBe('spinning');

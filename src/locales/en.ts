@@ -196,7 +196,6 @@ export const en = {
     activityType: 'ACTIVITY TYPE',
     general: 'Standard',
     run: 'Treadmill',
-    walk: 'Outdoor Walk',
     setupMode: 'SETUP MODE',
     easy: 'Easy',
     advanced: 'Advanced',

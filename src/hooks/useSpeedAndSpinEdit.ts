@@ -7,7 +7,7 @@ import {
   DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES, DEFAULT_SPIN_VALUES,
 } from '../lib/sessions';
 import {
-  type PresetLevel, SPEED_PRESETS, WALK_SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS,
+  type PresetLevel, SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS,
   findMatchingSpeedPreset, findMatchingInclinePreset, findMatchingSpinPreset,
 } from '../lib/presets';
 
@@ -31,10 +31,7 @@ export interface SpeedAndSpinEdit {
 
 export function useSpeedAndSpinEdit(
   existing: Session | undefined,
-  activityType?: 'run' | 'walk' | 'spinning',
 ): SpeedAndSpinEdit {
-  const speedPresetSource = activityType === 'walk' ? WALK_SPEED_PRESETS : SPEED_PRESETS;
-
   const initRunSpeeds = existing && existing.mode !== 'circuit'
     ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS;
   const initRunInclines = existing && existing.mode !== 'circuit' && existing.activityType === 'run'
@@ -53,7 +50,7 @@ export function useSpeedAndSpinEdit(
   const [spinDirty,   setSpinDirty]     = useState(false);
   const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
     existing && existing.mode !== 'circuit' && existing.runSpeeds
-      ? findMatchingSpeedPreset(existing.runSpeeds, speedPresetSource) : null
+      ? findMatchingSpeedPreset(existing.runSpeeds) : null
   );
   const [activeInclinePreset, setActiveInclinePreset] = useState<PresetLevel | null>(() =>
     existing && existing.mode !== 'circuit' && existing.activityType === 'run' && existing.runInclines
@@ -95,7 +92,7 @@ export function useSpeedAndSpinEdit(
 
   function applySpeedPreset(level: PresetLevel) {
     const doApply = () => {
-      setRunSpeeds(speedPresetSource[level]);
+      setRunSpeeds(SPEED_PRESETS[level]);
       setSpeedsDirty(false);
       setActiveSpeedPreset(level);
     };

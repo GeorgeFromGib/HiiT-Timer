@@ -289,14 +289,6 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
             <View style={styles.typeMenuSeparator} />
             <Pressable
               style={styles.typeMenuRow}
-              onPress={() => handleCreateSession('walk')}
-            >
-              <ActivityTypeIcon mode="easy" activityType="walk" size={18} />
-              <Text style={styles.typeMenuText}>{t('edit.walk')}</Text>
-            </Pressable>
-            <View style={styles.typeMenuSeparator} />
-            <Pressable
-              style={styles.typeMenuRow}
               onPress={() => handleCreateSession('circuit')}
             >
               <ActivityTypeIcon mode="circuit" size={18} />
