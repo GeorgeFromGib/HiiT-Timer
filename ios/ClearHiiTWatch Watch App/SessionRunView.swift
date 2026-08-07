@@ -200,6 +200,27 @@ struct SessionRunView: View {
             .monospacedDigit()
         }
 
+        if engineHolder.liveStats.heartRate != nil || engineHolder.liveStats.activeEnergy != nil {
+          HStack(spacing: 12) {
+            if let heartRate = engineHolder.liveStats.heartRate {
+              HStack(spacing: 3) {
+                Image(systemName: "heart.fill")
+                  .foregroundStyle(.red)
+                Text("\(Int(heartRate.rounded()))")
+              }
+            }
+            if let activeEnergy = engineHolder.liveStats.activeEnergy {
+              HStack(spacing: 3) {
+                Image(systemName: "flame.fill")
+                  .foregroundStyle(.orange)
+                Text("\(Int(activeEnergy.rounded()))")
+              }
+            }
+          }
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+        }
+
         if session.mode == "circuit", let circuitNumber = segment?.circuitNumber {
           Text("Circuit \(circuitNumber) / \(session.circuits ?? circuitNumber)")
             .font(.caption2)
@@ -335,6 +356,7 @@ private final class EngineHolder: ObservableObject {
   let engine: WorkoutTimerEngine
   let segments: [Segment]
   @Published private(set) var currentSegment: Segment?
+  @Published private(set) var liveStats = WorkoutLiveStats()
   let congratsMessage: String = congratsMessages.randomElement() ?? ""
   private var cancellable: AnyCancellable?
   private let workoutSession: WorkoutSessionCoordinator
@@ -353,6 +375,9 @@ private final class EngineHolder: ObservableObject {
       engine: engine
     )
     workoutSession.requestAuthorization { _ in }
+    workoutSession.onStatsUpdate = { [weak self] stats in
+      self?.liveStats = stats
+    }
     engine.onTransition = { [weak self] _, to in
       self?.currentSegment = to
       if let phase = to?.phase {
