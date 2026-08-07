@@ -1,7 +1,24 @@
 // ios/Shared/WorkoutSessionRecording.swift
 import HealthKit
 
-protocol WorkoutSessionRecording {
+struct WorkoutLiveStats: Equatable {
+  var heartRate: Double?
+  var activeEnergy: Double?
+}
+
+/// Folds newly-collected values into the previous reading, leaving fields
+/// HealthKit didn't report in this callback untouched — HKLiveWorkoutBuilder
+/// only reports the sample types that changed on any given callback, not a
+/// full snapshot every time.
+func mergingLiveStats(_ current: WorkoutLiveStats, heartRate: Double?, activeEnergy: Double?) -> WorkoutLiveStats {
+  var result = current
+  if let heartRate { result.heartRate = heartRate }
+  if let activeEnergy { result.activeEnergy = activeEnergy }
+  return result
+}
+
+protocol WorkoutSessionRecording: AnyObject {
+  var onStatsUpdate: ((WorkoutLiveStats) -> Void)? { get set }
   func requestAuthorization(_ completion: @escaping (Bool) -> Void)
   func start(activityType: HKWorkoutActivityType)
   func pause()
@@ -36,6 +53,11 @@ final class WorkoutSessionCoordinator {
 
   func requestAuthorization(_ completion: @escaping (Bool) -> Void) {
     recorder.requestAuthorization(completion)
+  }
+
+  var onStatsUpdate: ((WorkoutLiveStats) -> Void)? {
+    get { recorder.onStatsUpdate }
+    set { recorder.onStatsUpdate = newValue }
   }
 
   func handle(status: TimerState.Status) {

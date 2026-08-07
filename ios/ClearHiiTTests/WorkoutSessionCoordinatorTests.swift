@@ -8,6 +8,7 @@ final class WorkoutSessionCoordinatorTests: XCTestCase {
     var pauseCount = 0
     var resumeCount = 0
     var endCalls: [Bool] = []
+    var onStatsUpdate: ((WorkoutLiveStats) -> Void)?
 
     func requestAuthorization(_ completion: @escaping (Bool) -> Void) {
       authorizationRequested = true
@@ -178,5 +179,31 @@ final class WorkoutSessionCoordinatorTests: XCTestCase {
     now = now.addingTimeInterval(999)
     engine.tick()
     XCTAssertEqual(recorder.endCalls, [true])
+  }
+
+  func test_onStatsUpdate_forwardsToRecorder() {
+    let recorder = FakeRecorder()
+    let coordinator = WorkoutSessionCoordinator(recorder: recorder, activityType: .running)
+    var received: WorkoutLiveStats?
+    coordinator.onStatsUpdate = { received = $0 }
+    recorder.onStatsUpdate?(WorkoutLiveStats(heartRate: 140, activeEnergy: 55))
+    XCTAssertEqual(received, WorkoutLiveStats(heartRate: 140, activeEnergy: 55))
+  }
+
+  func test_mergingLiveStats_updatesOnlyProvidedFields() {
+    let current = WorkoutLiveStats(heartRate: 120, activeEnergy: 30)
+    let merged = mergingLiveStats(current, heartRate: nil, activeEnergy: 45)
+    XCTAssertEqual(merged, WorkoutLiveStats(heartRate: 120, activeEnergy: 45))
+  }
+
+  func test_mergingLiveStats_bothNil_keepsCurrentUnchanged() {
+    let current = WorkoutLiveStats(heartRate: 120, activeEnergy: 30)
+    let merged = mergingLiveStats(current, heartRate: nil, activeEnergy: nil)
+    XCTAssertEqual(merged, current)
+  }
+
+  func test_mergingLiveStats_fromEmptyState_setsBothProvidedFields() {
+    let merged = mergingLiveStats(WorkoutLiveStats(), heartRate: 150, activeEnergy: 60)
+    XCTAssertEqual(merged, WorkoutLiveStats(heartRate: 150, activeEnergy: 60))
   }
 }

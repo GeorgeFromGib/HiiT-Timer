@@ -11,6 +11,7 @@ final class HealthKitWorkoutManager: WorkoutSessionRecording {
   private let healthStore = HKHealthStore()
   private var session: HKWorkoutSession?
   private var builder: HKLiveWorkoutBuilder?
+  var onStatsUpdate: ((WorkoutLiveStats) -> Void)?
 
   func requestAuthorization(_ completion: @escaping (Bool) -> Void) {
     guard Self.isAvailable,
