@@ -146,7 +146,7 @@ struct SessionRunView: View {
       .padding()
       .tag(RunningPage.controls)
 
-      VStack(spacing: 8) {
+      VStack(spacing: 4) {
         if state.status == .paused {
           Image(systemName: "pause.circle.fill")
             .font(.title3)
