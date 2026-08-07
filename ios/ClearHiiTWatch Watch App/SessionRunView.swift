@@ -245,7 +245,8 @@ struct SessionRunView: View {
         let totalDuration = engineHolder.segments.last?.endAt ?? 0
         let percentDone = totalDuration > 0 ? Int((state.elapsed / totalDuration * 100).rounded()) : 0
         Text("\(percentDone)% · \(state.currentIndex + 1)/\(engineHolder.segments.count)")
-          .font(.caption2)
+          .font(.system(size: 16, weight: .semibold, design: .rounded))
+          .monospacedDigit()
           .foregroundStyle(.secondary)
       }
       .padding()
