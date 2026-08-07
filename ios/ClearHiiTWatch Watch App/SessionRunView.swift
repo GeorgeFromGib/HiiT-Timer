@@ -201,23 +201,28 @@ struct SessionRunView: View {
         }
 
         if engineHolder.liveStats.heartRate != nil || engineHolder.liveStats.activeEnergy != nil {
-          HStack(spacing: 12) {
+          HStack(spacing: 16) {
             if let heartRate = engineHolder.liveStats.heartRate {
-              HStack(spacing: 3) {
+              HStack(spacing: 4) {
                 Image(systemName: "heart.fill")
+                  .font(.system(size: 16))
                   .foregroundStyle(.red)
                 Text("\(Int(heartRate.rounded()))")
+                  .font(.system(size: 20, weight: .semibold, design: .rounded))
+                  .monospacedDigit()
               }
             }
             if let activeEnergy = engineHolder.liveStats.activeEnergy {
-              HStack(spacing: 3) {
+              HStack(spacing: 4) {
                 Image(systemName: "flame.fill")
+                  .font(.system(size: 16))
                   .foregroundStyle(.orange)
                 Text("\(Int(activeEnergy.rounded()))")
+                  .font(.system(size: 20, weight: .semibold, design: .rounded))
+                  .monospacedDigit()
               }
             }
           }
-          .font(.caption2)
           .foregroundStyle(.secondary)
         }
 
