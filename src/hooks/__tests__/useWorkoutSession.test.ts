@@ -272,4 +272,54 @@ describe('useWorkoutSession', () => {
     const midpointCalls = (Speech.speak as jest.Mock).mock.calls.filter(([text]) => text === 'Midpoint reached');
     expect(midpointCalls).toHaveLength(0);
   });
+
+  it('accepts an initialResume and starts already running at that elapsed, skipping the pre-start countdown', async () => {
+    const segments = twoSegments();
+    const { result } = await renderHook(() =>
+      useWorkoutSession(segments, DEFAULT_SETTINGS, undefined, false, { elapsed: 12, status: 'running' }));
+    expect(result.current.status).toBe('running');
+    expect(result.current.elapsed).toBe(12);
+    expect(result.current.currentIndex).toBe(1);
+  });
+
+  it('accepts an initialResume with status paused and starts paused at that elapsed', async () => {
+    const segments = twoSegments();
+    const { result } = await renderHook(() =>
+      useWorkoutSession(segments, DEFAULT_SETTINGS, undefined, false, { elapsed: 4, status: 'paused' }));
+    expect(result.current.status).toBe('paused');
+    expect(result.current.elapsed).toBe(4);
+  });
+
+  describe('applyIncomingLiveState', () => {
+    it('pauses locally when told the remote is now paused', async () => {
+      const segments = twoSegments();
+      const { result } = await renderHook(() => useWorkoutSession(segments));
+      await startWorkout(result);
+
+      await act(async () => result.current.applyIncomingLiveState('paused', result.current.elapsed));
+      expect(result.current.status).toBe('paused');
+    });
+
+    it('resumes locally when told the remote is now running', async () => {
+      const segments = twoSegments();
+      const { result } = await renderHook(() => useWorkoutSession(segments));
+      await startWorkout(result);
+      await act(async () => result.current.handlePlayPause()); // pause
+      expect(result.current.status).toBe('paused');
+
+      await act(async () => result.current.applyIncomingLiveState('running', result.current.elapsed));
+      expect(result.current.status).toBe('running');
+    });
+
+    it('jumps elapsed to match a remote skip while running', async () => {
+      const segments = twoSegments();
+      const { result } = await renderHook(() => useWorkoutSession(segments));
+      await startWorkout(result);
+
+      await act(async () => result.current.applyIncomingLiveState('running', 15));
+      expect(result.current.status).toBe('running');
+      expect(result.current.elapsed).toBe(15);
+      expect(result.current.currentIndex).toBe(1);
+    });
+  });
 });

@@ -29,6 +29,7 @@ export interface WorkoutSession {
   skipBack: () => void;
   extend: (seconds: number) => Segment[];
   addRound: (segsToInsert: Segment[]) => Segment[];
+  applyIncomingLiveState: (status: 'running' | 'paused', elapsed: number) => void;
 }
 
 export function useWorkoutSession(
@@ -36,6 +37,7 @@ export function useWorkoutSession(
   settings: Settings = DEFAULT_SETTINGS,
   onCountdownBeat?: () => void,
   enableMidpointCue = false,
+  initialResume?: { elapsed: number; status: 'running' | 'paused' },
 ): WorkoutSession {
   const cues = useWorkoutAudio(settings);
   const totalDur = totalDuration(segments);
@@ -54,7 +56,7 @@ export function useWorkoutSession(
   const {
     state, start, pause, resume, reset: engineReset,
     skip: engineSkip, skipBack: engineSkipBack, extend: engineExtend,
-    replaceSegments, getSegments,
+    replaceSegments, getSegments, applyRemoteElapsed,
   } = useTimerEngine(segments, {
     onTransition: (_from, to) => {
       cues.onTransition(to?.phase ?? null);
@@ -92,6 +94,25 @@ export function useWorkoutSession(
     onTick: () => cues.onPreStartTick(),
     onComplete: () => { cues.startKeepAlive(); start(); },
   });
+
+  const hasAutoResumedRef = useRef(false);
+  useEffect(() => {
+    if (!initialResume || hasAutoResumedRef.current) return;
+    hasAutoResumedRef.current = true;
+    cues.startKeepAlive();
+    start(initialResume.elapsed);
+    if (initialResume.status === 'paused') pause();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const applyIncomingLiveState = useCallback((incomingStatus: 'running' | 'paused', incomingElapsed: number) => {
+    if (state.status !== 'running' && state.status !== 'paused') return;
+    if (incomingStatus === 'paused' && state.status === 'running') pause();
+    else if (incomingStatus === 'running' && state.status === 'paused') resume();
+    if (incomingStatus === 'paused' || Math.abs(state.elapsed - incomingElapsed) > 2) {
+      applyRemoteElapsed(incomingElapsed);
+    }
+  }, [state.status, state.elapsed, pause, resume, applyRemoteElapsed]);
 
   const handlePlayPause = useCallback(() => {
     if (countdown.isRunning()) {
@@ -168,5 +189,6 @@ export function useWorkoutSession(
     skipBack,
     extend,
     addRound,
+    applyIncomingLiveState,
   };
 }
