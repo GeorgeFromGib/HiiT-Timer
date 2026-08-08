@@ -406,8 +406,14 @@ private final class EngineHolder: ObservableObject {
         HapticsController.play(for: phase)
       }
     }
-    engine.onFinish = {
+    engine.onFinish = { [weak self] in
       HapticsController.play(for: .finish)
+      // broadcastLiveState() guards on running/paused, so a skip that lands
+      // directly on finish (e.g. skipping out of the last segment) would
+      // otherwise never tell the phone this session ended.
+      self?.heartbeatTimer?.invalidate()
+      self?.heartbeatTimer = nil
+      self?.connectivity.clearLiveSession()
     }
     cancellable = engine.objectWillChange.sink { [weak self] in
       self?.objectWillChange.send()
