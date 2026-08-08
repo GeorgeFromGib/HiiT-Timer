@@ -17,13 +17,9 @@ export const INTENSITY_PRESETS: Record<PresetLevel, IntensityPreset> = {
 
 const ALL_LEVELS: PresetLevel[] = ['1', '2', '3', '4', '5', '6'];
 
-export function findMatchingIntensityPreset(
-  work: number,
-  rest: number,
-  source: Record<PresetLevel, IntensityPreset> = INTENSITY_PRESETS,
-): PresetLevel | null {
+export function findMatchingIntensityPreset(work: number, rest: number): PresetLevel | null {
   return ALL_LEVELS.find(level => {
-    const p = source[level];
+    const p = INTENSITY_PRESETS[level];
     return p.work === work && p.rest === rest;
   }) ?? null;
 }

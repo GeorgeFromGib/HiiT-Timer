@@ -18,14 +18,6 @@ describe('findMatchingSpeedPreset', () => {
     expect(findMatchingSpeedPreset(speeds)).toBeNull();
   });
 
-  it('matches against a custom source table when provided', () => {
-    const customSource: Record<string, RunSpeeds> = {
-      '1': { warmupSpeed: 2, workSpeed: 3, restSpeed: 2, cooldownSpeed: 2 },
-    } as Record<string, RunSpeeds>;
-    const speeds: RunSpeeds = { warmupSpeed: 2, workSpeed: 3, restSpeed: 2, cooldownSpeed: 2 };
-    expect(findMatchingSpeedPreset(speeds, customSource as Record<'1' | '2' | '3' | '4' | '5' | '6', typeof SPEED_PRESETS['1']>)).toBe('1');
-  });
-
   it('matches every defined speed preset level against itself', () => {
     for (const level of Object.keys(SPEED_PRESETS) as (keyof typeof SPEED_PRESETS)[]) {
       expect(findMatchingSpeedPreset(SPEED_PRESETS[level])).toBe(level);

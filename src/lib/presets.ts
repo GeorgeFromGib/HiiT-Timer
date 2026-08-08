@@ -60,12 +60,9 @@ export const INCLINE_PRESETS: Record<PresetLevel, InclinePreset> = {
 
 const ALL_LEVELS: PresetLevel[] = ['1', '2', '3', '4', '5', '6'];
 
-export function findMatchingSpeedPreset(
-  speeds: RunSpeeds,
-  source: Record<PresetLevel, SpeedPreset> = SPEED_PRESETS,
-): PresetLevel | null {
+export function findMatchingSpeedPreset(speeds: RunSpeeds): PresetLevel | null {
   return ALL_LEVELS.find(level => {
-    const p = source[level];
+    const p = SPEED_PRESETS[level];
     return p.warmupSpeed === speeds.warmupSpeed && p.workSpeed === speeds.workSpeed &&
            p.restSpeed === speeds.restSpeed && p.cooldownSpeed === speeds.cooldownSpeed;
   }) ?? null;

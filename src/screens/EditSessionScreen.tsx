@@ -77,7 +77,6 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     circuitWarmup, circuitCooldown, circuitRest, circuitCount,
   } = draft;
   const isRun = draftActivityType === 'run';
-  const hasSpeed = isRun;
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
   const addPhaseOptions: Phase[] = isCircuit
@@ -193,7 +192,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           right={
             <ActivityTypeIcon
               mode={isCircuit ? 'circuit' : 'easy'}
-              activityType={draftActivityType === 'run' ? 'run' : draftActivityType === 'spinning' ? 'spinning' : undefined}
+              activityType={draftActivityType}
               size={32}
             />
           }
@@ -349,7 +348,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               <View style={styles.fieldGroup}>
                 <Text style={styles.fieldLabel}>{t('edit.intervalPresets')}</Text>
                 <PresetStrip onApply={applyDurationPreset} activePreset={activeTimingPreset} />
-                {hasSpeed && (
+                {isRun && (
                   <>
                     <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
                     <PresetStrip
@@ -398,9 +397,9 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     onRemove={() => removeInterval(iv._key)}
                     onCyclePhase={() => cyclePhase(iv._key)}
                     onOpenPicker={() => openIntervalPicker(iv._key)}
-                    displaySpeed={hasSpeed ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
-                    onOpenSpeedPicker={hasSpeed ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
-                    onClearSpeed={hasSpeed ? () => clearIntervalSpeed(iv._key) : undefined}
+                    displaySpeed={isRun ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
+                    onOpenSpeedPicker={isRun ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
+                    onClearSpeed={isRun ? () => clearIntervalSpeed(iv._key) : undefined}
                     displayResistance={isSpinning ? (iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance) : undefined}
                     onOpenResistancePicker={isSpinning ? () => openIntervalResistancePicker(iv._key) : undefined}
                     onClearResistance={isSpinning ? () => clearIntervalResistance(iv._key) : undefined}
@@ -555,7 +554,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           )}
 
           {/* Speeds — only shown in Easy mode (Advanced mode has speed presets inline above intervals) */}
-          {hasSpeed && !isAdvanced && !isCircuit && (
+          {isRun && !isAdvanced && !isCircuit && (
             <View style={styles.fieldGroup}>
               <Text style={styles.fieldLabel}>{t('edit.speedPresets')}</Text>
               <PresetStrip
