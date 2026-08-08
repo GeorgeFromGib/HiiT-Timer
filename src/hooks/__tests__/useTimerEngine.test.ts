@@ -343,4 +343,32 @@ describe('useTimerEngine', () => {
     expect(result.current.state.status).toBe('finished');
     expect(onFinish).toHaveBeenCalledTimes(1);
   });
+
+  it('start(atElapsed) resumes mid-segment', async () => {
+    const segments = twoSegments();
+    const { result } = await renderHook(() => useTimerEngine(segments, {}));
+    await act(async () => result.current.start(12));
+    expect(result.current.state.status).toBe('running');
+    expect(result.current.state.currentIndex).toBe(1);
+    expect(result.current.state.elapsed).toBe(12);
+    expect(result.current.state.remainingInSegment).toBe(6);
+  });
+
+  it('applyRemoteElapsed jumps elapsed while running without changing status', async () => {
+    const segments = twoSegments();
+    const { result } = await renderHook(() => useTimerEngine(segments, {}));
+    await act(async () => result.current.start());
+    await act(async () => result.current.applyRemoteElapsed(15));
+    expect(result.current.state.status).toBe('running');
+    expect(result.current.state.currentIndex).toBe(1);
+    expect(result.current.state.elapsed).toBe(15);
+  });
+
+  it('applyRemoteElapsed while idle is a no-op', async () => {
+    const segments = twoSegments();
+    const { result } = await renderHook(() => useTimerEngine(segments, {}));
+    await act(async () => result.current.applyRemoteElapsed(5));
+    expect(result.current.state.status).toBe('idle');
+    expect(result.current.state.elapsed).toBe(0);
+  });
 });

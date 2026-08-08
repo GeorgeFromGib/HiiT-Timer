@@ -167,14 +167,23 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
     tick(); // immediate update, don't wait one tick
   }, [tick]);
 
-  const start = useCallback(() => {
-    accumulatedRef.current = 0;
+  const start = useCallback((atElapsed = 0) => {
+    accumulatedRef.current = atElapsed;
     resumeEpochRef.current = Date.now();
     statusRef.current = 'running';
     lastIndexRef.current = -1;
     clearBeats();
     startLoop();
   }, [startLoop]);
+
+  /** Jumps elapsed to a value reported by the other device (e.g. a remote
+   * skip) without changing running/paused status. No-ops when idle/finished. */
+  const applyRemoteElapsed = useCallback((elapsed: number) => {
+    if (statusRef.current !== 'running' && statusRef.current !== 'paused') return;
+    accumulatedRef.current = elapsed;
+    resumeEpochRef.current = Date.now();
+    tick();
+  }, [tick]);
 
   const pause = useCallback(() => {
     if (statusRef.current !== 'running') return;
@@ -265,5 +274,5 @@ export function useTimerEngine(segments: Segment[], cb: Callbacks) {
 
   const getSegments = useCallback((): Segment[] => segmentsRef.current, []);
 
-  return { state, start, pause, resume, reset, skip, skipBack, extend, replaceSegments, getSegments, sync: tick };
+  return { state, start, pause, resume, reset, skip, skipBack, extend, replaceSegments, getSegments, sync: tick, applyRemoteElapsed };
 }
