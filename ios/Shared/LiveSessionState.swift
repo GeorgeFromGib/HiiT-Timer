@@ -50,3 +50,33 @@ let liveSessionMaxAge: TimeInterval = 120
 func isLiveSessionFresh(_ state: LiveSessionState, now: Date) -> Bool {
   now.timeIntervalSince(state.updatedAt) < liveSessionMaxAge
 }
+
+enum LiveSessionAction: Equatable {
+  case ignore
+  case applyToCurrent(elapsed: Double, status: String)
+  case launchNew(sessionId: String, resumeElapsed: Double)
+}
+
+/// Central reconciliation rule shared by both "nothing is showing, should I
+/// auto-launch?" (watch's ContentView / phone's App.tsx, currentSessionId
+/// nil) and "already showing this live session, should I fold in a
+/// status/elapsed update from the other device?" (SessionRunView's
+/// EngineHolder, currentSessionId set) call sites. The identical rule is
+/// ported to TypeScript in src/lib/liveSessionSync.ts for the phone JS side.
+/// Most-recent-timestamp-wins: an incoming update is only acted on if it's
+/// newer than the last one this device already applied, so two devices
+/// trading heartbeats never fight over which state is current.
+func nextLiveSessionAction(
+  currentSessionId: String?,
+  lastAppliedUpdatedAt: Date?,
+  incoming: LiveSessionState,
+  now: Date
+) -> LiveSessionAction {
+  guard isLiveSessionFresh(incoming, now: now) else { return .ignore }
+  if let lastAppliedUpdatedAt, incoming.updatedAt <= lastAppliedUpdatedAt { return .ignore }
+  let elapsed = resumeElapsed(for: incoming, now: now)
+  if let currentSessionId, currentSessionId == incoming.sessionId {
+    return .applyToCurrent(elapsed: elapsed, status: incoming.status)
+  }
+  return .launchNew(sessionId: incoming.sessionId, resumeElapsed: elapsed)
+}

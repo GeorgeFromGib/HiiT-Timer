@@ -54,4 +54,36 @@ final class LiveSessionStateTests: XCTestCase {
     let now = Date(timeIntervalSince1970: 1000 + liveSessionMaxAge + 1)
     XCTAssertFalse(isLiveSessionFresh(state, now: now))
   }
+
+  func test_nextLiveSessionAction_staleIncoming_isIgnored() {
+    let incoming = LiveSessionState(sessionId: "1", name: "Tabata", elapsed: 20, status: "running", updatedAt: Date(timeIntervalSince1970: 1000))
+    let now = Date(timeIntervalSince1970: 1000 + liveSessionMaxAge + 1)
+    let action = nextLiveSessionAction(currentSessionId: nil, lastAppliedUpdatedAt: nil, incoming: incoming, now: now)
+    XCTAssertEqual(action, .ignore)
+  }
+
+  func test_nextLiveSessionAction_notNewerThanLastApplied_isIgnored() {
+    let incoming = LiveSessionState(sessionId: "1", name: "Tabata", elapsed: 20, status: "running", updatedAt: Date(timeIntervalSince1970: 1000))
+    let action = nextLiveSessionAction(currentSessionId: nil, lastAppliedUpdatedAt: Date(timeIntervalSince1970: 1000), incoming: incoming, now: Date(timeIntervalSince1970: 1001))
+    XCTAssertEqual(action, .ignore)
+  }
+
+  func test_nextLiveSessionAction_noCurrentSession_launchesNew() {
+    let incoming = LiveSessionState(sessionId: "1", name: "Tabata", elapsed: 20, status: "paused", updatedAt: Date(timeIntervalSince1970: 1000))
+    let action = nextLiveSessionAction(currentSessionId: nil, lastAppliedUpdatedAt: nil, incoming: incoming, now: Date(timeIntervalSince1970: 1000))
+    XCTAssertEqual(action, .launchNew(sessionId: "1", resumeElapsed: 20))
+  }
+
+  func test_nextLiveSessionAction_differentCurrentSession_launchesNew() {
+    let incoming = LiveSessionState(sessionId: "2", name: "Sprint", elapsed: 5, status: "paused", updatedAt: Date(timeIntervalSince1970: 1000))
+    let action = nextLiveSessionAction(currentSessionId: "1", lastAppliedUpdatedAt: nil, incoming: incoming, now: Date(timeIntervalSince1970: 1000))
+    XCTAssertEqual(action, .launchNew(sessionId: "2", resumeElapsed: 5))
+  }
+
+  func test_nextLiveSessionAction_sameCurrentSession_appliesToCurrent() {
+    let incoming = LiveSessionState(sessionId: "1", name: "Tabata", elapsed: 20, status: "running", updatedAt: Date(timeIntervalSince1970: 1000))
+    let now = Date(timeIntervalSince1970: 1004)
+    let action = nextLiveSessionAction(currentSessionId: "1", lastAppliedUpdatedAt: nil, incoming: incoming, now: now)
+    XCTAssertEqual(action, .applyToCurrent(elapsed: 24, status: "running"))
+  }
 }
