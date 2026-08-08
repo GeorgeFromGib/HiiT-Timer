@@ -73,20 +73,20 @@ export default function App() {
   const [liveSessionState, setLiveSessionState] = useState<LiveSessionState | null>(null);
   const lastAppliedLiveUpdatedAtRef = useRef<number | null>(null);
   const mutedSessionIdRef = useRef<string | null>(null);
-  const mutedUpdatedAtRef = useRef<number | null>(null);
   const launchInFlightRef = useRef(false);
 
   useEffect(() => subscribeToLiveSessionUpdates(setLiveSessionState), []);
 
   useEffect(() => {
-    if (!liveSessionState || launchInFlightRef.current) return;
+    if (!liveSessionState) { mutedSessionIdRef.current = null; return; }
+    if (launchInFlightRef.current) return;
     const currentSessionId = route.name === 'Workout' ? route.session.id : null;
     if (currentSessionId === liveSessionState.sessionId) return; // WorkoutScreen applies this directly
-    if (
-      liveSessionState.sessionId === mutedSessionIdRef.current &&
-      mutedUpdatedAtRef.current !== null &&
-      liveSessionState.updatedAt <= mutedUpdatedAtRef.current
-    ) return;
+    // Stay muted for this sessionId no matter how new the incoming updatedAt gets —
+    // the peer's heartbeat keeps advancing updatedAt every ~2s, which would otherwise
+    // immediately defeat a dismiss. The mute only lifts once this broadcast clears
+    // (handled above) or a different session starts broadcasting.
+    if (liveSessionState.sessionId === mutedSessionIdRef.current) return;
     const action = nextLiveSessionAction(currentSessionId, lastAppliedLiveUpdatedAtRef.current, liveSessionState, Date.now());
     if (action.type !== 'launchNew') return;
     lastAppliedLiveUpdatedAtRef.current = liveSessionState.updatedAt;
@@ -99,8 +99,7 @@ export default function App() {
 
   const handleLiveSessionDismiss = useCallback((sessionId: string) => {
     mutedSessionIdRef.current = sessionId;
-    mutedUpdatedAtRef.current = liveSessionState?.sessionId === sessionId ? liveSessionState.updatedAt : null;
-  }, [liveSessionState]);
+  }, []);
 
   useEffect(() => {
     configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));

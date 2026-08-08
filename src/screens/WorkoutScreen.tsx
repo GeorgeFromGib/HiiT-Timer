@@ -144,7 +144,12 @@ export default function WorkoutScreen({
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
 
-  const isApplyingRemoteRef = useRef(false);
+  // Snapshot (not a blanket flag) of the exact (status, elapsed) just applied from
+  // a remote update — the outbound effect below only suppresses a broadcast that
+  // would be an exact echo of it, so a genuine local action (e.g. a pause) that
+  // happens to land right after an unrelated no-op heartbeat still broadcasts
+  // instead of being mistaken for the echo and silently dropped.
+  const appliedRemoteSnapshotRef = useRef<{ status: 'running' | 'paused'; elapsed: number } | null>(null);
   const lastAppliedRemoteUpdatedAtRef = useRef<number | null>(null);
   useEffect(() => {
     if (!incomingLiveSession || incomingLiveSession.sessionId !== session.id) return;
@@ -153,14 +158,21 @@ export default function WorkoutScreen({
       incomingLiveSession.updatedAt <= lastAppliedRemoteUpdatedAtRef.current
     ) return;
     lastAppliedRemoteUpdatedAtRef.current = incomingLiveSession.updatedAt;
-    isApplyingRemoteRef.current = true;
-    applyIncomingLiveState(incomingLiveSession.status, resumeElapsedFor(incomingLiveSession, Date.now()));
+    const remoteElapsed = resumeElapsedFor(incomingLiveSession, Date.now());
+    appliedRemoteSnapshotRef.current = { status: incomingLiveSession.status, elapsed: remoteElapsed };
+    applyIncomingLiveState(incomingLiveSession.status, remoteElapsed);
   }, [incomingLiveSession, session.id, applyIncomingLiveState]);
 
   const lastLiveSyncRef = useRef<number | null>(null);
   const lastLiveStatusRef = useRef<string | null>(null);
   useEffect(() => {
-    if (isApplyingRemoteRef.current) { isApplyingRemoteRef.current = false; return; }
+    const appliedSnapshot = appliedRemoteSnapshotRef.current;
+    appliedRemoteSnapshotRef.current = null;
+    if (
+      appliedSnapshot &&
+      appliedSnapshot.status === status &&
+      Math.abs(appliedSnapshot.elapsed - elapsed) < 0.01
+    ) return;
     if (status === 'running' || status === 'paused') {
       const now = Date.now();
       if (shouldBroadcastLiveSession(lastLiveStatusRef.current, status, lastLiveSyncRef.current, now)) {

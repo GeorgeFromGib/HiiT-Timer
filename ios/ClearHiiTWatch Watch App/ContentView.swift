@@ -6,7 +6,6 @@ struct ContentView: View {
   @State private var deepLinkedResumeElapsed: Double?
   @StateObject private var connectivity = WatchSessionReceiver.shared
   @State private var mutedSessionId: String?
-  @State private var mutedAsOf: Date?
 
   var body: some View {
     NavigationStack {
@@ -19,7 +18,6 @@ struct ContentView: View {
         resumeElapsed: deepLinkedResumeElapsed,
         onDismiss: {
           mutedSessionId = session.id
-          mutedAsOf = connectivity.liveSession?.updatedAt
         }
       )
     }
@@ -41,9 +39,14 @@ struct ContentView: View {
   }
 
   private func checkForLiveSession() {
-    guard deepLinkedSession == nil, let live = connectivity.liveSession,
+    guard let live = connectivity.liveSession else { mutedSessionId = nil; return }
+    guard deepLinkedSession == nil,
           let session = WorkoutStore.shared.fetchSession(id: live.sessionId) else { return }
-    if live.sessionId == mutedSessionId, let mutedAsOf, live.updatedAt <= mutedAsOf { return }
+    // Stay muted for this sessionId no matter how new the incoming updatedAt gets —
+    // the phone's heartbeat keeps advancing updatedAt every ~2s, which would otherwise
+    // immediately defeat a dismiss. The mute only lifts once this broadcast clears
+    // (handled above) or a different session starts broadcasting.
+    if live.sessionId == mutedSessionId { return }
     let action = nextLiveSessionAction(currentSessionId: nil, lastAppliedUpdatedAt: nil, incoming: live, now: Date())
     guard case let .launchNew(_, resumeElapsed) = action else { return }
     deepLinkedResumeElapsed = resumeElapsed
