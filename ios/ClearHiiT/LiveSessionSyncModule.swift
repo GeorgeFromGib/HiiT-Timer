@@ -49,6 +49,9 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
     ensureActivated()
     guard WCSession.isSupported() else { return }
     try? WCSession.default.updateApplicationContext([:])
+    if WCSession.default.isReachable {
+      WCSession.default.sendMessage([:], replyHandler: nil, errorHandler: nil)
+    }
   }
 
   private func forwardToJS(_ payload: [String: Any]) {
