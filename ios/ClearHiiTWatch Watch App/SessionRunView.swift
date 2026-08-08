@@ -40,8 +40,10 @@ struct SessionRunView: View {
   let session: SessionDTO
   var autoStart: Bool = false
   var resumeElapsed: Double? = nil
+  var onDismiss: (() -> Void)? = nil
 
   @StateObject private var engineHolder: EngineHolder
+  @StateObject private var connectivity = WatchSessionReceiver.shared
   @State private var countdown: Int?
   @State private var countdownTask: Task<Void, Never>?
   @State private var runningPage: RunningPage = .timer
@@ -49,10 +51,11 @@ struct SessionRunView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.isLuminanceReduced) private var isLuminanceReduced
 
-  init(session: SessionDTO, autoStart: Bool = false, resumeElapsed: Double? = nil) {
+  init(session: SessionDTO, autoStart: Bool = false, resumeElapsed: Double? = nil, onDismiss: (() -> Void)? = nil) {
     self.session = session
     self.autoStart = autoStart
     self.resumeElapsed = resumeElapsed
+    self.onDismiss = onDismiss
     _engineHolder = StateObject(wrappedValue: EngineHolder(session: session, segments: segmentsForSession(session)))
   }
 
@@ -83,6 +86,11 @@ struct SessionRunView: View {
     .onDisappear {
       countdownTask?.cancel()
       engineHolder.discardIfUnfinished()
+      onDismiss?()
+    }
+    .onChange(of: connectivity.liveSession) { _, newValue in
+      guard let live = newValue else { return }
+      engineHolder.reconcileIncoming(live, sessionId: session.id, now: Date())
     }
   }
 
@@ -114,6 +122,11 @@ struct SessionRunView: View {
       }
     }
 
+    func skipAndBroadcast() {
+      engineHolder.engine.skip()
+      engineHolder.broadcastLiveState()
+    }
+
     if isLuminanceReduced {
       return AnyView(alwaysOnView(state: state, segment: segment))
     }
@@ -131,7 +144,7 @@ struct SessionRunView: View {
         .buttonStyle(.plain)
 
         Button {
-          engineHolder.engine.skip()
+          skipAndBroadcast()
         } label: {
           Image(systemName: "forward.end.fill")
             .font(.title3)
@@ -368,6 +381,9 @@ private final class EngineHolder: ObservableObject {
   private let workoutSession: WorkoutSessionCoordinator
   private let session: SessionDTO
   private let recentSessionStore = RecentSessionStore()
+  private let connectivity = WatchSessionReceiver.shared
+  private var heartbeatTimer: Timer?
+  private var lastAppliedRemoteUpdatedAt: Date?
 
   init(session: SessionDTO, segments: [Segment]) {
     let engine = WorkoutTimerEngine(segments: segments)
@@ -401,17 +417,58 @@ private final class EngineHolder: ObservableObject {
   func start(atElapsed: Double = 0) {
     recentSessionStore.record(id: session.id, name: session.name)
     engine.start(atElapsed: atElapsed)
+    broadcastLiveState()
+    startHeartbeat()
   }
 
   func pause() {
     engine.pause()
+    broadcastLiveState()
   }
 
   func resume() {
     engine.resume()
+    broadcastLiveState()
+  }
+
+  func broadcastLiveState() {
+    guard engine.state.status == .running || engine.state.status == .paused else { return }
+    let status = engine.state.status == .running ? "running" : "paused"
+    connectivity.sendLiveSession(sessionId: session.id, name: session.name, elapsed: engine.state.elapsed, status: status)
+  }
+
+  private func startHeartbeat() {
+    heartbeatTimer?.invalidate()
+    heartbeatTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+      self?.broadcastLiveState()
+    }
+  }
+
+  func applyIncomingLiveState(elapsed: Double, status: String, updatedAt: Date) {
+    lastAppliedRemoteUpdatedAt = updatedAt
+    switch status {
+    case "running":
+      if engine.state.status == .paused { engine.resume() }
+      if abs(engine.state.elapsed - elapsed) > 2 { engine.applyRemoteElapsed(elapsed) }
+    case "paused":
+      if engine.state.status == .running { engine.pause() }
+      engine.applyRemoteElapsed(elapsed)
+    default:
+      break
+    }
+  }
+
+  func reconcileIncoming(_ live: LiveSessionState, sessionId: String, now: Date) {
+    let action = nextLiveSessionAction(currentSessionId: sessionId, lastAppliedUpdatedAt: lastAppliedRemoteUpdatedAt, incoming: live, now: now)
+    if case let .applyToCurrent(elapsed, status) = action {
+      applyIncomingLiveState(elapsed: elapsed, status: status, updatedAt: live.updatedAt)
+    }
   }
 
   func discardIfUnfinished() {
+    heartbeatTimer?.invalidate()
+    heartbeatTimer = nil
+    connectivity.clearLiveSession()
     workoutSession.discardIfUnfinished()
   }
 }
