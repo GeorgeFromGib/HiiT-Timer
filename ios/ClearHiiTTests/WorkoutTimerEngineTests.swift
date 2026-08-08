@@ -177,4 +177,33 @@ final class WorkoutTimerEngineTests: XCTestCase {
     engine.tick()
     XCTAssertNil(engine.state.segmentEndDate)
   }
+
+  func test_applyRemoteElapsed_whileRunning_jumpsElapsedAndKeepsRunning() {
+    var now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.start()
+    now = Date(timeIntervalSince1970: 1005)
+    engine.applyRemoteElapsed(20) // inside the "work" segment (index 1, 10...30)
+    XCTAssertEqual(engine.state.status, .running)
+    XCTAssertEqual(engine.state.currentIndex, 1)
+    XCTAssertEqual(engine.state.elapsed, 20, accuracy: 0.001)
+  }
+
+  func test_applyRemoteElapsed_whilePaused_setsElapsedWithoutResuming() {
+    let now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.start()
+    engine.pause()
+    engine.applyRemoteElapsed(5)
+    XCTAssertEqual(engine.state.status, .paused)
+    XCTAssertEqual(engine.state.elapsed, 5, accuracy: 0.001)
+  }
+
+  func test_applyRemoteElapsed_whileIdle_isNoOp() {
+    let now = Date(timeIntervalSince1970: 1000)
+    let engine = WorkoutTimerEngine(segments: makeSegments(), now: { now })
+    engine.applyRemoteElapsed(5)
+    XCTAssertEqual(engine.state.status, .idle)
+    XCTAssertEqual(engine.state.elapsed, 0, accuracy: 0.001)
+  }
 }

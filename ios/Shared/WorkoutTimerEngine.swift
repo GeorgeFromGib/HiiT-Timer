@@ -80,6 +80,17 @@ final class WorkoutTimerEngine: ObservableObject {
     state = TimerState(remainingTotal: total)
   }
 
+  /// Jumps elapsed to a value reported by the other device (e.g. a remote
+  /// skip) without changing running/paused status — that's applied
+  /// separately via pause()/resume() so a status-only update doesn't also
+  /// yank elapsed. No-ops when idle/finished, matching skip()'s guard.
+  func applyRemoteElapsed(_ elapsed: Double) {
+    guard state.status == .running || state.status == .paused else { return }
+    accumulated = elapsed
+    resumeEpoch = now()
+    tick()
+  }
+
   func skip() {
     guard state.status == .running || state.status == .paused else { return }
     let elapsed = computeElapsed()
