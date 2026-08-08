@@ -29,11 +29,23 @@ import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import GhostBtn  from '../components/GhostBtn';
 import SessionCompleteScreen from './SessionCompleteScreen';
 import { checkAndRequestReview } from '../lib/reviewState';
-import { updateLiveSession, clearLiveSession, shouldBroadcastLiveSession } from '../lib/liveSessionSync';
+import {
+  updateLiveSession, clearLiveSession, shouldBroadcastLiveSession, resumeElapsedFor,
+  type LiveSessionState,
+} from '../lib/liveSessionSync';
 
 const EXTEND_OPTIONS = [5, 10] as const;
 
-export default function WorkoutScreen({ session, onBack }: { session: Session; onBack: () => void }) {
+export default function WorkoutScreen({
+  session, onBack, initialResumeElapsed, initialStatus, incomingLiveSession, onLiveSessionDismiss,
+}: {
+  session: Session;
+  onBack: () => void;
+  initialResumeElapsed?: number;
+  initialStatus?: 'running' | 'paused';
+  incomingLiveSession?: LiveSessionState | null;
+  onLiveSessionDismiss?: (sessionId: string) => void;
+}) {
   const { settings } = useSettings();
   const { t } = useTranslation();
 
@@ -59,6 +71,13 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   const [segments, setSegments] = useState(initialSegments);
   const TOTAL_DUR = useMemo(() => totalDuration(segments), [segments]);
 
+  const initialResume = useMemo(
+    () => (initialResumeElapsed !== undefined
+      ? { elapsed: initialResumeElapsed, status: initialStatus ?? 'running' as const }
+      : undefined),
+    [initialResumeElapsed, initialStatus],
+  );
+
   const {
     status,
     preStartCount,
@@ -74,12 +93,13 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     skipBack,
     extend,
     addRound,
+    applyIncomingLiveState,
   } = useWorkoutSession(segments, settings, () => {
     if (!settings.countdownFlash) return;
     if (flashTimerRef.current) clearTimeout(flashTimerRef.current);
     setFlashing(true);
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
-  });
+  }, false, initialResume);
 
   const reset = useCallback(() => {
     resetEngine();
@@ -109,7 +129,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           },
           {
             text: t('alerts.terminate'),
-            onPress: onBack,
+            onPress: () => { onLiveSessionDismiss?.(session.id); onBack(); },
             style: 'destructive',
           },
         ]
@@ -117,16 +137,30 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
     } else {
       onBack();
     }
-  }, [status, onBack, t]);
+  }, [status, onBack, t, onLiveSessionDismiss, session.id]);
 
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
 
+  const isApplyingRemoteRef = useRef(false);
+  const lastAppliedRemoteUpdatedAtRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!incomingLiveSession || incomingLiveSession.sessionId !== session.id) return;
+    if (
+      lastAppliedRemoteUpdatedAtRef.current !== null &&
+      incomingLiveSession.updatedAt <= lastAppliedRemoteUpdatedAtRef.current
+    ) return;
+    lastAppliedRemoteUpdatedAtRef.current = incomingLiveSession.updatedAt;
+    isApplyingRemoteRef.current = true;
+    applyIncomingLiveState(incomingLiveSession.status, resumeElapsedFor(incomingLiveSession, Date.now()));
+  }, [incomingLiveSession, session.id, applyIncomingLiveState]);
+
   const lastLiveSyncRef = useRef<number | null>(null);
   const lastLiveStatusRef = useRef<string | null>(null);
   useEffect(() => {
+    if (isApplyingRemoteRef.current) { isApplyingRemoteRef.current = false; return; }
     if (status === 'running' || status === 'paused') {
       const now = Date.now();
       if (shouldBroadcastLiveSession(lastLiveStatusRef.current, status, lastLiveSyncRef.current, now)) {
@@ -142,6 +176,16 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
   }, [status, elapsed, session.id, session.name]);
 
   useEffect(() => () => clearLiveSession(), []);
+
+  const handleSkip = useCallback(() => {
+    skip();
+    lastLiveStatusRef.current = null; // forces the effect above to broadcast immediately, not on the next 2s heartbeat
+  }, [skip]);
+
+  const handleSkipBack = useCallback(() => {
+    skipBack();
+    lastLiveStatusRef.current = null;
+  }, [skipBack]);
 
   const reviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -457,7 +501,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
       {/* ── Controls row ── */}
       <View style={styles.controls}>
         {isPlaying ? (
-          <GhostBtn onPress={skipBack}>
+          <GhostBtn onPress={handleSkipBack}>
             <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
               <Rect x="2.5" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />
               <Path d="M16 4l-9 6 9 6V4z" fill={T.subText} />
@@ -487,7 +531,7 @@ export default function WorkoutScreen({ session, onBack }: { session: Session; o
           </View>
         </Pressable>
 
-        <GhostBtn onPress={skip} disabled={isIdle || isPreStart}>
+        <GhostBtn onPress={handleSkip} disabled={isIdle || isPreStart}>
           <Svg width={19} height={19} viewBox="0 0 20 20" fill="none">
             <Path d="M4 4l9 6-9 6V4z" fill={T.subText} />
             <Rect x="15" y="4" width="2.5" height="12" rx="1.2" fill={T.subText} />
