@@ -4,7 +4,7 @@ import type { Session } from './lib/sessions';
 export type Route =
   | { name: 'Folders' }
   | { name: 'Sessions'; folderId?: string }
-  | { name: 'Workout'; session: Session }
+  | { name: 'Workout'; session: Session; initialResumeElapsed?: number; initialStatus?: 'running' | 'paused' }
   | { name: 'EditSession'; session?: Session; activityType?: 'general' | 'run' | 'circuit' | 'spinning'; folderId?: string }
   | { name: 'Settings' }
   | { name: 'PrivacyPolicy' };

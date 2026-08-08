@@ -22,7 +22,7 @@ import {
   Inter_900Black,
 } from '@expo-google-fonts/inter';
 import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import FoldersScreen from './src/screens/FoldersScreen';
 import SessionsListScreen from './src/screens/SessionsListScreen';
@@ -41,6 +41,8 @@ import { usePremiumState } from './src/hooks/usePremiumState';
 import { useSettingsState } from './src/hooks/useSettingsState';
 import { configureAudioSession } from './src/lib/audio';
 import { checkForUpdate } from './src/lib/versionCheck';
+import { loadSessions } from './src/lib/sessions';
+import { subscribeToLiveSessionUpdates, nextLiveSessionAction, type LiveSessionState } from './src/lib/liveSessionSync';
 
 function RouteScreen({ children }: { children: ReactNode }) {
   const { themeKey } = useTheme();
@@ -67,6 +69,36 @@ export default function App() {
   const { route, navigate, goBack, resetTo } = useNavigationStack({ name: 'Sessions' });
   const { settings, loading: settingsLoading, updateSettings } = useSettingsState();
   const premiumState = usePremiumState();
+
+  const [liveSessionState, setLiveSessionState] = useState<LiveSessionState | null>(null);
+  const lastAppliedLiveUpdatedAtRef = useRef<number | null>(null);
+  const mutedSessionIdRef = useRef<string | null>(null);
+  const mutedUpdatedAtRef = useRef<number | null>(null);
+
+  useEffect(() => subscribeToLiveSessionUpdates(setLiveSessionState), []);
+
+  useEffect(() => {
+    if (!liveSessionState) return;
+    const currentSessionId = route.name === 'Workout' ? route.session.id : null;
+    if (currentSessionId === liveSessionState.sessionId) return; // WorkoutScreen applies this directly
+    if (
+      liveSessionState.sessionId === mutedSessionIdRef.current &&
+      mutedUpdatedAtRef.current !== null &&
+      liveSessionState.updatedAt <= mutedUpdatedAtRef.current
+    ) return;
+    const action = nextLiveSessionAction(currentSessionId, lastAppliedLiveUpdatedAtRef.current, liveSessionState, Date.now());
+    if (action.type !== 'launchNew') return;
+    lastAppliedLiveUpdatedAtRef.current = liveSessionState.updatedAt;
+    loadSessions().then(({ sessions }) => {
+      const session = sessions.find(s => s.id === action.sessionId);
+      if (session) navigate({ name: 'Workout', session, initialResumeElapsed: action.resumeElapsed, initialStatus: liveSessionState.status });
+    });
+  }, [liveSessionState, route, navigate]);
+
+  const handleLiveSessionDismiss = useCallback((sessionId: string) => {
+    mutedSessionIdRef.current = sessionId;
+    mutedUpdatedAtRef.current = liveSessionState?.sessionId === sessionId ? liveSessionState.updatedAt : null;
+  }, [liveSessionState]);
 
   useEffect(() => {
     configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));
@@ -106,7 +138,16 @@ export default function App() {
     <SettingsContext.Provider value={{ settings, updateSettings }}>
     <ThemeContext.Provider value={{ T, themeKey, setTheme }}>
       {route.name === 'Workout' && (
-        <RouteScreen><WorkoutScreen session={route.session} onBack={goBack} /></RouteScreen>
+        <RouteScreen>
+          <WorkoutScreen
+            session={route.session}
+            onBack={goBack}
+            initialResumeElapsed={route.initialResumeElapsed}
+            initialStatus={route.initialStatus}
+            incomingLiveSession={liveSessionState?.sessionId === route.session.id ? liveSessionState : null}
+            onLiveSessionDismiss={handleLiveSessionDismiss}
+          />
+        </RouteScreen>
       )}
       {route.name === 'EditSession' && (
         <RouteScreen>
