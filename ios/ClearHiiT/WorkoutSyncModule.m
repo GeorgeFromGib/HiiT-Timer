@@ -6,4 +6,6 @@ RCT_EXTERN_METHOD(ping)
 
 RCT_EXTERN_METHOD(syncSessionsData:(NSString *)json)
 
+RCT_EXTERN_METHOD(syncPreferences:(BOOL)hideFolders)
+
 @end

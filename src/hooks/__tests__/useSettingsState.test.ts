@@ -2,6 +2,11 @@ import { act, renderHook } from '@testing-library/react-native';
 import { useSettingsState } from '../useSettingsState';
 import { DEFAULT_SETTINGS, type Settings } from '../../lib/settings';
 import { i18n } from '../../lib/i18n';
+import { syncPreferences } from '../../lib/workoutSync';
+
+jest.mock('../../lib/workoutSync', () => ({
+  syncPreferences: jest.fn(),
+}));
 
 const filesMock = jest.requireMock('expo-file-system').__files as Map<string, string>;
 const SETTINGS_PATH = 'document/settings_v1.json';
@@ -13,6 +18,7 @@ function readPersisted(): Settings | undefined {
 
 beforeEach(() => {
   filesMock.clear();
+  (syncPreferences as jest.Mock).mockClear();
 });
 
 describe('useSettingsState', () => {
@@ -113,5 +119,25 @@ describe('useSettingsState', () => {
     expect(result.current.settings.soundVolume).toBe(42);
     expect(result.current.settings.hapticFeedback).toBe(DEFAULT_SETTINGS.hapticFeedback);
     expect(result.current.settings.theme).toBe(DEFAULT_SETTINGS.theme);
+  });
+
+  it('pushes hideFolders to the watch once settings finish loading', async () => {
+    filesMock.set(SETTINGS_PATH, JSON.stringify({ hideFolders: false }));
+    await renderHook(() => useSettingsState());
+    expect(syncPreferences).toHaveBeenCalledWith(false);
+  });
+
+  it('updateSettings("hideFolders", ...) re-pushes the value to the watch', async () => {
+    const { result } = await renderHook(() => useSettingsState());
+    (syncPreferences as jest.Mock).mockClear();
+    await act(async () => result.current.updateSettings('hideFolders', false));
+    expect(syncPreferences).toHaveBeenCalledWith(false);
+  });
+
+  it('updateSettings for an unrelated field does not re-push hideFolders', async () => {
+    const { result } = await renderHook(() => useSettingsState());
+    (syncPreferences as jest.Mock).mockClear();
+    await act(async () => result.current.updateSettings('theme', 'tidal'));
+    expect(syncPreferences).not.toHaveBeenCalled();
   });
 });

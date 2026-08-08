@@ -4,6 +4,7 @@ import {
   type Settings,
 } from '../lib/settings';
 import { detectLanguage, i18n } from '../lib/i18n';
+import { syncPreferences } from '../lib/workoutSync';
 
 export interface SettingsState {
   settings: Settings;
@@ -46,6 +47,9 @@ export function useSettingsState(): SettingsState {
       setSettings(resolved);
       setLoading(false);
       if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
+      // Push the current value once on launch too — the watch's local copy
+      // otherwise never learns about it until the user next toggles it.
+      syncPreferences(resolved.hideFolders);
     });
   }, []);
 
@@ -59,6 +63,9 @@ export function useSettingsState(): SettingsState {
     setSettings(prev => {
       const next = withManualOverride(prev, key, value);
       saveSettings(next);
+      if (key === ('hideFolders' satisfies keyof Settings)) {
+        syncPreferences(next.hideFolders);
+      }
       return next;
     });
   }

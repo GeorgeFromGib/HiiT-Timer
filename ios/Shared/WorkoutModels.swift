@@ -107,6 +107,29 @@ struct SessionDTO: Codable {
 
 extension SessionDTO: Identifiable {}
 
+/// Mirrors src/lib/sessions.ts's Folder. Icon rendering is out of scope on the
+/// watch — folder rows use a generic systemImage instead.
+struct FolderDTO: Identifiable {
+  let id: String
+  let name: String
+  let orderIndex: Int
+}
+
+/// Drops duplicate folder ids, keeping the first occurrence. CloudKit-backed
+/// Core Data has no unique constraint on `id`, so the same logical folder can
+/// end up as more than one FolderRecord; mirrors the seenIds guard
+/// decodeRunnableSessions already applies to SessionRecord for the same reason.
+func dedupeFoldersById(_ folders: [FolderDTO]) -> [FolderDTO] {
+  var seenIds = Set<String>()
+  var result: [FolderDTO] = []
+  for folder in folders {
+    guard !seenIds.contains(folder.id) else { continue }
+    seenIds.insert(folder.id)
+    result.append(folder)
+  }
+  return result
+}
+
 let phaseWord: [Phase: String] = [
   .warmup: "WARM UP",
   .work: "WORK",

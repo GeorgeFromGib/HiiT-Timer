@@ -34,11 +34,12 @@ final class WorkoutStore {
         return
       }
 
-      for folder in folders {
+      for (index, folder) in folders.enumerated() {
         guard let id = folder["id"] as? String else { continue }
         let record = self.fetchOrCreate(entityName: "FolderRecord", id: id, in: context)
         record.setValue(folder["name"] as? String, forKey: "name")
         record.setValue(folder["icon"] as? String, forKey: "icon")
+        record.setValue(index, forKey: "orderIndex")
         if let createdAt = folder["createdAt"] as? Double {
           record.setValue(Date(timeIntervalSince1970: createdAt / 1000), forKey: "createdAt")
         }
@@ -72,6 +73,21 @@ final class WorkoutStore {
         try context.save()
       } catch {
         print("[WorkoutStore] applySessionsDataJSON: save failed: \(error)")
+      }
+    }
+  }
+
+  private static let preferencesRecordId = "app"
+
+  func applyPreferences(hideFolders: Bool) {
+    let context = container.newBackgroundContext()
+    context.perform {
+      let record = self.fetchOrCreate(entityName: "PreferenceRecord", id: Self.preferencesRecordId, in: context)
+      record.setValue(hideFolders, forKey: "hideFolders")
+      do {
+        try context.save()
+      } catch {
+        print("[WorkoutStore] applyPreferences: save failed: \(error)")
       }
     }
   }
@@ -116,5 +132,40 @@ extension WorkoutStore {
 
   func fetchSession(id: String) -> SessionDTO? {
     fetchRunnableSessions().first { $0.id == id }
+  }
+
+  func fetchRunnableSessions(inFolder folderId: String) -> [SessionDTO] {
+    fetchRunnableSessions().filter { $0.folderId == folderId }
+  }
+
+  /// Defaults to true (flat list) when no preference has synced yet, matching
+  /// src/lib/settings.ts's DEFAULT_SETTINGS.hideFolders.
+  func fetchHideFolders() -> Bool {
+    let context = container.viewContext
+    let request = NSFetchRequest<NSManagedObject>(entityName: "PreferenceRecord")
+    request.predicate = NSPredicate(format: "id == %@", Self.preferencesRecordId)
+    request.fetchLimit = 1
+    guard let record = try? context.fetch(request).first,
+          let hideFolders = record.value(forKey: "hideFolders") as? Bool else {
+      return true
+    }
+    return hideFolders
+  }
+
+  func fetchFolders() -> [FolderDTO] {
+    let context = container.viewContext
+    let request = NSFetchRequest<NSManagedObject>(entityName: "FolderRecord")
+    request.sortDescriptors = [
+      NSSortDescriptor(key: "orderIndex", ascending: true),
+      NSSortDescriptor(key: "createdAt", ascending: true),
+    ]
+    let records = (try? context.fetch(request)) ?? []
+    let folders = records.compactMap { record -> FolderDTO? in
+      guard let id = record.value(forKey: "id") as? String,
+            let name = record.value(forKey: "name") as? String else { return nil }
+      let orderIndex = record.value(forKey: "orderIndex") as? Int ?? 0
+      return FolderDTO(id: id, name: name, orderIndex: orderIndex)
+    }
+    return dedupeFoldersById(folders)
   }
 }

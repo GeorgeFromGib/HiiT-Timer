@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
-import { ping, syncSessionsData } from '../workoutSync';
+import { ping, syncSessionsData, syncPreferences } from '../workoutSync';
 import type { SessionsData } from '../sessions';
 
 describe('ping', () => {
@@ -39,5 +39,23 @@ describe('syncSessionsData', () => {
     NativeModules.WorkoutSync = undefined;
 
     expect(() => syncSessionsData(data)).not.toThrow();
+  });
+});
+
+describe('syncPreferences', () => {
+  it('calls the native WorkoutSync.syncPreferences method with the hideFolders value', () => {
+    const syncMock = jest.fn();
+    NativeModules.WorkoutSync = { syncPreferences: syncMock };
+
+    syncPreferences(false);
+
+    expect(syncMock).toHaveBeenCalledTimes(1);
+    expect(syncMock).toHaveBeenCalledWith(false);
+  });
+
+  it('does not throw when the native module is unavailable', () => {
+    NativeModules.WorkoutSync = undefined;
+
+    expect(() => syncPreferences(true)).not.toThrow();
   });
 });

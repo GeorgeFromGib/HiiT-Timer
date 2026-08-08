@@ -14,6 +14,11 @@ class WorkoutSync: NSObject {
   }
 
   @objc
+  func syncPreferences(_ hideFolders: Bool) {
+    WorkoutStore.shared.applyPreferences(hideFolders: hideFolders)
+  }
+
+  @objc
   static func requiresMainQueueSetup() -> Bool {
     return false
   }

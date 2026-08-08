@@ -19,3 +19,11 @@ export function syncSessionsData(data: SessionsData): void {
     console.warn('workoutSync: syncSessionsData failed', e);
   }
 }
+
+export function syncPreferences(hideFolders: boolean): void {
+  try {
+    NativeModules.WorkoutSync?.syncPreferences(hideFolders);
+  } catch (e) {
+    console.warn('workoutSync: syncPreferences failed', e);
+  }
+}

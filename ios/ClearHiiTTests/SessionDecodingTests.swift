@@ -205,4 +205,15 @@ final class SessionDecodingTests: XCTestCase {
     let result = decodeRunnableSessions(fromJSONBlobs: [standardJSON, spinningJSON, walkJSON, malformedJSON])
     XCTAssertEqual(result.map(\.id), ["1", "2"])
   }
+
+  func test_dedupeFoldersById_keepsFirstOccurrencePerId() {
+    let folders = [
+      FolderDTO(id: "f1", name: "Cardio", orderIndex: 0),
+      FolderDTO(id: "f2", name: "Strength", orderIndex: 1),
+      FolderDTO(id: "f1", name: "Cardio (duplicate CloudKit record)", orderIndex: 2),
+    ]
+    let result = dedupeFoldersById(folders)
+    XCTAssertEqual(result.map(\.id), ["f1", "f2"])
+    XCTAssertEqual(result[0].name, "Cardio")
+  }
 }
