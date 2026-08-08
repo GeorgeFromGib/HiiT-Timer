@@ -19,7 +19,7 @@ Background audio reliability **will not work in Expo Go**. Test on a dev build:
 npx eas build --profile development --platform ios
 ```
 
-There are no tests or a linter configured yet.
+Tests: `npx jest`. No linter configured yet.
 
 ## Architecture
 
