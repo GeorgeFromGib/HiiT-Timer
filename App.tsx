@@ -74,11 +74,12 @@ export default function App() {
   const lastAppliedLiveUpdatedAtRef = useRef<number | null>(null);
   const mutedSessionIdRef = useRef<string | null>(null);
   const mutedUpdatedAtRef = useRef<number | null>(null);
+  const launchInFlightRef = useRef(false);
 
   useEffect(() => subscribeToLiveSessionUpdates(setLiveSessionState), []);
 
   useEffect(() => {
-    if (!liveSessionState) return;
+    if (!liveSessionState || launchInFlightRef.current) return;
     const currentSessionId = route.name === 'Workout' ? route.session.id : null;
     if (currentSessionId === liveSessionState.sessionId) return; // WorkoutScreen applies this directly
     if (
@@ -89,10 +90,11 @@ export default function App() {
     const action = nextLiveSessionAction(currentSessionId, lastAppliedLiveUpdatedAtRef.current, liveSessionState, Date.now());
     if (action.type !== 'launchNew') return;
     lastAppliedLiveUpdatedAtRef.current = liveSessionState.updatedAt;
+    launchInFlightRef.current = true;
     loadSessions().then(({ sessions }) => {
       const session = sessions.find(s => s.id === action.sessionId);
       if (session) navigate({ name: 'Workout', session, initialResumeElapsed: action.resumeElapsed, initialStatus: liveSessionState.status });
-    });
+    }).finally(() => { launchInFlightRef.current = false; });
   }, [liveSessionState, route, navigate]);
 
   const handleLiveSessionDismiss = useCallback((sessionId: string) => {
