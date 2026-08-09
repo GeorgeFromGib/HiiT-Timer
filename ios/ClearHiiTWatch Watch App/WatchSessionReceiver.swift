@@ -13,6 +13,12 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
   static let shared = WatchSessionReceiver()
 
   @Published private(set) var liveSession: LiveSessionState?
+  /// The session id currently on-screen anywhere on the watch (pushed from
+  /// the list or presented as an auto-launch/deep-link cover) — lets
+  /// ContentView tell a real incoming peer update apart from its own
+  /// broadcast bouncing back via the phone's heartbeat, which would
+  /// otherwise present a duplicate cover for the session already running.
+  @Published var activeSessionId: String?
   private var lastAcceptedUpdatedAt: Date?
 
   private override init() {

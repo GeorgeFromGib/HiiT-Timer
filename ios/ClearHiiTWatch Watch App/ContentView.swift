@@ -48,7 +48,7 @@ struct ContentView: View {
     // immediately defeat a dismiss. The mute only lifts once this broadcast clears
     // (handled above) or a different session starts broadcasting.
     if live.sessionId == mutedSessionId { return }
-    let action = nextLiveSessionAction(currentSessionId: nil, lastAppliedUpdatedAt: nil, incoming: live, now: Date())
+    let action = nextLiveSessionAction(currentSessionId: connectivity.activeSessionId, lastAppliedUpdatedAt: nil, incoming: live, now: Date())
     guard case let .launchNew(_, resumeElapsed) = action else { return }
     deepLinkedResumeElapsed = resumeElapsed
     deepLinkedSession = session

@@ -76,6 +76,7 @@ struct SessionRunView: View {
       }
     }
     .onAppear {
+      connectivity.activeSessionId = session.id
       guard !hasAutoStarted else { return }
       hasAutoStarted = true
       if let resumeElapsed {
@@ -85,6 +86,7 @@ struct SessionRunView: View {
       }
     }
     .onDisappear {
+      if connectivity.activeSessionId == session.id { connectivity.activeSessionId = nil }
       countdownTask?.cancel()
       engineHolder.discardIfUnfinished()
       onDismiss?()
@@ -300,10 +302,10 @@ struct SessionRunView: View {
       }
     }
     .confirmationDialog("End Workout?", isPresented: $showTerminateConfirm, titleVisibility: .visible) {
-      Button("End Workout", role: .destructive) {
-        engineHolder.terminate()
-        dismiss()
-      }
+      // Leaving here by any means (this button, the back chevron, swipe, or
+      // the cover's system dismiss) ends the peer's mirrored session too —
+      // discardIfUnfinished (called from onDisappear below) broadcasts it.
+      Button("End Workout", role: .destructive) { dismiss() }
       Button("Continue", role: .cancel) {}
     })
   }
@@ -466,15 +468,6 @@ private final class EngineHolder: ObservableObject {
     broadcastLiveState()
   }
 
-  /// One-shot terminal broadcast so the phone (which may have auto-launched
-  /// this same session) ends it too, instead of ticking away a workout that
-  /// no longer exists on this device — mirrors WorkoutScreen.tsx's terminate.
-  func terminate() {
-    heartbeatTimer?.invalidate()
-    heartbeatTimer = nil
-    connectivity.sendLiveSession(sessionId: session.id, name: session.name, elapsed: engine.state.elapsed, status: "terminated")
-  }
-
   func broadcastLiveState() {
     let status: String
     switch engine.state.status {
@@ -522,7 +515,16 @@ private final class EngineHolder: ObservableObject {
   func discardIfUnfinished() {
     heartbeatTimer?.invalidate()
     heartbeatTimer = nil
-    connectivity.clearLiveSession()
+    switch engine.state.status {
+    case .running, .paused:
+      // Leaving a running/paused session by any means (back chevron, swipe,
+      // cover dismiss, or the End Workout confirmation) ends the peer's
+      // mirrored session too — there's no "accidental dismiss" distinction
+      // on watch.
+      connectivity.sendLiveSession(sessionId: session.id, name: session.name, elapsed: engine.state.elapsed, status: "terminated")
+    case .idle, .finished:
+      connectivity.clearLiveSession()
+    }
     workoutSession.discardIfUnfinished()
   }
 }
