@@ -7,7 +7,7 @@ import { useSettings } from '../lib/settingsContext';
 import { useTranslation } from '../lib/i18n';
 import { SettingsToggle } from './SettingsToggle';
 
-export const CURRENT_ONBOARDING_VERSION = 1;
+export const CURRENT_ONBOARDING_VERSION = 2;
 
 interface Props {
   visible: boolean;
@@ -23,8 +23,15 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const [showFolders, setShowFolders] = useState(!settings.hideFolders);
   const [voiceCues, setVoiceCues] = useState(settings.voiceCues);
   const [step, setStep] = useState(0);
-  const STEP_COUNT = 5;
+
+  // Fresh installs (never onboarded) see the full wizard, including the appearance
+  // step. Upgraders from 1.1 already picked a theme during their original onboarding,
+  // so that step is skipped and they go straight from what's-new to folders.
+  const isFreshInstall = settings.onboardingVersion === 0;
+  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance'] : []), 'folders', 'voiceCues', 'done'] as const;
+  const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
+  const currentStep = STEPS[step];
 
   // Re-sync local state to the loaded settings each time the modal opens,
   // since it mounts once at launch before settings have resolved.
@@ -55,7 +62,9 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     setStep(s => Math.max(0, s - 1));
   }
 
-  const FEATURES = [
+  // v1 (1.1) features — only shown to installs that never onboarded before (onboardingVersion === 0),
+  // stacked with the v2 features below. Upgraders who already saw v1 skip straight to what's new in v2.
+  const FEATURES_V1 = [
     {
       titleKey: 'onboarding.feature1Title',
       subKey: 'onboarding.feature1Sub',
@@ -87,6 +96,31 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     },
   ];
 
+  // v2 (1.2) features — always shown, since they're new to every install.
+  const FEATURES_V2 = [
+    {
+      titleKey: 'onboarding.feature4Title',
+      subKey: 'onboarding.feature4Sub',
+      icon: (
+        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <Path d="M3 20 9 8l4 6 3-5 5 11" />
+        </Svg>
+      ),
+    },
+    {
+      titleKey: 'onboarding.feature5Title',
+      subKey: 'onboarding.feature5Sub',
+      icon: (
+        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <Path d="M11 5 6 9H3v6h3l5 4V5z" />
+          <Path d="M16.5 12h4" />
+        </Svg>
+      ),
+    },
+  ];
+
+  const FEATURES = isFreshInstall ? [...FEATURES_V1, ...FEATURES_V2] : FEATURES_V2;
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={() => {}}>
       <View style={styles.overlay}>
@@ -109,7 +143,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {step === 0 && (
+            {currentStep === 'whatsNew' && (
               <>
                 <View style={styles.headerBlock}>
                   <View style={styles.glyph}>
@@ -137,7 +171,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
               </>
             )}
 
-            {step === 1 && (
+            {currentStep === 'appearance' && (
               <View style={styles.optionBlock}>
                 <View style={styles.glyph}>
                   <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -161,7 +195,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
               </View>
             )}
 
-            {step === 2 && (
+            {currentStep === 'folders' && (
               <View style={styles.optionBlock}>
                 <View style={styles.glyph}>
                   <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -176,7 +210,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
               </View>
             )}
 
-            {step === 3 && (
+            {currentStep === 'voiceCues' && (
               <View style={styles.optionBlock}>
                 <View style={styles.glyph}>
                   <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
@@ -192,7 +226,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
               </View>
             )}
 
-            {step === 4 && (
+            {currentStep === 'done' && (
               <View style={styles.optionBlock}>
                 <View style={styles.glyph}>
                   <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
