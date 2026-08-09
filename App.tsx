@@ -80,7 +80,7 @@ export default function App() {
   useEffect(() => {
     if (!liveSessionState) { mutedSessionIdRef.current = null; return; }
     if (launchInFlightRef.current) return;
-    if (liveSessionState.status === 'finished') return; // never auto-launch a session that's already over
+    if (liveSessionState.status === 'finished' || liveSessionState.status === 'terminated') return; // never auto-launch a session that's already over
     const currentSessionId = route.name === 'Workout' ? route.session.id : null;
     if (currentSessionId === liveSessionState.sessionId) return; // WorkoutScreen applies this directly
     // Stay muted for this sessionId no matter how new the incoming updatedAt gets —
