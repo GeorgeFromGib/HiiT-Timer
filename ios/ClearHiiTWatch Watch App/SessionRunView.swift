@@ -48,6 +48,7 @@ struct SessionRunView: View {
   @State private var countdownTask: Task<Void, Never>?
   @State private var runningPage: RunningPage = .timer
   @State private var hasAutoStarted = false
+  @State private var showTerminateConfirm = false
   @Environment(\.dismiss) private var dismiss
   @Environment(\.isLuminanceReduced) private var isLuminanceReduced
 
@@ -157,6 +158,19 @@ struct SessionRunView: View {
           Image(systemName: "forward.end.fill")
             .font(.title3)
             .foregroundStyle(controlSubText)
+            .frame(width: 44, height: 44)
+            .background(controlGhostBg)
+            .clipShape(Circle())
+            .overlay(Circle().stroke(controlHairline, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+
+        Button {
+          showTerminateConfirm = true
+        } label: {
+          Image(systemName: "xmark")
+            .font(.title3)
+            .foregroundStyle(.red)
             .frame(width: 44, height: 44)
             .background(controlGhostBg)
             .clipShape(Circle())
@@ -284,6 +298,13 @@ struct SessionRunView: View {
           .opacity(0)
           .allowsHitTesting(false)
       }
+    }
+    .confirmationDialog("End Workout?", isPresented: $showTerminateConfirm, titleVisibility: .visible) {
+      Button("End Workout", role: .destructive) {
+        engineHolder.terminate()
+        dismiss()
+      }
+      Button("Continue", role: .cancel) {}
     })
   }
 
@@ -443,6 +464,15 @@ private final class EngineHolder: ObservableObject {
   func resume() {
     engine.resume()
     broadcastLiveState()
+  }
+
+  /// One-shot terminal broadcast so the phone (which may have auto-launched
+  /// this same session) ends it too, instead of ticking away a workout that
+  /// no longer exists on this device — mirrors WorkoutScreen.tsx's terminate.
+  func terminate() {
+    heartbeatTimer?.invalidate()
+    heartbeatTimer = nil
+    connectivity.sendLiveSession(sessionId: session.id, name: session.name, elapsed: engine.state.elapsed, status: "terminated")
   }
 
   func broadcastLiveState() {
