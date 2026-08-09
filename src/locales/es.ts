@@ -160,6 +160,8 @@ export const es: typeof en = {
     finalBeepSub: 'Señal de audio en los últimos 3 segundos',
     voiceCuesLabel: 'Anuncios de voz',
     voiceCuesSub: 'Pronunciar el nombre del intervalo en lugar del tono',
+    minimalVoicePromptsLabel: 'Avisos de voz mínimos',
+    minimalVoicePromptsSub: 'Anuncia solo el inicio del intervalo, omite el aviso de preparación',
     about: 'Acerca de',
     version: 'Versión',
     subscription: 'Suscripción',

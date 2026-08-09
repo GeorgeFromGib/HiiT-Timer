@@ -29,6 +29,7 @@ const base: AudioSettings = {
   finalCountdownBeep: true,
   soundVolume: 100,
   voiceCues: false,
+  minimalVoicePrompts: false,
   language: 'en',
 };
 

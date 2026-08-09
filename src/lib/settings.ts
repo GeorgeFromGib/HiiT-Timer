@@ -9,6 +9,7 @@ export interface Settings {
   keepScreenAwake: boolean;
   hapticFeedback: boolean;
   voiceCues: boolean;
+  minimalVoicePrompts: boolean;
   soundCues: boolean;
   soundOff: boolean;
   countdownFlash: boolean;
@@ -28,6 +29,7 @@ export const DEFAULT_SETTINGS: Settings = {
   keepScreenAwake: true,
   hapticFeedback: true,
   voiceCues: false,
+  minimalVoicePrompts: false,
   soundCues: true,
   soundOff: false,
   countdownFlash: true,

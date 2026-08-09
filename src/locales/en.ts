@@ -158,6 +158,8 @@ export const en = {
     finalBeepSub: 'Audio cue in last 3 seconds',
     voiceCuesLabel: 'Voice announcements',
     voiceCuesSub: 'Speak interval name instead of chime',
+    minimalVoicePromptsLabel: 'Minimal voice prompts',
+    minimalVoicePromptsSub: 'Only announce the interval starting, skip the prepare cue',
     about: 'About',
     version: 'Version',
     subscription: 'Subscription',
