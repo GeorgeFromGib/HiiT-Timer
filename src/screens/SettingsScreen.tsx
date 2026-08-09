@@ -201,6 +201,18 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             right={<SettingsToggle value={settings.voiceCues} onChange={v => updateSettings('voiceCues', v)} disabled={settings.soundOff || !settings.soundCues} />}
           />
           <SettingsRow
+            label={t('settings.minimalVoicePromptsLabel')}
+            sub={t('settings.minimalVoicePromptsSub')}
+            disabled={settings.soundOff || !settings.soundCues || !settings.voiceCues}
+            right={
+              <SettingsToggle
+                value={settings.minimalVoicePrompts}
+                onChange={v => updateSettings('minimalVoicePrompts', v)}
+                disabled={settings.soundOff || !settings.soundCues || !settings.voiceCues}
+              />
+            }
+          />
+          <SettingsRow
             label={t('settings.finalBeepLabel')}
             sub={t('settings.finalBeepSub')}
             disabled={settings.soundOff}

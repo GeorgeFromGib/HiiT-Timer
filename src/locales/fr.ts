@@ -160,6 +160,8 @@ export const fr: typeof en = {
     finalBeepSub: 'Signal audio dans les 3 dernières secondes',
     voiceCuesLabel: 'Annonces vocales',
     voiceCuesSub: "Énoncer le nom de l'intervalle au lieu du carillon",
+    minimalVoicePromptsLabel: 'Annonces vocales minimales',
+    minimalVoicePromptsSub: "Annonce uniquement le début de l'intervalle, sans l'avis de préparation",
     about: 'À propos',
     version: 'Version',
     subscription: 'Abonnement',

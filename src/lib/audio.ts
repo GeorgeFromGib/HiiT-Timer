@@ -27,6 +27,7 @@ export type AudioSettings = {
   finalCountdownBeep: boolean;
   soundVolume: number;
   voiceCues: boolean;
+  minimalVoicePrompts: boolean;
   language: Language;
 };
 
@@ -161,7 +162,7 @@ export function useWorkoutAudio(settings: AudioSettings): WorkoutAudioCues {
     },
     onPrepare(nextPhase) {
       const s = settingsRef.current;
-      if (!voiceCuesEnabled(s)) return;
+      if (!voiceCuesEnabled(s) || s.minimalVoicePrompts) return;
       speakPrepare(nextPhase, s.language);
     },
     onFinish() {
