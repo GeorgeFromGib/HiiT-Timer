@@ -137,6 +137,11 @@ describe('parseLiveSessionState', () => {
     const event = { sessionId: '1', name: 'Tabata', elapsed: 18, status: 'finished', updatedAt: 1000 };
     expect(parseLiveSessionState(event)).toEqual(event);
   });
+
+  it('parses a terminal terminated event', () => {
+    const event = { sessionId: '1', name: 'Tabata', elapsed: 18, status: 'terminated', updatedAt: 1000 };
+    expect(parseLiveSessionState(event)).toEqual(event);
+  });
 });
 
 describe('subscribeToLiveSessionUpdates', () => {

@@ -129,7 +129,14 @@ export default function WorkoutScreen({
           },
           {
             text: t('alerts.terminate'),
-            onPress: () => { onLiveSessionDismiss?.(session.id); onBack(); },
+            onPress: () => {
+              // One-shot terminal broadcast so the peer (which may have
+              // auto-launched this same session) ends it too, instead of
+              // ticking away a workout that no longer exists on this device.
+              updateLiveSession(session.id, session.name, elapsed, 'terminated');
+              onLiveSessionDismiss?.(session.id);
+              onBack();
+            },
             style: 'destructive',
           },
         ]
@@ -137,7 +144,7 @@ export default function WorkoutScreen({
     } else {
       onBack();
     }
-  }, [status, onBack, t, onLiveSessionDismiss, session.id]);
+  }, [status, onBack, t, onLiveSessionDismiss, session.id, session.name, elapsed]);
 
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);
@@ -158,10 +165,16 @@ export default function WorkoutScreen({
       incomingLiveSession.updatedAt <= lastAppliedRemoteUpdatedAtRef.current
     ) return;
     lastAppliedRemoteUpdatedAtRef.current = incomingLiveSession.updatedAt;
+    if (incomingLiveSession.status === 'terminated') {
+      // The peer explicitly ended this session — leave the screen instead of
+      // ticking away a workout that no longer exists anywhere else.
+      onBack();
+      return;
+    }
     const remoteElapsed = resumeElapsedFor(incomingLiveSession, Date.now());
     appliedRemoteSnapshotRef.current = { status: incomingLiveSession.status, elapsed: remoteElapsed };
     applyIncomingLiveState(incomingLiveSession.status, remoteElapsed);
-  }, [incomingLiveSession, session.id, applyIncomingLiveState]);
+  }, [incomingLiveSession, session.id, applyIncomingLiveState, onBack]);
 
   const lastLiveSyncRef = useRef<number | null>(null);
   const lastLiveStatusRef = useRef<string | null>(null);

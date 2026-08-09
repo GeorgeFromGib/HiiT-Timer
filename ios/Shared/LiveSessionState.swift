@@ -13,7 +13,7 @@ struct LiveSessionState: Codable, Equatable {
   let sessionId: String
   let name: String
   let elapsed: Double
-  let status: String // "running", "paused", or a one-shot terminal "finished"
+  let status: String // "running", "paused", or a one-shot terminal "finished"/"terminated"
   let updatedAt: Date
 }
 

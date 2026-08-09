@@ -89,7 +89,15 @@ struct SessionRunView: View {
       onDismiss?()
     }
     .onChange(of: connectivity.liveSession) { _, newValue in
-      guard let live = newValue else { return }
+      guard let live = newValue, live.sessionId == session.id else { return }
+      if live.status == "terminated" {
+        // One-shot terminal broadcast: the peer explicitly ended this
+        // session — leave the screen instead of ticking away a workout that
+        // no longer exists anywhere else. onDisappear handles the discard.
+        guard isLiveSessionFresh(live, now: Date()) else { return }
+        dismiss()
+        return
+      }
       engineHolder.reconcileIncoming(live, sessionId: session.id, now: Date())
     }
   }
