@@ -157,7 +157,14 @@ export default function WorkoutScreen({
   // happens to land right after an unrelated no-op heartbeat still broadcasts
   // instead of being mistaken for the echo and silently dropped.
   const appliedRemoteSnapshotRef = useRef<{ status: 'running' | 'paused' | 'finished'; elapsed: number } | null>(null);
-  const lastAppliedRemoteUpdatedAtRef = useRef<number | null>(null);
+  // Seeded from whatever incomingLiveSession already is at mount (e.g. a stale
+  // 'terminated'/'finished' broadcast left over from a previous run of this
+  // same session id) so the effect below only reacts to updates that arrive
+  // AFTER this screen opened, not to a leftover snapshot mistaken for a live
+  // peer mirroring a freshly-started local run.
+  const lastAppliedRemoteUpdatedAtRef = useRef<number | null>(
+    incomingLiveSession && incomingLiveSession.sessionId === session.id ? incomingLiveSession.updatedAt : null
+  );
   useEffect(() => {
     if (!incomingLiveSession || incomingLiveSession.sessionId !== session.id) return;
     if (
