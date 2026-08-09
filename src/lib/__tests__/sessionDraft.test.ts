@@ -13,13 +13,27 @@ const spinValues: SpinValues = {
 };
 const intervals: Interval[] = [{ type: 'work', dur: 20 }, { type: 'rest', dur: 10 }];
 
+const baseInput = {
+  mode: 'easy' as const,
+  name: 'Basic HIIT',
+  existingId: undefined,
+  folderId: 'folder1',
+  intervals,
+  easyConfig,
+  activityType: undefined,
+  runSpeeds,
+  runInclines,
+  inclineEnabled: false,
+  spinValues: undefined,
+  circuitData: undefined,
+};
+
 describe('buildSessionFromDraft', () => {
   it('builds a circuit session, ignoring easy/activity fields', () => {
     const circuitData = { warmup: 30, cooldown: 30, circuits: 3, circuitRest: 20 };
-    const session = buildSessionFromDraft(
-      'circuit', 'My Circuit', easyConfig, intervals, undefined, runSpeeds,
-      undefined, circuitData, undefined, runInclines, false, 'folder1',
-    );
+    const session = buildSessionFromDraft({
+      ...baseInput, mode: 'circuit', name: 'My Circuit', circuitData,
+    });
     expect(session).toEqual({
       id: expect.any(String),
       name: 'My Circuit',
@@ -34,10 +48,7 @@ describe('buildSessionFromDraft', () => {
   });
 
   it('builds an easy-mode session with no activityType', () => {
-    const session = buildSessionFromDraft(
-      'easy', 'Basic HIIT', easyConfig, intervals, undefined, runSpeeds,
-      undefined, undefined, undefined, runInclines, false, 'folder1',
-    );
+    const session = buildSessionFromDraft(baseInput);
     expect(session).toEqual({
       id: expect.any(String),
       name: 'Basic HIIT',
@@ -48,10 +59,9 @@ describe('buildSessionFromDraft', () => {
   });
 
   it('builds an advanced-mode session with a run activityType', () => {
-    const session = buildSessionFromDraft(
-      'advanced', 'Treadmill Run', easyConfig, intervals, 'run', runSpeeds,
-      undefined, undefined, undefined, runInclines, true, 'folder1',
-    );
+    const session = buildSessionFromDraft({
+      ...baseInput, mode: 'advanced', name: 'Treadmill Run', activityType: 'run', inclineEnabled: true,
+    });
     expect(session).toEqual({
       id: expect.any(String),
       name: 'Treadmill Run',
@@ -66,35 +76,25 @@ describe('buildSessionFromDraft', () => {
   });
 
   it('builds a spinning session when spinValues is provided', () => {
-    const session = buildSessionFromDraft(
-      'advanced', 'Spin Class', easyConfig, intervals, 'spinning', runSpeeds,
-      undefined, undefined, spinValues, runInclines, false, 'folder1',
-    );
+    const session = buildSessionFromDraft({
+      ...baseInput, mode: 'advanced', name: 'Spin Class', activityType: 'spinning', spinValues,
+    });
     expect(session).toMatchObject({ activityType: 'spinning', spinValues });
   });
 
   it('throws when activityType is spinning but spinValues is undefined', () => {
     expect(() =>
-      buildSessionFromDraft(
-        'advanced', 'Spin Class', easyConfig, intervals, 'spinning', runSpeeds,
-        undefined, undefined, undefined, runInclines, false, 'folder1',
-      ),
+      buildSessionFromDraft({ ...baseInput, mode: 'advanced', name: 'Spin Class', activityType: 'spinning' }),
     ).toThrow('spinValues must be provided for spinning sessions');
   });
 
   it('reuses an existing id when provided instead of generating a new one', () => {
-    const session = buildSessionFromDraft(
-      'easy', 'Basic HIIT', easyConfig, intervals, undefined, runSpeeds,
-      'existing-id-123', undefined, undefined, runInclines, false, 'folder1',
-    );
+    const session = buildSessionFromDraft({ ...baseInput, existingId: 'existing-id-123' });
     expect(session.id).toBe('existing-id-123');
   });
 
   it('builds an advanced session with undefined activityType (standard)', () => {
-    const session = buildSessionFromDraft(
-      'advanced', 'Standard', easyConfig, intervals, undefined, runSpeeds,
-      undefined, undefined, undefined, runInclines, false, 'folder1',
-    );
+    const session = buildSessionFromDraft({ ...baseInput, mode: 'advanced', name: 'Standard' });
     expect(session).toEqual({
       id: expect.any(String),
       name: 'Standard',
@@ -102,6 +102,28 @@ describe('buildSessionFromDraft', () => {
       mode: 'advanced',
       intervals,
     });
+  });
+
+  it('is unaffected by the order in which input fields are specified', () => {
+    // Regression guard for the old positional-argument signature, where two same-typed
+    // adjacent params (e.g. runSpeeds/spinValues) could be silently transposed.
+    const reordered = {
+      folderId: 'folder1',
+      spinValues: undefined,
+      inclineEnabled: true,
+      runInclines,
+      existingId: 'fixed-id',
+      runSpeeds,
+      activityType: 'run' as const,
+      intervals,
+      easyConfig,
+      name: 'Treadmill Run',
+      mode: 'advanced' as const,
+      circuitData: undefined,
+    };
+    expect(buildSessionFromDraft(reordered)).toEqual(buildSessionFromDraft({
+      ...baseInput, mode: 'advanced', name: 'Treadmill Run', activityType: 'run', inclineEnabled: true, existingId: 'fixed-id',
+    }));
   });
 });
 

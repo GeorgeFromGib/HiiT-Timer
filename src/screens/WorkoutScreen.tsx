@@ -29,10 +29,8 @@ import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import GhostBtn  from '../components/GhostBtn';
 import SessionCompleteScreen from './SessionCompleteScreen';
 import { checkAndRequestReview } from '../lib/reviewState';
-import {
-  updateLiveSession, clearLiveSession, shouldBroadcastLiveSession, resumeElapsedFor,
-  type LiveSessionState,
-} from '../lib/liveSessionSync';
+import { updateLiveSession, type LiveSessionState } from '../lib/liveSessionSync';
+import { useLiveSessionMirror } from '../hooks/useLiveSessionMirror';
 
 const EXTEND_OPTIONS = [5, 10] as const;
 
@@ -151,82 +149,19 @@ export default function WorkoutScreen({
   const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
 
-  // Snapshot (not a blanket flag) of the exact (status, elapsed) just applied from
-  // a remote update — the outbound effect below only suppresses a broadcast that
-  // would be an exact echo of it, so a genuine local action (e.g. a pause) that
-  // happens to land right after an unrelated no-op heartbeat still broadcasts
-  // instead of being mistaken for the echo and silently dropped.
-  const appliedRemoteSnapshotRef = useRef<{ status: 'running' | 'paused' | 'finished'; elapsed: number } | null>(null);
-  // Seeded from whatever incomingLiveSession already is at mount (e.g. a stale
-  // 'terminated'/'finished' broadcast left over from a previous run of this
-  // same session id) so the effect below only reacts to updates that arrive
-  // AFTER this screen opened, not to a leftover snapshot mistaken for a live
-  // peer mirroring a freshly-started local run.
-  const lastAppliedRemoteUpdatedAtRef = useRef<number | null>(
-    incomingLiveSession && incomingLiveSession.sessionId === session.id ? incomingLiveSession.updatedAt : null
+  const liveMirror = useLiveSessionMirror(
+    session.id, session.name, incomingLiveSession, status, elapsed, applyIncomingLiveState, onBack,
   );
-  useEffect(() => {
-    if (!incomingLiveSession || incomingLiveSession.sessionId !== session.id) return;
-    if (
-      lastAppliedRemoteUpdatedAtRef.current !== null &&
-      incomingLiveSession.updatedAt <= lastAppliedRemoteUpdatedAtRef.current
-    ) return;
-    lastAppliedRemoteUpdatedAtRef.current = incomingLiveSession.updatedAt;
-    if (incomingLiveSession.status === 'terminated') {
-      // The peer explicitly ended this session — leave the screen instead of
-      // ticking away a workout that no longer exists anywhere else.
-      onBack();
-      return;
-    }
-    const remoteElapsed = resumeElapsedFor(incomingLiveSession, Date.now());
-    appliedRemoteSnapshotRef.current = { status: incomingLiveSession.status, elapsed: remoteElapsed };
-    applyIncomingLiveState(incomingLiveSession.status, remoteElapsed);
-  }, [incomingLiveSession, session.id, applyIncomingLiveState, onBack]);
-
-  const lastLiveSyncRef = useRef<number | null>(null);
-  const lastLiveStatusRef = useRef<string | null>(null);
-  useEffect(() => {
-    const appliedSnapshot = appliedRemoteSnapshotRef.current;
-    appliedRemoteSnapshotRef.current = null;
-    if (
-      appliedSnapshot &&
-      appliedSnapshot.status === status &&
-      Math.abs(appliedSnapshot.elapsed - elapsed) < 0.01
-    ) return;
-    if (status === 'running' || status === 'paused') {
-      const now = Date.now();
-      if (shouldBroadcastLiveSession(lastLiveStatusRef.current, status, lastLiveSyncRef.current, now)) {
-        updateLiveSession(session.id, session.name, elapsed, status);
-        lastLiveSyncRef.current = now;
-        lastLiveStatusRef.current = status;
-      }
-    } else if (status === 'finished') {
-      // One-shot terminal broadcast (not a clear) so the other device can
-      // tell a real finish apart from a manual dismiss/discard, which also
-      // clears the context but should NOT force this session to complete there.
-      if (lastLiveStatusRef.current !== null) {
-        updateLiveSession(session.id, session.name, elapsed, 'finished');
-        lastLiveStatusRef.current = null;
-        lastLiveSyncRef.current = null;
-      }
-    } else if (lastLiveStatusRef.current !== null) {
-      clearLiveSession();
-      lastLiveStatusRef.current = null;
-      lastLiveSyncRef.current = null;
-    }
-  }, [status, elapsed, session.id, session.name]);
-
-  useEffect(() => () => clearLiveSession(), []);
 
   const handleSkip = useCallback(() => {
     skip();
-    lastLiveStatusRef.current = null; // forces the effect above to broadcast immediately, not on the next 2s heartbeat
-  }, [skip]);
+    liveMirror.forceNextBroadcast(); // forces the mirror to broadcast immediately, not on the next 2s heartbeat
+  }, [skip, liveMirror.forceNextBroadcast]);
 
   const handleSkipBack = useCallback(() => {
     skipBack();
-    lastLiveStatusRef.current = null;
-  }, [skipBack]);
+    liveMirror.forceNextBroadcast();
+  }, [skipBack, liveMirror.forceNextBroadcast]);
 
   const reviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {

@@ -189,6 +189,11 @@ describe('useEditSession — initial state (existing session)', () => {
     expect(d.circuitRest).toBe(20);
     expect(d.circuitCount).toBe(3);
     expect(d.intervals.map(iv => iv.type)).toEqual(['work', 'rest']);
+    // warmup 30 + 3 * (work 40 + rest 20) + 2 * circuitRest 20 + cooldown 30
+    expect(d.previewTotal).toBe(280);
+    expect(d.previewSegments.map(s => s.phase)).toEqual([
+      'warmup', 'work', 'rest', 'circuitRest', 'work', 'rest', 'circuitRest', 'work', 'rest', 'cooldown',
+    ]);
   });
 
   it('lengthIsSet reflects whether the existing easy session total already exceeds 10 minutes (observed via the rounds-change warning)', async () => {

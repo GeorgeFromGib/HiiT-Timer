@@ -1,20 +1,26 @@
 import { newId, type Session, type RunSpeeds, type RunInclines, type SpinValues } from './sessions';
 import { type Interval } from './workout';
 
-export function buildSessionFromDraft(
-  mode: 'easy' | 'advanced' | 'circuit',
-  name: string,
-  easyConfig: { warmup: number; high: number; low: number; rounds: number; cooldown: number },
-  intervals: Interval[],
-  activityType: 'run' | 'spinning' | undefined,
-  runSpeeds: RunSpeeds,
-  existingId: string | undefined,
-  circuitData: { warmup: number; cooldown: number; circuits: number; circuitRest: number } | undefined,
-  spinValues: SpinValues | undefined,
-  runInclines: RunInclines,
-  inclineEnabled: boolean,
-  folderId: string,
-): Session {
+export interface SessionDraftInput {
+  mode:           'easy' | 'advanced' | 'circuit';
+  name:           string;
+  existingId:     string | undefined;
+  folderId:       string;
+  intervals:      Interval[];
+  easyConfig:     { warmup: number; high: number; low: number; rounds: number; cooldown: number };
+  activityType:   'run' | 'spinning' | undefined;
+  runSpeeds:      RunSpeeds;
+  runInclines:    RunInclines;
+  inclineEnabled: boolean;
+  spinValues:     SpinValues | undefined;
+  circuitData:    { warmup: number; cooldown: number; circuits: number; circuitRest: number } | undefined;
+}
+
+export function buildSessionFromDraft(input: SessionDraftInput): Session {
+  const {
+    mode, name, easyConfig, intervals, activityType, runSpeeds, existingId,
+    circuitData, spinValues, runInclines, inclineEnabled, folderId,
+  } = input;
   const base = { id: existingId ?? newId(), name, folderId };
   if (mode === 'circuit') {
     return {

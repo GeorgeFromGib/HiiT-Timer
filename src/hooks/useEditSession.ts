@@ -4,13 +4,12 @@ import { appAlert } from '../lib/appAlert';
 import {
   getSessionSegments, speedForPhase, spinValueForPhase, inclineForPhase,
   type Session, type RunSpeeds, type RunInclines, type SpinValues,
-  newId,
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel } from '../lib/presets';
 import { INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
 import {
-  totalDuration, expandCircuit, computeRoundsForTargetDuration,
+  totalDuration, computeRoundsForTargetDuration,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
 import { toDisplay } from '../lib/speedUnit';
@@ -150,6 +149,12 @@ export function useEditSession(
                      : mode === 'easy'     ? easyEdit.isTimingDirty
                      : false;
 
+  function circuitDraftData() {
+    return mode === 'circuit'
+      ? { warmup: circuitEdit.circuitWarmup, cooldown: circuitEdit.circuitCooldown, circuits: circuitEdit.circuitCount, circuitRest: circuitEdit.circuitRest }
+      : undefined;
+  }
+
   function warnIfShortDuration(secs: number) {
     if (secs < 300) {
       appAlert('warning', i18n.t('alerts.shortWarmupCooldownTitle'), i18n.t('alerts.shortWarmupCooldownMessage'));
@@ -231,12 +236,13 @@ export function useEditSession(
 
   const previewSegments = useMemo(() => {
     const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
-    if (mode === 'circuit') {
-      return expandCircuit(cleanIntervals, circuitEdit.circuitCount, circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitRest);
-    }
-    const draft: Session = mode === 'easy'
-      ? { id: '', name: '', folderId: sessionFolderId, mode: 'easy', config: easyEdit.easyConfig, activityType, runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines, inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues }
-      : { id: '', name: '', folderId: sessionFolderId, mode: 'advanced', intervals: cleanIntervals, activityType, runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines, inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues };
+    const draft = buildSessionFromDraft({
+      mode, name: '', existingId: '', folderId: sessionFolderId,
+      intervals: cleanIntervals, easyConfig: easyEdit.easyConfig, activityType,
+      runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines,
+      inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues,
+      circuitData: circuitDraftData(),
+    });
     return getSessionSegments(draft);
   }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervalEdit.intervals, activityType, speedSpinEdit.runSpeeds, speedSpinEdit.runInclines, speedSpinEdit.inclineEnabled, speedSpinEdit.spinValues,
       circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitCount, circuitEdit.circuitRest]);
@@ -366,37 +372,19 @@ export function useEditSession(
   }
 
   function buildSavePayload(): SavePayload {
-    if (mode === 'circuit') {
-      if (!name.trim()) {
-        return { ok: false, titleKey: 'alerts.nameRequiredTitle', messageKey: 'alerts.nameRequiredMessage' };
-      }
-      const hasWork = intervalEdit.intervals.some(iv => iv.type === 'work');
-      if (!hasWork) {
-        return { ok: false, titleKey: 'alerts.noWorkIntervalsTitle', messageKey: 'alerts.noWorkIntervalsMessage' };
-      }
-      const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
-      const session: Session = {
-        id: existing?.id ?? newId(),
-        name: name.trim(),
-        folderId: sessionFolderId,
-        mode: 'circuit',
-        intervals: cleanIntervals,
-        circuits:    circuitEdit.circuitCount,
-        warmup:      circuitEdit.circuitWarmup,
-        cooldown:    circuitEdit.circuitCooldown,
-        circuitRest: circuitEdit.circuitRest,
-      };
-      return { ok: true, session, isNew: !existing };
-    }
-    const validation = validateDraft(name, mode, intervalEdit.intervals);
+    const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
+    const hasWorkInterval = cleanIntervals.some(iv => iv.type === 'work');
+    const validation = validateDraft(name, mode, cleanIntervals, hasWorkInterval);
     if (!validation.ok) {
       return { ok: false, titleKey: validation.titleKey, messageKey: validation.messageKey };
     }
-    const cleanIntervals: Interval[] = intervalEdit.intervals.map(({ _key, ...iv }) => iv);
-    const session = buildSessionFromDraft(
-      mode, name.trim(), easyEdit.easyConfig, cleanIntervals, activityType, speedSpinEdit.runSpeeds, existing?.id,
-      undefined, speedSpinEdit.spinValues, speedSpinEdit.runInclines, speedSpinEdit.inclineEnabled, sessionFolderId,
-    );
+    const session = buildSessionFromDraft({
+      mode, name: name.trim(), existingId: existing?.id, folderId: sessionFolderId,
+      intervals: cleanIntervals, easyConfig: easyEdit.easyConfig, activityType,
+      runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines,
+      inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues,
+      circuitData: circuitDraftData(),
+    });
     return { ok: true, session, isNew: !existing };
   }
 
