@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, withOpacity, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
 import { useSettings } from '../lib/settingsContext';
@@ -24,11 +24,12 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const [voiceCues, setVoiceCues] = useState(settings.voiceCues);
   const [step, setStep] = useState(0);
 
-  // Fresh installs (never onboarded) see the full wizard, including the appearance
-  // step. Upgraders from 1.1 already picked a theme during their original onboarding,
-  // so that step is skipped and they go straight from what's-new to folders.
+  // Fresh installs (never onboarded) see the full wizard, including the 1.1 setup
+  // steps. Upgraders from 1.1 already made these choices during their original
+  // onboarding, so appearance/folders/voice cues are skipped entirely — they go
+  // straight from what's-new to done.
   const isFreshInstall = settings.onboardingVersion === 0;
-  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance'] : []), 'folders', 'voiceCues', 'done'] as const;
+  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues'] : []), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
   const currentStep = STEPS[step];
@@ -117,6 +118,16 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
         </Svg>
       ),
     },
+    {
+      titleKey: 'onboarding.feature6Title',
+      subKey: 'onboarding.feature6Sub',
+      icon: (
+        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <Rect x={6} y={6} width={12} height={12} rx={3} />
+          <Path d="M9 6V4h6v2M9 20v-2h6v2M12 10v3l1.5 1" />
+        </Svg>
+      ),
+    },
   ];
 
   const FEATURES = isFreshInstall ? [...FEATURES_V1, ...FEATURES_V2] : FEATURES_V2;
@@ -153,7 +164,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                     </Svg>
                   </View>
                   <Text style={styles.title}>{t('onboarding.title')}</Text>
-                  <Text style={styles.subtitle}>{t('onboarding.subtitle')}</Text>
+                  <Text style={styles.subtitle}>{t(isFreshInstall ? 'onboarding.subtitle' : 'onboarding.subtitleMinimal')}</Text>
                 </View>
 
                 <Text style={styles.sectionLabel}>{t('onboarding.whatsNew')}</Text>
