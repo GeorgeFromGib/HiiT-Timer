@@ -7,6 +7,7 @@ import WatchConnectivity
 class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
   private static var didActivate = false
   private var hasListeners = false
+  private var lastForwardedUpdatedAt: Date?
 
   override func supportedEvents() -> [String]! {
     ["LiveSessionUpdate"]
@@ -56,6 +57,13 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
 
   private func forwardToJS(_ payload: [String: Any]) {
     guard hasListeners else { return }
+    // Reject an out-of-order delivery (see isNewerLiveSessionUpdate) before it
+    // ever reaches JS. An empty payload (clearLiveSession) has no updatedAt
+    // and always passes through untouched.
+    if let state = liveSessionState(fromApplicationContext: payload) {
+      guard isNewerLiveSessionUpdate(updatedAt: state.updatedAt, lastAccepted: lastForwardedUpdatedAt) else { return }
+      lastForwardedUpdatedAt = state.updatedAt
+    }
     DispatchQueue.main.async { [weak self] in
       self?.sendEvent(withName: "LiveSessionUpdate", body: payload)
     }

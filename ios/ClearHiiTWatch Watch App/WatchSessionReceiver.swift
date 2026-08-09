@@ -13,6 +13,7 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
   static let shared = WatchSessionReceiver()
 
   @Published private(set) var liveSession: LiveSessionState?
+  private var lastAcceptedUpdatedAt: Date?
 
   private override init() {
     super.init()
@@ -46,19 +47,32 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
 
   func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
     DispatchQueue.main.async {
-      self.liveSession = liveSessionState(fromApplicationContext: session.receivedApplicationContext)
+      self.applyIncoming(session.receivedApplicationContext)
     }
   }
 
   func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
     DispatchQueue.main.async {
-      self.liveSession = liveSessionState(fromApplicationContext: applicationContext)
+      self.applyIncoming(applicationContext)
     }
   }
 
   func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
     DispatchQueue.main.async {
-      self.liveSession = liveSessionState(fromApplicationContext: message)
+      self.applyIncoming(message)
     }
+  }
+
+  // Rejects an out-of-order delivery (see isNewerLiveSessionUpdate) before it
+  // ever reaches @Published state. An empty payload (clearLiveSession) has no
+  // updatedAt and always clears through untouched.
+  private func applyIncoming(_ context: [String: Any]) {
+    guard let state = liveSessionState(fromApplicationContext: context) else {
+      liveSession = nil
+      return
+    }
+    guard isNewerLiveSessionUpdate(updatedAt: state.updatedAt, lastAccepted: lastAcceptedUpdatedAt) else { return }
+    lastAcceptedUpdatedAt = state.updatedAt
+    liveSession = state
   }
 }

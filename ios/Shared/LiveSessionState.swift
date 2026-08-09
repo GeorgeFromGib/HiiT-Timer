@@ -51,6 +51,20 @@ func isLiveSessionFresh(_ state: LiveSessionState, now: Date) -> Bool {
   now.timeIntervalSince(state.updatedAt) < liveSessionMaxAge
 }
 
+/// True if `updatedAt` is strictly newer than the last update this device has
+/// already accepted from the same raw transport stream. WatchConnectivity
+/// delivers `updateApplicationContext` and `sendMessage` as two independent
+/// channels with different latency — an older broadcast queued on the slower
+/// channel can arrive after a newer one already came through the faster one.
+/// Rejecting out-of-order deliveries here, at the point of receipt, stops a
+/// stale broadcast from ever reaching UI state — a downstream ordering guard
+/// alone isn't enough, since two same-tick deliveries can collapse into a
+/// single React/SwiftUI state update before it gets a chance to compare them.
+func isNewerLiveSessionUpdate(updatedAt: Date, lastAccepted: Date?) -> Bool {
+  guard let lastAccepted else { return true }
+  return updatedAt > lastAccepted
+}
+
 enum LiveSessionAction: Equatable {
   case ignore
   case applyToCurrent(elapsed: Double, status: String)

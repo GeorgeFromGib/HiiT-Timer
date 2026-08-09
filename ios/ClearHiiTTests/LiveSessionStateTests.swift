@@ -86,4 +86,19 @@ final class LiveSessionStateTests: XCTestCase {
     let action = nextLiveSessionAction(currentSessionId: "1", lastAppliedUpdatedAt: nil, incoming: incoming, now: now)
     XCTAssertEqual(action, .applyToCurrent(elapsed: 24, status: "running"))
   }
+
+  func test_isNewerLiveSessionUpdate_trueWhenNothingAcceptedYet() {
+    XCTAssertTrue(isNewerLiveSessionUpdate(updatedAt: Date(timeIntervalSince1970: 1000), lastAccepted: nil))
+  }
+
+  func test_isNewerLiveSessionUpdate_rejectsStaleOrEqual() {
+    let lastAccepted = Date(timeIntervalSince1970: 1000)
+    XCTAssertFalse(isNewerLiveSessionUpdate(updatedAt: Date(timeIntervalSince1970: 999), lastAccepted: lastAccepted))
+    XCTAssertFalse(isNewerLiveSessionUpdate(updatedAt: lastAccepted, lastAccepted: lastAccepted))
+  }
+
+  func test_isNewerLiveSessionUpdate_acceptsNewer() {
+    let lastAccepted = Date(timeIntervalSince1970: 1000)
+    XCTAssertTrue(isNewerLiveSessionUpdate(updatedAt: Date(timeIntervalSince1970: 1001), lastAccepted: lastAccepted))
+  }
 }
