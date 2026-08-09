@@ -321,5 +321,28 @@ describe('useWorkoutSession', () => {
       expect(result.current.elapsed).toBe(15);
       expect(result.current.currentIndex).toBe(1);
     });
+
+    it('finishes locally when told the remote session finished, regardless of the reported elapsed', async () => {
+      const segments = twoSegments();
+      const { result } = await renderHook(() => useWorkoutSession(segments));
+      await startWorkout(result);
+
+      await act(async () => result.current.applyIncomingLiveState('finished', 5));
+      expect(result.current.status).toBe('finished');
+    });
+
+    it('finishing from a remote update while paused is also a no-op the second time (idempotent)', async () => {
+      const segments = twoSegments();
+      const { result } = await renderHook(() => useWorkoutSession(segments));
+      await startWorkout(result);
+      await act(async () => result.current.handlePlayPause()); // pause
+
+      await act(async () => result.current.applyIncomingLiveState('finished', 999));
+      expect(result.current.status).toBe('finished');
+
+      // Already finished — a bounced/duplicate 'finished' update must not throw or re-fire.
+      await act(async () => result.current.applyIncomingLiveState('finished', 999));
+      expect(result.current.status).toBe('finished');
+    });
   });
 });

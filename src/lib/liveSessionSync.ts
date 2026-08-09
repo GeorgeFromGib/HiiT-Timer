@@ -4,7 +4,7 @@ export function updateLiveSession(
   sessionId: string,
   name: string,
   elapsed: number,
-  status: 'running' | 'paused',
+  status: 'running' | 'paused' | 'finished',
 ): void {
   try {
     // Look up NativeModules.LiveSessionSync at call time, not via a
@@ -45,18 +45,22 @@ export function shouldBroadcastLiveSession(
   return now - lastSentAt >= minIntervalMs;
 }
 
-/** Snapshot of the other device's live session, as broadcast over WatchConnectivity. */
+/** Snapshot of the other device's live session, as broadcast over WatchConnectivity.
+ * 'finished' is a one-shot terminal broadcast distinct from a cleared (null)
+ * context, so a natural/remote finish can be told apart from a manual
+ * dismiss/discard on the other device — both clear the context, but only a
+ * finish should force this device's own session to complete. */
 export interface LiveSessionState {
   sessionId: string;
   name: string;
   elapsed: number;
-  status: 'running' | 'paused';
+  status: 'running' | 'paused' | 'finished';
   updatedAt: number; // epoch seconds — matches native Date().timeIntervalSince1970
 }
 
 export type LiveSessionAction =
   | { type: 'ignore' }
-  | { type: 'applyToCurrent'; elapsed: number; status: 'running' | 'paused' }
+  | { type: 'applyToCurrent'; elapsed: number; status: 'running' | 'paused' | 'finished' }
   | { type: 'launchNew'; sessionId: string; resumeElapsed: number };
 
 export const LIVE_SESSION_MAX_AGE_MS = 120_000;
@@ -102,7 +106,7 @@ export function parseLiveSessionState(event: unknown): LiveSessionState | null {
     typeof e.sessionId !== 'string' ||
     typeof e.name !== 'string' ||
     typeof e.elapsed !== 'number' ||
-    (e.status !== 'running' && e.status !== 'paused') ||
+    (e.status !== 'running' && e.status !== 'paused' && e.status !== 'finished') ||
     typeof e.updatedAt !== 'number'
   ) {
     return null;

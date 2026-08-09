@@ -408,12 +408,12 @@ private final class EngineHolder: ObservableObject {
     }
     engine.onFinish = { [weak self] in
       HapticsController.play(for: .finish)
-      // broadcastLiveState() guards on running/paused, so a skip that lands
-      // directly on finish (e.g. skipping out of the last segment) would
-      // otherwise never tell the phone this session ended.
+      // One-shot "finished" broadcast (not a clear) so the phone can force
+      // its own session to complete too — a plain clear is ambiguous with a
+      // manual dismiss/discard, which must NOT do that.
       self?.heartbeatTimer?.invalidate()
       self?.heartbeatTimer = nil
-      self?.connectivity.clearLiveSession()
+      self?.broadcastLiveState()
     }
     cancellable = engine.objectWillChange.sink { [weak self] in
       self?.objectWillChange.send()
@@ -438,8 +438,13 @@ private final class EngineHolder: ObservableObject {
   }
 
   func broadcastLiveState() {
-    guard engine.state.status == .running || engine.state.status == .paused else { return }
-    let status = engine.state.status == .running ? "running" : "paused"
+    let status: String
+    switch engine.state.status {
+    case .running: status = "running"
+    case .paused: status = "paused"
+    case .finished: status = "finished"
+    case .idle: return
+    }
     connectivity.sendLiveSession(sessionId: session.id, name: session.name, elapsed: engine.state.elapsed, status: status)
   }
 
@@ -459,6 +464,11 @@ private final class EngineHolder: ObservableObject {
     case "paused":
       if engine.state.status == .running { engine.pause() }
       engine.applyRemoteElapsed(elapsed)
+    case "finished":
+      // Force this device to the same terminal state regardless of its own
+      // elapsed/segments — applyRemoteElapsed clamps to this device's own
+      // total, which is enough to trip the engine's finished check.
+      engine.applyRemoteElapsed(segments.last?.endAt ?? elapsed)
     default:
       break
     }

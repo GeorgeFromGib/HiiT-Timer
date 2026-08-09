@@ -29,7 +29,7 @@ export interface WorkoutSession {
   skipBack: () => void;
   extend: (seconds: number) => Segment[];
   addRound: (segsToInsert: Segment[]) => Segment[];
-  applyIncomingLiveState: (status: 'running' | 'paused', elapsed: number) => void;
+  applyIncomingLiveState: (status: 'running' | 'paused' | 'finished', elapsed: number) => void;
 }
 
 export function useWorkoutSession(
@@ -105,14 +105,21 @@ export function useWorkoutSession(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const applyIncomingLiveState = useCallback((incomingStatus: 'running' | 'paused', incomingElapsed: number) => {
+  const applyIncomingLiveState = useCallback((incomingStatus: 'running' | 'paused' | 'finished', incomingElapsed: number) => {
     if (state.status !== 'running' && state.status !== 'paused') return;
+    if (incomingStatus === 'finished') {
+      // Force this device to the same terminal state regardless of its own
+      // elapsed/segments — applyRemoteElapsed clamps to this device's own
+      // totalDur, which is enough to trip the engine's isFinished check.
+      applyRemoteElapsed(totalDur);
+      return;
+    }
     if (incomingStatus === 'paused' && state.status === 'running') pause();
     else if (incomingStatus === 'running' && state.status === 'paused') resume();
     if (incomingStatus === 'paused' || Math.abs(state.elapsed - incomingElapsed) > 2) {
       applyRemoteElapsed(incomingElapsed);
     }
-  }, [state.status, state.elapsed, pause, resume, applyRemoteElapsed]);
+  }, [state.status, state.elapsed, pause, resume, applyRemoteElapsed, totalDur]);
 
   const handlePlayPause = useCallback(() => {
     if (countdown.isRunning()) {

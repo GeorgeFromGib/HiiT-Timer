@@ -40,6 +40,7 @@ struct ContentView: View {
 
   private func checkForLiveSession() {
     guard let live = connectivity.liveSession else { mutedSessionId = nil; return }
+    guard live.status != "finished" else { return } // never auto-launch a session that's already over
     guard deepLinkedSession == nil,
           let session = WorkoutStore.shared.fetchSession(id: live.sessionId) else { return }
     // Stay muted for this sessionId no matter how new the incoming updatedAt gets —

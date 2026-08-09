@@ -149,7 +149,7 @@ export default function WorkoutScreen({
   // would be an exact echo of it, so a genuine local action (e.g. a pause) that
   // happens to land right after an unrelated no-op heartbeat still broadcasts
   // instead of being mistaken for the echo and silently dropped.
-  const appliedRemoteSnapshotRef = useRef<{ status: 'running' | 'paused'; elapsed: number } | null>(null);
+  const appliedRemoteSnapshotRef = useRef<{ status: 'running' | 'paused' | 'finished'; elapsed: number } | null>(null);
   const lastAppliedRemoteUpdatedAtRef = useRef<number | null>(null);
   useEffect(() => {
     if (!incomingLiveSession || incomingLiveSession.sessionId !== session.id) return;
@@ -179,6 +179,15 @@ export default function WorkoutScreen({
         updateLiveSession(session.id, session.name, elapsed, status);
         lastLiveSyncRef.current = now;
         lastLiveStatusRef.current = status;
+      }
+    } else if (status === 'finished') {
+      // One-shot terminal broadcast (not a clear) so the other device can
+      // tell a real finish apart from a manual dismiss/discard, which also
+      // clears the context but should NOT force this session to complete there.
+      if (lastLiveStatusRef.current !== null) {
+        updateLiveSession(session.id, session.name, elapsed, 'finished');
+        lastLiveStatusRef.current = null;
+        lastLiveSyncRef.current = null;
       }
     } else if (lastLiveStatusRef.current !== null) {
       clearLiveSession();

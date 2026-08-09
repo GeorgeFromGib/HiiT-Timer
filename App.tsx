@@ -80,6 +80,7 @@ export default function App() {
   useEffect(() => {
     if (!liveSessionState) { mutedSessionIdRef.current = null; return; }
     if (launchInFlightRef.current) return;
+    if (liveSessionState.status === 'finished') return; // never auto-launch a session that's already over
     const currentSessionId = route.name === 'Workout' ? route.session.id : null;
     if (currentSessionId === liveSessionState.sessionId) return; // WorkoutScreen applies this directly
     // Stay muted for this sessionId no matter how new the incoming updatedAt gets —
@@ -89,11 +90,12 @@ export default function App() {
     if (liveSessionState.sessionId === mutedSessionIdRef.current) return;
     const action = nextLiveSessionAction(currentSessionId, lastAppliedLiveUpdatedAtRef.current, liveSessionState, Date.now());
     if (action.type !== 'launchNew') return;
+    const initialStatus = liveSessionState.status; // narrowed to 'running' | 'paused' here; capture before the async closure below
     lastAppliedLiveUpdatedAtRef.current = liveSessionState.updatedAt;
     launchInFlightRef.current = true;
     loadSessions().then(({ sessions }) => {
       const session = sessions.find(s => s.id === action.sessionId);
-      if (session) navigate({ name: 'Workout', session, initialResumeElapsed: action.resumeElapsed, initialStatus: liveSessionState.status });
+      if (session) navigate({ name: 'Workout', session, initialResumeElapsed: action.resumeElapsed, initialStatus });
     }).finally(() => { launchInFlightRef.current = false; });
   }, [liveSessionState, route, navigate]);
 
