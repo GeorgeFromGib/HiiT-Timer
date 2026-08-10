@@ -4,8 +4,6 @@
 
 Background audio reliability **will not work in Expo Go**. Test on a dev build:
 
-Tests: `npx jest`. No linter configured yet.
-
 ### Navigation
 
 No React Navigation library — `App.tsx` holds a `Route` state and switches between screens manually. Routes are typed in `src/navigation.ts`:
