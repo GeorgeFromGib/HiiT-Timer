@@ -1,7 +1,7 @@
 // ios/Shared/WorkoutModels.swift
 import Foundation
 
-enum Phase: String, Codable, CaseIterable {
+enum Phase: String, Codable, CaseIterable, Hashable {
   case warmup, work, rest, cooldown, circuitRest, finish
 }
 
@@ -19,7 +19,7 @@ struct Segment: Equatable {
   var power: Double? = nil
 }
 
-struct WorkoutConfig: Codable {
+struct WorkoutConfig: Codable, Hashable {
   let warmup: Double
   let high: Double
   let low: Double
@@ -27,7 +27,7 @@ struct WorkoutConfig: Codable {
   let cooldown: Double
 }
 
-struct IntervalDTO: Codable {
+struct IntervalDTO: Codable, Hashable {
   let type: Phase
   let dur: Double
   let speed: Double?
@@ -38,7 +38,7 @@ struct IntervalDTO: Codable {
 }
 
 /// Mirrors src/lib/sessions.ts's SpinValues.
-struct SpinValuesDTO: Codable {
+struct SpinValuesDTO: Codable, Hashable {
   let warmupResistance: Double
   let warmupPower: Double
   let workResistance: Double
@@ -57,21 +57,21 @@ let defaultSpinValues = SpinValuesDTO(
   cooldownResistance: 3, cooldownPower: 85
 )
 
-struct RunSpeeds: Codable {
+struct RunSpeeds: Codable, Hashable {
   let warmupSpeed: Double
   let workSpeed: Double
   let restSpeed: Double
   let cooldownSpeed: Double
 }
 
-struct RunInclines: Codable {
+struct RunInclines: Codable, Hashable {
   let warmupIncline: Double
   let workIncline: Double
   let restIncline: Double
   let cooldownIncline: Double
 }
 
-struct SessionDTO: Codable {
+struct SessionDTO: Codable, Hashable {
   let id: String
   let name: String
   let folderId: String

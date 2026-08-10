@@ -10,16 +10,21 @@ struct ContentView: View {
   var body: some View {
     NavigationStack {
       SessionListView()
-    }
-    .fullScreenCover(item: $deepLinkedSession) { session in
-      SessionRunView(
-        session: session,
-        autoStart: deepLinkedResumeElapsed == nil,
-        resumeElapsed: deepLinkedResumeElapsed,
-        onDismiss: {
-          mutedSessionId = session.id
+        // Pushed onto the same stack as the list-tap path (not
+        // .fullScreenCover) — watchOS always renders its own system dismiss
+        // chrome on sheet/fullScreenCover presentations with no way to
+        // suppress it, so a real push is the only way to get a single,
+        // hideable back button for both launch paths.
+        .navigationDestination(item: $deepLinkedSession) { session in
+          SessionRunView(
+            session: session,
+            autoStart: deepLinkedResumeElapsed == nil,
+            resumeElapsed: deepLinkedResumeElapsed,
+            onDismiss: {
+              mutedSessionId = session.id
+            }
+          )
         }
-      )
     }
     .onOpenURL { url in
       guard let id = sessionId(fromDeepLinkURL: url),

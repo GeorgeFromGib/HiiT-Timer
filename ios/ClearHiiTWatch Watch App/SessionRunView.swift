@@ -75,6 +75,10 @@ struct SessionRunView: View {
         runningView(state: state, segment: segment)
       }
     }
+    // Running/paused must exit only through the controls page's explicit
+    // Stop button (with its confirmation) — the auto-generated back chevron
+    // would otherwise let a swipe/tap end the workout unconfirmed.
+    .navigationBarBackButtonHidden(state.status == .running || state.status == .paused)
     .onAppear {
       connectivity.activeSessionId = session.id
       guard !hasAutoStarted else { return }
