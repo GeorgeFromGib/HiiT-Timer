@@ -2,7 +2,7 @@
 
 ## Promotional Text (170 characters)
 
-Train your way. Organise workouts for yourself or your clients, enjoy extended voice coaching, and keep every session on track—even with your phone locked.
+Train your way. Now with an Apple Watch app. Organise workouts for yourself or your clients, enjoy extended voice coaching, and keep every session on track—even with your phone locked.
 
 ---
 
@@ -34,7 +34,7 @@ Audio cues and **extended voice prompts** play over your music, podcast, or audi
 A flexible interval timer for HIIT, Tabata, strength training, boxing, rowing, bodyweight workouts, and more.
 
 **Treadmill**
-Display your target speed for every interval so you always know exactly what to set before each work or recovery phase.
+Display your target speed and incline for every interval so you always know exactly what to set before each work or recovery phase.
 
 **Circuit**
 Name every exercise in your workout and follow each circuit with confidence, keeping your focus on training instead of remembering what's next.
@@ -48,6 +48,10 @@ Lock your phone, put it in your pocket, and train without worrying about the tim
 
 When the final interval ends, all that's left is the satisfaction of finishing a great workout.
 
+### Train from your wrist
+
+With the **Apple Watch app**, start and follow sessions right from your wrist, synced live with your phone.
+
 ---
 
 ## Features
@@ -58,12 +62,14 @@ When the final interval ends, all that's left is the satisfaction of finishing a
 * Improved quick-start presets
 * Full control over every workout phase
 * Four workout modes: Standard, Treadmill, Circuit, and Spin
-* Per-interval treadmill speed guidance
+* Per-interval treadmill speed and incline guidance
 * Named exercises for circuit workouts
 * Per-interval difficulty and power targets for Spin workouts
 * Extended voice prompts and audio cues that play over your music
+* Minimal voice prompts option to skip the "prepare" cue
 * Countdown flash before every interval
 * Reliable background timer that works with your screen locked
+* Apple Watch app with live sync to your phone
 * Beautiful Tidal and Daybreak themes
 * Available in English, Spanish, and French
 
