@@ -43,9 +43,25 @@ export function useLiveSessionMirror(
   const lastAppliedRemoteUpdatedAtRef = useRef<number | null>(
     incomingLiveSession && incomingLiveSession.sessionId === sessionId ? incomingLiveSession.updatedAt : null
   );
+  // Tracks whether the peer was actively mirroring THIS session as of the
+  // last update, so a later clear can be told apart from "no peer has ever
+  // broadcast anything" (the common, no-watch-involved case) — only the
+  // former means the peer just closed out and is worth following back.
+  const hadIncomingRef = useRef(!!(incomingLiveSession && incomingLiveSession.sessionId === sessionId));
+  const statusRef = useRef(status);
+  useEffect(() => { statusRef.current = status; }, [status]);
 
   useEffect(() => {
-    if (!incomingLiveSession || incomingLiveSession.sessionId !== sessionId) return;
+    if (!incomingLiveSession || incomingLiveSession.sessionId !== sessionId) {
+      // The peer's own "Done" tap clears its broadcast outright rather than
+      // sending a sessionId-scoped update (it has nothing left to report).
+      // If this device is already sitting on its own finished screen,
+      // follow the peer back instead of waiting for a separate local tap.
+      if (hadIncomingRef.current && statusRef.current === 'finished') onBack();
+      hadIncomingRef.current = false;
+      return;
+    }
+    hadIncomingRef.current = true;
     const action = nextLiveSessionAction(sessionId, lastAppliedRemoteUpdatedAtRef.current, incomingLiveSession, Date.now());
     if (action.type !== 'applyToCurrent') return;
     lastAppliedRemoteUpdatedAtRef.current = incomingLiveSession.updatedAt;

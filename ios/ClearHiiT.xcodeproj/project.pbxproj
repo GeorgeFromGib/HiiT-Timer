@@ -7,16 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0ADE5215E96F488D9CCEB900 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CCE433F70F4E54A7E917F2 /* DeepLink.swift */; };
 		5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
 		5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */; };
-		E1A2B3C4D5E64F708192A3B4 /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
-		F2B3C4D5E6F708192A3B4C5D /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
-		AA11BB22CC33DD44EE55FF66 /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
 		5E21ECBB30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
 		5E21ECBC30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */; };
 		5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21ECB930114F6A003B942C /* WorkoutStore.swift */; };
@@ -33,8 +28,6 @@
 		5E59C9B0300FC72B00C04775 /* ClearHiiTWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5E59C9B7300FD7F300C04775 /* WorkoutSyncModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */; };
 		5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */; };
-		A1B2C3D4E5F60718293A4B5C /* LiveSessionSyncModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8C7B6A5948372615E4D3C2 /* LiveSessionSyncModule.m */; };
-		B2C3D4E5F60718293A4B5C6D /* LiveSessionSyncModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2D1C0B9A8978675645F3E2 /* LiveSessionSyncModule.swift */; };
 		5EDC6723301A07D700D89195 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC6722301A07D700D89195 /* WidgetKit.framework */; };
 		5EDC6725301A07D700D89195 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDC6724301A07D700D89195 /* SwiftUI.framework */; };
 		5EDC6732301A07DA00D89195 /* ClearHiiTWatchComplicationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5EDC6721301A07D700D89195 /* ClearHiiTWatchComplicationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -43,9 +36,14 @@
 		7A02214D275B7F78B2F4B793 /* libPods-ClearHiiT.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 607D2C8DDBF7A757ED66172D /* libPods-ClearHiiT.a */; };
 		89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16819D9A253946278285B595 /* RecentSessionStore.swift */; };
 		940573A346E2812B92EF2A8B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DF74C6B9E34469B729A27019 /* PrivacyInfo.xcprivacy */; };
+		A1B2C3D4E5F60718293A4B5C /* LiveSessionSyncModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8C7B6A5948372615E4D3C2 /* LiveSessionSyncModule.m */; };
+		AA11BB22CC33DD44EE55FF66 /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
+		B2C3D4E5F60718293A4B5C6D /* LiveSessionSyncModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2D1C0B9A8978675645F3E2 /* LiveSessionSyncModule.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		E139F4CC671CD0B627E31440 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DF74C6B9E34469B729A27019 /* PrivacyInfo.xcprivacy */; };
+		E1A2B3C4D5E64F708192A3B4 /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F2B3C4D5E6F708192A3B4C5D /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,8 +110,8 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ClearHiiT/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ClearHiiT/Info.plist; sourceTree = "<group>"; };
 		16819D9A253946278285B595 /* RecentSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecentSessionStore.swift; path = Shared/RecentSessionStore.swift; sourceTree = "<group>"; };
+		3E2D1C0B9A8978675645F3E2 /* LiveSessionSyncModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveSessionSyncModule.swift; path = ClearHiiT/LiveSessionSyncModule.swift; sourceTree = "<group>"; };
 		5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSessionRecording.swift; path = Shared/WorkoutSessionRecording.swift; sourceTree = "<group>"; };
-		7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveSessionState.swift; path = Shared/LiveSessionState.swift; sourceTree = "<group>"; };
 		5BC979914E5CC35A94F8AAEA /* Pods-ClearHiiT.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.debug.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.debug.xcconfig"; sourceTree = "<group>"; };
 		5E21ECB930114F6A003B942C /* WorkoutStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutStore.swift; path = Shared/WorkoutStore.swift; sourceTree = "<group>"; };
 		5E21ECBA30114F6A003B942C /* WorkoutModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = WorkoutModel.xcdatamodel; sourceTree = "<group>"; };
@@ -124,15 +122,14 @@
 		5E59C9A6300FC71E00C04775 /* ClearHiiTWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ClearHiiTWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WorkoutSyncModule.m; path = ClearHiiT/WorkoutSyncModule.m; sourceTree = "<group>"; };
 		5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutSyncModule.swift; path = ClearHiiT/WorkoutSyncModule.swift; sourceTree = "<group>"; };
-		9D8C7B6A5948372615E4D3C2 /* LiveSessionSyncModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LiveSessionSyncModule.m; path = ClearHiiT/LiveSessionSyncModule.m; sourceTree = "<group>"; };
-		3E2D1C0B9A8978675645F3E2 /* LiveSessionSyncModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveSessionSyncModule.swift; path = ClearHiiT/LiveSessionSyncModule.swift; sourceTree = "<group>"; };
 		5EDC6721301A07D700D89195 /* ClearHiiTWatchComplicationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ClearHiiTWatchComplicationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EDC6722301A07D700D89195 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		5EDC6724301A07D700D89195 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		607D2C8DDBF7A757ED66172D /* libPods-ClearHiiT.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClearHiiT.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		60CCE433F70F4E54A7E917F2 /* DeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DeepLink.swift; path = Shared/DeepLink.swift; sourceTree = "<group>"; };
 		66B9101AB6E6A35A4F6690D0 /* Pods-ClearHiiT.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClearHiiT.release.xcconfig"; path = "Target Support Files/Pods-ClearHiiT/Pods-ClearHiiT.release.xcconfig"; sourceTree = "<group>"; };
+		7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LiveSessionState.swift; path = Shared/LiveSessionState.swift; sourceTree = "<group>"; };
 		851A8468A13AA3E4E66E311C /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-ClearHiiT/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		9D8C7B6A5948372615E4D3C2 /* LiveSessionSyncModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = LiveSessionSyncModule.m; path = ClearHiiT/LiveSessionSyncModule.m; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ClearHiiT/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		DF74C6B9E34469B729A27019 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ClearHiiT/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -208,7 +205,6 @@
 				5532829AB9C9ADA32A0E474F /* WorkoutSessionRecording.swift */,
 				7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */,
 				16819D9A253946278285B595 /* RecentSessionStore.swift */,
-				60CCE433F70F4E54A7E917F2 /* DeepLink.swift */,
 				5E21ECB830114F6A003B942C /* WorkoutModel.xcdatamodeld */,
 				5E21ECB930114F6A003B942C /* WorkoutStore.swift */,
 				5E59C9B5300FD7F300C04775 /* WorkoutSyncModule.m */,
@@ -657,7 +653,6 @@
 				5E21ECD130116142003B942C /* SegmentBuilder.swift in Sources */,
 				5930942B2A47F64F92DA8F87 /* WorkoutSessionRecording.swift in Sources */,
 				89C80048B3974DC09C91EDD3 /* RecentSessionStore.swift in Sources */,
-				4B8C5877C0DB4A20B13D6672 /* DeepLink.swift in Sources */,
 				E1A2B3C4D5E64F708192A3B4 /* LiveSessionState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -671,7 +666,6 @@
 				5E21ECCF3011611D003B942C /* SegmentBuilder.swift in Sources */,
 				5AAAF0DFFB85A1407BEF24A9 /* WorkoutSessionRecording.swift in Sources */,
 				30F9311A2DBF4E85B5B7ED8E /* RecentSessionStore.swift in Sources */,
-				0ADE5215E96F488D9CCEB900 /* DeepLink.swift in Sources */,
 				F2B3C4D5E6F708192A3B4C5D /* LiveSessionState.swift in Sources */,
 				5E21ECBD30114F6B003B942C /* WorkoutStore.swift in Sources */,
 				5E21ECBE30114F6B003B942C /* WorkoutModel.xcdatamodeld in Sources */,

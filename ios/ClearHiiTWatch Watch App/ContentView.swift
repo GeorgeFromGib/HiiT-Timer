@@ -1,3 +1,4 @@
+import CoreData
 import SwiftUI
 import WidgetKit
 
@@ -6,6 +7,7 @@ struct ContentView: View {
   @State private var deepLinkedResumeElapsed: Double?
   @StateObject private var connectivity = WatchSessionReceiver.shared
   @State private var mutedSessionId: String?
+  @Environment(\.scenePhase) private var scenePhase
 
   var body: some View {
     NavigationStack {
@@ -21,16 +23,15 @@ struct ContentView: View {
             autoStart: deepLinkedResumeElapsed == nil,
             resumeElapsed: deepLinkedResumeElapsed,
             onDismiss: {
-              mutedSessionId = session.id
+              // Only worth muting if the phone is still broadcasting this same
+              // session as of this dismiss — otherwise (e.g. its own broadcast
+              // already cleared) there's no live heartbeat left to guard
+              // against, and leaving the mute set would just block the very
+              // next legitimate start of this same session.
+              mutedSessionId = connectivity.liveSession?.sessionId == session.id ? session.id : nil
             }
           )
         }
-    }
-    .onOpenURL { url in
-      guard let id = sessionId(fromDeepLinkURL: url),
-            let session = WorkoutStore.shared.fetchSession(id: id) else { return }
-      deepLinkedResumeElapsed = nil
-      deepLinkedSession = session
     }
     .onAppear {
       // Ensures the complication reflects the latest installed code/content
@@ -39,6 +40,23 @@ struct ContentView: View {
       checkForLiveSession()
     }
     .onChange(of: connectivity.liveSession) { _, _ in
+      checkForLiveSession()
+    }
+    .onChange(of: scenePhase) { _, newPhase in
+      guard newPhase == .active else { return }
+      connectivity.refreshFromReceivedContext()
+      checkForLiveSession()
+    }
+    // The live-session heartbeat (WatchConnectivity) usually lands well before
+    // CloudKit finishes merging the corresponding session onto the watch's own
+    // store, so the fetchSession lookup below can miss on the first pass —
+    // retry once that merge actually lands, same pattern SessionListView uses.
+    .onReceive(
+      NotificationCenter.default.publisher(
+        for: .NSManagedObjectContextObjectsDidChange,
+        object: WorkoutStore.shared.container.viewContext
+      )
+    ) { _ in
       checkForLiveSession()
     }
   }

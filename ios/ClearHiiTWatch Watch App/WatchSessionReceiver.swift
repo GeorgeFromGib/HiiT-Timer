@@ -20,6 +20,13 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
   /// otherwise present a duplicate cover for the session already running.
   @Published var activeSessionId: String?
   private var lastAcceptedUpdatedAt: Date?
+  // On a freshly-installed watch app, first-time WCSession pairing/activation
+  // is measurably slower than on later launches — a session started before
+  // it completes would otherwise have its broadcast silently dropped
+  // (updateApplicationContext throws WCErrorCodeSessionNotActivated, and
+  // that throw was being swallowed by `try?`). Hold the latest context here
+  // and flush it once activation actually completes instead of losing it.
+  private var pendingOutgoingContext: [String: Any]?
 
   private override init() {
     super.init()
@@ -29,31 +36,48 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
   }
 
   func sendLiveSession(sessionId: String, name: String, elapsed: Double, status: String) {
-    guard WCSession.isSupported() else { return }
-    let context: [String: Any] = [
+    send([
       "sessionId": sessionId,
       "name": name,
       "elapsed": elapsed,
       "status": status,
       "updatedAt": Date().timeIntervalSince1970,
-    ]
+    ])
+  }
+
+  private func send(_ context: [String: Any]) {
+    guard WCSession.isSupported() else { return }
+    guard WCSession.default.activationState == .activated else {
+      pendingOutgoingContext = context
+      return
+    }
     try? WCSession.default.updateApplicationContext(context)
     if WCSession.default.isReachable {
       WCSession.default.sendMessage(context, replyHandler: nil, errorHandler: nil)
     }
   }
 
-  func clearLiveSession() {
+  // WatchConnectivity only pushes didReceiveApplicationContext while this
+  // process is alive to receive it — a watch app resumed from suspension
+  // (not cold-launched) can miss every update the phone sent while it was
+  // backgrounded. Re-reading the session's own receivedApplicationContext
+  // (which the OS keeps current regardless of watch reachability) on every
+  // foreground transition catches up on whatever was missed.
+  func refreshFromReceivedContext() {
     guard WCSession.isSupported() else { return }
-    try? WCSession.default.updateApplicationContext([:])
-    if WCSession.default.isReachable {
-      WCSession.default.sendMessage([:], replyHandler: nil, errorHandler: nil)
-    }
+    applyIncoming(WCSession.default.receivedApplicationContext)
+  }
+
+  func clearLiveSession() {
+    send([:])
   }
 
   func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
     DispatchQueue.main.async {
       self.applyIncoming(session.receivedApplicationContext)
+      guard activationState == .activated, let pending = self.pendingOutgoingContext else { return }
+      self.pendingOutgoingContext = nil
+      self.send(pending)
     }
   }
 

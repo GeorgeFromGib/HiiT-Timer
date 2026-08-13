@@ -43,17 +43,7 @@ struct RecentSessionWidgetEntryView: View {
           .clipShape(Circle())
       }
     }
-    .widgetURL(deepLinkURL)
     .containerBackground(.clear, for: .widget)
-  }
-
-  private var deepLinkURL: URL? {
-    guard let id = entry.recentSession?.id else { return nil }
-    var components = URLComponents()
-    components.scheme = "hiitwatch"
-    components.host = "run"
-    components.queryItems = [URLQueryItem(name: "id", value: id)]
-    return components.url
   }
 }
 
@@ -63,7 +53,7 @@ struct ClearHiiTWatchComplication: Widget {
       RecentSessionWidgetEntryView(entry: entry)
     }
     .configurationDisplayName("Last Workout")
-    .description("One-tap restart for your most recently run session.")
+    .description("Shows your most recently run session. Tap to open the app.")
     .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryCorner, .accessoryInline])
   }
 }

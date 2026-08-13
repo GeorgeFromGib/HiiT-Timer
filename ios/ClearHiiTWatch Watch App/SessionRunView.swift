@@ -51,6 +51,7 @@ struct SessionRunView: View {
   @State private var showTerminateConfirm = false
   @Environment(\.dismiss) private var dismiss
   @Environment(\.isLuminanceReduced) private var isLuminanceReduced
+  @Environment(\.scenePhase) private var scenePhase
 
   init(session: SessionDTO, autoStart: Bool = false, resumeElapsed: Double? = nil, onDismiss: (() -> Void)? = nil) {
     self.session = session
@@ -85,6 +86,16 @@ struct SessionRunView: View {
       hasAutoStarted = true
       if let resumeElapsed {
         engineHolder.start(atElapsed: resumeElapsed)
+      } else if let live = connectivity.liveSession, live.sessionId == session.id,
+                live.status != "finished", live.status != "terminated",
+                isLiveSessionFresh(live, now: Date()) {
+        // Reached this session some other way (e.g. tapped directly in the
+        // list) while the phone is already running it live — resume from
+        // its real progress instead of starting fresh at zero, which would
+        // otherwise broadcast elapsed 0 and reset the phone's timer the
+        // moment this device's own heartbeat lands.
+        let elapsed = live.status == "running" ? live.elapsed + Date().timeIntervalSince(live.updatedAt) : live.elapsed
+        engineHolder.start(atElapsed: elapsed)
       } else if autoStart {
         beginCountdown()
       }
@@ -96,17 +107,39 @@ struct SessionRunView: View {
       onDismiss?()
     }
     .onChange(of: connectivity.liveSession) { _, newValue in
-      guard let live = newValue, live.sessionId == session.id else { return }
-      if live.status == "terminated" {
-        // One-shot terminal broadcast: the peer explicitly ended this
-        // session — leave the screen instead of ticking away a workout that
-        // no longer exists anywhere else. onDisappear handles the discard.
-        guard isLiveSessionFresh(live, now: Date()) else { return }
-        dismiss()
-        return
-      }
-      engineHolder.reconcileIncoming(live, sessionId: session.id, now: Date())
+      applyIncomingLiveSession(newValue)
     }
+    // Battery-conserve/low-power mode can suspend WatchConnectivity delivery
+    // entirely while this screen sits in the background — a phone-side pause
+    // or terminate broadcast during that window is otherwise lost for good,
+    // since onChange above only fires on a live push. Force a re-read of the
+    // phone's last-known state on every foreground transition to catch up.
+    .onChange(of: scenePhase) { _, newPhase in
+      guard newPhase == .active else { return }
+      connectivity.refreshFromReceivedContext()
+      applyIncomingLiveSession(connectivity.liveSession)
+    }
+  }
+
+  private func applyIncomingLiveSession(_ newValue: LiveSessionState?) {
+    guard let live = newValue else {
+      // The phone's own "Done" tap clears its broadcast outright rather than
+      // sending a sessionId-scoped update (it has nothing left to report).
+      // If this device is already sitting on its own finished screen, follow
+      // the peer back to the list instead of waiting for a separate local tap.
+      if engineHolder.engine.state.status == .finished { dismiss() }
+      return
+    }
+    guard live.sessionId == session.id else { return }
+    if live.status == "terminated" {
+      // One-shot terminal broadcast: the peer explicitly ended this
+      // session — leave the screen instead of ticking away a workout that
+      // no longer exists anywhere else. onDisappear handles the discard.
+      guard isLiveSessionFresh(live, now: Date()) else { return }
+      dismiss()
+      return
+    }
+    engineHolder.reconcileIncoming(live, sessionId: session.id, now: Date())
   }
 
   private var readyView: some View {
