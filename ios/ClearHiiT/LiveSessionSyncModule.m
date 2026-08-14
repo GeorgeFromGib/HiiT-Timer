@@ -7,4 +7,6 @@ RCT_EXTERN_METHOD(updateLiveSession:(NSString *)sessionId name:(NSString *)name 
 
 RCT_EXTERN_METHOD(clearLiveSession)
 
+RCT_EXTERN_METHOD(refreshFromReceivedContext)
+
 @end

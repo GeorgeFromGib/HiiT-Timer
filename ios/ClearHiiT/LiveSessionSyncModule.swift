@@ -15,6 +15,12 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
 
   override func startObserving() {
     hasListeners = true
+    // Activate eagerly here rather than waiting for an outbound broadcast —
+    // a phone that only ever *receives* watch-started sessions (never starts
+    // its own) would otherwise never activate WCSession at all and could
+    // never hear from the watch. This runs as soon as App.tsx mounts its
+    // listener, at every app launch.
+    ensureActivated()
   }
 
   override func stopObserving() {
@@ -26,6 +32,18 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
     LiveSessionSync.didActivate = true
     WCSession.default.delegate = self
     WCSession.default.activate()
+  }
+
+  // JS-callable catch-up for when the app resumes from background/lock.
+  // WatchConnectivity only pushes didReceiveApplicationContext while this
+  // process is alive to receive it, so a session the watch started while the
+  // phone was asleep needs an explicit re-read of receivedApplicationContext
+  // (which the OS keeps current regardless) — mirrors the watch's own
+  // refreshFromReceivedContext in WatchSessionReceiver.swift.
+  @objc
+  func refreshFromReceivedContext() {
+    guard WCSession.isSupported() else { return }
+    forwardToJS(WCSession.default.receivedApplicationContext)
   }
 
   @objc
@@ -69,7 +87,12 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
     }
   }
 
-  func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {}
+  func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+    guard activationState == .activated else { return }
+    DispatchQueue.main.async { [weak self] in
+      self?.forwardToJS(session.receivedApplicationContext)
+    }
+  }
   func sessionDidBecomeInactive(_ session: WCSession) {}
   func sessionDidDeactivate(_ session: WCSession) {
     WCSession.default.activate()

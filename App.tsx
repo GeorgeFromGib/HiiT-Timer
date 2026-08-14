@@ -1,4 +1,4 @@
-import { LogBox } from 'react-native';
+import { AppState, LogBox } from 'react-native';
 
 // RN new-arch bug: ScrollView's keyboard-scroll calls measureLayout with a non-native ref.
 // LogBox suppresses the in-app overlay; console.error override suppresses Metro terminal output.
@@ -42,7 +42,7 @@ import { useSettingsState } from './src/hooks/useSettingsState';
 import { configureAudioSession } from './src/lib/audio';
 import { checkForUpdate } from './src/lib/versionCheck';
 import { loadSessions } from './src/lib/sessions';
-import { subscribeToLiveSessionUpdates, nextLiveSessionAction, type LiveSessionState } from './src/lib/liveSessionSync';
+import { subscribeToLiveSessionUpdates, nextLiveSessionAction, refreshLiveSession, type LiveSessionState } from './src/lib/liveSessionSync';
 
 function RouteScreen({ children }: { children: ReactNode }) {
   const { themeKey } = useTheme();
@@ -76,6 +76,16 @@ export default function App() {
   const launchInFlightRef = useRef(false);
 
   useEffect(() => subscribeToLiveSessionUpdates(setLiveSessionState), []);
+
+  // Catches up on a session the watch started while this device was
+  // asleep/locked/backgrounded — the native side only pushes updates while
+  // the app is alive to receive them (see refreshLiveSession's doc comment).
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') refreshLiveSession();
+    });
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     if (!liveSessionState) { mutedSessionIdRef.current = null; return; }

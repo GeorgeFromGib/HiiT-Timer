@@ -26,6 +26,21 @@ export function clearLiveSession(): void {
 }
 
 /**
+ * Re-reads WCSession's receivedApplicationContext on the native side and
+ * replays it as a LiveSessionUpdate event. WatchConnectivity only pushes
+ * updates while the app is alive to receive them, so a session the watch
+ * started while the phone was asleep/locked needs this explicit catch-up
+ * when the app comes back to the foreground.
+ */
+export function refreshLiveSession(): void {
+  try {
+    NativeModules.LiveSessionSync?.refreshFromReceivedContext();
+  } catch (e) {
+    console.warn('liveSessionSync: refreshLiveSession failed', e);
+  }
+}
+
+/**
  * Throttles how often WorkoutScreen pushes to WatchConnectivity: always on
  * a status change (so pause/resume/finish reach the watch immediately),
  * otherwise at most once per `minIntervalMs` while running — a steady
