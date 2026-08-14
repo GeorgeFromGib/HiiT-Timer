@@ -52,3 +52,4 @@ add the lesson as a one-line rule under ## Lessons, so it never happens again.
 ## Lessons
 
 - For Swift builds/tests (`xcodebuild`), always pass `-workspace ios/ClearHiiT.xcworkspace`, never `-project ios/ClearHiiT.xcodeproj` — the bare `.xcodeproj` skips CocoaPods' `Pods.xcodeproj`, causing "module map not found" / "No such module 'Expo'" errors unrelated to any code change.
+- Watch complication images (`ComplicationIcon.imageset`) must stay small (~48×48) — a 128×128 asset rendered as a blank grey placeholder on a real watch despite being byte-correct (verified via simulator build + binary extraction) and despite fixing alpha/opacity/ICC-profile; simulator and asset-extraction checks did not reproduce the failure, only real hardware did. Keep new complication art at the old asset's resolution rather than shipping high-res source images as-is.

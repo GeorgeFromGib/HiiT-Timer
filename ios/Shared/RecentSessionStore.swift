@@ -6,7 +6,11 @@ import WidgetKit
 /// timeline after recording a session) and the widget extension (which
 /// registers itself under this kind) — keeping it here, in the one file both
 /// targets include, keeps the two from ever drifting apart.
-let recentSessionWidgetKind = "RecentSessionComplication"
+// Renamed from "RecentSessionComplication" once to force watchOS to treat
+// this as a brand-new complication with no cached gallery/picker state —
+// the system's complication picker cache proved sticky across reinstalls
+// and device restarts alike.
+let recentSessionWidgetKind = "RecentSessionComplicationV2"
 
 private let appGroupSuiteName = "group.com.georgefromgib.hiittimer"
 private let recentSessionDefaultsKey = "watch.recentSession"

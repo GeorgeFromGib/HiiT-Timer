@@ -40,7 +40,14 @@ struct RecentSessionWidgetEntryView: View {
           .renderingMode(.original)
           .resizable()
           .scaledToFit()
-          .clipShape(Circle())
+          .padding(4)
+          // Full-color faces use the original artwork as-is; the gallery
+          // picker and any watch face that renders this complication in
+          // vibrant/accented (monochrome) mode need this opt-in or the
+          // image draws as nothing at all, even though the asset itself
+          // is valid — SwiftUI won't synthesize a vibrant version of a
+          // non-template image without it.
+          .widgetAccentable()
       }
     }
     .containerBackground(.clear, for: .widget)
@@ -52,8 +59,8 @@ struct ClearHiiTWatchComplication: Widget {
     StaticConfiguration(kind: recentSessionWidgetKind, provider: RecentSessionProvider()) { entry in
       RecentSessionWidgetEntryView(entry: entry)
     }
-    .configurationDisplayName("Last Workout")
-    .description("Shows your most recently run session. Tap to open the app.")
+    .configurationDisplayName("ClearHiiT")
+    .description("Tap to open the app.")
     .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryCorner, .accessoryInline])
   }
 }
