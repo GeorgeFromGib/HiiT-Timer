@@ -18,13 +18,14 @@ interface Props {
   onConfirm: (showFolders: boolean) => void;
 }
 
-function NumberStepper({ T, value, onChange, min, max, step: incrementBy }: {
+function NumberStepper({ T, value, onChange, min, max, step: incrementBy, unit }: {
   T: ThemeTokens;
   value: number;
   onChange: (next: number) => void;
   min: number;
   max: number;
   step: number;
+  unit?: string;
 }) {
   const styles = useMemo(() => makeStepperStyles(T), [T]);
   return (
@@ -35,7 +36,7 @@ function NumberStepper({ T, value, onChange, min, max, step: incrementBy }: {
       >
         <Text style={styles.btnText}>−</Text>
       </Pressable>
-      <Text style={styles.value}>{value}</Text>
+      <Text style={styles.value}>{unit ? `${value} ${unit}` : value}</Text>
       <Pressable
         style={styles.btn}
         onPress={() => onChange(Math.min(max, value + incrementBy))}
@@ -57,8 +58,8 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const [name, setName] = useState(settings.name);
   const [createFirstSession, setCreateFirstSession] = useState(false);
   const [sessionDurationMinutes, setSessionDurationMinutes] = useState(15);
-  const [sessionWork, setSessionWork] = useState(30);
-  const [sessionRest, setSessionRest] = useState(15);
+  const [sessionWork, setSessionWork] = useState(20);
+  const [sessionRest, setSessionRest] = useState(30);
   const [step, setStep] = useState(0);
   const [confirming, setConfirming] = useState(false);
 
@@ -88,8 +89,8 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     setVoiceCues(settings.voiceCues);
     setName(settings.name);
     setSessionDurationMinutes(15);
-    setSessionWork(30);
-    setSessionRest(15);
+    setSessionWork(20);
+    setSessionRest(30);
     setStep(0);
     setConfirming(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -351,7 +352,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 <Text style={styles.optionTitle}>{t('onboarding.sessionDurationTitle')}</Text>
                 <Text style={styles.optionSub}>{t('onboarding.sessionDurationSub')}</Text>
                 <View style={styles.stepperCentered}>
-                  <NumberStepper T={T} value={sessionDurationMinutes} onChange={setSessionDurationMinutes} min={MIN_TARGET_DURATION_MINUTES} max={MAX_TARGET_DURATION_MINUTES} step={5} />
+                  <NumberStepper T={T} value={sessionDurationMinutes} onChange={setSessionDurationMinutes} min={MIN_TARGET_DURATION_MINUTES} max={MAX_TARGET_DURATION_MINUTES} step={5} unit="min" />
                 </View>
                 <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
                   <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
@@ -369,7 +370,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 <Text style={styles.optionTitle}>{t('onboarding.sessionWorkTitle')}</Text>
                 <Text style={styles.optionSub}>{t('onboarding.sessionWorkSub')}</Text>
                 <View style={styles.stepperCentered}>
-                  <NumberStepper T={T} value={sessionWork} onChange={setSessionWork} min={5} max={300} step={5} />
+                  <NumberStepper T={T} value={sessionWork} onChange={setSessionWork} min={5} max={300} step={5} unit="sec" />
                 </View>
                 <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
                   <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
@@ -388,7 +389,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 <Text style={styles.optionTitle}>{t('onboarding.sessionRecoverTitle')}</Text>
                 <Text style={styles.optionSub}>{t('onboarding.sessionRecoverSub')}</Text>
                 <View style={styles.stepperCentered}>
-                  <NumberStepper T={T} value={sessionRest} onChange={setSessionRest} min={5} max={120} step={5} />
+                  <NumberStepper T={T} value={sessionRest} onChange={setSessionRest} min={5} max={120} step={5} unit="sec" />
                 </View>
                 <Text style={styles.sessionSummary}>
                   {t('onboarding.sessionSetupSummary', { rounds: sessionRounds, minutes: sessionActualMinutes })}
@@ -477,7 +478,7 @@ function makeStyles(T: ThemeTokens) {
       justifyContent: 'flex-end',
     },
     sheet: {
-      maxHeight: '91%',
+      height: '91%',
       backgroundColor: T.sheetBg,
       borderTopLeftRadius: 26,
       borderTopRightRadius: 26,
