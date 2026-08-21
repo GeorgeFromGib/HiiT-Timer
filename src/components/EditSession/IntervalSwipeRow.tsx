@@ -3,7 +3,7 @@ import { Animated, Pressable, StyleSheet, Text } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { ScaleDecorator } from 'react-native-draggable-flatlist';
-import { useTranslation } from '../../lib/i18n';
+import { useTranslation } from '../../hooks/useTranslation';
 import { typography } from '../../typography';
 import IntervalRow from '../IntervalRow';
 import { type LocalInterval } from '../../hooks/useEditSession';

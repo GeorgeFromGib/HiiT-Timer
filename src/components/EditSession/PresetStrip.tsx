@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, selectedBg, type ThemeTokens } from '../../theme';
-import { useTranslation } from '../../lib/i18n';
+import { useTranslation } from '../../hooks/useTranslation';
 import { type PresetLevel } from '../../lib/presets';
 
 const PRESET_LEVELS: { label: string; level: PresetLevel }[] = [

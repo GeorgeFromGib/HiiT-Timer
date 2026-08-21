@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import { appAlert } from '../lib/appAlert';
 import { validateFolderName, type Folder, type FolderIconName } from '../lib/sessions';
 import { DEFAULT_FOLDER_ICON, resolveFolderIconColor, folderIconTint } from '../lib/folderIcons';

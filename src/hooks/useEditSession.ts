@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { i18n } from '../lib/i18n';
-import { appAlert } from '../lib/appAlert';
+import { appAlert, confirmIfDirty } from '../lib/appAlert';
 import {
   getSessionSegments, speedForPhase, spinValueForPhase, inclineForPhase,
   type Session, type RunSpeeds, type RunInclines, type SpinValues,
@@ -295,7 +295,7 @@ export function useEditSession(
 
   function applyDurationPreset(level: PresetLevel) {
     const p = INTENSITY_PRESETS[level];
-    const doApply = () => {
+    confirmIfDirty(timingDirty, 'alerts.overwriteTimingMessage', () => {
       const rounds = computeRoundsForTargetDuration(
         easyEdit.fieldValues.warmup, p.work, p.rest, easyEdit.fieldValues.cooldown,
         targetLengthMinutes * 60,
@@ -308,17 +308,7 @@ export function useEditSession(
       } else {
         setEasyDirty(true);
       }
-    };
-    if (timingDirty) {
-      appAlert(
-        'warning',
-        i18n.t('alerts.overwriteTitle'),
-        i18n.t('alerts.overwriteTimingMessage'),
-        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
-      );
-    } else {
-      doApply();
-    }
+    });
   }
 
   function nearestTargetMinutes(rounds: number): number {

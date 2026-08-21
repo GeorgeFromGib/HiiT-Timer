@@ -38,6 +38,22 @@ export function dismissAppAlert() {
   notify();
 }
 
+// Shared "applying this preset will overwrite your current settings" confirmation,
+// used by every preset-apply flow (timing, speed, incline, spin) — skips the prompt
+// entirely when there's nothing to overwrite.
+export function confirmIfDirty(dirty: boolean, messageKey: string, apply: () => void): void {
+  if (!dirty) {
+    apply();
+    return;
+  }
+  appAlert(
+    'warning',
+    i18n.t('alerts.overwriteTitle'),
+    i18n.t(messageKey),
+    [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: apply }],
+  );
+}
+
 export function useAppAlert(): AppAlertRequest | null {
   return useSyncExternalStore(
     onChange => { listeners.add(onChange); return () => listeners.delete(onChange); },

@@ -3,7 +3,7 @@ import { AccessibilityInfo, Animated, PixelRatio, Pressable, StyleSheet, Text, V
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { useTheme, withOpacity, buttonShadow, type ThemeTokens } from '../theme';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import PhaseStrip from '../components/PhaseStrip';
 import { fmtTimer, type Segment } from '../lib/workout';
 import type { Session } from '../lib/sessions';

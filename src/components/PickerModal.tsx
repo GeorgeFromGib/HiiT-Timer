@@ -3,7 +3,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import WheelColumn from './WheelColumn';
 import type { EditSessionPicker, PickerValues } from '../hooks/useEditSession';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 
 const EMPTY_VALUES: PickerValues = { selected: [] };
 

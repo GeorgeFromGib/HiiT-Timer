@@ -61,16 +61,19 @@ export const DEFAULT_SPIN_VALUES: SpinValues = {
   cooldownResistance: 3,  cooldownPower: 85,
 };
 
+// circuitRest and finish always alias the rest value — encoded once here rather than
+// repeated in each of the three phase-map functions below.
+function expandPhaseMap<T>(warmup: T, work: T, rest: T, cooldown: T): Record<Phase, T> {
+  return { warmup, work, rest, cooldown, circuitRest: rest, finish: rest };
+}
+
 export function spinValueForPhase(phase: Phase, values: SpinValues): { resistance: number; power: number } {
-  const map: Record<Phase, { resistance: number; power: number }> = {
-    warmup:      { resistance: values.warmupResistance,   power: values.warmupPower   },
-    work:        { resistance: values.workResistance,     power: values.workPower     },
-    rest:        { resistance: values.restResistance,     power: values.restPower     },
-    cooldown:    { resistance: values.cooldownResistance, power: values.cooldownPower },
-    circuitRest: { resistance: values.restResistance,     power: values.restPower     },
-    finish:      { resistance: values.restResistance,     power: values.restPower     },
-  };
-  return map[phase];
+  return expandPhaseMap(
+    { resistance: values.warmupResistance,   power: values.warmupPower   },
+    { resistance: values.workResistance,     power: values.workPower     },
+    { resistance: values.restResistance,     power: values.restPower     },
+    { resistance: values.cooldownResistance, power: values.cooldownPower },
+  )[phase];
 }
 
 export type Session =
@@ -79,27 +82,11 @@ export type Session =
   | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
-  const map: Record<Phase, number> = {
-    warmup:      speeds.warmupSpeed,
-    work:        speeds.workSpeed,
-    rest:        speeds.restSpeed,
-    cooldown:    speeds.cooldownSpeed,
-    circuitRest: speeds.restSpeed,
-    finish:      speeds.restSpeed,
-  };
-  return map[phase];
+  return expandPhaseMap(speeds.warmupSpeed, speeds.workSpeed, speeds.restSpeed, speeds.cooldownSpeed)[phase];
 }
 
 export function inclineForPhase(phase: Phase, inclines: RunInclines): number {
-  const map: Record<Phase, number> = {
-    warmup:      inclines.warmupIncline,
-    work:        inclines.workIncline,
-    rest:        inclines.restIncline,
-    cooldown:    inclines.cooldownIncline,
-    circuitRest: inclines.restIncline,
-    finish:      inclines.restIncline,
-  };
-  return map[phase];
+  return expandPhaseMap(inclines.warmupIncline, inclines.workIncline, inclines.restIncline, inclines.cooldownIncline)[phase];
 }
 
 // Merges per-activity-type values onto each segment. `intervals` supplies per-interval

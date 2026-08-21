@@ -11,7 +11,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, THEME_PREVIEWS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { useSettings } from '../lib/settingsContext';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import { usePremium } from '../lib/premiumContext';
 import { setForceNextReview } from '../lib/reviewState';
 import { checkForUpdate } from '../lib/versionCheck';

@@ -18,7 +18,7 @@ import {
   fmtTimer,
 } from '../lib/workout';
 import { formatSpeed } from '../lib/speedUnit';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import { appAlert } from '../lib/appAlert';
 import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';

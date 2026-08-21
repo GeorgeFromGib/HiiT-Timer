@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
 import { usePremium } from '../lib/premiumContext';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface TrialStatusPillProps {
   onUpgrade: () => void;

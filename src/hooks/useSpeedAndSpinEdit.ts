@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useDraft } from './useDraft';
-import { i18n } from '../lib/i18n';
-import { appAlert } from '../lib/appAlert';
+import { confirmIfDirty } from '../lib/appAlert';
 import {
   type Session, type RunSpeeds, type RunInclines, type SpinValues,
   DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES, DEFAULT_SPIN_VALUES,
@@ -91,57 +90,27 @@ export function useSpeedAndSpinEdit(
   }
 
   function applySpeedPreset(level: PresetLevel) {
-    const doApply = () => {
+    confirmIfDirty(speedsDirty, 'alerts.overwriteSpeedMessage', () => {
       setRunSpeeds(SPEED_PRESETS[level]);
       setSpeedsDirty(false);
       setActiveSpeedPreset(level);
-    };
-    if (speedsDirty) {
-      appAlert(
-        'warning',
-        i18n.t('alerts.overwriteTitle'),
-        i18n.t('alerts.overwriteSpeedMessage'),
-        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
-      );
-    } else {
-      doApply();
-    }
+    });
   }
 
   function applyInclinePreset(level: PresetLevel) {
-    const doApply = () => {
+    confirmIfDirty(inclineDirty, 'alerts.overwriteInclineMessage', () => {
       setRunInclines(INCLINE_PRESETS[level]);
       setInclineDirty(false);
       setActiveInclinePreset(level);
-    };
-    if (inclineDirty) {
-      appAlert(
-        'warning',
-        i18n.t('alerts.overwriteTitle'),
-        i18n.t('alerts.overwriteInclineMessage'),
-        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
-      );
-    } else {
-      doApply();
-    }
+    });
   }
 
   function applySpinPreset(level: PresetLevel) {
-    const doApply = () => {
+    confirmIfDirty(spinDirty, 'alerts.overwriteSpinMessage', () => {
       setSpinValues(SPIN_PRESETS[level]);
       setSpinDirty(false);
       setActiveSpinPreset(level);
-    };
-    if (spinDirty) {
-      appAlert(
-        'warning',
-        i18n.t('alerts.overwriteTitle'),
-        i18n.t('alerts.overwriteSpinMessage'),
-        [{ text: i18n.t('alerts.cancel'), style: 'cancel' }, { text: i18n.t('alerts.apply'), onPress: doApply }],
-      );
-    } else {
-      doApply();
-    }
+    });
   }
 
   return {

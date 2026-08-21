@@ -32,7 +32,7 @@ import SessionCard from '../components/SessionCard';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import TrialStatusPill from '../components/TrialStatusPill';
 import MoveToFolderSheet from '../components/MoveToFolderSheet';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function SessionsListScreen({ folderId, onNavigate }: { folderId?: string; onNavigate: (route: Route) => void }) {
   const { T } = useTheme();

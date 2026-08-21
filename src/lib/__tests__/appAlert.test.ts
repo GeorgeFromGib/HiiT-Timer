@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-native';
-import { appAlert, dismissAppAlert, useAppAlert } from '../appAlert';
+import { appAlert, dismissAppAlert, useAppAlert, confirmIfDirty } from '../appAlert';
 
 describe('appAlert / dismissAppAlert / useAppAlert', () => {
   afterEach(async () => {
@@ -71,5 +71,53 @@ describe('appAlert / dismissAppAlert / useAppAlert', () => {
     });
     expect(r1.current?.title).toBe('Broadcast');
     expect(r2.current?.title).toBe('Broadcast');
+  });
+});
+
+describe('confirmIfDirty', () => {
+  afterEach(async () => {
+    await act(async () => {
+      dismissAppAlert();
+    });
+  });
+
+  it('applies immediately, with no prompt, when not dirty', () => {
+    const apply = jest.fn();
+    confirmIfDirty(false, 'alerts.overwriteSpeedMessage', apply);
+    expect(apply).toHaveBeenCalledTimes(1);
+  });
+
+  it('prompts for confirmation when dirty, without applying yet', async () => {
+    const { result } = await renderHook(() => useAppAlert());
+    const apply = jest.fn();
+    await act(async () => {
+      confirmIfDirty(true, 'alerts.overwriteSpeedMessage', apply);
+    });
+    expect(apply).not.toHaveBeenCalled();
+    expect(result.current?.title).toBe('Overwrite settings?');
+    expect(result.current?.message).toBe('Applying this preset will replace your current speed settings.');
+    expect(result.current?.buttons).toHaveLength(2);
+  });
+
+  it('applies when the confirm button is pressed', async () => {
+    const { result } = await renderHook(() => useAppAlert());
+    const apply = jest.fn();
+    await act(async () => {
+      confirmIfDirty(true, 'alerts.overwriteSpeedMessage', apply);
+    });
+    await act(async () => {
+      result.current?.buttons[1].onPress?.();
+    });
+    expect(apply).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not apply when the cancel button is pressed', async () => {
+    const { result } = await renderHook(() => useAppAlert());
+    const apply = jest.fn();
+    await act(async () => {
+      confirmIfDirty(true, 'alerts.overwriteSpeedMessage', apply);
+    });
+    expect(result.current?.buttons[0].style).toBe('cancel');
+    expect(apply).not.toHaveBeenCalled();
   });
 });

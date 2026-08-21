@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { fmtDuration, type Interval } from '../lib/workout';
 import { useTheme, withOpacity, glowShadow, type ThemeTokens } from '../theme';
 import DragHandle from './DragHandle';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 
 export interface IntervalRowProps {
   interval:                Interval;

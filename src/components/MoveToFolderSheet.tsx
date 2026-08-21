@@ -8,7 +8,7 @@ import {
   Modal,
 } from 'react-native';
 import { useTheme, type ThemeTokens } from '../theme';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import { type Folder } from '../lib/sessions';
 
 interface MoveToFolderSheetProps {

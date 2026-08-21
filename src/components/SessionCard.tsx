@@ -6,7 +6,7 @@ import { getSessionSegments } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, glowShadow, selectedBg, type ThemeTokens } from '../theme';
 import PhaseStrip from './PhaseStrip';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import ActivityTypeIcon from './ActivityTypeIcon';
 
 

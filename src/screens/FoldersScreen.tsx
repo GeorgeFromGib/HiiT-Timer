@@ -7,7 +7,7 @@ import { useTheme, ghostBtnStyle, buttonShadow, type ThemeTokens } from '../them
 import ScreenHeader from '../components/ScreenHeader';
 import DragHandle from '../components/DragHandle';
 import { useSettings } from '../lib/settingsContext';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import { appAlert } from '../lib/appAlert';
 import {
   loadSessions,

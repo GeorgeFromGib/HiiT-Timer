@@ -8,7 +8,7 @@ import { buildSessionFromDraft } from '../lib/sessionDraft';
 import { loadSessions, saveSessions, DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES } from '../lib/sessions';
 import { computeRoundsForTargetDuration, warmupCooldownForDuration } from '../lib/workout';
 import { MIN_TARGET_DURATION_MINUTES, MAX_TARGET_DURATION_MINUTES } from '../hooks/usePickerState';
-import { useTranslation } from '../lib/i18n';
+import { useTranslation } from '../hooks/useTranslation';
 import { SettingsToggle } from './SettingsToggle';
 
 export const CURRENT_ONBOARDING_VERSION = 2;
