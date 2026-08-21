@@ -48,7 +48,9 @@ export function useWorkoutSession(
 
   const [congratsMsg] = useState(() => {
     const msgs = getCongratsMessages();
-    return msgs[Math.floor(Math.random() * msgs.length)];
+    const msg = msgs[Math.floor(Math.random() * msgs.length)];
+    const useName = settings.name && Math.random() < 0.35;
+    return useName ? `${settings.name} — ${msg}` : msg;
   });
 
   const hapticBurst = useHapticBurst();
