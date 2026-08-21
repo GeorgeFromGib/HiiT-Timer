@@ -328,13 +328,6 @@ export const en = {
       finish:      'Get ready to finish',
     },
   },
-  defaultSessions: {
-    example1: 'Standard Example',
-    example2: 'Advanced Example',
-    example3: 'Treadmill Example',
-    circuit1: 'Calisthenics Example',
-    spinning1: 'Spinning Example',
-  },
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },
     daybreak: { name: 'Daybreak', note: 'Light · warm paper' },

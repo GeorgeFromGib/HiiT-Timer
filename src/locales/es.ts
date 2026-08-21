@@ -330,13 +330,6 @@ export const es: typeof en = {
       finish:      'Prepárate para terminar',
     },
   },
-  defaultSessions: {
-    example1: 'Ejemplo Estándar',
-    example2: 'Ejemplo Avanzado',
-    example3: 'Ejemplo de Cinta',
-    circuit1: 'Ejemplo de Calistenia',
-    spinning1: 'Ejemplo de Spinning',
-  },
   theme: {
     tidal: { name: 'Tidal', note: 'Verde azulado · tranquilo' },
     daybreak: { name: 'Daybreak', note: 'Claro · papel cálido' },
