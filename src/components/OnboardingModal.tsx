@@ -81,6 +81,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     setSessionRest(15);
     setSessionRounds(8);
     setStep(0);
+    setConfirming(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
