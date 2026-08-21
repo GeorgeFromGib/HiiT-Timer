@@ -115,6 +115,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
 
   async function handleNext() {
     if (!isNameStepValid || confirming) return;
+    if (currentStep === 'sessionSetup') setCreateFirstSession(true);
     if (lastStep) {
       setConfirming(true);
       await handleConfirm();
@@ -341,15 +342,15 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 <Text style={styles.optionSub}>{t('onboarding.sessionSetupSub')}</Text>
                 <View style={styles.sessionSetupRow}>
                   <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupWork')}</Text>
-                  <NumberStepper T={T} value={sessionWork} onChange={v => { setSessionWork(v); setCreateFirstSession(true); }} min={5} max={300} step={5} />
+                  <NumberStepper T={T} value={sessionWork} onChange={setSessionWork} min={5} max={300} step={5} />
                 </View>
                 <View style={styles.sessionSetupRow}>
                   <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupRest')}</Text>
-                  <NumberStepper T={T} value={sessionRest} onChange={v => { setSessionRest(v); setCreateFirstSession(true); }} min={5} max={120} step={5} />
+                  <NumberStepper T={T} value={sessionRest} onChange={setSessionRest} min={5} max={120} step={5} />
                 </View>
                 <View style={styles.sessionSetupRow}>
                   <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupRounds')}</Text>
-                  <NumberStepper T={T} value={sessionRounds} onChange={v => { setSessionRounds(v); setCreateFirstSession(true); }} min={1} max={30} step={1} />
+                  <NumberStepper T={T} value={sessionRounds} onChange={setSessionRounds} min={1} max={30} step={1} />
                 </View>
                 <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
                   <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
@@ -383,7 +384,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 onPress={handleNext}
                 disabled={!isNameStepValid || confirming}
               >
-                <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : t('onboarding.next')}</Text>
+                <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : currentStep === 'sessionSetup' ? t('onboarding.sessionSetupCreate') : t('onboarding.next')}</Text>
               </Pressable>
             </View>
           </View>
