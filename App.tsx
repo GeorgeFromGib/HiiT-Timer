@@ -66,6 +66,7 @@ export default function App() {
 
   const [audioReady, setAudioReady] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [sessionsEpoch, setSessionsEpoch] = useState(0);
   const { route, navigate, goBack, resetTo } = useNavigationStack({ name: 'Sessions' });
   const { settings, loading: settingsLoading, updateSettings } = useSettingsState();
   const premiumState = usePremiumState();
@@ -189,12 +190,13 @@ export default function App() {
         <RouteScreen><FoldersScreen onNavigate={navigate} /></RouteScreen>
       )}
       {route.name === 'Sessions' && (
-        <RouteScreen><SessionsListScreen folderId={route.folderId} onNavigate={navigate} /></RouteScreen>
+        <RouteScreen><SessionsListScreen key={sessionsEpoch} folderId={route.folderId} onNavigate={navigate} /></RouteScreen>
       )}
       <OnboardingModal
         visible={showOnboarding}
         onConfirm={showFolders => {
           setShowOnboarding(false);
+          setSessionsEpoch(e => e + 1);
           resetTo(showFolders ? { name: 'Folders' } : { name: 'Sessions' });
         }}
       />
