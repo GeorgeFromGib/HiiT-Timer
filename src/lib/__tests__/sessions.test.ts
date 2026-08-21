@@ -3,7 +3,6 @@ import {
   speedForPhase,
   inclineForPhase,
   getSessionSegments,
-  getDefaultSessions,
   loadSessions,
   saveSessions,
   newId,
@@ -22,7 +21,7 @@ import {
   type RunSpeeds,
   type SpinValues,
 } from '../sessions';
-import { SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS } from '../presets';
+import { SPIN_PRESETS } from '../presets';
 import { NativeModules } from 'react-native';
 
 describe('spinValueForPhase', () => {
@@ -195,45 +194,15 @@ describe('getSessionSegments', () => {
   });
 });
 
-describe('getDefaultSessions', () => {
-  it('returns five default sessions in English by default', () => {
-    const sessions = getDefaultSessions();
-    expect(sessions).toHaveLength(5);
-    expect(sessions.map(s => s.id)).toEqual([
-      'default-1', 'default-2', 'default-run-2', 'default-circuit-1', 'default-spinning-1',
-    ]);
-    expect(sessions[0].name).toBe('Standard Example');
-    expect(sessions[3].name).toBe('Calisthenics Example');
-  });
-
-  it('translates session names for a given language', () => {
-    const es = getDefaultSessions('es');
-    const fr = getDefaultSessions('fr');
-    expect(es[0].name).not.toBe('Standard Example');
-    expect(fr[0].name).not.toBe('Standard Example');
-    expect(es[0].name).not.toBe(fr[0].name);
-  });
-
-  it('gives every default session a folderId of "default"', () => {
-    expect(getDefaultSessions().every(s => s.folderId === 'default')).toBe(true);
-  });
-
-  it('uses SPEED_PRESETS/INCLINE_PRESETS level 3 for the treadmill example', () => {
-    const run = getDefaultSessions().find(s => s.id === 'default-run-2') as Extract<Session, { mode: 'easy' }>;
-    expect(run.runSpeeds).toEqual(SPEED_PRESETS['3']);
-    expect(run.runInclines).toEqual(INCLINE_PRESETS['3']);
-  });
-});
-
 describe('loadSessions / saveSessions', () => {
   beforeEach(() => {
     jest.requireMock('expo-file-system').__files.clear();
   });
 
-  it('returns the default folder and default sessions when no file exists', async () => {
+  it('returns an empty session list in the default folder when no file exists', async () => {
     const data = await loadSessions();
     expect(data.folders).toEqual([expect.objectContaining({ id: 'default', name: 'My Sessions' })]);
-    expect(data.sessions).toHaveLength(5);
+    expect(data.sessions).toEqual([]);
   });
 
   it('round-trips a SessionsData object through save/load', async () => {

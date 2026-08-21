@@ -2,9 +2,8 @@ import { readJsonFile, writeJsonFile } from './jsonFile';
 import { syncSessionsData } from './workoutSync';
 import type { Interval, Segment, WorkoutConfig, Phase } from './workout';
 import { expandWorkout, intervalsToSegments, expandCircuit } from './workout';
-import { i18n, type Language } from './i18n';
-import { SPEED_PRESETS, SPIN_PRESETS, INCLINE_PRESETS } from './presets';
-import { INTENSITY_PRESETS } from './intensityPresets';
+import { type Language } from './i18n';
+import { SPEED_PRESETS, INCLINE_PRESETS } from './presets';
 
 export type FolderIconName =
   | 'sun' | 'flame' | 'bolt' | 'pauseIcon' | 'snow'
@@ -150,71 +149,6 @@ export function getSessionSegments(session: Session): Segment[] {
 
 const SESSIONS_FILE = 'sessions_v2.json';
 
-export function getDefaultSessions(language: Language = 'en'): Session[] {
-  return [
-    {
-      id: 'default-1',
-      name: i18n.t('defaultSessions.example1', { locale: language }),
-      folderId: 'default',
-      mode: 'easy',
-      config: { warmup: 45, high: 45, low: 15, rounds: 13, cooldown: 60 },
-    },
-    {
-      id: 'default-2',
-      name: i18n.t('defaultSessions.example2', { locale: language }),
-      folderId: 'default',
-      mode: 'advanced',
-      intervals: [
-        { type: 'warmup',   dur: 20 },
-        { type: 'work',     dur: 20 },
-        { type: 'rest',     dur: 10 },
-        { type: 'work',     dur: 30 },
-        { type: 'rest',     dur: 15 },
-        { type: 'work',     dur: 20 },
-        { type: 'rest',     dur: 10 },
-        { type: 'cooldown', dur: 30 },
-      ],
-    },
-    {
-      id: 'default-run-2',
-      name: i18n.t('defaultSessions.example3', { locale: language }),
-      folderId: 'default',
-      mode: 'easy',
-      activityType: 'run',
-      config: { warmup: 300, high: 45, low: 15, rounds: 5, cooldown: 300 },
-      runSpeeds: SPEED_PRESETS['3'],
-      runInclines: INCLINE_PRESETS['3'],
-    },
-    {
-      id: 'default-circuit-1',
-      name: i18n.t('defaultSessions.circuit1', { locale: language }),
-      folderId: 'default',
-      mode: 'circuit',
-      circuits: 3,
-      warmup: 60,
-      cooldown: 60,
-      circuitRest: 30,
-      intervals: [
-        { type: 'work', dur: 40, activityLabel: 'Push-ups' },
-        { type: 'rest', dur: 20 },
-        { type: 'work', dur: 40, activityLabel: 'Squats' },
-        { type: 'rest', dur: 20 },
-        { type: 'work', dur: 40, activityLabel: 'Plank' },
-        { type: 'rest', dur: 20 },
-      ],
-    },
-    {
-      id: 'default-spinning-1',
-      name: i18n.t('defaultSessions.spinning1', { locale: language }),
-      folderId: 'default',
-      mode: 'easy',
-      activityType: 'spinning',
-      config: { warmup: 300, high: INTENSITY_PRESETS['3'].work, low: INTENSITY_PRESETS['3'].rest, rounds: 5, cooldown: 300 },
-      spinValues: SPIN_PRESETS['3'],
-    },
-  ];
-}
-
 function createDefaultFolder(): Folder {
   return {
     id: 'default',
@@ -252,7 +186,7 @@ function migrateSessionsToFolders(oldSessions: Session[]): SessionsData {
 export async function loadSessions(language: Language = 'en'): Promise<SessionsData> {
   const parsed = await readJsonFile<Session[] | SessionsData>(SESSIONS_FILE);
   if (!parsed) {
-    return { folders: [createDefaultFolder()], sessions: getDefaultSessions(language) };
+    return { folders: [createDefaultFolder()], sessions: [] };
   }
   if (Array.isArray(parsed)) {
     return migrateSessionsToFolders(parsed);
