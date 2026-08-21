@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, withOpacity, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
@@ -22,6 +22,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
 
   const [showFolders, setShowFolders] = useState(!settings.hideFolders);
   const [voiceCues, setVoiceCues] = useState(settings.voiceCues);
+  const [name, setName] = useState(settings.name);
   const [step, setStep] = useState(0);
 
   // Fresh installs (never onboarded) see the full wizard, including the 1.1 setup
@@ -29,7 +30,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   // onboarding, so appearance/folders/voice cues are skipped entirely — they go
   // straight from what's-new to done.
   const isFreshInstall = settings.onboardingVersion === 0;
-  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues'] : []), 'done'] as const;
+  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name'] : []), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
   const currentStep = STEPS[step];
@@ -40,6 +41,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     if (!visible) return;
     setShowFolders(!settings.hideFolders);
     setVoiceCues(settings.voiceCues);
+    setName(settings.name);
     setStep(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
@@ -47,11 +49,15 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   function handleConfirm() {
     updateSettings('hideFolders', !showFolders);
     updateSettings('voiceCues', voiceCues);
+    updateSettings('name', name.trim());
     updateSettings('onboardingVersion', CURRENT_ONBOARDING_VERSION);
     onConfirm(showFolders);
   }
 
+  const isNameStepValid = currentStep !== 'name' || name.trim().length > 0;
+
   function handleNext() {
+    if (!isNameStepValid) return;
     if (lastStep) {
       handleConfirm();
     } else {
@@ -237,6 +243,29 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
               </View>
             )}
 
+            {currentStep === 'name' && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <Circle cx={12} cy={8} r={4} />
+                    <Path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('onboarding.nameTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.nameSub')}</Text>
+                <TextInput
+                  style={styles.nameInput}
+                  value={name}
+                  onChangeText={setName}
+                  placeholder={t('onboarding.namePlaceholder')}
+                  placeholderTextColor={T.faintText}
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  maxLength={40}
+                />
+              </View>
+            )}
+
             {currentStep === 'done' && (
               <View style={styles.optionBlock}>
                 <View style={styles.glyph}>
@@ -258,7 +287,11 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                   <Text style={styles.backBtnText}>{t('onboarding.back')}</Text>
                 </Pressable>
               )}
-              <Pressable style={styles.confirmBtn} onPress={handleNext}>
+              <Pressable
+                style={[styles.confirmBtn, !isNameStepValid && styles.confirmBtnDisabled]}
+                onPress={handleNext}
+                disabled={!isNameStepValid}
+              >
                 <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : t('onboarding.next')}</Text>
               </Pressable>
             </View>
@@ -459,6 +492,19 @@ function makeStyles(T: ThemeTokens) {
     optionToggleRow: {
       marginTop: 22,
     },
+    nameInput: {
+      marginTop: 22,
+      width: '100%',
+      borderWidth: 1,
+      borderColor: T.hairline,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 15,
+      color: T.text,
+      backgroundColor: T.card,
+    },
     footer: {
       paddingHorizontal: 20,
       paddingTop: 14,
@@ -496,6 +542,9 @@ function makeStyles(T: ThemeTokens) {
       shadowOffset: { width: 0, height: 10 },
       shadowOpacity: 0.33,
       shadowRadius: 26,
+    },
+    confirmBtnDisabled: {
+      opacity: 0.45,
     },
     confirmBtnText: {
       fontFamily: 'Inter_800ExtraBold',
