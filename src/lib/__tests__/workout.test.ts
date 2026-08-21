@@ -6,6 +6,7 @@ import {
   totalDuration,
   segmentIndexAt,
   computeRoundsForTargetDuration,
+  warmupCooldownForDuration,
   buildIntervalsFromEasy,
   tryConvertToEasy,
   fmtDuration,
@@ -145,6 +146,18 @@ describe('computeRoundsForTargetDuration', () => {
 
   it('returns 1 when warmup+cooldown already exceed the target', () => {
     expect(computeRoundsForTargetDuration(60, 20, 5, 60, 100)).toBe(1);
+  });
+});
+
+describe('warmupCooldownForDuration', () => {
+  it('returns 180 seconds for sessions under 15 minutes', () => {
+    expect(warmupCooldownForDuration(10)).toBe(180);
+    expect(warmupCooldownForDuration(14)).toBe(180);
+  });
+
+  it('returns 300 seconds for sessions of 15 minutes or longer', () => {
+    expect(warmupCooldownForDuration(15)).toBe(300);
+    expect(warmupCooldownForDuration(60)).toBe(300);
   });
 });
 

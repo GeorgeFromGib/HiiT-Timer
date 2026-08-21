@@ -158,6 +158,11 @@ export function computeRoundsForTargetDuration(
   return Math.max(1, Math.round(available / perRound));
 }
 
+/** Sessions under 15 minutes get a shorter 3-minute warmup/cooldown; 15+ minute sessions get the recommended 5 minutes. */
+export function warmupCooldownForDuration(durationMinutes: number): number {
+  return durationMinutes < 15 ? 180 : 300;
+}
+
 export function buildIntervalsFromEasy(cfg: WorkoutConfig): Interval[] {
   const intervals: Interval[] = [];
   if (cfg.warmup > 0)   intervals.push({ type: 'warmup', dur: cfg.warmup });
