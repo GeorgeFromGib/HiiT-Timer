@@ -165,10 +165,10 @@ export default function WorkoutScreen({
 
   const reviewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
-    if (status !== 'finished') return;
+    if (status !== 'finished' || stats.skippedCount > 0) return;
     reviewTimerRef.current = setTimeout(() => { checkAndRequestReview(); }, 1500);
     return () => { if (reviewTimerRef.current) clearTimeout(reviewTimerRef.current); };
-  }, [status]);
+  }, [status, stats.skippedCount]);
 
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
   const seg            = segments[effectiveIndex];
