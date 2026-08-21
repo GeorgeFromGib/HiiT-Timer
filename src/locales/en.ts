@@ -194,7 +194,7 @@ export const en = {
     nameSub: "We'll use this to personalize your experience.",
     namePlaceholder: 'Your name or nickname',
     sessionDurationTitle: 'How long do you want your session?',
-    sessionDurationSub: 'Total time, including warmup and cooldown. You can fine-tune everything later.',
+    sessionDurationSub: 'Total time, including warmup and cooldown, in minutes. You can fine-tune everything later.',
     sessionWorkTitle: 'How long is each work interval?',
     sessionWorkSub: 'Your high-intensity push, in seconds.',
     sessionRecoverTitle: 'How long do you want to recover?',

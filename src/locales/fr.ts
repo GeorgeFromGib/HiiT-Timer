@@ -196,7 +196,7 @@ export const fr: typeof en = {
     nameSub: 'Nous l\'utiliserons pour personnaliser votre expérience.',
     namePlaceholder: 'Votre nom ou surnom',
     sessionDurationTitle: 'Quelle durée voulez-vous pour votre séance ?',
-    sessionDurationSub: 'Temps total, échauffement et récupération finale inclus. Vous pourrez tout ajuster plus tard.',
+    sessionDurationSub: 'Temps total, échauffement et récupération finale inclus, en minutes. Vous pourrez tout ajuster plus tard.',
     sessionWorkTitle: 'Quelle est la durée de chaque intervalle de travail ?',
     sessionWorkSub: 'Votre effort de haute intensité, en secondes.',
     sessionRecoverTitle: 'Combien de temps voulez-vous récupérer ?',
