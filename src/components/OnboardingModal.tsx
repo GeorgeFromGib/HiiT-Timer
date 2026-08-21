@@ -58,6 +58,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const [sessionRest, setSessionRest] = useState(15);
   const [sessionRounds, setSessionRounds] = useState(8);
   const [step, setStep] = useState(0);
+  const [confirming, setConfirming] = useState(false);
 
   // Fresh installs (never onboarded) see the full wizard, including the 1.1 setup
   // steps. Upgraders from 1.1 already made these choices during their original
@@ -112,8 +113,9 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const isNameStepValid = currentStep !== 'name' || name.trim().length > 0;
 
   async function handleNext() {
-    if (!isNameStepValid) return;
+    if (!isNameStepValid || confirming) return;
     if (lastStep) {
+      setConfirming(true);
       await handleConfirm();
     } else {
       setStep(s => s + 1);
@@ -376,9 +378,9 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 </Pressable>
               )}
               <Pressable
-                style={[styles.confirmBtn, !isNameStepValid && styles.confirmBtnDisabled]}
+                style={[styles.confirmBtn, (!isNameStepValid || confirming) && styles.confirmBtnDisabled]}
                 onPress={handleNext}
-                disabled={!isNameStepValid}
+                disabled={!isNameStepValid || confirming}
               >
                 <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : t('onboarding.next')}</Text>
               </Pressable>
