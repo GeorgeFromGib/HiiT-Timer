@@ -6,6 +6,8 @@ import { useTheme, withOpacity, THEME_PREVIEWS, type ThemeTokens, type ThemePrev
 import { useSettings } from '../lib/settingsContext';
 import { buildSessionFromDraft } from '../lib/sessionDraft';
 import { loadSessions, saveSessions, DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES } from '../lib/sessions';
+import { computeRoundsForTargetDuration, warmupCooldownForDuration } from '../lib/workout';
+import { MIN_TARGET_DURATION_MINUTES, MAX_TARGET_DURATION_MINUTES } from '../hooks/usePickerState';
 import { useTranslation } from '../lib/i18n';
 import { SettingsToggle } from './SettingsToggle';
 
@@ -54,9 +56,9 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const [voiceCues, setVoiceCues] = useState(settings.voiceCues);
   const [name, setName] = useState(settings.name);
   const [createFirstSession, setCreateFirstSession] = useState(false);
+  const [sessionDurationMinutes, setSessionDurationMinutes] = useState(15);
   const [sessionWork, setSessionWork] = useState(30);
   const [sessionRest, setSessionRest] = useState(15);
-  const [sessionRounds, setSessionRounds] = useState(8);
   const [step, setStep] = useState(0);
   const [confirming, setConfirming] = useState(false);
 
@@ -65,10 +67,18 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   // onboarding, so appearance/folders/voice cues are skipped entirely — they go
   // straight from what's-new to done.
   const isFreshInstall = settings.onboardingVersion === 0;
-  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name', 'sessionSetup'] : []), 'done'] as const;
+  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name', 'sessionDuration', 'sessionWork', 'sessionRecover'] : []), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
   const currentStep = STEPS[step];
+
+  const sessionWarmupCooldown = warmupCooldownForDuration(sessionDurationMinutes);
+  const sessionRounds = computeRoundsForTargetDuration(
+    sessionWarmupCooldown, sessionWork, sessionRest, sessionWarmupCooldown, sessionDurationMinutes * 60,
+  );
+  const sessionActualMinutes = Math.round(
+    (sessionWarmupCooldown * 2 + sessionRounds * (sessionWork + sessionRest)) / 60,
+  );
 
   // Re-sync local state to the loaded settings each time the modal opens,
   // since it mounts once at launch before settings have resolved.
@@ -77,9 +87,9 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     setShowFolders(!settings.hideFolders);
     setVoiceCues(settings.voiceCues);
     setName(settings.name);
+    setSessionDurationMinutes(15);
     setSessionWork(30);
     setSessionRest(15);
-    setSessionRounds(8);
     setStep(0);
     setConfirming(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,7 +107,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
         existingId: undefined,
         folderId: 'default',
         intervals: [],
-        easyConfig: { warmup: 45, high: sessionWork, low: sessionRest, rounds: sessionRounds, cooldown: 60 },
+        easyConfig: { warmup: sessionWarmupCooldown, high: sessionWork, low: sessionRest, rounds: sessionRounds, cooldown: sessionWarmupCooldown },
         activityType: undefined,
         runSpeeds: DEFAULT_RUN_SPEEDS,
         runInclines: DEFAULT_RUN_INCLINES,
@@ -115,7 +125,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
 
   async function handleNext() {
     if (!isNameStepValid || confirming) return;
-    if (currentStep === 'sessionSetup') setCreateFirstSession(true);
+    if (currentStep === 'sessionRecover') setCreateFirstSession(true);
     if (lastStep) {
       setConfirming(true);
       await handleConfirm();
@@ -126,7 +136,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
 
   function handleSkipSessionSetup() {
     setCreateFirstSession(false);
-    setStep(s => s + 1);
+    setStep(STEP_COUNT - 1);
   }
 
   function handleBack() {
@@ -330,7 +340,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
               </View>
             )}
 
-            {currentStep === 'sessionSetup' && (
+            {currentStep === 'sessionDuration' && (
               <View style={styles.optionBlock}>
                 <View style={styles.glyph}>
                   <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -338,20 +348,51 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                     <Path d="M12 7v5l3 3" />
                   </Svg>
                 </View>
-                <Text style={styles.optionTitle}>{t('onboarding.sessionSetupTitle')}</Text>
-                <Text style={styles.optionSub}>{t('onboarding.sessionSetupSub')}</Text>
-                <View style={styles.sessionSetupRow}>
-                  <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupWork')}</Text>
+                <Text style={styles.optionTitle}>{t('onboarding.sessionDurationTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.sessionDurationSub')}</Text>
+                <View style={styles.stepperCentered}>
+                  <NumberStepper T={T} value={sessionDurationMinutes} onChange={setSessionDurationMinutes} min={MIN_TARGET_DURATION_MINUTES} max={MAX_TARGET_DURATION_MINUTES} step={5} />
+                </View>
+                <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
+                  <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
+                </Pressable>
+              </View>
+            )}
+
+            {currentStep === 'sessionWork' && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <Path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('onboarding.sessionWorkTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.sessionWorkSub')}</Text>
+                <View style={styles.stepperCentered}>
                   <NumberStepper T={T} value={sessionWork} onChange={setSessionWork} min={5} max={300} step={5} />
                 </View>
-                <View style={styles.sessionSetupRow}>
-                  <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupRest')}</Text>
+                <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
+                  <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
+                </Pressable>
+              </View>
+            )}
+
+            {currentStep === 'sessionRecover' && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                    <Rect x={7} y={6} width={4} height={12} rx={2} fill={T.btnGlyph} />
+                    <Rect x={13} y={6} width={4} height={12} rx={2} fill={T.btnGlyph} />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('onboarding.sessionRecoverTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.sessionRecoverSub')}</Text>
+                <View style={styles.stepperCentered}>
                   <NumberStepper T={T} value={sessionRest} onChange={setSessionRest} min={5} max={120} step={5} />
                 </View>
-                <View style={styles.sessionSetupRow}>
-                  <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupRounds')}</Text>
-                  <NumberStepper T={T} value={sessionRounds} onChange={setSessionRounds} min={1} max={30} step={1} />
-                </View>
+                <Text style={styles.sessionSummary}>
+                  {t('onboarding.sessionSetupSummary', { rounds: sessionRounds, minutes: sessionActualMinutes })}
+                </Text>
                 <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
                   <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
                 </Pressable>
@@ -384,7 +425,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 onPress={handleNext}
                 disabled={!isNameStepValid || confirming}
               >
-                <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : currentStep === 'sessionSetup' ? t('onboarding.sessionSetupCreate') : t('onboarding.next')}</Text>
+                <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : currentStep === 'sessionRecover' ? t('onboarding.sessionSetupCreate') : t('onboarding.next')}</Text>
               </Pressable>
             </View>
           </View>
@@ -597,17 +638,15 @@ function makeStyles(T: ThemeTokens) {
       color: T.text,
       backgroundColor: T.card,
     },
-    sessionSetupRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      width: '100%',
-      marginTop: 18,
+    stepperCentered: {
+      marginTop: 22,
     },
-    sessionSetupLabel: {
+    sessionSummary: {
       fontFamily: 'Inter_700Bold',
-      fontSize: 14,
-      color: T.text,
+      fontSize: 13,
+      color: T.subText,
+      textAlign: 'center',
+      marginTop: 16,
     },
     skipLink: {
       marginTop: 24,
