@@ -57,4 +57,14 @@ describe('loadSettings / saveSettings', () => {
     );
     expect(await loadSettings()).toEqual({ ...DEFAULT_SETTINGS, theme: 'tidal' });
   });
+
+  it('defaults name to an empty string', async () => {
+    expect((await loadSettings()).name).toBe('');
+  });
+
+  it('round-trips a saved name', async () => {
+    const custom: Settings = { ...DEFAULT_SETTINGS, name: 'Alex' };
+    await saveSettings(custom);
+    expect(await loadSettings()).toEqual(custom);
+  });
 });

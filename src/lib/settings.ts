@@ -20,6 +20,7 @@ export interface Settings {
   languageIsManuallySet: boolean;
   hideFolders: boolean;
   onboardingVersion: number;
+  name: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   languageIsManuallySet: false,
   hideFolders: true,
   onboardingVersion: 0,
+  name: '',
 };
 
 const SETTINGS_FILE = 'settings_v1.json';
