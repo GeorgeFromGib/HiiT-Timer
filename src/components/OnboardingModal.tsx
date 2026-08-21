@@ -4,6 +4,8 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, withOpacity, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
 import { useSettings } from '../lib/settingsContext';
+import { buildSessionFromDraft } from '../lib/sessionDraft';
+import { loadSessions, saveSessions, DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES } from '../lib/sessions';
 import { useTranslation } from '../lib/i18n';
 import { SettingsToggle } from './SettingsToggle';
 
@@ -12,6 +14,34 @@ export const CURRENT_ONBOARDING_VERSION = 2;
 interface Props {
   visible: boolean;
   onConfirm: (showFolders: boolean) => void;
+}
+
+function NumberStepper({ T, value, onChange, min, max, step: incrementBy }: {
+  T: ThemeTokens;
+  value: number;
+  onChange: (next: number) => void;
+  min: number;
+  max: number;
+  step: number;
+}) {
+  const styles = useMemo(() => makeStepperStyles(T), [T]);
+  return (
+    <View style={styles.row}>
+      <Pressable
+        style={styles.btn}
+        onPress={() => onChange(Math.max(min, value - incrementBy))}
+      >
+        <Text style={styles.btnText}>−</Text>
+      </Pressable>
+      <Text style={styles.value}>{value}</Text>
+      <Pressable
+        style={styles.btn}
+        onPress={() => onChange(Math.min(max, value + incrementBy))}
+      >
+        <Text style={styles.btnText}>+</Text>
+      </Pressable>
+    </View>
+  );
 }
 
 export default function OnboardingModal({ visible, onConfirm }: Props) {
@@ -23,6 +53,10 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const [showFolders, setShowFolders] = useState(!settings.hideFolders);
   const [voiceCues, setVoiceCues] = useState(settings.voiceCues);
   const [name, setName] = useState(settings.name);
+  const [createFirstSession, setCreateFirstSession] = useState(false);
+  const [sessionWork, setSessionWork] = useState(30);
+  const [sessionRest, setSessionRest] = useState(15);
+  const [sessionRounds, setSessionRounds] = useState(8);
   const [step, setStep] = useState(0);
 
   // Fresh installs (never onboarded) see the full wizard, including the 1.1 setup
@@ -30,7 +64,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   // onboarding, so appearance/folders/voice cues are skipped entirely — they go
   // straight from what's-new to done.
   const isFreshInstall = settings.onboardingVersion === 0;
-  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name'] : []), 'done'] as const;
+  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name', 'sessionSetup'] : []), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
   const currentStep = STEPS[step];
@@ -42,27 +76,53 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     setShowFolders(!settings.hideFolders);
     setVoiceCues(settings.voiceCues);
     setName(settings.name);
+    setSessionWork(30);
+    setSessionRest(15);
+    setSessionRounds(8);
     setStep(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
 
-  function handleConfirm() {
+  async function handleConfirm() {
     updateSettings('hideFolders', !showFolders);
     updateSettings('voiceCues', voiceCues);
     updateSettings('name', name.trim());
     updateSettings('onboardingVersion', CURRENT_ONBOARDING_VERSION);
+    if (createFirstSession) {
+      const session = buildSessionFromDraft({
+        mode: 'easy',
+        name: t('onboarding.firstSessionName'),
+        existingId: undefined,
+        folderId: 'default',
+        intervals: [],
+        easyConfig: { warmup: 45, high: sessionWork, low: sessionRest, rounds: sessionRounds, cooldown: 60 },
+        activityType: undefined,
+        runSpeeds: DEFAULT_RUN_SPEEDS,
+        runInclines: DEFAULT_RUN_INCLINES,
+        inclineEnabled: true,
+        spinValues: undefined,
+        circuitData: undefined,
+      });
+      const data = await loadSessions();
+      await saveSessions({ ...data, sessions: [...data.sessions, session] });
+    }
     onConfirm(showFolders);
   }
 
   const isNameStepValid = currentStep !== 'name' || name.trim().length > 0;
 
-  function handleNext() {
+  async function handleNext() {
     if (!isNameStepValid) return;
     if (lastStep) {
-      handleConfirm();
+      await handleConfirm();
     } else {
       setStep(s => s + 1);
     }
+  }
+
+  function handleSkipSessionSetup() {
+    setCreateFirstSession(false);
+    setStep(s => s + 1);
   }
 
   function handleBack() {
@@ -263,6 +323,34 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                   autoCorrect={false}
                   maxLength={40}
                 />
+              </View>
+            )}
+
+            {currentStep === 'sessionSetup' && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <Circle cx={12} cy={12} r={9} />
+                    <Path d="M12 7v5l3 3" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('onboarding.sessionSetupTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.sessionSetupSub')}</Text>
+                <View style={styles.sessionSetupRow}>
+                  <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupWork')}</Text>
+                  <NumberStepper T={T} value={sessionWork} onChange={v => { setSessionWork(v); setCreateFirstSession(true); }} min={5} max={300} step={5} />
+                </View>
+                <View style={styles.sessionSetupRow}>
+                  <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupRest')}</Text>
+                  <NumberStepper T={T} value={sessionRest} onChange={v => { setSessionRest(v); setCreateFirstSession(true); }} min={5} max={120} step={5} />
+                </View>
+                <View style={styles.sessionSetupRow}>
+                  <Text style={styles.sessionSetupLabel}>{t('onboarding.sessionSetupRounds')}</Text>
+                  <NumberStepper T={T} value={sessionRounds} onChange={v => { setSessionRounds(v); setCreateFirstSession(true); }} min={1} max={30} step={1} />
+                </View>
+                <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
+                  <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
+                </Pressable>
               </View>
             )}
 
@@ -505,6 +593,28 @@ function makeStyles(T: ThemeTokens) {
       color: T.text,
       backgroundColor: T.card,
     },
+    sessionSetupRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      marginTop: 18,
+    },
+    sessionSetupLabel: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 14,
+      color: T.text,
+    },
+    skipLink: {
+      marginTop: 24,
+      paddingVertical: 6,
+    },
+    skipLinkText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 13,
+      color: T.faintText,
+      textDecorationLine: 'underline',
+    },
     footer: {
       paddingHorizontal: 20,
       paddingTop: 14,
@@ -598,6 +708,38 @@ function makeSwatchStyles(T: ThemeTokens) {
       borderRadius: 7.5,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+  });
+}
+
+function makeStepperStyles(T: ThemeTokens) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+    },
+    btn: {
+      width: 34,
+      height: 34,
+      borderRadius: 10,
+      backgroundColor: T.ghostBg,
+      borderWidth: 1,
+      borderColor: T.hairline,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    btnText: {
+      fontFamily: 'Inter_800ExtraBold',
+      fontSize: 18,
+      color: T.text,
+    },
+    value: {
+      fontFamily: 'Inter_800ExtraBold',
+      fontSize: 16,
+      color: T.text,
+      minWidth: 36,
+      textAlign: 'center',
     },
   });
 }
