@@ -2,49 +2,19 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme, withOpacity, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
+import { useTheme, withOpacity, selectedBg, THEME_PREVIEWS, type ThemeTokens, type ThemePreview } from '../theme';
 import { useSettings } from '../lib/settingsContext';
 import { buildSessionFromDraft } from '../lib/sessionDraft';
 import { loadSessions, saveSessions, DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES } from '../lib/sessions';
 import { computeRoundsForTargetDuration, warmupCooldownForDuration } from '../lib/workout';
-import { MIN_TARGET_DURATION_MINUTES, MAX_TARGET_DURATION_MINUTES } from '../hooks/usePickerState';
 import { useTranslation } from '../hooks/useTranslation';
-import { SettingsToggle } from './SettingsToggle';
+import SessionSetupChat from './SessionSetupChat';
 
 export const CURRENT_ONBOARDING_VERSION = 2;
 
 interface Props {
   visible: boolean;
   onConfirm: (showFolders: boolean) => void;
-}
-
-function NumberStepper({ T, value, onChange, min, max, step: incrementBy, unit }: {
-  T: ThemeTokens;
-  value: number;
-  onChange: (next: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  unit?: string;
-}) {
-  const styles = useMemo(() => makeStepperStyles(T), [T]);
-  return (
-    <View style={styles.row}>
-      <Pressable
-        style={styles.btn}
-        onPress={() => onChange(Math.max(min, value - incrementBy))}
-      >
-        <Text style={styles.btnText}>−</Text>
-      </Pressable>
-      <Text style={styles.value}>{unit ? `${value} ${unit}` : value}</Text>
-      <Pressable
-        style={styles.btn}
-        onPress={() => onChange(Math.min(max, value + incrementBy))}
-      >
-        <Text style={styles.btnText}>+</Text>
-      </Pressable>
-    </View>
-  );
 }
 
 export default function OnboardingModal({ visible, onConfirm }: Props) {
@@ -68,18 +38,10 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   // onboarding, so appearance/folders/voice cues are skipped entirely — they go
   // straight from what's-new to done.
   const isFreshInstall = settings.onboardingVersion === 0;
-  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name', 'sessionDuration', 'sessionWork', 'sessionRecover'] : []), 'done'] as const;
+  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name', 'sessionIntro', 'sessionSetup'] : []), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
   const currentStep = STEPS[step];
-
-  const sessionWarmupCooldown = warmupCooldownForDuration(sessionDurationMinutes);
-  const sessionRounds = computeRoundsForTargetDuration(
-    sessionWarmupCooldown, sessionWork, sessionRest, sessionWarmupCooldown, sessionDurationMinutes * 60,
-  );
-  const sessionActualMinutes = Math.round(
-    (sessionWarmupCooldown * 2 + sessionRounds * (sessionWork + sessionRest)) / 60,
-  );
 
   // Re-sync local state to the loaded settings each time the modal opens,
   // since it mounts once at launch before settings have resolved.
@@ -102,13 +64,17 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     updateSettings('name', name.trim());
     updateSettings('onboardingVersion', CURRENT_ONBOARDING_VERSION);
     if (createFirstSession) {
+      const warmupCooldown = warmupCooldownForDuration(sessionDurationMinutes);
+      const rounds = computeRoundsForTargetDuration(
+        warmupCooldown, sessionWork, sessionRest, warmupCooldown, sessionDurationMinutes * 60,
+      );
       const session = buildSessionFromDraft({
         mode: 'easy',
         name: t('onboarding.firstSessionName'),
         existingId: undefined,
         folderId: 'default',
         intervals: [],
-        easyConfig: { warmup: sessionWarmupCooldown, high: sessionWork, low: sessionRest, rounds: sessionRounds, cooldown: sessionWarmupCooldown },
+        easyConfig: { warmup: warmupCooldown, high: sessionWork, low: sessionRest, rounds, cooldown: warmupCooldown },
         activityType: undefined,
         runSpeeds: DEFAULT_RUN_SPEEDS,
         runInclines: DEFAULT_RUN_INCLINES,
@@ -126,13 +92,20 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
 
   async function handleNext() {
     if (!isNameStepValid || confirming) return;
-    if (currentStep === 'sessionRecover') setCreateFirstSession(true);
     if (lastStep) {
       setConfirming(true);
       await handleConfirm();
     } else {
       setStep(s => s + 1);
     }
+  }
+
+  function handleSessionSetupDone(result: { durationMinutes: number; work: number; rest: number; create: boolean }) {
+    setSessionDurationMinutes(result.durationMinutes);
+    setSessionWork(result.work);
+    setSessionRest(result.rest);
+    setCreateFirstSession(result.create);
+    setStep(s => s + 1);
   }
 
   function handleSkipSessionSetup() {
@@ -221,6 +194,10 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
             <View style={styles.handle} />
           </View>
 
+          {currentStep === 'sessionSetup' ? (
+            <SessionSetupChat T={T} onDone={handleSessionSetupDone} />
+          ) : (
+          <>
           <View style={styles.dotsRow}>
             {Array.from({ length: STEP_COUNT }).map((_, i) => (
               <View
@@ -297,7 +274,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 <Text style={styles.optionTitle}>{t('settings.hideFoldersLabel')}</Text>
                 <Text style={styles.optionSub}>{t('onboarding.foldersSub')}</Text>
                 <View style={styles.optionToggleRow}>
-                  <SettingsToggle value={showFolders} onChange={setShowFolders} />
+                  <YesNoChoice T={T} value={showFolders} onChange={setShowFolders} />
                 </View>
               </View>
             )}
@@ -313,7 +290,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 <Text style={styles.optionTitle}>{t('settings.voiceCuesLabel')}</Text>
                 <Text style={styles.optionSub}>{t('onboarding.voiceCuesSub')}</Text>
                 <View style={styles.optionToggleRow}>
-                  <SettingsToggle value={voiceCues} onChange={setVoiceCues} />
+                  <YesNoChoice T={T} value={voiceCues} onChange={setVoiceCues} />
                 </View>
               </View>
             )}
@@ -341,59 +318,16 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
               </View>
             )}
 
-            {currentStep === 'sessionDuration' && (
+            {currentStep === 'sessionIntro' && (
               <View style={styles.optionBlock}>
                 <View style={styles.glyph}>
                   <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                     <Circle cx={12} cy={12} r={9} />
-                    <Path d="M12 7v5l3 3" />
+                    <Path d="M10 8.5v7l6-3.5-6-3.5z" fill={T.btnGlyph} stroke="none" />
                   </Svg>
                 </View>
-                <Text style={styles.optionTitle}>{t('onboarding.sessionDurationTitle')}</Text>
-                <Text style={styles.optionSub}>{t('onboarding.sessionDurationSub')}</Text>
-                <View style={styles.stepperCentered}>
-                  <NumberStepper T={T} value={sessionDurationMinutes} onChange={setSessionDurationMinutes} min={MIN_TARGET_DURATION_MINUTES} max={MAX_TARGET_DURATION_MINUTES} step={5} unit="min" />
-                </View>
-                <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
-                  <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
-                </Pressable>
-              </View>
-            )}
-
-            {currentStep === 'sessionWork' && (
-              <View style={styles.optionBlock}>
-                <View style={styles.glyph}>
-                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                    <Path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" />
-                  </Svg>
-                </View>
-                <Text style={styles.optionTitle}>{t('onboarding.sessionWorkTitle')}</Text>
-                <Text style={styles.optionSub}>{t('onboarding.sessionWorkSub')}</Text>
-                <View style={styles.stepperCentered}>
-                  <NumberStepper T={T} value={sessionWork} onChange={setSessionWork} min={5} max={300} step={5} unit="sec" />
-                </View>
-                <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
-                  <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
-                </Pressable>
-              </View>
-            )}
-
-            {currentStep === 'sessionRecover' && (
-              <View style={styles.optionBlock}>
-                <View style={styles.glyph}>
-                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-                    <Rect x={7} y={6} width={4} height={12} rx={2} fill={T.btnGlyph} />
-                    <Rect x={13} y={6} width={4} height={12} rx={2} fill={T.btnGlyph} />
-                  </Svg>
-                </View>
-                <Text style={styles.optionTitle}>{t('onboarding.sessionRecoverTitle')}</Text>
-                <Text style={styles.optionSub}>{t('onboarding.sessionRecoverSub')}</Text>
-                <View style={styles.stepperCentered}>
-                  <NumberStepper T={T} value={sessionRest} onChange={setSessionRest} min={5} max={120} step={5} unit="sec" />
-                </View>
-                <Text style={styles.sessionSummary}>
-                  {t('onboarding.sessionSetupSummary', { rounds: sessionRounds, minutes: sessionActualMinutes })}
-                </Text>
+                <Text style={styles.optionTitle}>{t('onboarding.sessionSetup.readyTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.sessionSetup.readySub')}</Text>
                 <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
                   <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
                 </Pressable>
@@ -426,13 +360,36 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 onPress={handleNext}
                 disabled={!isNameStepValid || confirming}
               >
-                <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : currentStep === 'sessionRecover' ? t('onboarding.sessionSetupCreate') : t('onboarding.next')}</Text>
+                <Text style={styles.confirmBtnText}>{lastStep ? t('onboarding.confirm') : currentStep === 'sessionIntro' ? t('onboarding.sessionSetup.readyCta') : t('onboarding.next')}</Text>
               </Pressable>
             </View>
           </View>
+          </>
+          )}
         </View>
       </View>
     </Modal>
+  );
+}
+
+function YesNoChoice({ T, value, onChange }: { T: ThemeTokens; value: boolean; onChange: (v: boolean) => void }) {
+  const { t } = useTranslation();
+  const styles = useMemo(() => makeYesNoStyles(T), [T]);
+  return (
+    <View style={styles.row}>
+      {[{ v: true, label: t('common.yes') }, { v: false, label: t('common.no') }].map(opt => {
+        const selected = value === opt.v;
+        return (
+          <Pressable
+            key={String(opt.v)}
+            style={[styles.pill, selected && { borderColor: T.accent, backgroundColor: selectedBg(T.accent) }]}
+            onPress={() => onChange(opt.v)}
+          >
+            <Text style={[styles.pillText, { color: selected ? T.accent : T.subText }]}>{opt.label}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
   );
 }
 
@@ -625,6 +582,17 @@ function makeStyles(T: ThemeTokens) {
     },
     optionToggleRow: {
       marginTop: 22,
+      width: '100%',
+    },
+    skipLink: {
+      marginTop: 24,
+      paddingVertical: 6,
+    },
+    skipLinkText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 13,
+      color: T.faintText,
+      textDecorationLine: 'underline',
     },
     nameInput: {
       marginTop: 22,
@@ -638,26 +606,6 @@ function makeStyles(T: ThemeTokens) {
       fontSize: 15,
       color: T.text,
       backgroundColor: T.card,
-    },
-    stepperCentered: {
-      marginTop: 22,
-    },
-    sessionSummary: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 13,
-      color: T.subText,
-      textAlign: 'center',
-      marginTop: 16,
-    },
-    skipLink: {
-      marginTop: 24,
-      paddingVertical: 6,
-    },
-    skipLinkText: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 13,
-      color: T.faintText,
-      textDecorationLine: 'underline',
     },
     footer: {
       paddingHorizontal: 20,
@@ -709,6 +657,29 @@ function makeStyles(T: ThemeTokens) {
   });
 }
 
+function makeYesNoStyles(T: ThemeTokens) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      gap: 10,
+      width: '100%',
+    },
+    pill: {
+      flex: 1,
+      paddingVertical: 14,
+      borderRadius: 14,
+      borderWidth: 1.5,
+      borderColor: T.hairline,
+      backgroundColor: T.ghostBg,
+      alignItems: 'center',
+    },
+    pillText: {
+      fontFamily: 'Inter_800ExtraBold',
+      fontSize: 15,
+    },
+  });
+}
+
 function makeSwatchStyles(T: ThemeTokens) {
   return StyleSheet.create({
     swatch: {
@@ -752,38 +723,6 @@ function makeSwatchStyles(T: ThemeTokens) {
       borderRadius: 7.5,
       alignItems: 'center',
       justifyContent: 'center',
-    },
-  });
-}
-
-function makeStepperStyles(T: ThemeTokens) {
-  return StyleSheet.create({
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 14,
-    },
-    btn: {
-      width: 34,
-      height: 34,
-      borderRadius: 10,
-      backgroundColor: T.ghostBg,
-      borderWidth: 1,
-      borderColor: T.hairline,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    btnText: {
-      fontFamily: 'Inter_800ExtraBold',
-      fontSize: 18,
-      color: T.text,
-    },
-    value: {
-      fontFamily: 'Inter_800ExtraBold',
-      fontSize: 16,
-      color: T.text,
-      minWidth: 36,
-      textAlign: 'center',
     },
   });
 }

@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
@@ -38,10 +39,15 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
   const [forceReview, setForceReview] = React.useState(false);
   const [showPaywall, setShowPaywall] = React.useState(false);
   const [data, setData] = React.useState<SessionsData>({ folders: [], sessions: [] });
+  const [name, setName] = React.useState(settings.name);
 
   React.useEffect(() => {
     loadSessions(settings.language).then(setData);
   }, [settings.language]);
+
+  React.useEffect(() => {
+    setName(settings.name);
+  }, [settings.name]);
 
   const canHideFolders = data.folders.length <= 1;
 
@@ -59,6 +65,23 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
       >
         {/* ── Header ── */}
         <ScreenHeader onBack={onBack} subtitle={t('settings.subtitle')} title={t('settings.title')} style={styles.header} />
+
+        {/* ── Profile ── */}
+        <SettingsSection title={t('settings.profile')}>
+          <View style={styles.nameRow}>
+            <TextInput
+              style={styles.nameInput}
+              value={name}
+              onChangeText={setName}
+              onEndEditing={() => updateSettings('name', name.trim())}
+              placeholder={t('onboarding.namePlaceholder')}
+              placeholderTextColor={T.faintText}
+              autoCapitalize="words"
+              autoCorrect={false}
+              maxLength={40}
+            />
+          </View>
+        </SettingsSection>
 
         {/* ── Appearance ── */}
         <View style={styles.section}>
@@ -386,6 +409,19 @@ function makeStyles(T: ThemeTokens) {
     themeRow: {
       flexDirection: 'row',
       gap: 10,
+    },
+
+    // Profile
+    nameRow: {
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+    },
+    nameInput: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 15,
+      color: T.text,
+      paddingVertical: 7,
+      paddingHorizontal: 4,
     },
 
     // About
