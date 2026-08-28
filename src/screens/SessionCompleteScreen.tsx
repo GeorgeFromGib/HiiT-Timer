@@ -43,8 +43,10 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
   } = stats;
   const { T } = useTheme();
   const { t } = useTranslation();
-  const { height: screenHeight } = useWindowDimensions();
-  const uiScale = Math.min(1, (screenHeight / 844) / Math.max(1, PixelRatio.getFontScale()));
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const isLandscape = screenWidth > screenHeight;
+  // Scale off the long edge so digits don't collapse when width/height swap.
+  const uiScale = Math.min(1, (Math.max(screenWidth, screenHeight) / 844) / Math.max(1, PixelRatio.getFontScale()));
   const styles = useMemo(() => makeStyles(T, uiScale), [T, uiScale]);
 
   const workSecs = segments
@@ -100,75 +102,49 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
     return () => loops.forEach(l => l.stop());
   }, [showConfetti, reduceMotion]);
 
-  return (
-    <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
-      {/* Accent glow */}
-      <View style={[styles.accentGlow, { backgroundColor: withOpacity(T.accent, 0x22) }]} />
+  const eyebrowBlock = (
+    <Animated.View style={{ marginTop: isLandscape ? 0 : Math.round(48 * uiScale), opacity: eyebrowAnim, transform: [{ translateY: eyebrowAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }}>
+      <Text allowFontScaling={false} style={[styles.eyebrow, { color: T.accent }]}>
+        {skippedCount > 0 ? t('complete.eyebrowPartial') : t('complete.eyebrow')}
+      </Text>
+    </Animated.View>
+  );
 
-      {/* Confetti */}
-      {showConfetti && !reduceMotion && confettiAnims.map((anim, i) => {
-        const PHASES = ['warmup', 'work', 'rest', 'cooldown'] as const;
-        const color  = T.phases[PHASES[i % PHASES.length]];
-        const sz     = 5 + (i % 3) * 2;
-        return (
-          <Animated.View
-            key={i}
-            style={[
-              styles.confetti,
-              {
-                left:            `${(i * 37 + 11) % 100}%`,
-                width:           sz,
-                height:          sz,
-                borderRadius:    i % 2 === 0 ? sz / 2 : 2,
-                backgroundColor: color,
-                opacity:         anim.interpolate({ inputRange: [0, 0.08, 0.9, 1], outputRange: [0, 0.9, 0.9, 0] }),
-                transform:       [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [-12, 640] }) }],
-              },
-            ]}
-          />
-        );
-      })}
-
-      {/* Eyebrow */}
-      <Animated.View style={{ marginTop: Math.round(48 * uiScale), opacity: eyebrowAnim, transform: [{ translateY: eyebrowAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }}>
-        <Text allowFontScaling={false} style={[styles.eyebrow, { color: T.accent }]}>
-          {skippedCount > 0 ? t('complete.eyebrowPartial') : t('complete.eyebrow')}
-        </Text>
+  const heroBlock = (
+    <View style={styles.heroWrap}>
+      <Animated.View style={{
+        opacity:   checkAnim,
+        transform: [{ scale: checkAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] }) }],
+      }}>
+        <View style={[styles.checkCircle, { backgroundColor: T.accent, shadowColor: T.accent }]}>
+          <Svg width={Math.round(58 * uiScale)} height={Math.round(58 * uiScale)} viewBox="0 0 48 48" fill="none">
+            <Path d="M10 25l9.5 9.5L38 15" stroke={T.btnGlyph} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
+        </View>
       </Animated.View>
+    </View>
+  );
 
-      {/* Hero checkmark */}
-      <View style={styles.heroWrap}>
-        <Animated.View style={{
-          opacity:   checkAnim,
-          transform: [{ scale: checkAnim.interpolate({ inputRange: [0, 1], outputRange: [0.7, 1] }) }],
-        }}>
-          <View style={[styles.checkCircle, { backgroundColor: T.accent, shadowColor: T.accent }]}>
-            <Svg width={Math.round(58 * uiScale)} height={Math.round(58 * uiScale)} viewBox="0 0 48 48" fill="none">
-              <Path d="M10 25l9.5 9.5L38 15" stroke={T.btnGlyph} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
-            </Svg>
-          </View>
-        </Animated.View>
-      </View>
+  const headlineBlock = (
+    <Animated.View style={[styles.headlineWrap, { opacity: headlineAnim, transform: [{ translateY: headlineAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
+      {skippedCount === 0 && (
+        <Text allowFontScaling={false} style={[styles.headline, { color: T.text }]}>{congratsMsg}</Text>
+      )}
+      <Text allowFontScaling={false} style={[styles.subline, { color: T.subText }]}>
+        {t('complete.sublinePrefix')}{' '}
+        <Text style={{ color: T.text, fontFamily: 'Inter_800ExtraBold' }}>{session.name}</Text>
+      </Text>
+    </Animated.View>
+  );
 
-      {/* Headline */}
-      <Animated.View style={[styles.headlineWrap, { opacity: headlineAnim, transform: [{ translateY: headlineAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
-        {skippedCount === 0 && (
-          <Text allowFontScaling={false} style={[styles.headline, { color: T.text }]}>{congratsMsg}</Text>
-        )}
-        <Text allowFontScaling={false} style={[styles.subline, { color: T.subText }]}>
-          {t('complete.sublinePrefix')}{' '}
-          <Text style={{ color: T.text, fontFamily: 'Inter_800ExtraBold' }}>{session.name}</Text>
-        </Text>
-      </Animated.View>
-
-      {/* Stats */}
+  const statsBlock = (
+    <>
       <Animated.View style={[styles.statsRow, { opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
         <StatCard label={t('complete.totalTime')} value={fmtStatTime(displayTotalDur)} accent={T.accent} T={T} uiScale={uiScale} />
         <StatCard label={t('complete.intervals')} value={String(intervalsCount)} T={T} uiScale={uiScale} />
         <StatCard label={t('complete.workTime')} value={fmtStatTime(workSecs)} T={T} uiScale={uiScale} />
       </Animated.View>
 
-      {/* Skipped stats */}
       {skippedCount > 0 && (
         <Animated.View style={[styles.statsRow, { marginTop: 9, opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
           <StatCard label={t('complete.skippedIntervals')} value={String(skippedCount)} T={T} uiScale={uiScale} />
@@ -176,7 +152,6 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
         </Animated.View>
       )}
 
-      {/* Extras added stats */}
       {(extendedSecs > 0 || addedRoundSecs > 0 || skipBackSecs > 0) && (
         <Animated.View style={[styles.statsRow, { marginTop: 9, opacity: statsAnim, transform: [{ translateY: statsAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
           {extendedSecs > 0 && (
@@ -190,26 +165,82 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
           )}
         </Animated.View>
       )}
+    </>
+  );
 
-      {/* Phase recap */}
-      <Animated.View style={[styles.recapWrap, { opacity: recapAnim, transform: [{ translateY: recapAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
-        <Text style={[styles.recapLabel, { color: T.faintText }]}>{t('complete.sessionRecap')}</Text>
-        <PhaseStrip segments={segments} />
-      </Animated.View>
+  const recapBlock = (
+    <Animated.View style={[styles.recapWrap, { opacity: recapAnim, transform: [{ translateY: recapAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
+      <Text style={[styles.recapLabel, { color: T.faintText }]}>{t('complete.sessionRecap')}</Text>
+      <PhaseStrip segments={segments} />
+    </Animated.View>
+  );
 
-      {/* Actions */}
-      <View style={styles.actions}>
-        <Pressable onPress={onDone} style={[styles.doneBtn, { backgroundColor: T.accent, ...buttonShadow(T) }]}>
-          <Text style={[styles.doneBtnText, { color: T.btnGlyph }]}>{t('complete.done')}</Text>
-        </Pressable>
-        <Pressable onPress={onRepeat} style={[styles.repeatBtn, { backgroundColor: T.ghostBg, borderColor: T.hairline }]}>
-          <Svg width={16} height={16} viewBox="0 0 20 20" fill="none">
-            <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
-            <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-          </Svg>
-          <Text style={[styles.repeatBtnText, { color: T.subText }]}>{t('complete.repeat')}</Text>
-        </Pressable>
-      </View>
+  const actionsBlock = (
+    <View style={styles.actions}>
+      <Pressable onPress={onDone} style={[styles.doneBtn, { backgroundColor: T.accent, ...buttonShadow(T) }]}>
+        <Text style={[styles.doneBtnText, { color: T.btnGlyph }]}>{t('complete.done')}</Text>
+      </Pressable>
+      <Pressable onPress={onRepeat} style={[styles.repeatBtn, { backgroundColor: T.ghostBg, borderColor: T.hairline }]}>
+        <Svg width={16} height={16} viewBox="0 0 20 20" fill="none">
+          <Path d="M3 10a7 7 0 1 1 2.3 5.2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" />
+          <Path d="M3 5v4h4" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+        <Text style={[styles.repeatBtnText, { color: T.subText }]}>{t('complete.repeat')}</Text>
+      </Pressable>
+    </View>
+  );
+
+  const confettiLayer = showConfetti && !reduceMotion && confettiAnims.map((anim, i) => {
+    const PHASES = ['warmup', 'work', 'rest', 'cooldown'] as const;
+    const color  = T.phases[PHASES[i % PHASES.length]];
+    const sz     = 5 + (i % 3) * 2;
+    return (
+      <Animated.View
+        key={i}
+        style={[
+          styles.confetti,
+          {
+            left:            `${(i * 37 + 11) % 100}%`,
+            width:           sz,
+            height:          sz,
+            borderRadius:    i % 2 === 0 ? sz / 2 : 2,
+            backgroundColor: color,
+            opacity:         anim.interpolate({ inputRange: [0, 0.08, 0.9, 1], outputRange: [0, 0.9, 0.9, 0] }),
+            transform:       [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [-12, 640] }) }],
+          },
+        ]}
+      />
+    );
+  });
+
+  return (
+    <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={isLandscape ? styles.rootLandscape : styles.root}>
+      <View style={[styles.accentGlow, { backgroundColor: withOpacity(T.accent, 0x22) }]} />
+      {confettiLayer}
+
+      {isLandscape ? (
+        <>
+          <View style={styles.landscapeLeft}>
+            {eyebrowBlock}
+            {heroBlock}
+            {headlineBlock}
+          </View>
+          <View style={styles.landscapeRight}>
+            {statsBlock}
+            {recapBlock}
+            {actionsBlock}
+          </View>
+        </>
+      ) : (
+        <>
+          {eyebrowBlock}
+          {heroBlock}
+          {headlineBlock}
+          {statsBlock}
+          {recapBlock}
+          {actionsBlock}
+        </>
+      )}
     </LinearGradient>
   );
 }
@@ -220,6 +251,24 @@ function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
     paddingTop: 54,
     paddingHorizontal: 20,
     paddingBottom: Math.round(24 * s),
+  },
+  rootLandscape: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingTop: Math.round(20 * s),
+    // Clears the notch / Dynamic Island, which sits on whichever side is "up"
+    // in landscape. No SafeAreaProvider is mounted, so this is a fixed inset.
+    paddingHorizontal: 60,
+    paddingBottom: Math.round(24 * s),
+  },
+  landscapeLeft: {
+    width: '44%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  landscapeRight: {
+    flex: 1,
+    paddingLeft: 24,
   },
   accentGlow: {
     position: 'absolute',

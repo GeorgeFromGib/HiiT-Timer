@@ -94,6 +94,15 @@ export default function WorkoutScreenLandscape({
     borderColor: withOpacity(color, 0x59),
   });
 
+  // Smooth in-phase marker, same as portrait: travels across the active
+  // segment as `progress` depletes 1 -> 0.
+  const segStartPct = `${(seg.startAt / totalDur) * 100}%`;
+  const segEndPct   = `${(seg.endAt / totalDur) * 100}%`;
+  const chevronLeft = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [segEndPct, segStartPct],
+  });
+
   return (
     <LinearGradient colors={T.bgGradient} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={styles.root}>
       {/* ── Back: top-left ── */}
@@ -276,18 +285,42 @@ export default function WorkoutScreenLandscape({
                   const widthPct = (s.duration / totalDur) * 100;
                   const isActive = i === currentIndex;
                   const isCompleted = currentIndex > 0 && i < currentIndex;
+                  const phColor = T.phases[s.phase];
+
+                  if (isActive) {
+                    return (
+                      <View key={i} style={[styles.timelineSeg, { width: `${widthPct}%`, overflow: 'hidden' }]}>
+                        <View style={[StyleSheet.absoluteFill, { backgroundColor: phColor, opacity: 0.28 }]} />
+                        <Animated.View
+                          style={{
+                            position: 'absolute',
+                            right: 0, top: 0, bottom: 0,
+                            backgroundColor: phColor,
+                            shadowColor: phColor,
+                            shadowOpacity: 0.7,
+                            shadowRadius: 6,
+                            shadowOffset: { width: 0, height: 0 },
+                            elevation: 4,
+                            width: progress.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: ['0%', '100%'],
+                            }),
+                          }}
+                        />
+                      </View>
+                    );
+                  }
+
                   return (
-                    <View key={i} style={{
+                    <View key={i} style={[styles.timelineSeg, {
                       width: `${widthPct}%`,
-                      height: '100%',
-                      borderRadius: 4,
-                      backgroundColor: T.phases[s.phase],
-                      opacity: isCompleted ? 0.28 : isActive ? 1 : 0.5,
-                    }} />
+                      backgroundColor: phColor,
+                      opacity: isCompleted ? 0.28 : 1,
+                    }]} />
                   );
                 })}
               </View>
-              <View style={[styles.markerLine, { left: `${Math.min(100, Math.max(0, pct))}%` }]} />
+              <Animated.View style={[styles.markerLine, { left: chevronLeft }]} />
             </View>
             <View style={styles.timelineLabels}>
               <Text style={styles.timelineLabelText}>{pct}%</Text>
@@ -492,9 +525,12 @@ function makeStyles(T: ThemeTokens, s: number) { return StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     height: '100%',
-    gap: 2,
     borderRadius: 4,
     overflow: 'hidden',
+  },
+  timelineSeg: {
+    height: '100%',
+    borderRadius: 4,
   },
   markerLine: {
     position: 'absolute',

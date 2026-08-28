@@ -176,17 +176,13 @@ export default function WorkoutScreen({
     return () => { if (reviewTimerRef.current) clearTimeout(reviewTimerRef.current); };
   }, [status, stats.skippedCount]);
 
-  // The rest of the app is portrait-locked (App.tsx). The active timer allows
-  // landscape while running, but the completion screen is portrait-only.
+  // The rest of the app is portrait-locked (App.tsx); the timer and its
+  // completion screen both allow landscape while mounted.
   useEffect(() => {
-    ScreenOrientation.lockAsync(
-      status === 'finished'
-        ? ScreenOrientation.OrientationLock.PORTRAIT_UP
-        : ScreenOrientation.OrientationLock.DEFAULT,
-    ).catch(() => {});
-  }, [status]);
-  useEffect(() => () => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(() => {});
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.DEFAULT).catch(() => {});
+    return () => {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(() => {});
+    };
   }, []);
 
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
