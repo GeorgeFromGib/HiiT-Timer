@@ -38,6 +38,7 @@ describe('usePremium', () => {
       restore: jest.fn(async () => true),
       setMockPremium: jest.fn(),
       expireTrialForTesting: jest.fn(async () => {}),
+      endTrialSoonForTesting: jest.fn(async () => {}),
       resetTrialForTesting: jest.fn(async () => {}),
     };
     const wrapper = ({ children }: { children: React.ReactNode }) => (

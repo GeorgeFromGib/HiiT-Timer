@@ -9,6 +9,7 @@ export type PremiumContextValue = {
   restore: () => Promise<boolean>;
   setMockPremium: (val: boolean) => void;
   expireTrialForTesting: () => Promise<void>;
+  endTrialSoonForTesting: () => Promise<void>;
   resetTrialForTesting: () => Promise<void>;
 };
 
@@ -21,6 +22,7 @@ export const PremiumContext = createContext<PremiumContextValue>({
   restore: async () => false,
   setMockPremium: () => {},
   expireTrialForTesting: async () => {},
+  endTrialSoonForTesting: async () => {},
   resetTrialForTesting: async () => {},
 });
 

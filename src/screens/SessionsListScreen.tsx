@@ -23,6 +23,9 @@ import {
 } from '../lib/sessions';
 import { useGatedAction } from '../hooks/useGatedAction';
 import PaywallModal from '../components/PaywallModal';
+import { usePremium } from '../lib/premiumContext';
+import { isTrialReminderDue, wasTrialReminderShown, markTrialReminderShown } from '../lib/purchases';
+import { appAlert } from '../lib/appAlert';
 import { useSettings } from '../lib/settingsContext';
 import { confirmDeleteSession } from '../lib/alerts';
 import type { Route } from '../navigation';
@@ -83,12 +86,23 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
   }, [showTypeMenu]);
 
   const gate = useGatedAction(() => setShowPaywall(true));
+  const { isPremium, trialDaysRemaining } = usePremium();
 
   React.useEffect(() => {
     loadSessions(settings.language).then((loadedData) => {
       setData(loadedData);
     });
   }, [settings.language]);
+
+  // One-time friendly nudge when the free trial has 1–3 days left.
+  React.useEffect(() => {
+    if (!isTrialReminderDue(trialDaysRemaining, isPremium, wasTrialReminderShown())) return;
+    markTrialReminderShown();
+    appAlert('info', t('sessions.trialReminderTitle'), t('sessions.trialReminderBody'), [
+      { text: t('sessions.trialReminderLater'), style: 'cancel' },
+      { text: t('sessions.trialUpgrade'), onPress: () => setShowPaywall(true) },
+    ]);
+  }, [isPremium, trialDaysRemaining]);
 
   const handleCreateSession = (activityType?: string) => {
     const folderId = selectedFolderForSession || data.folders[0]?.id || 'default';

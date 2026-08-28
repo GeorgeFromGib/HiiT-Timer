@@ -19,12 +19,14 @@ type FlowState = 'idle' | 'purchasing' | 'restoring';
 const state = {
   isPremium: false,
   trialStartedAt: null as string | null,
+  trialReminderShown: false,
   flowState: 'idle' as FlowState,
   pendingResolve: null as ((success: boolean) => void) | null,
 };
 
 const TRIAL_FILE = 'trial_v1.json';
 const PREMIUM_FILE = 'premium_v1.json';
+const TRIAL_REMINDER_FILE = 'trial_reminder_v1.json';
 
 async function loadPremium(): Promise<boolean> {
   const parsed = await readJsonFile<{ isPremium: boolean }>(PREMIUM_FILE);
@@ -37,6 +39,11 @@ function savePremium(): void {
 
 async function saveTrialStart(iso: string): Promise<void> {
   writeJsonFile(TRIAL_FILE, { startedAt: iso });
+}
+
+function setTrialReminderShown(shown: boolean): void {
+  state.trialReminderShown = shown;
+  writeJsonFile(TRIAL_REMINDER_FILE, { shown });
 }
 
 function isWithinTrial(): boolean {
@@ -63,6 +70,9 @@ export async function initPurchases(_apiKey?: string): Promise<void> {
     state.trialStartedAt = new Date().toISOString();
     await saveTrialStart(state.trialStartedAt);
   }
+
+  const reminder = await readJsonFile<{ shown: boolean }>(TRIAL_REMINDER_FILE);
+  state.trialReminderShown = reminder?.shown === true;
 
   try {
     await initConnection();
@@ -97,6 +107,18 @@ export function getTrialDaysRemaining(): number {
   const elapsed =
     (Date.now() - new Date(state.trialStartedAt).getTime()) / (1000 * 60 * 60 * 24);
   return Math.max(0, Math.ceil(TRIAL_DAYS - elapsed));
+}
+
+export function isTrialReminderDue(days: number, isPremium: boolean, shown: boolean): boolean {
+  return !isPremium && !shown && days >= 1 && days <= 3;
+}
+
+export function wasTrialReminderShown(): boolean {
+  return state.trialReminderShown;
+}
+
+export function markTrialReminderShown(): void {
+  setTrialReminderShown(true);
 }
 
 export async function purchasePremium(): Promise<boolean> {
@@ -146,7 +168,16 @@ export async function expireTrialForTesting(): Promise<void> {
   await saveTrialStart(state.trialStartedAt);
 }
 
+export async function endTrialSoonForTesting(): Promise<void> {
+  state.trialStartedAt = new Date(
+    Date.now() - (TRIAL_DAYS - 2) * 24 * 60 * 60 * 1000
+  ).toISOString();
+  await saveTrialStart(state.trialStartedAt);
+  setTrialReminderShown(false);
+}
+
 export async function resetTrialForTesting(): Promise<void> {
   state.trialStartedAt = new Date().toISOString();
   await saveTrialStart(state.trialStartedAt);
+  setTrialReminderShown(false);
 }

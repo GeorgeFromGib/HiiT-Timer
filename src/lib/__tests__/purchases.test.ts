@@ -106,6 +106,58 @@ describe('expireTrialForTesting / resetTrialForTesting', () => {
   });
 });
 
+describe('isTrialReminderDue', () => {
+  it('is true only inside the 1–3 day window for a non-premium user who has not seen it', async () => {
+    const { purchases } = await setup();
+    const due = purchases.isTrialReminderDue;
+    expect(due(4, false, false)).toBe(false);
+    expect(due(3, false, false)).toBe(true);
+    expect(due(1, false, false)).toBe(true);
+    expect(due(0, false, false)).toBe(false);
+    expect(due(2, true, false)).toBe(false); // premium
+    expect(due(2, false, true)).toBe(false); // already shown
+  });
+});
+
+describe('trial reminder flag', () => {
+  it('markTrialReminderShown persists { shown: true } to disk', async () => {
+    const { fs, purchases } = await setup();
+    await purchases.initPurchases();
+    expect(purchases.wasTrialReminderShown()).toBe(false);
+
+    purchases.markTrialReminderShown();
+    expect(purchases.wasTrialReminderShown()).toBe(true);
+    expect(JSON.parse(fs.__files.get('document/trial_reminder_v1.json'))).toEqual({ shown: true });
+  });
+
+  it('initPurchases loads a persisted shown flag', async () => {
+    const { fs, purchases } = await setup();
+    fs.__files.set('document/trial_reminder_v1.json', JSON.stringify({ shown: true }));
+    await purchases.initPurchases();
+    expect(purchases.wasTrialReminderShown()).toBe(true);
+  });
+
+  it('endTrialSoonForTesting leaves 2 days remaining and re-arms the reminder', async () => {
+    const { purchases } = await setup();
+    await purchases.initPurchases();
+    purchases.markTrialReminderShown();
+
+    await purchases.endTrialSoonForTesting();
+    expect(purchases.getTrialDaysRemaining()).toBe(2);
+    expect(purchases.getHasAccess()).toBe(true);
+    expect(purchases.wasTrialReminderShown()).toBe(false);
+  });
+
+  it('resetTrialForTesting also re-arms the reminder', async () => {
+    const { purchases } = await setup();
+    await purchases.initPurchases();
+    purchases.markTrialReminderShown();
+
+    await purchases.resetTrialForTesting();
+    expect(purchases.wasTrialReminderShown()).toBe(false);
+  });
+});
+
 describe('setMockPremium', () => {
   it('toggles isPremium without touching the trial state', async () => {
     const { purchases } = await setup();

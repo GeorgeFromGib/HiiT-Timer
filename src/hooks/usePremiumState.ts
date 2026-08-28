@@ -8,6 +8,7 @@ import {
   restorePurchases,
   setMockPremium as mockSet,
   expireTrialForTesting as expireTrial,
+  endTrialSoonForTesting as endTrialSoon,
   resetTrialForTesting as resetTrial,
 } from '../lib/purchases';
 import type { PremiumContextValue } from '../lib/premiumContext';
@@ -63,6 +64,11 @@ export function usePremiumState(apiKey?: string): PremiumContextValue {
     await refreshState();
   }
 
+  async function endTrialSoonForTesting() {
+    await endTrialSoon();
+    await refreshState();
+  }
+
   async function resetTrialForTesting() {
     await resetTrial();
     await refreshState();
@@ -77,6 +83,7 @@ export function usePremiumState(apiKey?: string): PremiumContextValue {
     restore,
     setMockPremium,
     expireTrialForTesting,
+    endTrialSoonForTesting,
     resetTrialForTesting,
   };
 }

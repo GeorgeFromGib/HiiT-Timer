@@ -58,6 +58,7 @@ export default function PaywallModal({ visible, onDismiss }: Props) {
           {purchaseMsg !== null && (
             <Text style={styles.purchaseMsg}>{purchaseMsg}</Text>
           )}
+          <Text style={styles.tagline}>{t('paywall.tagline')}</Text>
           <Pressable
             style={[styles.dismissBtn, loading && styles.disabled]}
             onPress={onDismiss}
@@ -126,6 +127,14 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_700Bold',
       fontSize: 16,
       color: T.btnGlyph,
+    },
+    tagline: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 13,
+      color: T.subText,
+      textAlign: 'center',
+      marginTop: 4,
+      marginBottom: 12,
     },
     dismissBtn: {
       paddingVertical: 10,

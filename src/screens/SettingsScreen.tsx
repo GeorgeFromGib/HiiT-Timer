@@ -35,7 +35,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
 
   const { settings, updateSettings } = useSettings();
   const { t } = useTranslation();
-  const { isPremium, trialDaysRemaining, setMockPremium, expireTrialForTesting, resetTrialForTesting } = usePremium();
+  const { isPremium, trialDaysRemaining, setMockPremium, expireTrialForTesting, endTrialSoonForTesting, resetTrialForTesting } = usePremium();
   const [forceReview, setForceReview] = React.useState(false);
   const [showPaywall, setShowPaywall] = React.useState(false);
   const [data, setData] = React.useState<SessionsData>({ folders: [], sessions: [] });
@@ -260,6 +260,11 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
               label="Expire trial"
               sub="Set trial start to 31 days ago"
               right={<Pressable onPress={expireTrialForTesting} style={styles.devBtn}><Text style={styles.devBtnText}>Expire</Text></Pressable>}
+            />
+            <SettingsRow
+              label="End trial soon"
+              sub="2 days left + re-arm reminder"
+              right={<Pressable onPress={endTrialSoonForTesting} style={styles.devBtn}><Text style={styles.devBtnText}>Soon</Text></Pressable>}
             />
             <SettingsRow
               label="Reset trial"
