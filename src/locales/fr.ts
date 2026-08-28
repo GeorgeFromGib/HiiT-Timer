@@ -274,6 +274,25 @@ export const fr: typeof en = {
     exercisePlaceholder: 'Nom de l\'exercice',
     newCircuitTitle: 'Nouveau Circuit',
     circuit: 'Circuit',
+    tabataMode: 'Mode Tabata',
+    tabataHint: 'Fixé à 8 rounds de 20s d\'effort / 10s de repos, avec 5 min d\'échauffement et de récupération. Seuls les noms des exercices sont modifiables.',
+    tabataInfoTitle: 'Qu\'est-ce qu\'une séance Tabata ?',
+    tabataInfoBody:
+      'Origine\n' +
+      'Le Tabata est un format d\'intervalles à haute intensité défini dans une étude de 1996 menée par le Dr Izumi Tabata à l\'Institut national de fitness et de sport de Kanoya, au Japon. Il reprenait les séances d\'intervalles que l\'entraîneur national de patinage de vitesse utilisait déjà avec ses athlètes.\n\n' +
+      'La structure\n' +
+      'Un bloc Tabata, ce sont exactement 8 rounds de 20 secondes d\'effort suivies de 10 secondes de repos — 4 minutes au total. Dans le protocole d\'origine, chaque round est le même mouvement, réalisé sur un vélo stationnaire.\n\n' +
+      'L\'intensité\n' +
+      'C\'est l\'effort qui fait le Tabata, pas le chronomètre. Chaque bloc de 20 secondes se fait à fond : les sujets d\'origine travaillaient à environ 170 % de leur VO₂max, une allure impossible à tenir sur les 4 minutes entières. Si vous pouvez vous économiser et terminer le round 8 sans peine, ce n\'était pas un vrai Tabata. Les rounds 6 à 8 doivent être à peine reproductibles.\n\n' +
+      'Ce que ça développe\n' +
+      'La recherche d\'origine a montré des gains à la fois en capacité aérobie (VO₂max) et anaérobie avec le même protocole de 4 minutes — une combinaison rare. Cela fonctionne mieux avec des mouvements qui permettent d\'atteindre une très haute intensité sans casser la technique : vélo, rameur, squats, burpees, montées de genoux.\n\n' +
+      'Échauffement et récupération\n' +
+      'Quatre minutes à fond sont éprouvantes pour des muscles froids. Un échauffement complet d\'environ 5 minutes — cardio progressif et mobilité dynamique — et une récupération douce de 5 minutes font partie de la séance, ce ne sont pas des options.\n\n' +
+      'Dans cette appli\n' +
+      'Le Mode Tabata verrouille la minuterie sur le format canonique 8 × (20s / 10s) avec 5 minutes d\'échauffement et de récupération. Vous choisissez l\'exercice de chacun des 8 rounds : gardez un seul mouvement pour un Tabata classique, ou variez-les pour un circuit façon Tabata.',
+    tabataInfoCaution:
+      'Mise en garde\n' +
+      'Le Tabata est vraiment éprouvant. Si vous n\'êtes pas habitué à l\'exercice à haute intensité, si vous êtes enceinte ou si vous avez un problème cardiaque, de l\'hypertension ou un autre problème de santé, consultez un médecin avant de le pratiquer — et arrêtez-vous en cas de vertige, de malaise ou de douleur dans la poitrine.',
     spinning:         'Spinning',
     newSpinningTitle: 'Nouveau Spinning',
     spinResistance:   'Résistance',
@@ -305,6 +324,7 @@ export const fr: typeof en = {
     overwriteSpeedMessage: 'Appliquer ce préréglage remplacera vos réglages de vitesse actuels.',
     overwriteSpinMessage:  'Appliquer ce préréglage remplacera vos réglages de résistance et de puissance actuels.',
     overwriteInclineMessage: 'Appliquer ce préréglage remplacera vos réglages d\'inclinaison actuels.',
+    tabataOverwriteMessage: 'Le mode Tabata réinitialisera votre circuit à 8 rounds de 20s / 10s avec 5 min d\'échauffement et de récupération. Les noms des exercices sont conservés.',
     apply: 'Appliquer',
     cancel: 'Annuler',
     unsavedTitle: 'Modifications non enregistrées',

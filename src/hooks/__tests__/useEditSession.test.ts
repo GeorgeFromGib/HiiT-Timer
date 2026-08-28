@@ -687,6 +687,73 @@ describe('circuit pickers', () => {
   });
 });
 
+// ── Tabata mode ─────────────────────────────────────────────────────────
+
+describe('setTabataMode', () => {
+  it('on a fresh circuit, applies immediately: locks config and builds 8×(20s/10s)', async () => {
+    const alert = await renderAlertObserver();
+    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'circuit'));
+
+    await act(async () => result.current.setTabataMode(true));
+    expect(alert.current).toBeNull();
+
+    const d = result.current.draft;
+    expect(d.tabataMode).toBe(true);
+    expect(d.circuitWarmup).toBe(300);
+    expect(d.circuitCooldown).toBe(300);
+    expect(d.circuitRest).toBe(0);
+    expect(d.circuitCount).toBe(1);
+    expect(d.intervals).toHaveLength(16);
+    expect(d.intervals.filter(iv => iv.type === 'work').every(iv => iv.dur === 20)).toBe(true);
+    expect(d.intervals.filter(iv => iv.type === 'rest').every(iv => iv.dur === 10)).toBe(true);
+  });
+
+  it('warns before overwriting an edited circuit, and carries work names onto the 8 rounds once confirmed', async () => {
+    const alert = await renderAlertObserver();
+    const { result } = await renderHook(() => useEditSession(circuitSession, onBack)); // work "Push-ups" + rest
+
+    await act(async () => result.current.setActivityLabel(result.current.draft.intervals[0]._key, 'Squats'));
+    await act(async () => result.current.setTabataMode(true));
+    expect(alert.current?.title).toBe(i18n.t('alerts.overwriteTitle'));
+    expect(result.current.draft.tabataMode).toBe(false); // not applied yet
+
+    await act(async () => alert.current!.buttons[1].onPress?.());
+    const work = result.current.draft.intervals.filter(iv => iv.type === 'work');
+    expect(result.current.draft.tabataMode).toBe(true);
+    expect(work).toHaveLength(8);
+    expect(work[0].activityLabel).toBe('Squats');
+    expect(work[1].activityLabel).toBeUndefined();
+  });
+
+  it('buildSavePayload persists tabata:true with the expanded interval list', async () => {
+    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'circuit'));
+    await act(async () => result.current.setName('Tabata One'));
+    await act(async () => result.current.setTabataMode(true));
+
+    const payload = result.current.buildSavePayload();
+    expect(payload.ok).toBe(true);
+    if (payload.ok && payload.session.mode === 'circuit') {
+      expect(payload.session.tabata).toBe(true);
+      expect(payload.session.circuits).toBe(1);
+      expect(payload.session.warmup).toBe(300);
+      expect(payload.session.cooldown).toBe(300);
+      expect(payload.session.circuitRest).toBe(0);
+      expect(payload.session.intervals).toHaveLength(16);
+    }
+  });
+
+  it('turning it back off clears the flag but keeps the values', async () => {
+    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'circuit'));
+    await act(async () => result.current.setTabataMode(true));
+    await act(async () => result.current.setTabataMode(false));
+
+    expect(result.current.draft.tabataMode).toBe(false);
+    expect(result.current.draft.circuitWarmup).toBe(300);
+    expect(result.current.draft.circuitCount).toBe(1);
+    expect(result.current.draft.intervals).toHaveLength(16);
+  });
+});
+
 // ── Preset application delegates (speed/incline/spin) ────────────────────
 
 describe('applySpeedPreset / applyInclinePreset / applySpinPreset', () => {

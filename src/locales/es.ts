@@ -274,6 +274,25 @@ export const es: typeof en = {
     exercisePlaceholder: 'Nombre del ejercicio',
     newCircuitTitle: 'Nuevo Circuito',
     circuit: 'Circuito',
+    tabataMode: 'Modo Tabata',
+    tabataHint: 'Fijado a 8 rondas de 20s de trabajo / 10s de descanso, con 5 min de calentamiento y enfriamiento. Solo se editan los nombres de los ejercicios.',
+    tabataInfoTitle: '¿Qué es un entrenamiento Tabata?',
+    tabataInfoBody:
+      'Origen\n' +
+      'Tabata es un formato de intervalos de alta intensidad definido en un estudio de 1996 dirigido por el Dr. Izumi Tabata en el Instituto Nacional de Fitness y Deportes de Kanoya, Japón. Se basó en las sesiones de intervalos que el entrenador nacional de patinaje de velocidad ya usaba con sus atletas.\n\n' +
+      'La estructura\n' +
+      'Un bloque Tabata son exactamente 8 rondas de 20 segundos de trabajo seguidas de 10 segundos de descanso: 4 minutos en total. En el protocolo original cada ronda es el mismo movimiento, en una bicicleta estática.\n\n' +
+      'La intensidad\n' +
+      'Lo que hace que sea Tabata es el esfuerzo, no el cronómetro. Cada intervalo de 20 segundos es al máximo: los sujetos originales trabajaban a cerca del 170% de su VO₂máx, un ritmo imposible de mantener los 4 minutos completos. Si puedes reservar fuerzas y terminar la ronda 8 con comodidad, no fue un Tabata real. Las rondas 6 a 8 deben resultar apenas repetibles.\n\n' +
+      'Qué desarrolla\n' +
+      'La investigación original mostró mejoras tanto en la capacidad aeróbica (VO₂máx) como en la anaeróbica con el mismo protocolo de 4 minutos, una combinación poco habitual. Funciona mejor con movimientos que permiten alcanzar una intensidad muy alta sin perder la técnica: bicicleta, remo, sentadillas, burpees, escaladores.\n\n' +
+      'Calentamiento y enfriamiento\n' +
+      'Cuatro minutos al máximo castigan los músculos en frío. Un calentamiento completo de unos 5 minutos —cardio progresivo más movilidad dinámica— y un enfriamiento suave de 5 minutos forman parte de la sesión, no son extras opcionales.\n\n' +
+      'En esta app\n' +
+      'El Modo Tabata bloquea los tiempos en el canónico 8 × (20s / 10s) con 5 minutos de calentamiento y enfriamiento. Tú eliges el ejercicio de cada una de las 8 rondas: mantén un solo movimiento para un Tabata clásico, o varíalos para un circuito estilo Tabata.',
+    tabataInfoCaution:
+      'Advertencia\n' +
+      'El Tabata es realmente exigente. Si no estás habituado al ejercicio de alta intensidad, estás embarazada o tienes una afección cardíaca, hipertensión u otro problema de salud, consulta a un médico antes de practicarlo, y detente si sientes mareo, desmayo o dolor en el pecho.',
     spinning:         'Spinning',
     newSpinningTitle: 'Nueva Sesión Spinning',
     spinResistance:   'Resistencia',
@@ -305,6 +324,7 @@ export const es: typeof en = {
     overwriteSpeedMessage: 'Aplicar este preajuste reemplazará tus ajustes de velocidad actuales.',
     overwriteSpinMessage:  'Aplicar este preajuste reemplazará tus ajustes de resistencia y potencia actuales.',
     overwriteInclineMessage: 'Aplicar este preajuste reemplazará tus ajustes de inclinación actuales.',
+    tabataOverwriteMessage: 'El modo Tabata restablecerá tu circuito a 8 rondas de 20s / 10s con 5 min de calentamiento y enfriamiento. Se conservan los nombres de los ejercicios.',
     apply: 'Aplicar',
     cancel: 'Cancelar',
     unsavedTitle: 'Cambios sin guardar',

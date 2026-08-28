@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import {
   KeyboardAvoidingView,
+  Modal,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Switch,
   Text,
@@ -58,7 +60,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     toggleMode,
     openFieldPicker, setFieldEnabled, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
-    openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker,
+    openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker, setTabataMode,
     openSpinResistancePicker, openSpinPowerPicker,
     openIntervalResistancePicker, openIntervalPowerPicker,
     clearIntervalResistance, clearIntervalPower,
@@ -75,11 +77,13 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     previewSegments, previewTotal,
     activityType: draftActivityType, runSpeeds, runInclines, inclineEnabled, spinValues,
     activeTimingPreset, targetLengthMinutes, activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges,
-    circuitWarmup, circuitCooldown, circuitRest, circuitCount,
+    circuitWarmup, circuitCooldown, circuitRest, circuitCount, tabataMode,
   } = draft;
   const isRun = draftActivityType === 'run';
+  const circuitLocked = isCircuit && tabataMode;
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
+  const [showTabataInfo, setShowTabataInfo] = React.useState(false);
   const addPhaseOptions: Phase[] = isCircuit
     ? ['work', 'rest']
     : ['work', 'rest', 'warmup', 'cooldown'];
@@ -281,30 +285,57 @@ export default function EditSessionScreen({ session: existing, activityType, fol
 
           {isCircuit ? (
             <>
+              {/* Tabata mode — locks every timing/count to the canonical 8×(20s/10s) config */}
+              <View style={styles.fieldGroup}>
+                <View style={[styles.modeToggleRow, { justifyContent: 'space-between' }]}>
+                  <View style={styles.modeToggleRow}>
+                    <Text style={[styles.modeToggleLabel, { color: tabataMode ? T.accent : T.subText }]}>{t('edit.tabataMode')}</Text>
+                    <Pressable
+                      onPress={() => setShowTabataInfo(true)}
+                      hitSlop={10}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('edit.tabataInfoTitle')}
+                      style={styles.helpBtn}
+                    >
+                      <Text style={styles.helpBtnText}>?</Text>
+                    </Pressable>
+                  </View>
+                  <Switch
+                    value={tabataMode}
+                    onValueChange={setTabataMode}
+                    trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
+                    thumbColor={T.accent}
+                  />
+                </View>
+                {circuitLocked && (
+                  <Text style={styles.intervalsHint}>{t('edit.tabataHint')}</Text>
+                )}
+              </View>
+
               {/* Circuit config grid */}
               <View style={styles.fieldGroup}>
-                <View style={styles.configGrid}>
+                <View style={[styles.configGrid, circuitLocked && { opacity: 0.45 }]}>
                   <View style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{t('edit.circuitWarmup')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitWarmupPicker}>
+                    <Pressable style={styles.configInput} onPress={openCircuitWarmupPicker} disabled={circuitLocked}>
                       <Text style={styles.configInputText}>{fmtDuration(circuitWarmup)}</Text>
                     </Pressable>
                   </View>
                   <View style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{t('edit.circuitCooldown')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitCooldownPicker}>
+                    <Pressable style={styles.configInput} onPress={openCircuitCooldownPicker} disabled={circuitLocked}>
                       <Text style={styles.configInputText}>{fmtDuration(circuitCooldown)}</Text>
                     </Pressable>
                   </View>
                   <View style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{t('edit.circuitRest')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitRestPicker}>
+                    <Pressable style={styles.configInput} onPress={openCircuitRestPicker} disabled={circuitLocked}>
                       <Text style={styles.configInputText}>{circuitRest > 0 ? fmtDuration(circuitRest) : '—'}</Text>
                     </Pressable>
                   </View>
                   <View style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{t('edit.circuits')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitsPicker}>
+                    <Pressable style={styles.configInput} onPress={openCircuitsPicker} disabled={circuitLocked}>
                       <Text style={styles.configInputText}>{circuitCount}</Text>
                     </Pressable>
                   </View>
@@ -331,6 +362,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     interval={iv}
                     isActive={isActive}
                     drag={drag}
+                    locked={circuitLocked}
                     onDuplicate={() => duplicateInterval(iv._key)}
                     onRemove={() => removeInterval(iv._key)}
                     onCyclePhase={() => cyclePhase(iv._key)}
@@ -341,7 +373,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                 )}
               />
 
-              {renderAddIntervalBar()}
+              {!circuitLocked && renderAddIntervalBar()}
             </>
           ) : isAdvanced ? (
             <>
@@ -645,6 +677,26 @@ export default function EditSessionScreen({ session: existing, activityType, fol
         onDismiss={dismissPicker}
         onCommit={commitPicker}
       />
+
+      <Modal
+        visible={showTabataInfo}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowTabataInfo(false)}
+      >
+        <View style={styles.infoOverlay}>
+          <View style={styles.infoCard}>
+            <Text style={styles.infoTitle}>{t('edit.tabataInfoTitle')}</Text>
+            <ScrollView style={styles.infoScroll} contentContainerStyle={styles.infoScrollContent}>
+              <Text style={styles.infoBody}>{t('edit.tabataInfoBody')}</Text>
+              <Text style={[styles.infoBody, styles.infoCaution]}>{t('edit.tabataInfoCaution')}</Text>
+            </ScrollView>
+            <Pressable onPress={() => setShowTabataInfo(false)} style={styles.infoCloseBtn}>
+              <Text style={styles.infoCloseBtnText}>{t('common.done')}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -698,6 +750,70 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   modeToggleLabel: {
     ...typography.controlLabel,
+  },
+  helpBtn: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: T.subText,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  helpBtnText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 12,
+    lineHeight: 14,
+    color: T.subText,
+  },
+  infoOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  infoCard: {
+    width: '100%',
+    maxWidth: 380,
+    maxHeight: '80%',
+    backgroundColor: T.sheetBg,
+    borderRadius: 16,
+    padding: 20,
+  },
+  infoScroll: {
+    marginTop: 12,
+  },
+  infoScrollContent: {
+    paddingBottom: 4,
+  },
+  infoTitle: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 17,
+    color: T.text,
+  },
+  infoBody: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    lineHeight: 21,
+    color: T.subText,
+  },
+  infoCaution: {
+    marginTop: 16,
+    color: T.phases.warmup,
+    fontFamily: 'Inter_600SemiBold',
+  },
+  infoCloseBtn: {
+    marginTop: 16,
+    paddingVertical: 11,
+    borderRadius: 8,
+    backgroundColor: T.accent,
+    alignItems: 'center',
+  },
+  infoCloseBtnText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 14,
+    color: '#fff',
   },
 
   previewMetaRow: {

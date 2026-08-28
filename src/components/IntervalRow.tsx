@@ -7,6 +7,8 @@ import { useTranslation } from '../hooks/useTranslation';
 export interface IntervalRowProps {
   interval:                Interval;
   isActive:                boolean;
+  // Tabata mode: only the exercise-name field stays interactive; everything else is inert.
+  locked?:                 boolean;
   onCyclePhase:            () => void;
   onOpenPicker:            () => void;
   onDrag:                  () => void;
@@ -27,7 +29,7 @@ export interface IntervalRowProps {
 }
 
 export default function IntervalRow({
-  interval, isActive,
+  interval, isActive, locked,
   onCyclePhase, onOpenPicker, onDrag,
   displaySpeed, onOpenSpeedPicker, onClearSpeed,
   activityLabel, onLabelChange,
@@ -42,11 +44,11 @@ export default function IntervalRow({
 
   return (
     <View style={[styles.intervalRow, isActive && styles.intervalRowActive]}>
-      <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8}>
+      <Pressable onLongPress={onDrag} delayLongPress={150} style={styles.dragHandle} hitSlop={8} disabled={locked}>
         <DragHandle color={T.subText} />
       </Pressable>
 
-      <Pressable onPress={onCyclePhase} style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor }]}>
+      <Pressable onPress={onCyclePhase} disabled={locked} style={[styles.phasePill, { backgroundColor: withOpacity(phaseColor, 0x22), borderColor: phaseColor }, locked && { opacity: 0.5 }]}>
         <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phasesAbbr.' + interval.type)}</Text>
       </Pressable>
 
@@ -120,12 +122,14 @@ export default function IntervalRow({
 
       <Pressable
         onPress={onOpenPicker}
+        disabled={locked}
         style={[
           styles.intervalDuration,
           (displaySpeed !== undefined
             || (onLabelChange !== undefined && interval.type === 'work')
           ) && { flex: 0 },
           (displayResistance !== undefined || displayIncline !== undefined) && { flex: 1, alignItems: 'center', paddingRight: 0 },
+          locked && { opacity: 0.5 },
         ]}
       >
         <View style={[styles.settingChip, { borderColor: T.hairline }]}>

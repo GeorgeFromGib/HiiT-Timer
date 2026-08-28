@@ -174,6 +174,20 @@ export function buildIntervalsFromEasy(cfg: WorkoutConfig): Interval[] {
   return intervals;
 }
 
+// Canonical Tabata: 8 rounds of 20s all-out / 10s rest, 5-minute warmup and cooldown.
+export const TABATA = { rounds: 8, work: 20, rest: 10, warmup: 300, cooldown: 300 } as const;
+
+// 8×(20s work / 10s rest) as a circuit interval list. names[i] labels round i+1's
+// work interval; a missing/blank name is left undefined (shows the placeholder).
+export function buildTabataIntervals(names: (string | undefined)[] = []): Interval[] {
+  const out: Interval[] = [];
+  for (let i = 0; i < TABATA.rounds; i++) {
+    out.push({ type: 'work', dur: TABATA.work, activityLabel: names[i] || undefined });
+    out.push({ type: 'rest', dur: TABATA.rest });
+  }
+  return out;
+}
+
 export function tryConvertToEasy(ivs: Interval[]): ConvertToEasyResult {
   let list = [...ivs];
   let easyWarmup = 0;

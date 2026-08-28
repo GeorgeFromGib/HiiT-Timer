@@ -53,6 +53,7 @@ export interface EditSessionDraft {
   circuitCooldown:     number;
   circuitRest:         number;
   circuitCount:        number;
+  tabataMode:          boolean;
 }
 
 export interface EditSessionInterface {
@@ -86,6 +87,7 @@ export interface EditSessionInterface {
   openCircuitCooldownPicker: () => void;
   openCircuitRestPicker:    () => void;
   openCircuitsPicker:       () => void;
+  setTabataMode:            (on: boolean) => void;
   openSpinResistancePicker:    (field: keyof SpinValues) => void;
   openSpinPowerPicker:         (field: keyof SpinValues) => void;
   openIntervalResistancePicker: (key: string) => void;
@@ -151,8 +153,21 @@ export function useEditSession(
 
   function circuitDraftData() {
     return mode === 'circuit'
-      ? { warmup: circuitEdit.circuitWarmup, cooldown: circuitEdit.circuitCooldown, circuits: circuitEdit.circuitCount, circuitRest: circuitEdit.circuitRest }
+      ? { warmup: circuitEdit.circuitWarmup, cooldown: circuitEdit.circuitCooldown, circuits: circuitEdit.circuitCount, circuitRest: circuitEdit.circuitRest, tabata: circuitEdit.tabata }
       : undefined;
+  }
+
+  // Tabata toggle: on → lock timings/counts to the canonical config and rebuild the
+  // interval list as 8×(20s/10s), keeping the work-interval names the user already typed.
+  // Off → just unlock; values stay. Warns first if there's circuit work to overwrite.
+  function setTabataMode(on: boolean) {
+    if (!on) { circuitEdit.setTabata(false); return; }
+    const apply = () => {
+      const workNames = intervalEdit.intervals.filter(iv => iv.type === 'work').map(iv => iv.activityLabel);
+      circuitEdit.setTabata(true);
+      intervalEdit.setTabataIntervals(workNames);
+    };
+    confirmIfDirty(intervalEdit.hasChanges || circuitEdit.hasChanges, 'alerts.tabataOverwriteMessage', apply);
   }
 
   function warnIfShortDuration(secs: number) {
@@ -423,6 +438,7 @@ export function useEditSession(
     circuitCooldown: circuitEdit.circuitCooldown,
     circuitRest:     circuitEdit.circuitRest,
     circuitCount:    circuitEdit.circuitCount,
+    tabataMode:      circuitEdit.tabata,
   };
 
   return {
@@ -465,6 +481,7 @@ export function useEditSession(
     openCircuitCooldownPicker: pickerState.openCircuitCooldownPicker,
     openCircuitRestPicker:     pickerState.openCircuitRestPicker,
     openCircuitsPicker:        pickerState.openCircuitCountPicker,
+    setTabataMode,
     openSpinResistancePicker:    (field) => pickerState.openSpinResistancePicker(field, speedSpinEdit.spinValues[field]),
     openSpinPowerPicker:         (field) => pickerState.openSpinPowerPicker(field, speedSpinEdit.spinValues[field]),
     openIntervalResistancePicker,

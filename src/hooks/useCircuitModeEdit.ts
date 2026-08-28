@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useDraft } from './useDraft';
+import { TABATA } from '../lib/workout';
 import { type Session } from '../lib/sessions';
 
 export interface CircuitModeEdit {
@@ -7,8 +8,12 @@ export interface CircuitModeEdit {
   circuitCooldown: number;
   circuitRest:     number;
   circuitCount:    number;
+  tabata:          boolean;
   hasChanges:      boolean;
   set:             (field: 'warmup' | 'cooldown' | 'rest' | 'count', value: number) => void;
+  // Toggling Tabata on locks warmup/cooldown/rest/count to the canonical config;
+  // toggling off just unlocks — the values stay put (caller decides what to edit next).
+  setTabata:       (on: boolean) => void;
   reset:           () => void;
 }
 
@@ -19,11 +24,13 @@ export function useCircuitModeEdit(initial: Session | undefined): CircuitModeEdi
   const initC  = initial?.mode === 'circuit' ? initial.cooldown    : DEFAULTS.cooldown;
   const initR  = initial?.mode === 'circuit' ? initial.circuitRest : DEFAULTS.rest;
   const initCt = initial?.mode === 'circuit' ? initial.circuits    : DEFAULTS.count;
+  const initT  = initial?.mode === 'circuit' ? (initial.tabata ?? false) : false;
 
   const [circuitWarmup,   setCircuitWarmup]   = useState(initW);
   const [circuitCooldown, setCircuitCooldown] = useState(initC);
   const [circuitRest,     setCircuitRest]     = useState(initR);
   const [circuitCount,    setCircuitCount]    = useState(initCt);
+  const [tabata,          setTabataState]     = useState(initT);
 
   const stateSetters = {
     warmup:   setCircuitWarmup,
@@ -32,15 +39,25 @@ export function useCircuitModeEdit(initial: Session | undefined): CircuitModeEdi
     count:    setCircuitCount,
   };
 
-  const draft = useDraft({ warmup: initW, cooldown: initC, rest: initR, count: initCt });
+  const draft = useDraft({ warmup: initW, cooldown: initC, rest: initR, count: initCt, tabata: initT });
 
   const hasChanges = useMemo(
-    () => draft.isDirty({ warmup: circuitWarmup, cooldown: circuitCooldown, rest: circuitRest, count: circuitCount }),
-    [circuitWarmup, circuitCooldown, circuitRest, circuitCount],
+    () => draft.isDirty({ warmup: circuitWarmup, cooldown: circuitCooldown, rest: circuitRest, count: circuitCount, tabata }),
+    [circuitWarmup, circuitCooldown, circuitRest, circuitCount, tabata],
   );
 
   function set(field: 'warmup' | 'cooldown' | 'rest' | 'count', value: number) {
     stateSetters[field](value);
+  }
+
+  function setTabata(on: boolean) {
+    setTabataState(on);
+    if (on) {
+      setCircuitWarmup(TABATA.warmup);
+      setCircuitCooldown(TABATA.cooldown);
+      setCircuitRest(0);
+      setCircuitCount(1);
+    }
   }
 
   function reset() {
@@ -48,7 +65,8 @@ export function useCircuitModeEdit(initial: Session | undefined): CircuitModeEdi
     setCircuitCooldown(DEFAULTS.cooldown);
     setCircuitRest(DEFAULTS.rest);
     setCircuitCount(DEFAULTS.count);
+    setTabataState(false);
   }
 
-  return { circuitWarmup, circuitCooldown, circuitRest, circuitCount, hasChanges, set, reset };
+  return { circuitWarmup, circuitCooldown, circuitRest, circuitCount, tabata, hasChanges, set, setTabata, reset };
 }

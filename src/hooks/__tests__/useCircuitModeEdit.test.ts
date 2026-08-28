@@ -95,6 +95,42 @@ describe('useCircuitModeEdit', () => {
     expect(result.current.circuitCount).toBe(3);
   });
 
+  it('setTabata(true) locks warmup/cooldown/rest/count to the canonical Tabata config', async () => {
+    const { result } = await renderHook(() => useCircuitModeEdit(circuitSession));
+
+    await act(async () => result.current.setTabata(true));
+    expect(result.current.tabata).toBe(true);
+    expect(result.current.circuitWarmup).toBe(300);
+    expect(result.current.circuitCooldown).toBe(300);
+    expect(result.current.circuitRest).toBe(0);
+    expect(result.current.circuitCount).toBe(1);
+    expect(result.current.hasChanges).toBe(true);
+  });
+
+  it('setTabata(false) clears the flag but leaves the values in place', async () => {
+    const { result } = await renderHook(() => useCircuitModeEdit(circuitSession));
+
+    await act(async () => result.current.setTabata(true));
+    await act(async () => result.current.setTabata(false));
+
+    expect(result.current.tabata).toBe(false);
+    expect(result.current.circuitWarmup).toBe(300);
+    expect(result.current.circuitCount).toBe(1);
+  });
+
+  it('seeds tabata=true from a saved Tabata circuit with no spurious changes', async () => {
+    const tabataSession: Session = {
+      ...circuitSession, tabata: true, warmup: 300, cooldown: 300, circuitRest: 0, circuits: 1,
+    };
+    const { result } = await renderHook(() => useCircuitModeEdit(tabataSession));
+
+    expect(result.current.tabata).toBe(true);
+    expect(result.current.hasChanges).toBe(false);
+
+    await act(async () => result.current.setTabata(false));
+    expect(result.current.hasChanges).toBe(true);
+  });
+
   it('reset() on a circuit session with values matching DEFAULTS leaves hasChanges reflecting the diff from the original snapshot', async () => {
     // Session equal to DEFAULTS: reset() sets state to DEFAULTS, which differs from the
     // draft's original snapshot (also DEFAULTS here), so hasChanges should be false.

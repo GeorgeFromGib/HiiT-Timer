@@ -8,6 +8,7 @@ import {
   computeRoundsForTargetDuration,
   warmupCooldownForDuration,
   buildIntervalsFromEasy,
+  buildTabataIntervals,
   tryConvertToEasy,
   fmtDuration,
   fmtTimer,
@@ -90,6 +91,34 @@ describe('expandCircuit', () => {
   it('carries activityLabel onto each segment', () => {
     const segs = expandCircuit(intervals, 1, 0, 0, 0);
     expect(segs[0].activityLabel).toBe('Push-ups');
+  });
+});
+
+describe('buildTabataIntervals', () => {
+  it('builds 8 rounds of 20s work / 10s rest', () => {
+    const ivs = buildTabataIntervals();
+    expect(ivs).toHaveLength(16);
+    expect(ivs.filter(iv => iv.type === 'work').every(iv => iv.dur === 20)).toBe(true);
+    expect(ivs.filter(iv => iv.type === 'rest').every(iv => iv.dur === 10)).toBe(true);
+    expect(ivs.filter(iv => iv.type === 'work')).toHaveLength(8);
+  });
+
+  it('labels each round from names[] and leaves gaps undefined', () => {
+    const ivs = buildTabataIntervals(['Squats', undefined, 'Burpees']);
+    const work = ivs.filter(iv => iv.type === 'work');
+    expect(work[0].activityLabel).toBe('Squats');
+    expect(work[1].activityLabel).toBeUndefined();
+    expect(work[2].activityLabel).toBe('Burpees');
+    expect(work[7].activityLabel).toBeUndefined();
+  });
+
+  it('expands through getSessionSegments as a continuous 20/10 block with no circuitRest', () => {
+    const segs = expandCircuit(buildTabataIntervals(), 1, 300, 300, 0);
+    expect(segs.some(s => s.phase === 'circuitRest')).toBe(false);
+    expect(segs[0].phase).toBe('warmup');
+    expect(segs[0].duration).toBe(300);
+    expect(segs[segs.length - 1].phase).toBe('cooldown');
+    expect(totalDuration(segs)).toBe(300 + 8 * (20 + 10) + 300);
   });
 });
 

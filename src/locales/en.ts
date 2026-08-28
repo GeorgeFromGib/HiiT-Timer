@@ -272,6 +272,25 @@ export const en = {
     exercisePlaceholder: 'Exercise name',
     newCircuitTitle: 'New Circuit',
     circuit: 'Circuit',
+    tabataMode: 'Tabata Mode',
+    tabataHint: 'Locked to 8 rounds of 20s work / 10s rest, 5-min warmup and cooldown. Edit exercise names only.',
+    tabataInfoTitle: 'What is a Tabata workout?',
+    tabataInfoBody:
+      'Origin\n' +
+      'Tabata is a high-intensity interval format defined in a 1996 study led by Dr. Izumi Tabata at Japan’s National Institute of Fitness and Sports in Kanoya. It was based on the interval sessions the national speed-skating coach was already using with his athletes.\n\n' +
+      'The structure\n' +
+      'One Tabata block is exactly 8 rounds of 20 seconds of work followed by 10 seconds of rest — 4 minutes in total. In the original protocol every round is the same movement, performed on a stationary bike.\n\n' +
+      'The intensity\n' +
+      'Effort is what makes it Tabata, not the stopwatch. Each 20-second bout is all-out: the original subjects worked at roughly 170% of their VO₂max, a pace that cannot be sustained for the full 4 minutes. If you can hold something back and finish round 8 comfortably, it was not a true Tabata. Rounds 6 to 8 should feel barely repeatable.\n\n' +
+      'What it trains\n' +
+      'The original research showed gains in both aerobic capacity (VO₂max) and anaerobic capacity from the same 4-minute protocol — an unusual combination. It works best with movements that let you reach very high intensity without breaking form: bike, rower, squats, burpees, mountain climbers.\n\n' +
+      'Warm-up and cool-down\n' +
+      'Four all-out minutes are punishing on cold muscles. A full warm-up of about 5 minutes — progressive cardio plus dynamic movement — and an easy 5-minute cool-down are part of the session, not optional extras.\n\n' +
+      'In this app\n' +
+      'Tabata Mode locks the timing to the canonical 8 × (20s / 10s) with a 5-minute warm-up and cool-down. You choose the exercise for each of the 8 rounds: keep one movement for a classic Tabata, or vary them for a Tabata-style circuit.',
+    tabataInfoCaution:
+      'A note of caution\n' +
+      'Tabata is genuinely strenuous. If you are new to high-intensity exercise, are pregnant, or have a heart condition, high blood pressure, or another health concern, talk to a doctor before doing it — and stop if you feel dizzy, faint, or have chest pain.',
     spinning:         'Spinning',
     newSpinningTitle: 'New Spinning',
     spinResistance:   'Resistance',
@@ -303,6 +322,7 @@ export const en = {
     overwriteSpeedMessage: 'Applying this preset will replace your current speed settings.',
     overwriteSpinMessage:  'Applying this preset will replace your current resistance and power settings.',
     overwriteInclineMessage: 'Applying this preset will replace your current incline settings.',
+    tabataOverwriteMessage: 'Tabata mode will reset your circuit to 8 rounds of 20s / 10s with 5-minute warmup and cooldown. Exercise names are kept.',
     apply: 'Apply',
     cancel: 'Cancel',
     unsavedTitle: 'Unsaved changes',

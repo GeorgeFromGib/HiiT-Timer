@@ -1,5 +1,5 @@
 import React, { useRef, useImperativeHandle } from 'react';
-import { Animated, Pressable, StyleSheet, Text } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { ScaleDecorator } from 'react-native-draggable-flatlist';
@@ -12,6 +12,8 @@ interface Props {
   interval:                LocalInterval;
   isActive:                boolean;
   drag:                    () => void;
+  // Tabata mode: no swipe/duplicate/delete/reorder — only the name field stays live.
+  locked?:                 boolean;
   onDuplicate:             () => void;
   onRemove:                () => void;
   onCyclePhase:            () => void;
@@ -62,7 +64,7 @@ const IntervalSwipeDuplicateAction = React.forwardRef<
 });
 
 export default function IntervalSwipeRow({
-  interval, isActive, drag,
+  interval, isActive, drag, locked,
   onDuplicate, onRemove, onCyclePhase, onOpenPicker,
   displaySpeed, onOpenSpeedPicker, onClearSpeed,
   activityLabel, onLabelChange,
@@ -72,6 +74,35 @@ export default function IntervalSwipeRow({
 }: Props) {
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
+
+  const row = (
+    <IntervalRow
+      interval={interval}
+      isActive={isActive}
+      locked={locked}
+      onCyclePhase={onCyclePhase}
+      onOpenPicker={onOpenPicker}
+      onDrag={drag}
+      displaySpeed={displaySpeed}
+      onOpenSpeedPicker={onOpenSpeedPicker}
+      onClearSpeed={onClearSpeed}
+      activityLabel={activityLabel}
+      onLabelChange={onLabelChange}
+      displayResistance={displayResistance}
+      onOpenResistancePicker={onOpenResistancePicker}
+      onClearResistance={onClearResistance}
+      displayPower={displayPower}
+      onOpenPowerPicker={onOpenPowerPicker}
+      onClearPower={onClearPower}
+      displayIncline={displayIncline}
+      onOpenInclinePicker={onOpenInclinePicker}
+      onClearIncline={onClearIncline}
+    />
+  );
+
+  if (locked) {
+    return <View style={styles.intervalSwipeContainer}>{row}</View>;
+  }
 
   return (
     <ScaleDecorator>
@@ -98,27 +129,7 @@ export default function IntervalSwipeRow({
           </Pressable>
         )}
       >
-        <IntervalRow
-          interval={interval}
-          isActive={isActive}
-          onCyclePhase={onCyclePhase}
-          onOpenPicker={onOpenPicker}
-          onDrag={drag}
-          displaySpeed={displaySpeed}
-          onOpenSpeedPicker={onOpenSpeedPicker}
-          onClearSpeed={onClearSpeed}
-          activityLabel={activityLabel}
-          onLabelChange={onLabelChange}
-          displayResistance={displayResistance}
-          onOpenResistancePicker={onOpenResistancePicker}
-          onClearResistance={onClearResistance}
-          displayPower={displayPower}
-          onOpenPowerPicker={onOpenPowerPicker}
-          onClearPower={onClearPower}
-          displayIncline={displayIncline}
-          onOpenInclinePicker={onOpenInclinePicker}
-          onClearIncline={onClearIncline}
-        />
+        {row}
       </ReanimatedSwipeable>
     </ScaleDecorator>
   );

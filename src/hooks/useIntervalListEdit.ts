@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useDraft } from './useDraft';
-import { tryConvertToEasy, buildIntervalsFromEasy, type Interval, type Phase } from '../lib/workout';
+import { tryConvertToEasy, buildIntervalsFromEasy, buildTabataIntervals, type Interval, type Phase } from '../lib/workout';
 import { type Session } from '../lib/sessions';
 import { type LocalInterval, toLocal } from './editSessionTypes';
 
@@ -29,6 +29,8 @@ export interface IntervalListEdit {
   setIntervalPower:        (key: string, value: number) => void;
   clearIntervalPower:      (key: string) => void;
   buildFromEasy:           (config: EasyConfig) => void;
+  // Replace the list with 8×(20s/10s) Tabata pairs, carrying over work-interval names in order.
+  setTabataIntervals:      (workNames: (string | undefined)[]) => void;
   tryConvertToEasy:        typeof tryConvertToEasy;
 }
 
@@ -143,6 +145,10 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
     presetCheckpoint.commit(built);
   }
 
+  function setTabataIntervals(workNames: (string | undefined)[]) {
+    setIntervals(buildTabataIntervals(workNames).map(toLocal));
+  }
+
   return {
     intervals, hasChanges, isTimingDirty,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
@@ -150,6 +156,6 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
     setIntervalDuration, setIntervalSpeed, clearIntervalSpeed,
     setIntervalIncline, clearIntervalIncline,
     setIntervalResistance, clearIntervalResistance, setIntervalPower, clearIntervalPower,
-    buildFromEasy, tryConvertToEasy,
+    buildFromEasy, setTabataIntervals, tryConvertToEasy,
   };
 }
