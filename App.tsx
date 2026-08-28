@@ -24,6 +24,7 @@ import {
 import { ChakraPetch_700Bold } from '@expo-google-fonts/chakra-petch';
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import FoldersScreen from './src/screens/FoldersScreen';
 import SessionsListScreen from './src/screens/SessionsListScreen';
 import WorkoutScreen from './src/screens/WorkoutScreen';
@@ -116,6 +117,12 @@ export default function App() {
 
   useEffect(() => {
     configureAudioSession().catch(() => {}).finally(() => setAudioReady(true));
+  }, []);
+
+  // App is portrait-only everywhere except the active timer, which unlocks
+  // landscape itself while mounted (see WorkoutScreen).
+  useEffect(() => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(() => {});
   }, []);
 
   useEffect(() => {

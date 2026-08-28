@@ -3,7 +3,7 @@
     "name": "Clear HiiT",
     "slug": "hiit-timer",
     "version": "1.3.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/hiit-icon.png",
     "userInterfaceStyle": "light",
     "ios": {
@@ -45,6 +45,7 @@
     ],
     "plugins": [
       "expo-audio",
+      "expo-screen-orientation",
       [
         "expo-splash-screen",
         {

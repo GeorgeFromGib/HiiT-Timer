@@ -139,14 +139,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5E59C9C1300FC72C00C04775 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		5E59C9C1300FC72C00C04775 /* Exceptions for "ClearHiiTWatch Watch App" folder in "ClearHiiTWatch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 5E59C9A5300FC71E00C04775 /* ClearHiiTWatch Watch App */;
 		};
-		5EDC6737301A07DA00D89195 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		5EDC6737301A07DA00D89195 /* Exceptions for "ClearHiiTWatchComplication" folder in "ClearHiiTWatchComplicationExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -156,9 +156,41 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		5E21ECC430115DB0003B942C /* ClearHiiTTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ClearHiiTTests; sourceTree = "<group>"; };
-		5E59C9A7300FC71F00C04775 /* ClearHiiTWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5E59C9C1300FC72C00C04775 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ClearHiiTWatch Watch App"; sourceTree = "<group>"; };
-		5EDC6726301A07D700D89195 /* ClearHiiTWatchComplication */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (5EDC6737301A07DA00D89195 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ClearHiiTWatchComplication; sourceTree = "<group>"; };
+		5E21ECC430115DB0003B942C /* ClearHiiTTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = ClearHiiTTests;
+			sourceTree = "<group>";
+		};
+		5E59C9A7300FC71F00C04775 /* ClearHiiTWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5E59C9C1300FC72C00C04775 /* Exceptions for "ClearHiiTWatch Watch App" folder in "ClearHiiTWatch Watch App" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = "ClearHiiTWatch Watch App";
+			sourceTree = "<group>";
+		};
+		5EDC6726301A07D700D89195 /* ClearHiiTWatchComplication */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5EDC6737301A07DA00D89195 /* Exceptions for "ClearHiiTWatchComplication" folder in "ClearHiiTWatchComplicationExtension" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = ClearHiiTWatchComplication;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -391,8 +423,6 @@
 				5EDC6726301A07D700D89195 /* ClearHiiTWatchComplication */,
 			);
 			name = ClearHiiTWatchComplicationExtension;
-			packageProductDependencies = (
-			);
 			productName = ClearHiiTWatchComplicationExtension;
 			productReference = 5EDC6721301A07D700D89195 /* ClearHiiTWatchComplicationExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -987,6 +1017,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.watchkitapp.ClearHiiTWatchComplication;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
@@ -1037,6 +1068,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.georgefromgib.hiittimer.watchkitapp.ClearHiiTWatchComplication;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;

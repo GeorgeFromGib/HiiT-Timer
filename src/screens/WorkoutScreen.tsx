@@ -1,5 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -27,12 +28,13 @@ import ScreenHeader from '../components/ScreenHeader';
 import WorkoutIcon from '../components/WorkoutIcon';
 import ActivityTypeIcon from '../components/ActivityTypeIcon';
 import GhostBtn  from '../components/GhostBtn';
+import ExtendControls from '../components/ExtendControls';
+import CircuitSetCounter from '../components/CircuitSetCounter';
 import SessionCompleteScreen from './SessionCompleteScreen';
+import WorkoutScreenLandscape from './WorkoutScreenLandscape';
 import { checkAndRequestReview } from '../lib/reviewState';
 import { updateLiveSession, type LiveSessionState } from '../lib/liveSessionSync';
 import { useLiveSessionMirror } from '../hooks/useLiveSessionMirror';
-
-const EXTEND_OPTIONS = [5, 10] as const;
 
 export default function WorkoutScreen({
   session, onBack, initialResumeElapsed, initialStatus, incomingLiveSession, onLiveSessionDismiss,
@@ -55,10 +57,14 @@ export default function WorkoutScreen({
   }, [settings.keepScreenAwake]);
 
   const { T, themeKey } = useTheme();
-  const { height: screenHeight } = useWindowDimensions();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const isLandscape = screenWidth > screenHeight;
   // Scale down when screen is logically smaller (Display Zoom or small device).
   // Also account for the user's Larger Text preference so we don't overflow.
-  const uiScale = Math.min(1, (screenHeight / 844) / Math.max(1, PixelRatio.getFontScale()));
+  const fontScale = Math.max(1, PixelRatio.getFontScale());
+  const uiScale = Math.min(1, (screenHeight / 844) / fontScale);
+  // Landscape scales off the long edge so text doesn't collapse when width/height swap.
+  const landscapeScale = Math.min(1, (Math.max(screenWidth, screenHeight) / 844) / fontScale);
   const styles = useMemo(() => makeStyles(T, uiScale), [T, uiScale]);
 
   const initialSegments = useMemo(() => getSessionSegments(session), [session]);
@@ -170,6 +176,19 @@ export default function WorkoutScreen({
     return () => { if (reviewTimerRef.current) clearTimeout(reviewTimerRef.current); };
   }, [status, stats.skippedCount]);
 
+  // The rest of the app is portrait-locked (App.tsx). The active timer allows
+  // landscape while running, but the completion screen is portrait-only.
+  useEffect(() => {
+    ScreenOrientation.lockAsync(
+      status === 'finished'
+        ? ScreenOrientation.OrientationLock.PORTRAIT_UP
+        : ScreenOrientation.OrientationLock.DEFAULT,
+    ).catch(() => {});
+  }, [status]);
+  useEffect(() => () => {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch(() => {});
+  }, []);
+
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
   const seg            = segments[effectiveIndex];
   const nextSeg        = segments[effectiveIndex + 1];
@@ -218,6 +237,33 @@ export default function WorkoutScreen({
         showConfetti={settings.congratsMessage}
         onDone={onBack}
         onRepeat={reset}
+      />
+    );
+  }
+
+  if (isLandscape) {
+    return (
+      <WorkoutScreenLandscape
+        session={session}
+        segments={segments}
+        currentIndex={currentIndex}
+        totalDur={TOTAL_DUR}
+        status={status}
+        displayCountdown={displayCountdown}
+        flashing={flashing}
+        intervalNum={intervalNum}
+        pct={pct}
+        displayRemaining={displayRemaining}
+        progress={progressAnim}
+        scale={landscapeScale}
+        screenWidth={screenWidth}
+        onPlayPause={handlePlayPause}
+        onSkip={handleSkip}
+        onSkipBack={handleSkipBack}
+        onReset={reset}
+        onExtend={handleExtend}
+        onAddRound={appendLastTwo}
+        onBack={handleBackPress}
       />
     );
   }
@@ -353,35 +399,24 @@ export default function WorkoutScreen({
           </View>
 
           {!isPreStart && (
-            session.mode === 'circuit' ? (
-              // Tabata is a single locked round — the "SET x / y" counter would only ever read "1 / 1".
-              session.tabata ? null :
-              seg.circuitNumber !== undefined ? (
-                <Text style={[styles.intervalCounter, { color: T.onBg }]}>
-                  {t('workout.circuit')} {seg.circuitNumber} / {session.circuits}
-                </Text>
-              ) : seg.phase === 'circuitRest' && nextSeg?.circuitNumber !== undefined ? (
-                <Text style={[styles.intervalCounter, { color: T.onBg }]}>
-                  {t('workout.nextCircuit')} {nextSeg.circuitNumber} / {session.circuits}
-                </Text>
-              ) : null
-            ) : (
-              <View style={styles.extendRow}>
-                <View style={styles.extendLeft}>
-                  {EXTEND_OPTIONS.map((secs) => (
-                    <GhostBtn key={secs} onPress={() => handleExtend(secs)} disabled={isIdle} color={phaseColor} size={68}>
-                      <Text style={[styles.intervalCounter, { color: phaseColor }]}>{`+${secs}s`}</Text>
-                    </GhostBtn>
-                  ))}
-                </View>
-                <GhostBtn onPress={appendLastTwo} disabled={isIdle} color={phaseColor} size={68}>
-                  <Text style={[styles.intervalCounter, { color: phaseColor }]}>
-                    {'+1 '}
-                    <Text style={styles.roundAbbr}>{t('workout.roundAbbr')}</Text>
-                  </Text>
-                </GhostBtn>
-              </View>
-            )
+            <>
+              <CircuitSetCounter
+                session={session}
+                seg={seg}
+                nextSeg={nextSeg}
+                style={[styles.intervalCounter, { color: T.onBg }]}
+              />
+              {session.mode !== 'circuit' && (
+                <ExtendControls
+                  onExtend={handleExtend}
+                  onAddRound={appendLastTwo}
+                  color={phaseColor}
+                  disabled={isIdle}
+                  spread
+                  style={styles.extendRow}
+                />
+              )}
+            </>
           )}
         </View>
       </View>
@@ -616,20 +651,8 @@ function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
     letterSpacing: 19 * 0.08,
     color: T.onBg,
   },
-  roundAbbr: {
-    fontSize: Math.round(13 * s),
-    letterSpacing: 13 * 0.08,
-  },
   extendRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    alignSelf: 'stretch',
     marginHorizontal: 16,
-  },
-  extendLeft: {
-    flexDirection: 'row',
-    gap: 12,
   },
   progressTrack: {
     alignSelf: 'stretch',
