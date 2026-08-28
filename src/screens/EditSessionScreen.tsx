@@ -41,14 +41,14 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 
 interface Props {
   session?: Session;
-  activityType?: 'general' | 'run' | 'circuit' | 'spinning';
+  activityType?: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata';
   folderId?: string;
   onBack: () => void;
 }
 
 export default function EditSessionScreen({ session: existing, activityType, folderId, onBack }: Props) {
   const { T } = useTheme();
-  const { settings } = useSettings();
+  const { settings, updateSettings } = useSettings();
   const { t } = useTranslation();
   const isMiles = settings.speedUnit === 'miles';
   const styles = useMemo(() => makeStyles(T), [T]);
@@ -60,7 +60,8 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     toggleMode,
     openFieldPicker, setFieldEnabled, openRoundsPicker, openIntervalPicker, openSpeedPicker,
     openIntervalSpeedPicker, clearIntervalSpeed,
-    openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker, setTabataMode,
+    openCircuitWarmupPicker, openCircuitCooldownPicker, openCircuitRestPicker, openCircuitsPicker,
+    openTabataWarmupPicker, openTabataCooldownPicker,
     openSpinResistancePicker, openSpinPowerPicker,
     openIntervalResistancePicker, openIntervalPowerPicker,
     clearIntervalResistance, clearIntervalPower,
@@ -84,17 +85,31 @@ export default function EditSessionScreen({ session: existing, activityType, fol
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
   const [showTabataInfo, setShowTabataInfo] = React.useState(false);
+
+  // First Tabata session a user creates: auto-open the "What is a Tabata workout?"
+  // writeup once, then remember it so it never auto-shows again.
+  const tabataIntroShownRef = React.useRef(false);
+  React.useEffect(() => {
+    if (tabataIntroShownRef.current) return;
+    if (isEditing || !circuitLocked || settings.tabataIntroSeen) return;
+    tabataIntroShownRef.current = true;
+    setShowTabataInfo(true);
+    updateSettings('tabataIntroSeen', true);
+  }, [isEditing, circuitLocked, settings.tabataIntroSeen, updateSettings]);
+
   const addPhaseOptions: Phase[] = isCircuit
     ? ['work', 'rest']
     : ['work', 'rest', 'warmup', 'cooldown'];
 
   const editorTitle = isEditing
     ? t('edit.editTitle')
-    : isCircuit
-      ? t('edit.newCircuitTitle')
-      : isSpinning
-        ? t('edit.newSpinningTitle')
-        : t('edit.newTitle');
+    : circuitLocked
+      ? t('edit.newTabataTitle')
+      : isCircuit
+        ? t('edit.newCircuitTitle')
+        : isSpinning
+          ? t('edit.newSpinningTitle')
+          : t('edit.newTitle');
 
   // Warm-up and cool-down get their own toggleable rows (see easy-mode block below); this grid is work/rest only.
   const timeFields: { label: string; field: TimeField }[] = [
@@ -197,6 +212,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           right={
             <ActivityTypeIcon
               mode={isCircuit ? 'circuit' : 'easy'}
+              tabata={circuitLocked}
               activityType={draftActivityType}
               size={32}
             />
@@ -247,7 +263,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                   {fmtDuration(previewTotal)} · {previewSegments.length} {t('common.intervals')}
                 </Text>
                 <Text style={styles.previewMeta}>
-                  {isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : isSpinning ? t('edit.spinning') : t('edit.general')}
+                  {circuitLocked ? t('edit.tabata') : isCircuit ? t('edit.circuit') : isRun ? t('edit.run') : isSpinning ? t('edit.spinning') : t('edit.general')}
                 </Text>
               </View>
             </View>
@@ -285,60 +301,59 @@ export default function EditSessionScreen({ session: existing, activityType, fol
 
           {isCircuit ? (
             <>
-              {/* Tabata mode — locks every timing/count to the canonical 8×(20s/10s) config */}
-              <View style={styles.fieldGroup}>
-                <View style={[styles.modeToggleRow, { justifyContent: 'space-between' }]}>
-                  <View style={styles.modeToggleRow}>
-                    <Text style={[styles.modeToggleLabel, { color: tabataMode ? T.accent : T.subText }]}>{t('edit.tabataMode')}</Text>
-                    <Pressable
-                      onPress={() => setShowTabataInfo(true)}
-                      hitSlop={10}
-                      accessibilityRole="button"
-                      accessibilityLabel={t('edit.tabataInfoTitle')}
-                      style={styles.helpBtn}
-                    >
-                      <Text style={styles.helpBtnText}>?</Text>
-                    </Pressable>
-                  </View>
-                  <Switch
-                    value={tabataMode}
-                    onValueChange={setTabataMode}
-                    trackColor={{ false: selectedBorder(T.accent), true: selectedBorder(T.accent) }}
-                    thumbColor={T.accent}
-                  />
+              {/* Tabata: locked to the canonical 8×(20s/10s) config — tap the hint for the what/why */}
+              {circuitLocked && (
+                <View style={styles.fieldGroup}>
+                  <Pressable
+                    onPress={() => setShowTabataInfo(true)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('edit.tabataInfoTitle')}
+                  >
+                    <Text style={styles.intervalsHint}>
+                      {t('edit.tabataHint')}{' '}
+                      <Text style={styles.tabataInfoLink}>{t('edit.tabataInfoLink')}</Text>
+                    </Text>
+                  </Pressable>
                 </View>
-                {circuitLocked && (
-                  <Text style={styles.intervalsHint}>{t('edit.tabataHint')}</Text>
-                )}
-              </View>
+              )}
 
-              {/* Circuit config grid */}
+              {/* Circuit config grid — Tabata shows only warmup/cooldown (tap to cycle 3–5 min) */}
               <View style={styles.fieldGroup}>
-                <View style={[styles.configGrid, circuitLocked && { opacity: 0.45 }]}>
+                <View style={styles.configGrid}>
                   <View style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{t('edit.circuitWarmup')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitWarmupPicker} disabled={circuitLocked}>
+                    <Pressable
+                      style={styles.configInput}
+                      onPress={circuitLocked ? openTabataWarmupPicker : openCircuitWarmupPicker}
+                    >
                       <Text style={styles.configInputText}>{fmtDuration(circuitWarmup)}</Text>
                     </Pressable>
                   </View>
                   <View style={styles.configCell}>
                     <Text style={styles.configCellLabel}>{t('edit.circuitCooldown')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitCooldownPicker} disabled={circuitLocked}>
+                    <Pressable
+                      style={styles.configInput}
+                      onPress={circuitLocked ? openTabataCooldownPicker : openCircuitCooldownPicker}
+                    >
                       <Text style={styles.configInputText}>{fmtDuration(circuitCooldown)}</Text>
                     </Pressable>
                   </View>
-                  <View style={styles.configCell}>
-                    <Text style={styles.configCellLabel}>{t('edit.circuitRest')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitRestPicker} disabled={circuitLocked}>
-                      <Text style={styles.configInputText}>{circuitRest > 0 ? fmtDuration(circuitRest) : '—'}</Text>
-                    </Pressable>
-                  </View>
-                  <View style={styles.configCell}>
-                    <Text style={styles.configCellLabel}>{t('edit.circuits')}</Text>
-                    <Pressable style={styles.configInput} onPress={openCircuitsPicker} disabled={circuitLocked}>
-                      <Text style={styles.configInputText}>{circuitCount}</Text>
-                    </Pressable>
-                  </View>
+                  {!circuitLocked && (
+                    <>
+                      <View style={styles.configCell}>
+                        <Text style={styles.configCellLabel}>{t('edit.circuitRest')}</Text>
+                        <Pressable style={styles.configInput} onPress={openCircuitRestPicker}>
+                          <Text style={styles.configInputText}>{circuitRest > 0 ? fmtDuration(circuitRest) : '—'}</Text>
+                        </Pressable>
+                      </View>
+                      <View style={styles.configCell}>
+                        <Text style={styles.configCellLabel}>{t('edit.circuits')}</Text>
+                        <Pressable style={styles.configInput} onPress={openCircuitsPicker}>
+                          <Text style={styles.configInputText}>{circuitCount}</Text>
+                        </Pressable>
+                      </View>
+                    </>
+                  )}
                 </View>
               </View>
 
@@ -730,6 +745,11 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
     fontSize: 11,
     color: T.faintText,
   },
+  tabataInfoLink: {
+    fontFamily: 'Inter_600SemiBold',
+    color: T.accent,
+    textDecorationLine: 'underline',
+  },
 
   textInput: {
     backgroundColor: T.ghostBg,
@@ -750,21 +770,6 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   },
   modeToggleLabel: {
     ...typography.controlLabel,
-  },
-  helpBtn: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: T.subText,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  helpBtnText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 12,
-    lineHeight: 14,
-    color: T.subText,
   },
   infoOverlay: {
     flex: 1,

@@ -272,8 +272,10 @@ export const en = {
     exercisePlaceholder: 'Exercise name',
     newCircuitTitle: 'New Circuit',
     circuit: 'Circuit',
-    tabataMode: 'Tabata Mode',
-    tabataHint: 'Locked to 8 rounds of 20s work / 10s rest, 5-min warmup and cooldown. Edit exercise names only.',
+    tabata: 'Tabata',
+    newTabataTitle: 'New Tabata',
+    tabataHint: 'Locked to 8 rounds of 20s work / 10s rest. Tap warm-up / cool-down to set 3–5 min; edit exercise names only.',
+    tabataInfoLink: 'What is a Tabata workout?',
     tabataInfoTitle: 'What is a Tabata workout?',
     tabataInfoBody:
       'Origin\n' +
@@ -287,7 +289,7 @@ export const en = {
       'Warm-up and cool-down\n' +
       'Four all-out minutes are punishing on cold muscles. A full warm-up of about 5 minutes — progressive cardio plus dynamic movement — and an easy 5-minute cool-down are part of the session, not optional extras.\n\n' +
       'In this app\n' +
-      'Tabata Mode locks the timing to the canonical 8 × (20s / 10s) with a 5-minute warm-up and cool-down. You choose the exercise for each of the 8 rounds: keep one movement for a classic Tabata, or vary them for a Tabata-style circuit.',
+      'A Tabata session locks the timing to the canonical 8 × (20s / 10s) with a 3–5 minute warm-up and cool-down. You choose the exercise for each of the 8 rounds: keep one movement for a classic Tabata, or vary them for a Tabata-style circuit.',
     tabataInfoCaution:
       'A note of caution\n' +
       'Tabata is genuinely strenuous. If you are new to high-intensity exercise, are pregnant, or have a heart condition, high blood pressure, or another health concern, talk to a doctor before doing it — and stop if you feel dizzy, faint, or have chest pain.',
@@ -322,7 +324,6 @@ export const en = {
     overwriteSpeedMessage: 'Applying this preset will replace your current speed settings.',
     overwriteSpinMessage:  'Applying this preset will replace your current resistance and power settings.',
     overwriteInclineMessage: 'Applying this preset will replace your current incline settings.',
-    tabataOverwriteMessage: 'Tabata mode will reset your circuit to 8 rounds of 20s / 10s with 5-minute warmup and cooldown. Exercise names are kept.',
     apply: 'Apply',
     cancel: 'Cancel',
     unsavedTitle: 'Unsaved changes',

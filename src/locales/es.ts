@@ -274,8 +274,10 @@ export const es: typeof en = {
     exercisePlaceholder: 'Nombre del ejercicio',
     newCircuitTitle: 'Nuevo Circuito',
     circuit: 'Circuito',
-    tabataMode: 'Modo Tabata',
-    tabataHint: 'Fijado a 8 rondas de 20s de trabajo / 10s de descanso, con 5 min de calentamiento y enfriamiento. Solo se editan los nombres de los ejercicios.',
+    tabata: 'Tabata',
+    newTabataTitle: 'Nuevo Tabata',
+    tabataHint: 'Fijado a 8 rondas de 20s de trabajo / 10s de descanso. Toca calentamiento / enfriamiento para elegir 3–5 min; solo se editan los nombres de los ejercicios.',
+    tabataInfoLink: '¿Qué es un entrenamiento Tabata?',
     tabataInfoTitle: '¿Qué es un entrenamiento Tabata?',
     tabataInfoBody:
       'Origen\n' +
@@ -289,7 +291,7 @@ export const es: typeof en = {
       'Calentamiento y enfriamiento\n' +
       'Cuatro minutos al máximo castigan los músculos en frío. Un calentamiento completo de unos 5 minutos —cardio progresivo más movilidad dinámica— y un enfriamiento suave de 5 minutos forman parte de la sesión, no son extras opcionales.\n\n' +
       'En esta app\n' +
-      'El Modo Tabata bloquea los tiempos en el canónico 8 × (20s / 10s) con 5 minutos de calentamiento y enfriamiento. Tú eliges el ejercicio de cada una de las 8 rondas: mantén un solo movimiento para un Tabata clásico, o varíalos para un circuito estilo Tabata.',
+      'Una sesión Tabata bloquea los tiempos en el canónico 8 × (20s / 10s) con 3–5 minutos de calentamiento y enfriamiento. Tú eliges el ejercicio de cada una de las 8 rondas: mantén un solo movimiento para un Tabata clásico, o varíalos para un circuito estilo Tabata.',
     tabataInfoCaution:
       'Advertencia\n' +
       'El Tabata es realmente exigente. Si no estás habituado al ejercicio de alta intensidad, estás embarazada o tienes una afección cardíaca, hipertensión u otro problema de salud, consulta a un médico antes de practicarlo, y detente si sientes mareo, desmayo o dolor en el pecho.',
@@ -324,7 +326,6 @@ export const es: typeof en = {
     overwriteSpeedMessage: 'Aplicar este preajuste reemplazará tus ajustes de velocidad actuales.',
     overwriteSpinMessage:  'Aplicar este preajuste reemplazará tus ajustes de resistencia y potencia actuales.',
     overwriteInclineMessage: 'Aplicar este preajuste reemplazará tus ajustes de inclinación actuales.',
-    tabataOverwriteMessage: 'El modo Tabata restablecerá tu circuito a 8 rondas de 20s / 10s con 5 min de calentamiento y enfriamiento. Se conservan los nombres de los ejercicios.',
     apply: 'Aplicar',
     cancel: 'Cancelar',
     unsavedTitle: 'Cambios sin guardar',

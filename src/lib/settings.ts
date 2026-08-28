@@ -21,6 +21,9 @@ export interface Settings {
   hideFolders: boolean;
   onboardingVersion: number;
   name: string;
+  // Set once the "What is a Tabata workout?" writeup has been auto-shown on the first
+  // Tabata session the user creates.
+  tabataIntroSeen: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -42,6 +45,7 @@ export const DEFAULT_SETTINGS: Settings = {
   hideFolders: true,
   onboardingVersion: 0,
   name: '',
+  tabataIntroSeen: false,
 };
 
 const SETTINGS_FILE = 'settings_v1.json';

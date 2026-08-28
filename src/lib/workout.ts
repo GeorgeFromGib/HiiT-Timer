@@ -177,6 +177,9 @@ export function buildIntervalsFromEasy(cfg: WorkoutConfig): Interval[] {
 // Canonical Tabata: 8 rounds of 20s all-out / 10s rest, 5-minute warmup and cooldown.
 export const TABATA = { rounds: 8, work: 20, rest: 10, warmup: 300, cooldown: 300 } as const;
 
+// The only warmup/cooldown lengths a Tabata session allows — tapped to cycle, 3–5 min.
+export const TABATA_WARMUP_COOLDOWN_STEPS: readonly number[] = [180, 240, 300];
+
 // 8×(20s work / 10s rest) as a circuit interval list. names[i] labels round i+1's
 // work interval; a missing/blank name is left undefined (shows the placeholder).
 export function buildTabataIntervals(names: (string | undefined)[] = []): Interval[] {

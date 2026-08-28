@@ -95,27 +95,22 @@ describe('useCircuitModeEdit', () => {
     expect(result.current.circuitCount).toBe(3);
   });
 
-  it('setTabata(true) locks warmup/cooldown/rest/count to the canonical Tabata config', async () => {
-    const { result } = await renderHook(() => useCircuitModeEdit(circuitSession));
+  it('startTabata seeds the canonical locked config for a brand-new Tabata session', async () => {
+    const { result } = await renderHook(() => useCircuitModeEdit(undefined, true));
 
-    await act(async () => result.current.setTabata(true));
     expect(result.current.tabata).toBe(true);
     expect(result.current.circuitWarmup).toBe(300);
     expect(result.current.circuitCooldown).toBe(300);
     expect(result.current.circuitRest).toBe(0);
     expect(result.current.circuitCount).toBe(1);
-    expect(result.current.hasChanges).toBe(true);
+    expect(result.current.hasChanges).toBe(false);
   });
 
-  it('setTabata(false) clears the flag but leaves the values in place', async () => {
-    const { result } = await renderHook(() => useCircuitModeEdit(circuitSession));
-
-    await act(async () => result.current.setTabata(true));
-    await act(async () => result.current.setTabata(false));
+  it('an existing circuit session ignores startTabata and keeps its saved values', async () => {
+    const { result } = await renderHook(() => useCircuitModeEdit(circuitSession, true));
 
     expect(result.current.tabata).toBe(false);
-    expect(result.current.circuitWarmup).toBe(300);
-    expect(result.current.circuitCount).toBe(1);
+    expect(result.current.circuitWarmup).toBe(15);
   });
 
   it('seeds tabata=true from a saved Tabata circuit with no spurious changes', async () => {
@@ -126,9 +121,6 @@ describe('useCircuitModeEdit', () => {
 
     expect(result.current.tabata).toBe(true);
     expect(result.current.hasChanges).toBe(false);
-
-    await act(async () => result.current.setTabata(false));
-    expect(result.current.hasChanges).toBe(true);
   });
 
   it('reset() on a circuit session with values matching DEFAULTS leaves hasChanges reflecting the diff from the original snapshot', async () => {

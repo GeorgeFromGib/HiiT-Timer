@@ -79,9 +79,11 @@ export function spinValueForPhase(phase: Phase, values: SpinValues): { resistanc
 export type Session =
   | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
   | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
-  // `tabata`: circuit built via the locked Tabata toggle. Editor-only flag — the expanded
-  // segments are an ordinary circuit, so Swift/widgets need no change. ponytail: add to
-  // SessionDTO only if native ever needs to show a "Tabata" badge.
+  // `tabata`: session created as the Tabata type — a circuit locked to the canonical
+  // 8×(20s/10s) + 5-min warmup/cooldown protocol. Set once at creation, never toggled.
+  // Editor/display-only flag — the expanded segments are an ordinary circuit, so
+  // Swift/widgets need no change. ponytail: add to SessionDTO only if native ever needs
+  // to show a "Tabata" badge.
   | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number; tabata?: boolean };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {

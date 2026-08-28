@@ -354,6 +354,8 @@ export default function WorkoutScreen({
 
           {!isPreStart && (
             session.mode === 'circuit' ? (
+              // Tabata is a single locked round — the "SET x / y" counter would only ever read "1 / 1".
+              session.tabata ? null :
               seg.circuitNumber !== undefined ? (
                 <Text style={[styles.intervalCounter, { color: T.onBg }]}>
                   {t('workout.circuit')} {seg.circuitNumber} / {session.circuits}

@@ -687,17 +687,14 @@ describe('circuit pickers', () => {
   });
 });
 
-// ── Tabata mode ─────────────────────────────────────────────────────────
+// ── Tabata session type ─────────────────────────────────────────────────
 
-describe('setTabataMode', () => {
-  it('on a fresh circuit, applies immediately: locks config and builds 8×(20s/10s)', async () => {
-    const alert = await renderAlertObserver();
-    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'circuit'));
-
-    await act(async () => result.current.setTabataMode(true));
-    expect(alert.current).toBeNull();
+describe('initialActivityType "tabata"', () => {
+  it('starts a new session as a circuit locked to the canonical 8×(20s/10s) config', async () => {
+    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'tabata'));
 
     const d = result.current.draft;
+    expect(d.isCircuit).toBe(true);
     expect(d.tabataMode).toBe(true);
     expect(d.circuitWarmup).toBe(300);
     expect(d.circuitCooldown).toBe(300);
@@ -706,29 +703,12 @@ describe('setTabataMode', () => {
     expect(d.intervals).toHaveLength(16);
     expect(d.intervals.filter(iv => iv.type === 'work').every(iv => iv.dur === 20)).toBe(true);
     expect(d.intervals.filter(iv => iv.type === 'rest').every(iv => iv.dur === 10)).toBe(true);
-  });
-
-  it('warns before overwriting an edited circuit, and carries work names onto the 8 rounds once confirmed', async () => {
-    const alert = await renderAlertObserver();
-    const { result } = await renderHook(() => useEditSession(circuitSession, onBack)); // work "Push-ups" + rest
-
-    await act(async () => result.current.setActivityLabel(result.current.draft.intervals[0]._key, 'Squats'));
-    await act(async () => result.current.setTabataMode(true));
-    expect(alert.current?.title).toBe(i18n.t('alerts.overwriteTitle'));
-    expect(result.current.draft.tabataMode).toBe(false); // not applied yet
-
-    await act(async () => alert.current!.buttons[1].onPress?.());
-    const work = result.current.draft.intervals.filter(iv => iv.type === 'work');
-    expect(result.current.draft.tabataMode).toBe(true);
-    expect(work).toHaveLength(8);
-    expect(work[0].activityLabel).toBe('Squats');
-    expect(work[1].activityLabel).toBeUndefined();
+    expect(d.hasChanges).toBe(false);
   });
 
   it('buildSavePayload persists tabata:true with the expanded interval list', async () => {
-    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'circuit'));
+    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'tabata'));
     await act(async () => result.current.setName('Tabata One'));
-    await act(async () => result.current.setTabataMode(true));
 
     const payload = result.current.buildSavePayload();
     expect(payload.ok).toBe(true);
@@ -742,15 +722,27 @@ describe('setTabataMode', () => {
     }
   });
 
-  it('turning it back off clears the flag but keeps the values', async () => {
+  it('a plain "circuit" session is not locked', async () => {
     const { result } = await renderHook(() => useEditSession(undefined, onBack, 'circuit'));
-    await act(async () => result.current.setTabataMode(true));
-    await act(async () => result.current.setTabataMode(false));
-
+    expect(result.current.draft.isCircuit).toBe(true);
     expect(result.current.draft.tabataMode).toBe(false);
-    expect(result.current.draft.circuitWarmup).toBe(300);
-    expect(result.current.draft.circuitCount).toBe(1);
-    expect(result.current.draft.intervals).toHaveLength(16);
+  });
+
+  it('the warmup/cooldown pickers are a minutes wheel limited to 3–5, seeded at the current value', async () => {
+    const { result } = await renderHook(() => useEditSession(undefined, onBack, 'tabata'));
+
+    await act(async () => result.current.openTabataWarmupPicker());
+    expect(result.current.picker?.columns).toHaveLength(1);
+    expect(result.current.picker?.columns[0].values).toEqual(['3', '4', '5']);
+    expect(result.current.picker?.selected).toEqual([2]); // seeded at 5 min
+
+    await act(async () => result.current.commitPicker({ selected: [0] }));
+    expect(result.current.draft.circuitWarmup).toBe(180);
+
+    await act(async () => result.current.openTabataCooldownPicker());
+    await act(async () => result.current.commitPicker({ selected: [1] }));
+    expect(result.current.draft.circuitCooldown).toBe(240);
+    expect(result.current.draft.circuitWarmup).toBe(180);
   });
 });
 

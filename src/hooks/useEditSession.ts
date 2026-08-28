@@ -87,7 +87,8 @@ export interface EditSessionInterface {
   openCircuitCooldownPicker: () => void;
   openCircuitRestPicker:    () => void;
   openCircuitsPicker:       () => void;
-  setTabataMode:            (on: boolean) => void;
+  openTabataWarmupPicker:   () => void;
+  openTabataCooldownPicker: () => void;
   openSpinResistancePicker:    (field: keyof SpinValues) => void;
   openSpinPowerPicker:         (field: keyof SpinValues) => void;
   openIntervalResistancePicker: (key: string) => void;
@@ -104,15 +105,19 @@ export interface EditSessionInterface {
 export function useEditSession(
   existing: Session | undefined,
   onBack: () => void,
-  initialActivityType?: 'general' | 'run' | 'circuit' | 'spinning',
+  initialActivityType?: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata',
   folderId?: string,
 ): EditSessionInterface {
   const sessionFolderId = existing?.folderId ?? folderId ?? 'default';
 
+  // Tabata is its own session type but stored as a locked circuit — a brand-new one
+  // starts in circuit mode with the canonical config + 8×(20s/10s) interval list seeded.
+  const startTabata = !existing && initialActivityType === 'tabata';
+
   const [name, setName] = useState(existing?.name ?? '');
   const [mode, setMode] = useState<'easy' | 'advanced' | 'circuit'>(() => {
     if (existing) return existing.mode;
-    if (initialActivityType === 'circuit') return 'circuit';
+    if (initialActivityType === 'circuit' || initialActivityType === 'tabata') return 'circuit';
     return 'easy';
   });
 
@@ -142,8 +147,8 @@ export function useEditSession(
 
   // Mode sub-hooks
   const easyEdit     = useEasyModeEdit(existing);
-  const circuitEdit  = useCircuitModeEdit(existing);
-  const intervalEdit = useIntervalListEdit(existing);
+  const circuitEdit  = useCircuitModeEdit(existing, startTabata);
+  const intervalEdit = useIntervalListEdit(existing, startTabata);
   const speedSpinEdit = useSpeedAndSpinEdit(existing);
 
   // Derived from each sub-hook's own preset checkpoint — not manually flagged at each call site.
@@ -155,19 +160,6 @@ export function useEditSession(
     return mode === 'circuit'
       ? { warmup: circuitEdit.circuitWarmup, cooldown: circuitEdit.circuitCooldown, circuits: circuitEdit.circuitCount, circuitRest: circuitEdit.circuitRest, tabata: circuitEdit.tabata }
       : undefined;
-  }
-
-  // Tabata toggle: on → lock timings/counts to the canonical config and rebuild the
-  // interval list as 8×(20s/10s), keeping the work-interval names the user already typed.
-  // Off → just unlock; values stay. Warns first if there's circuit work to overwrite.
-  function setTabataMode(on: boolean) {
-    if (!on) { circuitEdit.setTabata(false); return; }
-    const apply = () => {
-      const workNames = intervalEdit.intervals.filter(iv => iv.type === 'work').map(iv => iv.activityLabel);
-      circuitEdit.setTabata(true);
-      intervalEdit.setTabataIntervals(workNames);
-    };
-    confirmIfDirty(intervalEdit.hasChanges || circuitEdit.hasChanges, 'alerts.tabataOverwriteMessage', apply);
   }
 
   function warnIfShortDuration(secs: number) {
@@ -239,6 +231,11 @@ export function useEditSession(
         circuitEdit.set('rest', result.secs);
       } else if (result.type === 'circuitCount') {
         circuitEdit.set('count', result.value);
+      } else if (result.type === 'tabataWarmup') {
+        // 3 min is a deliberate, allowed choice for Tabata — no short-duration warning.
+        circuitEdit.set('warmup', result.secs);
+      } else if (result.type === 'tabataCooldown') {
+        circuitEdit.set('cooldown', result.secs);
       } else if (result.type === 'interval') {
         intervalEdit.setIntervalDuration(result.key, result.secs);
       }
@@ -481,7 +478,8 @@ export function useEditSession(
     openCircuitCooldownPicker: pickerState.openCircuitCooldownPicker,
     openCircuitRestPicker:     pickerState.openCircuitRestPicker,
     openCircuitsPicker:        pickerState.openCircuitCountPicker,
-    setTabataMode,
+    openTabataWarmupPicker:    pickerState.openTabataWarmupPicker,
+    openTabataCooldownPicker:  pickerState.openTabataCooldownPicker,
     openSpinResistancePicker:    (field) => pickerState.openSpinResistancePicker(field, speedSpinEdit.spinValues[field]),
     openSpinPowerPicker:         (field) => pickerState.openSpinPowerPicker(field, speedSpinEdit.spinValues[field]),
     openIntervalResistancePicker,

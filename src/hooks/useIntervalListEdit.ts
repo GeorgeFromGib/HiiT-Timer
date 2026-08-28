@@ -29,14 +29,14 @@ export interface IntervalListEdit {
   setIntervalPower:        (key: string, value: number) => void;
   clearIntervalPower:      (key: string) => void;
   buildFromEasy:           (config: EasyConfig) => void;
-  // Replace the list with 8×(20s/10s) Tabata pairs, carrying over work-interval names in order.
-  setTabataIntervals:      (workNames: (string | undefined)[]) => void;
   tryConvertToEasy:        typeof tryConvertToEasy;
 }
 
-export function useIntervalListEdit(existing: Session | undefined): IntervalListEdit {
-  const initIntervals = existing?.mode === 'advanced' || existing?.mode === 'circuit'
-    ? existing.intervals : [];
+export function useIntervalListEdit(existing: Session | undefined, startTabata = false): IntervalListEdit {
+  const initIntervals =
+    existing?.mode === 'advanced' || existing?.mode === 'circuit' ? existing.intervals
+    : startTabata ? buildTabataIntervals()
+    : [];
 
   const [intervals, setIntervals] = useState<LocalInterval[]>(initIntervals.map(toLocal));
 
@@ -145,10 +145,6 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
     presetCheckpoint.commit(built);
   }
 
-  function setTabataIntervals(workNames: (string | undefined)[]) {
-    setIntervals(buildTabataIntervals(workNames).map(toLocal));
-  }
-
   return {
     intervals, hasChanges, isTimingDirty,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
@@ -156,6 +152,6 @@ export function useIntervalListEdit(existing: Session | undefined): IntervalList
     setIntervalDuration, setIntervalSpeed, clearIntervalSpeed,
     setIntervalIncline, clearIntervalIncline,
     setIntervalResistance, clearIntervalResistance, setIntervalPower, clearIntervalPower,
-    buildFromEasy, setTabataIntervals, tryConvertToEasy,
+    buildFromEasy, tryConvertToEasy,
   };
 }

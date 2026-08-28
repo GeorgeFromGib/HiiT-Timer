@@ -48,6 +48,7 @@ export default function SessionCard({ session, selected, onPress, onLongPress, o
               <ActivityTypeIcon
                 activityType={session.mode !== 'circuit' ? session.activityType : undefined}
                 mode={session.mode}
+                tabata={session.mode === 'circuit' && !!session.tabata}
                 size={20}
               />
               <Text style={styles.title}>{session.name}</Text>

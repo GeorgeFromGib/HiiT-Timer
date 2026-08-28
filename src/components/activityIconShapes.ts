@@ -5,7 +5,7 @@ export interface ActivityIconShape {
   paths: string[];
 }
 
-export const ACTIVITY_ICON_SHAPES: Record<'run' | 'walk' | 'circuit' | 'spinning', ActivityIconShape> = {
+export const ACTIVITY_ICON_SHAPES: Record<'run' | 'walk' | 'circuit' | 'spinning' | 'tabata', ActivityIconShape> = {
   run: {
     circles: [{ cx: 15.5, cy: 4.6, r: 2.1 }],
     paths: [
@@ -40,6 +40,15 @@ export const ACTIVITY_ICON_SHAPES: Record<'run' | 'walk' | 'circuit' | 'spinning
       'M11 16.4 9 8.2M11 16.4 16 8.2M9 8.2h7M11 16.4H6M16 8.2l2 8.2',
       'M7.9 7.7h2.4',
       'M16 8.2V6.4M14.7 6.4h2.6',
+    ],
+  },
+  // Repeating high/low interval pulses — the 20s-on / 10s-off Tabata rhythm.
+  tabata: {
+    paths: [
+      'M4.5 5v14',
+      'M9.5 9.5v5',
+      'M14.5 5v14',
+      'M19.5 9.5v5',
     ],
   },
 };

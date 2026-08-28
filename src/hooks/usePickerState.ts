@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { i18n } from '../lib/i18n';
 import { type RunSpeeds, type RunInclines, type SpinValues } from '../lib/sessions';
+import { TABATA_WARMUP_COOLDOWN_STEPS } from '../lib/workout';
 import { fromDisplay, pickerRange } from '../lib/speedUnit';
 import { type LocalInterval, type TimeField } from './editSessionTypes';
 
@@ -43,6 +44,16 @@ const minutesOnlyColumns = (): PickerColumn[] => [{ values: TARGET_DURATION_LABE
 const encodeMinutesOnly = (minutes: number): number[] => [minutes - MIN_TARGET_DURATION_MINUTES];
 const decodeMinutesOnly = (idx: number[]): number => idx[0] + MIN_TARGET_DURATION_MINUTES;
 
+// Tabata warmup/cooldown: a minutes-only wheel restricted to the 3/4/5-min steps.
+const TABATA_MINUTE_LABELS = TABATA_WARMUP_COOLDOWN_STEPS.map(s => String(s / 60));
+const tabataMinutesColumns = (): PickerColumn[] => [{ values: TABATA_MINUTE_LABELS, unitLabel: i18n.t('picker.min') }];
+const encodeTabataMinutes = (secs: number): number[] => {
+  const i = TABATA_WARMUP_COOLDOWN_STEPS.indexOf(secs);
+  return [i < 0 ? TABATA_WARMUP_COOLDOWN_STEPS.length - 1 : i];
+};
+const decodeTabataMinutes = (idx: number[]): number =>
+  TABATA_WARMUP_COOLDOWN_STEPS[idx[0]] ?? TABATA_WARMUP_COOLDOWN_STEPS[TABATA_WARMUP_COOLDOWN_STEPS.length - 1];
+
 const resistanceColumns = (): PickerColumn[] => [{ values: RESISTANCE_LABELS, unitLabel: i18n.t('picker.resistanceTitle') }];
 const encodeResistance = (current: number): number[] => [current - 1];
 const decodeResistance = (idx: number[]): number => idx[0] + 1;
@@ -77,6 +88,8 @@ export type ActivePicker =
   | { type: 'circuitCooldown' }
   | { type: 'circuitRest' }
   | { type: 'circuitCount' }
+  | { type: 'tabataWarmup' }
+  | { type: 'tabataCooldown' }
   | { type: 'spinResistance';    field: keyof SpinValues }
   | { type: 'spinPower';         field: keyof SpinValues }
   | { type: 'intervalResistance'; key: string }
@@ -95,6 +108,8 @@ export type CommitResult =
   | { type: 'circuitCooldown'; secs: number }
   | { type: 'circuitRest';     secs: number }
   | { type: 'circuitCount';    value: number }
+  | { type: 'tabataWarmup';    secs: number }
+  | { type: 'tabataCooldown';  secs: number }
   | { type: 'spinResistance';    field: keyof SpinValues; value: number }
   | { type: 'spinPower';         field: keyof SpinValues; value: number }
   | { type: 'intervalResistance'; key: string;            value: number }
@@ -130,8 +145,8 @@ export function usePickerState(
   const pickerTitle = (() => {
     if (!activePicker) return '';
     if (activePicker.type === 'circuitCount') return i18n.t('picker.circuitsTitle');
-    if (activePicker.type === 'circuitWarmup') return i18n.t('phases.warmup');
-    if (activePicker.type === 'circuitCooldown') return i18n.t('phases.cooldown');
+    if (activePicker.type === 'circuitWarmup' || activePicker.type === 'tabataWarmup') return i18n.t('phases.warmup');
+    if (activePicker.type === 'circuitCooldown' || activePicker.type === 'tabataCooldown') return i18n.t('phases.cooldown');
     if (activePicker.type === 'circuitRest') return i18n.t('edit.circuitRest');
     if (activePicker.type === 'rounds') return i18n.t('picker.roundsTitle');
     if (activePicker.type === 'targetDuration') return i18n.t('picker.sessionLengthTitle');
@@ -157,6 +172,8 @@ export function usePickerState(
       case 'rounds':              return countColumns(i18n.t('picker.rounds'));
       case 'circuitCount':        return countColumns(i18n.t('picker.circuitsTitle'));
       case 'targetDuration':      return minutesOnlyColumns();
+      case 'tabataWarmup':
+      case 'tabataCooldown':      return tabataMinutesColumns();
       case 'spinResistance':
       case 'intervalResistance':  return resistanceColumns();
       case 'spinPower':
@@ -221,6 +238,16 @@ export function usePickerState(
     setActivePicker({ type: 'circuitCount' });
   }
 
+  function openTabataWarmupPicker() {
+    setSelected(encodeTabataMinutes(circuitValues.warmup));
+    setActivePicker({ type: 'tabataWarmup' });
+  }
+
+  function openTabataCooldownPicker() {
+    setSelected(encodeTabataMinutes(circuitValues.cooldown));
+    setActivePicker({ type: 'tabataCooldown' });
+  }
+
   function openSpinResistancePicker(field: keyof SpinValues, currentValue: number) {
     setSelected(encodeResistance(currentValue));
     setActivePicker({ type: 'spinResistance', field });
@@ -282,6 +309,10 @@ export function usePickerState(
       onCommit({ type: 'circuitCooldown', secs: decodeDuration(idx) });
     } else if (activePicker.type === 'circuitRest') {
       onCommit({ type: 'circuitRest', secs: decodeDuration(idx) });
+    } else if (activePicker.type === 'tabataWarmup') {
+      onCommit({ type: 'tabataWarmup', secs: decodeTabataMinutes(idx) });
+    } else if (activePicker.type === 'tabataCooldown') {
+      onCommit({ type: 'tabataCooldown', secs: decodeTabataMinutes(idx) });
     } else if (activePicker.type === 'field') {
       onCommit({ type: 'field', field: activePicker.field, secs: decodeDuration(idx) });
     } else {
@@ -309,6 +340,8 @@ export function usePickerState(
     openCircuitCooldownPicker,
     openCircuitRestPicker,
     openCircuitCountPicker,
+    openTabataWarmupPicker,
+    openTabataCooldownPicker,
     openSpinResistancePicker,
     openSpinPowerPicker,
     openIntervalResistancePicker,
