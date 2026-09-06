@@ -8,7 +8,8 @@ import PhaseStrip from './PhaseStrip';
 
 interface Props {
   T: ThemeTokens;
-  onDone: (result: { durationMinutes: number; work: number; rest: number; create: boolean }) => void;
+  firstSessionName: string;
+  onDone: (result: { durationMinutes: number; work: number; rest: number }) => void;
 }
 
 interface Opt { v: number; subKey: string }
@@ -122,7 +123,7 @@ function ChoiceCard({ T, label, sub, onPick }: { T: ThemeTokens; label: string; 
   );
 }
 
-export default function SessionSetupChat({ T, onDone }: Props) {
+export default function SessionSetupChat({ T, firstSessionName, onDone }: Props) {
   const { t } = useTranslation();
   const [subStep, setSubStep] = useState(0);
   const [typing, setTyping] = useState(true);
@@ -150,11 +151,6 @@ export default function SessionSetupChat({ T, onDone }: Props) {
     setSubStep(s => s + 1);
   }
 
-  function skipQuestions() {
-    setAnswers({ length: DEFAULTS.length, work: DEFAULTS.work, rest: DEFAULTS.rest });
-    setSubStep(3);
-  }
-
   const len = answers.length ?? DEFAULTS.length;
   const work = answers.work ?? DEFAULTS.work;
   const rest = answers.rest ?? DEFAULTS.rest;
@@ -174,11 +170,6 @@ export default function SessionSetupChat({ T, onDone }: Props) {
             <View key={i} style={[styles.dot, i === Math.min(subStep, 3) ? { backgroundColor: T.accent, width: 16 } : { backgroundColor: T.hairline }]} />
           ))}
         </View>
-        {subStep < 3 && (
-          <Pressable onPress={skipQuestions}>
-            <Text style={[styles.skipHeaderText, { color: T.faintText }]}>{t('onboarding.sessionSetup.skipQuestions')}</Text>
-          </Pressable>
-        )}
       </View>
 
       <ScrollView
@@ -211,7 +202,7 @@ export default function SessionSetupChat({ T, onDone }: Props) {
             <Bubble T={T}>{t('onboarding.sessionSetup.reviewIntro')}</Bubble>
             <View style={[styles.reviewCard, { backgroundColor: T.card, borderColor: T.hairline }]}>
               <View style={styles.reviewHeaderRow}>
-                <Text style={[styles.reviewTitle, { color: T.text }]}>{t('onboarding.firstSessionName')}</Text>
+                <Text style={[styles.reviewTitle, { color: T.text }]}>{firstSessionName}</Text>
                 <Text style={[styles.reviewDuration, { color: T.accent }]}>{len}:00</Text>
               </View>
               <Text style={[styles.reviewMeta, { color: T.faintText }]}>
@@ -249,14 +240,11 @@ export default function SessionSetupChat({ T, onDone }: Props) {
         )}
         {!typing && subStep === 3 && (
           <View style={{ gap: 10 }}>
-            <Pressable style={[styles.primaryBtn, { backgroundColor: T.accent }]} onPress={() => onDone({ durationMinutes: len, work, rest, create: true })}>
+            <Pressable style={[styles.primaryBtn, { backgroundColor: T.accent }]} onPress={() => onDone({ durationMinutes: len, work, rest })}>
               <Text style={[styles.primaryBtnText, { color: T.btnGlyph }]}>{t('onboarding.sessionSetup.saveCta')}</Text>
             </Pressable>
             <Pressable style={styles.ghostBtn} onPress={() => setSubStep(0)}>
               <Text style={[styles.ghostBtnText, { color: T.subText }]}>{t('onboarding.sessionSetup.tweakCta')}</Text>
-            </Pressable>
-            <Pressable style={styles.ghostBtn} onPress={() => onDone({ durationMinutes: DEFAULTS.length, work: DEFAULTS.work, rest: DEFAULTS.rest, create: false })}>
-              <Text style={[styles.ghostBtnText, { color: T.faintText }]}>{t('onboarding.sessionSetupSkip')}</Text>
             </Pressable>
           </View>
         )}
@@ -277,7 +265,6 @@ const styles = StyleSheet.create({
   },
   dotsRow: { flexDirection: 'row', gap: 6, alignItems: 'center' },
   dot: { width: 6, height: 6, borderRadius: 3 },
-  skipHeaderText: { fontFamily: 'Inter_700Bold', fontSize: 13 },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 20, paddingBottom: 12, gap: 12 },
   glyphRow: { flexDirection: 'row', gap: 10, alignItems: 'flex-start' },

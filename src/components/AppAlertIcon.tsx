@@ -1,13 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Svg, { Circle, G, Path } from 'react-native-svg';
-import { useTheme, withOpacity } from '../theme';
+import { withOpacity } from '../theme';
 import { BASE_SVG_STROKE } from './svgStroke';
 import { type AppAlertKind } from '../lib/appAlert';
 
-// 'add' has no fixed color — it uses the live theme's accent so it always
-// matches the actual + button (which is styled the same way).
-const KIND_COLORS: Partial<Record<AppAlertKind, string>> = {
+const KIND_COLORS: Record<AppAlertKind, string> = {
   warning: '#f59e0b',
   error:   '#ef4444',
   info:    '#3b82f6',
@@ -19,8 +17,7 @@ interface Props {
 }
 
 export default function AppAlertIcon({ kind, size = 28 }: Props) {
-  const { T } = useTheme();
-  const color = kind === 'add' ? T.accent : KIND_COLORS[kind]!;
+  const color = KIND_COLORS[kind];
   const badgeSize = size + 24;
 
   return (
@@ -45,7 +42,6 @@ export default function AppAlertIcon({ kind, size = 28 }: Props) {
               <Path d="M12 11v5" />
             </>
           )}
-          {kind === 'add' && <Path d="M12 5v14M5 12h14" strokeLinecap="round" />}
         </G>
         {kind === 'warning' && <Circle cx="12" cy="17.3" r="1.1" fill={color} stroke="none" />}
         {kind === 'info' && <Circle cx="12" cy="7.7" r="1.1" fill={color} stroke="none" />}

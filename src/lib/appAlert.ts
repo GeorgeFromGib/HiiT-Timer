@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { i18n } from './i18n';
 
-export type AppAlertKind = 'warning' | 'error' | 'info' | 'add';
+export type AppAlertKind = 'warning' | 'error' | 'info';
 
 export interface AppAlertButton {
   text:     string;

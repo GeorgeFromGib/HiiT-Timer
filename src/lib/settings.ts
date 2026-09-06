@@ -29,9 +29,6 @@ export interface Settings {
   inclineTipSeen: boolean;
   watchTipSeen: boolean;
   minimalVoiceTipSeen: boolean;
-  // One-time nudge pointing at the + button, shown the first time a session
-  // already exists (almost always right after onboarding).
-  addSessionTipSeen: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -57,7 +54,6 @@ export const DEFAULT_SETTINGS: Settings = {
   inclineTipSeen: false,
   watchTipSeen: false,
   minimalVoiceTipSeen: false,
-  addSessionTipSeen: false,
 };
 
 const SETTINGS_FILE = 'settings_v1.json';

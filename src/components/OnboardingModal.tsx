@@ -71,7 +71,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
       );
       const session = buildSessionFromDraft({
         mode: 'easy',
-        name: t('onboarding.firstSessionName'),
+        name: firstSessionName,
         existingId: undefined,
         folderId: 'default',
         intervals: [],
@@ -91,6 +91,13 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
 
   const isNameStepValid = currentStep !== 'name' || name.trim().length > 0;
 
+  // Name is guaranteed non-empty for fresh installs (the name step blocks Next),
+  // but upgraders reaching 'done' may have no name — hence the fallbacks.
+  const displayName = name.trim();
+  const firstSessionName = displayName
+    ? t('onboarding.firstSessionNameNamed', { name: displayName })
+    : t('onboarding.firstSessionName');
+
   async function handleNext() {
     if (!isNameStepValid || confirming) return;
     if (lastStep) {
@@ -101,17 +108,12 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     }
   }
 
-  function handleSessionSetupDone(result: { durationMinutes: number; work: number; rest: number; create: boolean }) {
+  function handleSessionSetupDone(result: { durationMinutes: number; work: number; rest: number }) {
     setSessionDurationMinutes(result.durationMinutes);
     setSessionWork(result.work);
     setSessionRest(result.rest);
-    setCreateFirstSession(result.create);
+    setCreateFirstSession(true);
     setStep(s => s + 1);
-  }
-
-  function handleSkipSessionSetup() {
-    setCreateFirstSession(false);
-    setStep(STEP_COUNT - 1);
   }
 
   function handleBack() {
@@ -162,7 +164,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
           </View>
 
           {currentStep === 'sessionSetup' ? (
-            <SessionSetupChat T={T} onDone={handleSessionSetupDone} />
+            <SessionSetupChat T={T} firstSessionName={firstSessionName} onDone={handleSessionSetupDone} />
           ) : (
           <>
           <View style={styles.dotsRow}>
@@ -319,11 +321,8 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                     <Path d="M10 8.5v7l6-3.5-6-3.5z" fill={T.btnGlyph} stroke="none" />
                   </Svg>
                 </View>
-                <Text style={styles.optionTitle}>{t('onboarding.sessionSetup.readyTitle')}</Text>
+                <Text style={styles.optionTitle}>{t('onboarding.sessionSetup.readyTitle', { name: displayName })}</Text>
                 <Text style={styles.optionSub}>{t('onboarding.sessionSetup.readySub')}</Text>
-                <Pressable style={styles.skipLink} onPress={handleSkipSessionSetup}>
-                  <Text style={styles.skipLinkText}>{t('onboarding.sessionSetupSkip')}</Text>
-                </Pressable>
               </View>
             )}
 
@@ -335,8 +334,29 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                     <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                   </Svg>
                 </View>
-                <Text style={styles.optionTitle}>{t('onboarding.settingsTitle')}</Text>
+                <Text style={styles.optionTitle}>
+                  {displayName ? t('onboarding.settingsTitleNamed', { name: displayName }) : t('onboarding.settingsTitle')}
+                </Text>
                 <Text style={styles.optionSub}>{t('onboarding.settingsSub')}</Text>
+                <View style={styles.doneRows}>
+                  <View style={styles.doneRow}>
+                    <View style={styles.featureIcon}>
+                      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+                        <Path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                        <Path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                      </Svg>
+                    </View>
+                    <Text style={[styles.featureSub, styles.doneRowText]}>{t('onboarding.settingsSubGear')}</Text>
+                  </View>
+                  <View style={styles.doneRow}>
+                    <View style={styles.featureIcon}>
+                      <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+                        <Path d="M12 5v14M5 12h14" stroke={T.accent} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+                      </Svg>
+                    </View>
+                    <Text style={[styles.featureSub, styles.doneRowText]}>{t('onboarding.settingsSubAdd')}</Text>
+                  </View>
+                </View>
               </View>
             )}
           </ScrollView>
@@ -516,6 +536,23 @@ function makeStyles(T: ThemeTokens) {
       justifyContent: 'center',
     },
     featureTextBlock: { flex: 1, paddingTop: 2 },
+    doneRows: {
+      alignSelf: 'stretch',
+      gap: 14,
+      marginTop: 22,
+    },
+    doneRow: {
+      flexDirection: 'row',
+      gap: 12,
+      alignItems: 'center',
+    },
+    doneRowText: {
+      flex: 1,
+      fontSize: 13.5,
+      color: T.subText,
+      marginTop: 0,
+      lineHeight: 19,
+    },
     featureTitle: {
       fontFamily: 'Inter_700Bold',
       fontSize: 14,
@@ -566,26 +603,16 @@ function makeStyles(T: ThemeTokens) {
     },
     optionSub: {
       fontFamily: 'Inter_600SemiBold',
-      fontSize: 13,
+      fontSize: 15,
       color: T.subText,
       textAlign: 'center',
       marginTop: 8,
-      maxWidth: 280,
-      lineHeight: 19,
+      maxWidth: 300,
+      lineHeight: 22,
     },
     optionToggleRow: {
       marginTop: 22,
       width: '100%',
-    },
-    skipLink: {
-      marginTop: 24,
-      paddingVertical: 6,
-    },
-    skipLinkText: {
-      fontFamily: 'Inter_700Bold',
-      fontSize: 13,
-      color: T.faintText,
-      textDecorationLine: 'underline',
     },
     nameInput: {
       marginTop: 22,
