@@ -24,6 +24,14 @@ export interface Settings {
   // Set once the "What is a Tabata workout?" writeup has been auto-shown on the first
   // Tabata session the user creates.
   tabataIntroSeen: boolean;
+  // One-time feature tips, auto-shown once each then never again — see
+  // EditSessionScreen (incline) and SettingsScreen (watch, minimal voice prompts).
+  inclineTipSeen: boolean;
+  watchTipSeen: boolean;
+  minimalVoiceTipSeen: boolean;
+  // One-time nudge pointing at the + button, shown the first time a session
+  // already exists (almost always right after onboarding).
+  addSessionTipSeen: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -46,6 +54,10 @@ export const DEFAULT_SETTINGS: Settings = {
   onboardingVersion: 0,
   name: '',
   tabataIntroSeen: false,
+  inclineTipSeen: false,
+  watchTipSeen: false,
+  minimalVoiceTipSeen: false,
+  addSessionTipSeen: false,
 };
 
 const SETTINGS_FILE = 'settings_v1.json';

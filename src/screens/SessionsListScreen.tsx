@@ -40,7 +40,7 @@ import { useTranslation } from '../hooks/useTranslation';
 export default function SessionsListScreen({ folderId, onNavigate }: { folderId?: string; onNavigate: (route: Route) => void }) {
   const { T } = useTheme();
   const { t } = useTranslation();
-  const { settings } = useSettings();
+  const { settings, updateSettings } = useSettings();
   const styles = useMemo(() => makeStyles(T), [T]);
   const [data, setData] = useState<SessionsData>({ folders: [], sessions: [] });
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
@@ -103,6 +103,18 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
       { text: t('sessions.trialUpgrade'), onPress: () => setShowPaywall(true) },
     ]);
   }, [isPremium, trialDaysRemaining]);
+
+  // One-time nudge pointing at the + button, the first time a session already
+  // exists — almost always right after onboarding, when it's easy to miss that
+  // + adds more. The empty-state hint already covers the zero-sessions case.
+  const addSessionTipShownRef = React.useRef(false);
+  React.useEffect(() => {
+    if (addSessionTipShownRef.current) return;
+    if (settings.addSessionTipSeen || data.sessions.length === 0) return;
+    addSessionTipShownRef.current = true;
+    updateSettings('addSessionTipSeen', true);
+    appAlert('add', t('sessions.addTipTitle'), t('sessions.addTipBody'));
+  }, [settings.addSessionTipSeen, data.sessions.length, updateSettings]);
 
   const handleCreateSession = (activityType?: string) => {
     const folderId = selectedFolderForSession || data.folders[0]?.id || 'default';

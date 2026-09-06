@@ -97,6 +97,17 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     updateSettings('tabataIntroSeen', true);
   }, [isEditing, circuitLocked, settings.tabataIntroSeen, updateSettings]);
 
+  // First Run session a user creates: nudge them toward treadmill incline once,
+  // then remember it so it never auto-shows again.
+  const inclineTipShownRef = React.useRef(false);
+  React.useEffect(() => {
+    if (inclineTipShownRef.current) return;
+    if (isEditing || !isRun || settings.inclineTipSeen) return;
+    inclineTipShownRef.current = true;
+    updateSettings('inclineTipSeen', true);
+    appAlert('info', t('edit.inclineTipTitle'), t('edit.inclineTipBody'));
+  }, [isEditing, isRun, settings.inclineTipSeen, updateSettings, t]);
+
   const addPhaseOptions: Phase[] = isCircuit
     ? ['work', 'rest']
     : ['work', 'rest', 'warmup', 'cooldown'];

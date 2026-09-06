@@ -12,6 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, THEME_PREVIEWS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { useSettings } from '../lib/settingsContext';
+import { appAlert } from '../lib/appAlert';
 import { useTranslation } from '../hooks/useTranslation';
 import { usePremium } from '../lib/premiumContext';
 import { setForceNextReview } from '../lib/reviewState';
@@ -48,6 +49,22 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
   React.useEffect(() => {
     setName(settings.name);
   }, [settings.name]);
+
+  // First Settings visit: nudge toward one undiscovered feature at a time (never
+  // stack more than one tip per visit), then remember it so it never repeats.
+  const settingsTipShownRef = React.useRef(false);
+  React.useEffect(() => {
+    if (settingsTipShownRef.current) return;
+    settingsTipShownRef.current = true;
+    if (!settings.watchTipSeen) {
+      updateSettings('watchTipSeen', true);
+      appAlert('info', t('settings.watchTipTitle'), t('settings.watchTipBody'));
+    } else if (settings.voiceCues && !settings.minimalVoiceTipSeen) {
+      updateSettings('minimalVoiceTipSeen', true);
+      appAlert('info', t('settings.minimalVoiceTipTitle'), t('settings.minimalVoiceTipBody'));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const canHideFolders = data.folders.length <= 1;
 

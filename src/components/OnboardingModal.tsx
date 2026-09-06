@@ -33,12 +33,13 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   const [step, setStep] = useState(0);
   const [confirming, setConfirming] = useState(false);
 
-  // Fresh installs (never onboarded) see the full wizard, including the 1.1 setup
-  // steps. Upgraders from 1.1 already made these choices during their original
-  // onboarding, so appearance/folders/voice cues are skipped entirely — they go
-  // straight from what's-new to done.
+  // Fresh installs (never onboarded) skip the feature-list "what's new" screen —
+  // it has nothing to sell a brand-new user on yet — and start on the problem/
+  // solution framing instead, then the full 1.1 setup steps. Upgraders from 1.1
+  // already made those setup choices during their original onboarding, so they
+  // just see what's-new and go straight to done.
   const isFreshInstall = settings.onboardingVersion === 0;
-  const STEPS = ['whatsNew', ...(isFreshInstall ? ['appearance', 'folders', 'voiceCues', 'name', 'sessionIntro', 'sessionSetup'] : []), 'done'] as const;
+  const STEPS = [...(isFreshInstall ? ['problem', 'solution', 'appearance', 'folders', 'voiceCues', 'name', 'sessionIntro', 'sessionSetup'] : ['whatsNew']), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
   const currentStep = STEPS[step];
@@ -117,42 +118,9 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     setStep(s => Math.max(0, s - 1));
   }
 
-  // v1 (1.1) features — only shown to installs that never onboarded before (onboardingVersion === 0),
-  // stacked with the v2 features below. Upgraders who already saw v1 skip straight to what's new in v2.
-  const FEATURES_V1 = [
-    {
-      titleKey: 'onboarding.feature1Title',
-      subKey: 'onboarding.feature1Sub',
-      icon: (
-        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
-          <Path d="M4 9v6h4l5 4V5L8 9H4z" fill={T.accent} />
-          <Path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke={T.accent} strokeWidth={2} strokeLinecap="round" fill="none" />
-        </Svg>
-      ),
-    },
-    {
-      titleKey: 'onboarding.feature2Title',
-      subKey: 'onboarding.feature2Sub',
-      icon: (
-        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <Path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
-        </Svg>
-      ),
-    },
-    {
-      titleKey: 'onboarding.feature3Title',
-      subKey: 'onboarding.feature3Sub',
-      icon: (
-        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <Circle cx={15.5} cy={4.6} r={2.1} />
-          <Path d="M14.2 8.3 10 13.4l3.6 1.9.5 5M10 13.4 6.2 16.8 4 18.4M13.6 9.6l3.3 1.7 2.7-.6" />
-        </Svg>
-      ),
-    },
-  ];
-
-  // v2 (1.2) features — always shown, since they're new to every install.
-  const FEATURES_V2 = [
+  // What's-new features — shown only to upgraders now; fresh installs get the
+  // problem/solution screens instead (see STEPS above).
+  const FEATURES = [
     {
       titleKey: 'onboarding.feature4Title',
       subKey: 'onboarding.feature4Sub',
@@ -184,7 +152,6 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
     },
   ];
 
-  const FEATURES = isFreshInstall ? [...FEATURES_V1, ...FEATURES_V2] : FEATURES_V2;
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={() => {}}>
@@ -212,6 +179,32 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
+            {currentStep === 'problem' && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+                    <Circle cx={12} cy={14} r={7} />
+                    <Path d="M9.7 3.2h4.6M12 3.4V7M18.4 7.6l1.3-1.3M12 14l3 1.8M12 14V10.2" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('onboarding.problemTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.problemSub')}</Text>
+              </View>
+            )}
+
+            {currentStep === 'solution' && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+                    <Path d="M4 9v6h4l5 4V5L8 9H4z" fill={T.btnGlyph} />
+                    <Path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" fill="none" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('onboarding.solutionTitle')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.solutionSub')}</Text>
+              </View>
+            )}
+
             {currentStep === 'whatsNew' && (
               <>
                 <View style={styles.headerBlock}>
@@ -222,7 +215,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                     </Svg>
                   </View>
                   <Text style={styles.title}>{t('onboarding.title')}</Text>
-                  <Text style={styles.subtitle}>{t(isFreshInstall ? 'onboarding.subtitle' : 'onboarding.subtitleMinimal')}</Text>
+                  <Text style={styles.subtitle}>{t('onboarding.subtitleMinimal')}</Text>
                 </View>
 
                 <Text style={styles.sectionLabel}>{t('onboarding.whatsNew')}</Text>
