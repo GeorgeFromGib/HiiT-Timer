@@ -10,6 +10,8 @@ interface Props {
   onAddRound: () => void;
   color: string;
   disabled?: boolean;
+  /** Disable only the "+1 rnd" button (e.g. during cooldown), leaving +Ns live. */
+  addRoundDisabled?: boolean;
   size?: number;
   /** Push the +Ns group and the +1 round button to opposite edges (portrait). */
   spread?: boolean;
@@ -22,7 +24,7 @@ interface Props {
  * layouts; text sizing derives from `size` so callers only pass one number.
  */
 export default function ExtendControls({
-  onExtend, onAddRound, color, disabled, size = 68, spread, style,
+  onExtend, onAddRound, color, disabled, addRoundDisabled, size = 68, spread, style,
 }: Props) {
   const { t } = useTranslation();
   const fontSize = Math.round(size * 0.28);
@@ -43,7 +45,7 @@ export default function ExtendControls({
           </GhostBtn>
         ))}
       </View>
-      <GhostBtn onPress={onAddRound} disabled={disabled} color={color} size={size}>
+      <GhostBtn onPress={onAddRound} disabled={disabled || addRoundDisabled} color={color} size={size}>
         <Text style={labelStyle}>
           {'+1 '}
           <Text style={{ fontSize: Math.round(fontSize * 0.7), letterSpacing: fontSize * 0.08 }}>

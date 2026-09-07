@@ -233,6 +233,7 @@ export const fr: typeof en = {
     firstSessionNameNamed: 'Première séance de %{name}',
     settingsTitle: 'Vous êtes prêt',
     settingsTitleNamed: 'Vous êtes prêt, %{name}',
+    sessionRecap: 'La première séance de %{name} est prête — %{duration} min, %{work}s de travail / %{rest}s de repos.',
     settingsSub: "Deux boutons à retenir sur l'écran d'accueil :",
     settingsSubGear: "L'icône d'engrenage, en haut à gauche, ouvre les Réglages — chaque option peut y être ajustée à tout moment.",
     settingsSubAdd: "Le bouton +, en haut à droite, ajoute une autre séance — créez-en autant que vous voulez.",

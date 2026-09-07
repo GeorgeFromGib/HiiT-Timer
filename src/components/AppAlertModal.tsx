@@ -19,7 +19,13 @@ export default function AppAlertModal() {
   const stacked = request.buttons.length > 2;
 
   return (
-    <Modal visible transparent animationType="fade" onRequestClose={dismissAppAlert}>
+    <Modal
+      visible
+      transparent
+      animationType="fade"
+      onRequestClose={dismissAppAlert}
+      supportedOrientations={['portrait', 'landscape']}
+    >
       <View style={styles.overlay}>
         <View style={styles.card}>
           <AppAlertIcon kind={request.kind} />

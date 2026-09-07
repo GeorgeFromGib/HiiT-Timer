@@ -337,6 +337,16 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
                 <Text style={styles.optionTitle}>
                   {displayName ? t('onboarding.settingsTitleNamed', { name: displayName }) : t('onboarding.settingsTitle')}
                 </Text>
+                {createFirstSession && displayName && (
+                  <Text style={styles.sessionRecap}>
+                    {t('onboarding.sessionRecap', {
+                      name: displayName,
+                      duration: sessionDurationMinutes,
+                      work: sessionWork,
+                      rest: sessionRest,
+                    })}
+                  </Text>
+                )}
                 <Text style={styles.optionSub}>{t('onboarding.settingsSub')}</Text>
                 <View style={styles.doneRows}>
                   <View style={styles.doneRow}>
@@ -609,6 +619,15 @@ function makeStyles(T: ThemeTokens) {
       marginTop: 8,
       maxWidth: 300,
       lineHeight: 22,
+    },
+    sessionRecap: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 14,
+      color: T.accent,
+      textAlign: 'center',
+      marginTop: 10,
+      maxWidth: 280,
+      lineHeight: 19,
     },
     optionToggleRow: {
       marginTop: 22,

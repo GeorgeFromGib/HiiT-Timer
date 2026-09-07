@@ -231,6 +231,7 @@ export const en = {
     firstSessionNameNamed: "%{name}'s First Session",
     settingsTitle: "You're all set",
     settingsTitleNamed: "You're all set, %{name}",
+    sessionRecap: "%{name}'s first session is ready — %{duration} min, %{work}s work / %{rest}s rest.",
     settingsSub: 'Two buttons to remember on the home screen:',
     settingsSubGear: 'The gear icon, top left, opens Settings — every option can be fine-tuned there anytime.',
     settingsSubAdd: 'The + button, top right, adds another session — build as many as you like.',

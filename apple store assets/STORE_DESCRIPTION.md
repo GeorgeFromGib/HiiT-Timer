@@ -2,7 +2,7 @@
 
 ## Promotional Text (170 characters)
 
-Train your way. Now with an Apple Watch app. Organise workouts for yourself or your clients, enjoy extended voice coaching, and keep every session on track—even with your phone locked.
+Now with five workout modes, including dedicated Tabata. Rotate to landscape for a big-screen timer, follow sessions on Apple Watch, and train with your phone locked.
 
 ---
 
@@ -31,7 +31,10 @@ Audio cues and **extended voice prompts** play over your music, podcast, or audi
 ### Choose the workout mode that matches your training
 
 **Standard**
-A flexible interval timer for HIIT, Tabata, strength training, boxing, rowing, bodyweight workouts, and more.
+A flexible interval timer for HIIT, strength training, boxing, rowing, bodyweight workouts, and more.
+
+**Tabata**
+The classic protocol ready to go—eight rounds of 20 seconds hard, 10 seconds easy, with warm-up and cooldown built in. Change anything you like.
 
 **Treadmill**
 Display your target speed and incline for every interval so you always know exactly what to set before each work or recovery phase.
@@ -48,6 +51,10 @@ Lock your phone, put it in your pocket, and train without worrying about the tim
 
 When the final interval ends, all that's left is the satisfaction of finishing a great workout.
 
+### A bigger view when you need it
+
+Turn your phone sideways during a workout for a bold, full-width timer that stays readable from across the room—on both the running screen and the finish screen.
+
 ### Train from your wrist
 
 With the **Apple Watch app**, start and follow sessions right from your wrist, synced live with your phone.
@@ -61,13 +68,15 @@ With the **Apple Watch app**, start and follow sessions right from your wrist, s
 * Unlimited custom workouts
 * Improved quick-start presets
 * Full control over every workout phase
-* Four workout modes: Standard, Treadmill, Circuit, and Spin
+* Five workout modes: Standard, Tabata, Treadmill, Circuit, and Spin
+* Ready-made Tabata preset: 8 rounds of 20s work / 10s rest with warm-up and cooldown
 * Per-interval treadmill speed and incline guidance
 * Named exercises for circuit workouts
 * Per-interval difficulty and power targets for Spin workouts
 * Extended voice prompts and audio cues that play over your music
 * Minimal voice prompts option to skip the "prepare" cue
 * Countdown flash before every interval
+* Landscape timer and completion screens for big-screen readability
 * Reliable background timer that works with your screen locked
 * Apple Watch app with live sync to your phone
 * Beautiful Tidal and Daybreak themes

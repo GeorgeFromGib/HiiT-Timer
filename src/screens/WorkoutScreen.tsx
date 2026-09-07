@@ -408,6 +408,7 @@ export default function WorkoutScreen({
                   onAddRound={appendLastTwo}
                   color={phaseColor}
                   disabled={isIdle}
+                  addRoundDisabled={seg.phase === 'cooldown'}
                   spread
                   style={styles.extendRow}
                 />

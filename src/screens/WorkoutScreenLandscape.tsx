@@ -273,6 +273,7 @@ export default function WorkoutScreenLandscape({
                 onAddRound={onAddRound}
                 color={phaseColor}
                 disabled={isIdle}
+                addRoundDisabled={seg.phase === 'cooldown'}
                 size={Math.round(56 * scale)}
               />
             )}
