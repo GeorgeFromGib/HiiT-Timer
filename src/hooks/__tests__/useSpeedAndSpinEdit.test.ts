@@ -31,15 +31,15 @@ afterEach(() => {
 });
 
 describe('useSpeedAndSpinEdit', () => {
-  it('defaults to DEFAULT_* values with no existing session', async () => {
+  it('a new session starts on preset level 1 for speed, incline and spin', async () => {
     const { result } = await renderHook(() => useSpeedAndSpinEdit(undefined));
-    expect(result.current.runSpeeds).toEqual(DEFAULT_RUN_SPEEDS);
-    expect(result.current.runInclines).toEqual(DEFAULT_RUN_INCLINES);
+    expect(result.current.runSpeeds).toEqual(SPEED_PRESETS['1']);
+    expect(result.current.runInclines).toEqual(INCLINE_PRESETS['1']);
     expect(result.current.inclineEnabled).toBe(true);
-    expect(result.current.spinValues).toEqual(DEFAULT_SPIN_VALUES);
-    expect(result.current.activeSpeedPreset).toBeNull();
-    expect(result.current.activeInclinePreset).toBeNull();
-    expect(result.current.activeSpinPreset).toBeNull();
+    expect(result.current.spinValues).toEqual(SPIN_PRESETS['1']);
+    expect(result.current.activeSpeedPreset).toBe('1');
+    expect(result.current.activeInclinePreset).toBe('1');
+    expect(result.current.activeSpinPreset).toBe('1');
     expect(result.current.hasChanges).toBe(false);
   });
 
@@ -59,17 +59,36 @@ describe('useSpeedAndSpinEdit', () => {
     expect(result.current.inclineEnabled).toBe(false);
   });
 
+  it('defaults cooldownTaper ON for a new run session, OFF otherwise', async () => {
+    const newRun = await renderHook(() => useSpeedAndSpinEdit(undefined, 'run'));
+    expect(newRun.result.current.cooldownTaper).toBe(true);
+
+    const newGeneral = await renderHook(() => useSpeedAndSpinEdit(undefined, 'general'));
+    expect(newGeneral.result.current.cooldownTaper).toBe(false);
+
+    const newSpin = await renderHook(() => useSpeedAndSpinEdit(undefined, 'spinning'));
+    expect(newSpin.result.current.cooldownTaper).toBe(false);
+  });
+
+  it('keeps an existing run session on its saved cooldownTaper value', async () => {
+    const off = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
+    expect(off.result.current.cooldownTaper).toBe(false);
+
+    const on = await renderHook(() => useSpeedAndSpinEdit(runSession({ cooldownTaper: true }), 'run'));
+    expect(on.result.current.cooldownTaper).toBe(true);
+  });
+
   it('seeds spinValues and detects the matching preset for a spinning session', async () => {
     const { result } = await renderHook(() => useSpeedAndSpinEdit(spinSession()));
     expect(result.current.spinValues).toEqual(SPIN_PRESETS['3']);
     expect(result.current.activeSpinPreset).toBe('3');
-    // Not a run session, so run-only fields stay at defaults
-    expect(result.current.runInclines).toEqual(DEFAULT_RUN_INCLINES);
+    // Not a run session, so run-only fields stay at the level-1 placeholder
+    expect(result.current.runInclines).toEqual(INCLINE_PRESETS['1']);
   });
 
-  it('falls back to defaults for a circuit-mode session regardless of activityType', async () => {
+  it('uses the level-1 placeholder for a circuit-mode session, with no active preset', async () => {
     const { result } = await renderHook(() => useSpeedAndSpinEdit(circuitSession));
-    expect(result.current.runSpeeds).toEqual(DEFAULT_RUN_SPEEDS);
+    expect(result.current.runSpeeds).toEqual(SPEED_PRESETS['1']);
     expect(result.current.activeSpeedPreset).toBeNull();
   });
 

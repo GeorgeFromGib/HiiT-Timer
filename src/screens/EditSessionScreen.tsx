@@ -65,7 +65,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     openSpinResistancePicker, openSpinPowerPicker,
     openIntervalResistancePicker, openIntervalPowerPicker,
     clearIntervalResistance, clearIntervalPower,
-    openInclinePicker, openIntervalInclinePicker, clearIntervalIncline, setInclineEnabled,
+    openInclinePicker, openIntervalInclinePicker, clearIntervalIncline, toggleIntervalCooldownTaper, setInclineEnabled, setCooldownTaper,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     commitPicker, dismissPicker,
     applyDurationPreset, openCustomLengthPicker, applySpeedPreset, applyInclinePreset, applySpinPreset,
@@ -76,7 +76,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
   const {
     name, isAdvanced, isCircuit, isSpinning, fieldValues, rounds, intervals,
     previewSegments, previewTotal,
-    activityType: draftActivityType, runSpeeds, runInclines, inclineEnabled, spinValues,
+    activityType: draftActivityType, runSpeeds, runInclines, inclineEnabled, cooldownTaper, spinValues,
     activeTimingPreset, targetLengthMinutes, activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges,
     circuitWarmup, circuitCooldown, circuitRest, circuitCount, tabataMode,
   } = draft;
@@ -85,6 +85,8 @@ export default function EditSessionScreen({ session: existing, activityType, fol
 
   const [showAddPhasePicker, setShowAddPhasePicker] = React.useState(false);
   const [showTabataInfo, setShowTabataInfo] = React.useState(false);
+  // First thing for a new session: prompt for its name.
+  const [showNameModal, setShowNameModal] = React.useState(!isEditing);
 
   // First Tabata session a user creates: auto-open the "What is a Tabata workout?"
   // writeup once, then remember it so it never auto-shows again.
@@ -107,6 +109,11 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     updateSettings('inclineTipSeen', true);
     appAlert('info', t('edit.inclineTipTitle'), t('edit.inclineTipBody'));
   }, [isEditing, isRun, settings.inclineTipSeen, updateSettings, t]);
+
+  // Treadmill cooldown taper (per-session, run only) owns the cooldown speed/
+  // incline — the per-phase inputs go read-only "AUTO" and the cooldown enable
+  // toggle is hidden. See docs/todo.md item 1.
+  const cooldownAuto = isRun && cooldownTaper;
 
   const addPhaseOptions: Phase[] = isCircuit
     ? ['work', 'rest']
@@ -447,7 +454,12 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                 data={intervals}
                 keyExtractor={iv => iv._key}
                 onDragEnd={({ data }) => reorderIntervals(data)}
-                renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => (
+                renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => {
+                  // Advanced run mode: cooldown intervals get their own taper toggle;
+                  // when on, it owns speed & incline so those chips are hidden.
+                  const ivTaperable = isRun && iv.type === 'cooldown';
+                  const ivTapered = ivTaperable && !!iv.cooldownTaper;
+                  return (
                   <IntervalSwipeRow
                     interval={iv}
                     isActive={isActive}
@@ -456,20 +468,23 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     onRemove={() => removeInterval(iv._key)}
                     onCyclePhase={() => cyclePhase(iv._key)}
                     onOpenPicker={() => openIntervalPicker(iv._key)}
-                    displaySpeed={isRun ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
-                    onOpenSpeedPicker={isRun ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
-                    onClearSpeed={isRun ? () => clearIntervalSpeed(iv._key) : undefined}
+                    displaySpeed={isRun && !ivTapered ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
+                    onOpenSpeedPicker={isRun && !ivTapered ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
+                    onClearSpeed={isRun && !ivTapered ? () => clearIntervalSpeed(iv._key) : undefined}
                     displayResistance={isSpinning ? (iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance) : undefined}
                     onOpenResistancePicker={isSpinning ? () => openIntervalResistancePicker(iv._key) : undefined}
                     onClearResistance={isSpinning ? () => clearIntervalResistance(iv._key) : undefined}
                     displayPower={isSpinning ? (iv.power ?? spinValueForPhase(iv.type, spinValues).power) : undefined}
                     onOpenPowerPicker={isSpinning ? () => openIntervalPowerPicker(iv._key) : undefined}
                     onClearPower={isSpinning ? () => clearIntervalPower(iv._key) : undefined}
-                    displayIncline={isRun && inclineEnabled ? (iv.incline ?? inclineForPhase(iv.type, runInclines)) : undefined}
-                    onOpenInclinePicker={isRun && inclineEnabled ? () => openIntervalInclinePicker(iv._key) : undefined}
-                    onClearIncline={isRun && inclineEnabled ? () => clearIntervalIncline(iv._key) : undefined}
+                    displayIncline={isRun && inclineEnabled && !ivTapered ? (iv.incline ?? inclineForPhase(iv.type, runInclines)) : undefined}
+                    onOpenInclinePicker={isRun && inclineEnabled && !ivTapered ? () => openIntervalInclinePicker(iv._key) : undefined}
+                    onClearIncline={isRun && inclineEnabled && !ivTapered ? () => clearIntervalIncline(iv._key) : undefined}
+                    cooldownTaperOn={ivTapered}
+                    onToggleCooldownTaper={ivTaperable ? () => toggleIntervalCooldownTaper(iv._key) : undefined}
                   />
-                )}
+                  );
+                }}
               />
 
               {renderAddIntervalBar()}
@@ -549,6 +564,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <SettingsToggle
                       value={fieldValues.cooldown > 0}
                       onChange={v => setFieldEnabled('cooldown', v)}
+                      disabled={cooldownAuto}
                     />
                   </View>
                 </View>
@@ -612,6 +628,19 @@ export default function EditSessionScreen({ session: existing, activityType, fol
             </>
           )}
 
+          {/* Treadmill cooldown taper — per-session, easy-mode run only */}
+          {isRun && !isAdvanced && !isCircuit && (
+            <View style={styles.fieldGroup}>
+              <View style={[styles.modeToggleRow, { justifyContent: 'space-between' }]}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.fieldLabel}>{t('edit.cooldownTaperLabel')}</Text>
+                  <Text style={styles.intervalsHint}>{t('edit.cooldownTaperHint')}</Text>
+                </View>
+                <SettingsToggle value={cooldownTaper} onChange={setCooldownTaper} />
+              </View>
+            </View>
+          )}
+
           {/* Speeds — only shown in Easy mode (Advanced mode has speed presets inline above intervals) */}
           {isRun && !isAdvanced && !isCircuit && (
             <View style={styles.fieldGroup}>
@@ -624,18 +653,19 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               />
               <View style={styles.configGrid}>
                 {speedFields.map(({ label, field }) => {
+                  const isAuto = field === 'cooldownSpeed' && cooldownAuto;
                   const isPhaseDisabled = (field === 'warmupSpeed' && fieldValues.warmup === 0)
                     || (field === 'cooldownSpeed' && fieldValues.cooldown === 0);
                   return (
                     <View key={field} style={styles.configCell}>
                       <Text style={styles.configCellLabel}>{label}</Text>
                       <Pressable
-                        style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                        style={[styles.configInput, (isPhaseDisabled || isAuto) && styles.configInputDisabled]}
                         onPress={() => openSpeedPicker(field, toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km'), isMiles)}
-                        disabled={isPhaseDisabled}
+                        disabled={isPhaseDisabled || isAuto}
                       >
                         <Text style={styles.configInputText}>
-                          {isPhaseDisabled ? '—' : (
+                          {isAuto ? t('edit.cooldownAuto') : isPhaseDisabled ? '—' : (
                             <>
                               {toDisplay(runSpeeds[field], isMiles ? 'miles' : 'km').toFixed(1)}
                               <Text style={styles.speedUnitText}>{' '}{isMiles ? 'mph' : 'km/h'}</Text>
@@ -664,18 +694,19 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               <View style={styles.configGrid}>
                 {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                   const field = `${phase}Incline` as keyof RunInclines;
+                  const isAuto = phase === 'cooldown' && cooldownAuto;
                   const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
                     || (phase === 'cooldown' && fieldValues.cooldown === 0);
                   return (
                     <View key={field} style={styles.configCell}>
                       <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
                       <Pressable
-                        style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                        style={[styles.configInput, (isPhaseDisabled || isAuto) && styles.configInputDisabled]}
                         onPress={() => openInclinePicker(field)}
-                        disabled={isPhaseDisabled}
+                        disabled={isPhaseDisabled || isAuto}
                       >
                         <Text style={styles.configInputText}>
-                          {isPhaseDisabled ? '—' : <>{runInclines[field]}<Text style={styles.speedUnitText}>%</Text></>}
+                          {isAuto ? t('edit.cooldownAuto') : isPhaseDisabled ? '—' : <>{runInclines[field]}<Text style={styles.speedUnitText}>%</Text></>}
                         </Text>
                       </Pressable>
                     </View>
@@ -719,6 +750,39 @@ export default function EditSessionScreen({ session: existing, activityType, fol
             </ScrollView>
             <Pressable onPress={() => setShowTabataInfo(false)} style={styles.infoCloseBtn}>
               <Text style={styles.infoCloseBtnText}>{t('common.done')}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showNameModal}
+        transparent
+        animationType="fade"
+        onRequestClose={onBack}
+      >
+        <View style={styles.infoOverlay}>
+          <View style={styles.infoCard}>
+            <Text style={styles.infoTitle}>{t('edit.nameModalTitle')}</Text>
+            <TextInput
+              style={[styles.textInput, { marginTop: 12 }]}
+              value={name}
+              onChangeText={setName}
+              placeholder={t('edit.namePlaceholder')}
+              placeholderTextColor={T.faintText}
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={() => { if (name.trim()) setShowNameModal(false); }}
+            />
+            <Pressable
+              onPress={() => setShowNameModal(false)}
+              disabled={!name.trim()}
+              style={[styles.saveBtn, { marginTop: 16 }, !name.trim() && styles.saveBtnDisabled]}
+            >
+              <Text style={styles.saveBtnText}>{t('edit.nameModalContinue')}</Text>
+            </Pressable>
+            <Pressable onPress={onBack} style={styles.cancelBtn}>
+              <Text style={styles.cancelBtnText}>{t('common.cancel')}</Text>
             </Pressable>
           </View>
         </View>

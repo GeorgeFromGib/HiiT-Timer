@@ -100,19 +100,19 @@ describe('useEditSession — initial state (new session)', () => {
     expect(d.isAdvanced).toBe(false);
     expect(d.isCircuit).toBe(false);
     expect(d.isSpinning).toBe(false);
-    expect(d.fieldValues).toEqual({ warmup: 30, work: 30, rest: 15, cooldown: 30 });
-    expect(d.rounds).toBe(4);
+    expect(d.fieldValues).toEqual({ warmup: 300, work: 20, rest: 40, cooldown: 300 });
+    expect(d.rounds).toBe(5);
     expect(d.intervals).toEqual([]);
     expect(d.activityType).toBeUndefined();
-    expect(d.runSpeeds).toEqual(DEFAULT_RUN_SPEEDS);
-    expect(d.runInclines).toEqual(DEFAULT_RUN_INCLINES);
+    expect(d.runSpeeds).toEqual(SPEED_PRESETS['1']);
+    expect(d.runInclines).toEqual(INCLINE_PRESETS['1']);
     expect(d.inclineEnabled).toBe(true);
-    expect(d.spinValues).toEqual(DEFAULT_SPIN_VALUES);
-    expect(d.activeTimingPreset).toBeNull();
+    expect(d.spinValues).toEqual(SPIN_PRESETS['1']);
+    expect(d.activeTimingPreset).toBe('1');
     expect(d.targetLengthMinutes).toBe(15);
-    expect(d.activeSpeedPreset).toBeNull();
-    expect(d.activeInclinePreset).toBeNull();
-    expect(d.activeSpinPreset).toBeNull();
+    expect(d.activeSpeedPreset).toBe('1');
+    expect(d.activeInclinePreset).toBe('1');
+    expect(d.activeSpinPreset).toBe('1');
     expect(d.hasChanges).toBe(false);
     expect(d.circuitWarmup).toBe(60);
     expect(d.circuitCooldown).toBe(60);
@@ -124,10 +124,10 @@ describe('useEditSession — initial state (new session)', () => {
   it('computes previewSegments/previewTotal for the default easy config', async () => {
     const { result } = await renderHook(() => useEditSession(undefined, onBack));
     const d = result.current.draft;
-    // warmup 30 + 4 * (30+15) + cooldown 30
-    expect(d.previewTotal).toBe(30 + 4 * (30 + 15) + 30);
+    // preset 1: warmup 300 + 5 * (20+40) + cooldown 300
+    expect(d.previewTotal).toBe(300 + 5 * (20 + 40) + 300);
     expect(d.previewSegments.map(s => s.phase)).toEqual([
-      'warmup', 'work', 'rest', 'work', 'rest', 'work', 'rest', 'work', 'rest', 'cooldown',
+      'warmup', 'work', 'rest', 'work', 'rest', 'work', 'rest', 'work', 'rest', 'work', 'rest', 'cooldown',
     ]);
   });
 
@@ -229,8 +229,8 @@ describe('toggleMode', () => {
     const { result } = await renderHook(() => useEditSession(undefined, onBack));
     await act(async () => result.current.toggleMode(true));
     expect(result.current.draft.isAdvanced).toBe(true);
-    // buildIntervalsFromEasy(warmup30, work30x4, rest15x4, cooldown30) -> 1 + 4*2 + 1
-    expect(result.current.draft.intervals).toHaveLength(10);
+    // preset 1: buildIntervalsFromEasy(warmup, work20x5, rest40x5, cooldown) -> 1 + 5*2 + 1
+    expect(result.current.draft.intervals).toHaveLength(12);
   });
 
   it('advanced -> easy converts a regular interval list back to easy fields', async () => {
@@ -337,12 +337,12 @@ describe('openFieldPicker / commitPicker (field)', () => {
   it('opens with the encoded current value and commits a new duration, recalculating rounds to preserve total length', async () => {
     const { result } = await renderHook(() => useEditSession(undefined, onBack));
     await act(async () => result.current.openFieldPicker('work'));
-    expect(result.current.picker?.selected).toEqual([0, 30]);
+    expect(result.current.picker?.selected).toEqual([0, 20]);
 
     await act(async () => result.current.commitPicker({ selected: [0, 45] }));
     expect(result.current.draft.fieldValues.work).toBe(45);
-    // old total 240; warmup30+rounds*(45+15)+cooldown30 solved for rounds -> round(180/60) = 3
-    expect(result.current.draft.rounds).toBe(3);
+    // old total 900; warmup300+rounds*(45+40)+cooldown300 solved for rounds -> round(300/85) = 4
+    expect(result.current.draft.rounds).toBe(4);
     expect(result.current.picker).toBeNull();
   });
 });
@@ -354,12 +354,12 @@ describe('setFieldEnabled', () => {
 
     await act(async () => result.current.setFieldEnabled('warmup', false));
     expect(result.current.draft.fieldValues.warmup).toBe(0);
-    // old total 240; 0+rounds*(30+15)+30 solved for rounds -> round(210/45) = 5
-    expect(result.current.draft.rounds).toBe(5);
+    // old total 900; 0+rounds*(20+40)+300 solved for rounds -> round(600/60) = 10
+    expect(result.current.draft.rounds).toBe(10);
     expect(alert.current?.title).toBe(i18n.t('alerts.shortWarmupCooldownTitle'));
   });
 
-  it('re-enabling warmup restores the last non-zero value, warning again since the restored value is still short', async () => {
+  it('re-enabling warmup restores the last non-zero value (the 5-min default) and recomputes rounds', async () => {
     const alert = await renderAlertObserver();
     const { result } = await renderHook(() => useEditSession(undefined, onBack));
 
@@ -367,11 +367,11 @@ describe('setFieldEnabled', () => {
     await act(async () => dismissAppAlert());
 
     await act(async () => result.current.setFieldEnabled('warmup', true));
-    expect(result.current.draft.fieldValues.warmup).toBe(30);
-    // total before this step was 0+5*45+30=255; solving with warmup 30 -> round(195/45) = 4
-    expect(result.current.draft.rounds).toBe(4);
-    // restored value (30s) is still under the 5-minute threshold, so this should warn too
-    expect(alert.current?.title).toBe(i18n.t('alerts.shortWarmupCooldownTitle'));
+    expect(result.current.draft.fieldValues.warmup).toBe(300);
+    // total before this step was 0+10*60+300=900; solving with warmup 300 -> round(300/60) = 5
+    expect(result.current.draft.rounds).toBe(5);
+    // restored value (300s) is exactly the 5-minute threshold, so no warning
+    expect(alert.current).toBeNull();
   });
 
   it('re-enabling warmup to a restored value at/above the 5-minute threshold does not warn', async () => {
@@ -396,7 +396,7 @@ describe('setFieldEnabled', () => {
 
     await act(async () => result.current.setFieldEnabled('work', false));
     expect(result.current.draft.fieldValues.work).toBe(0);
-    expect(result.current.draft.rounds).toBe(4); // unchanged
+    expect(result.current.draft.rounds).toBe(5); // unchanged
     expect(alert.current).toBeNull();
   });
 });
@@ -409,7 +409,7 @@ describe('openRoundsPicker / commitPicker (rounds)', () => {
     const { result } = await renderHook(() => useEditSession(undefined, onBack));
 
     await act(async () => result.current.openRoundsPicker());
-    expect(result.current.picker?.selected).toEqual([3]); // rounds=4 -> idx 3
+    expect(result.current.picker?.selected).toEqual([4]); // rounds=5 -> idx 4
 
     await act(async () => result.current.commitPicker({ selected: [6] })); // rounds -> 7
     expect(result.current.draft.rounds).toBe(7);
@@ -443,8 +443,11 @@ describe('applyDurationPreset', () => {
     const d = result.current.draft;
     expect(d.fieldValues.work).toBe(45);
     expect(d.fieldValues.rest).toBe(15);
-    // computeRoundsForTargetDuration(30,45,15,30, 15*60) -> round(840/60) = 14
-    expect(d.rounds).toBe(14);
+    // A preset standardises warm-up and cool-down to 5 minutes each.
+    expect(d.fieldValues.warmup).toBe(300);
+    expect(d.fieldValues.cooldown).toBe(300);
+    // computeRoundsForTargetDuration(300,45,15,300, 15*60) -> round(300/60) = 5
+    expect(d.rounds).toBe(5);
     expect(d.activeTimingPreset).toBe('4');
   });
 
@@ -484,8 +487,8 @@ describe('openCustomLengthPicker / commitPicker (targetDuration)', () => {
     await act(async () => result.current.openCustomLengthPicker());
     await act(async () => result.current.commitPicker({ selected: [10] })); // minutes 10+10=20
     expect(result.current.draft.targetLengthMinutes).toBe(20);
-    // computeRoundsForTargetDuration(30,30,15,30, 20*60) -> round(1140/45) = 25
-    expect(result.current.draft.rounds).toBe(25);
+    // computeRoundsForTargetDuration(300,20,40,300, 20*60) -> round(600/60) = 10
+    expect(result.current.draft.rounds).toBe(10);
   });
 });
 
@@ -604,12 +607,12 @@ describe('openSpinResistancePicker / openSpinPowerPicker / commitPicker', () => 
   it('opens encoded from current spinValues and commits new session-level values', async () => {
     const { result } = await renderHook(() => useEditSession(undefined, onBack, 'spinning'));
     await act(async () => result.current.openSpinResistancePicker('workResistance'));
-    expect(result.current.picker?.selected).toEqual([4]); // DEFAULT workResistance=5 -> idx 4
+    expect(result.current.picker?.selected).toEqual([1]); // preset 1 workResistance=2 -> idx 1
     await act(async () => result.current.commitPicker({ selected: [6] }));
     expect(result.current.draft.spinValues.workResistance).toBe(7);
 
     await act(async () => result.current.openSpinPowerPicker('workPower'));
-    expect(result.current.picker?.selected).toEqual([8]); // DEFAULT workPower=120 -> (120-40)/10=8
+    expect(result.current.picker?.selected).toEqual([2]); // preset 1 workPower=60 -> (60-40)/10=2
     await act(async () => result.current.commitPicker({ selected: [10] }));
     expect(result.current.draft.spinValues.workPower).toBe(140);
   });
@@ -825,7 +828,7 @@ describe('buildSavePayload — easy/advanced', () => {
       expect(payload.session.name).toBe('Padded Name');
       expect(payload.session.mode).toBe('easy');
       if (payload.session.mode === 'easy') {
-        expect(payload.session.config).toEqual({ warmup: 30, high: 30, low: 15, rounds: 4, cooldown: 30 });
+        expect(payload.session.config).toEqual({ warmup: 300, high: 20, low: 40, rounds: 5, cooldown: 300 });
       }
     }
   });
@@ -837,7 +840,7 @@ describe('buildSavePayload — easy/advanced', () => {
     const payload = result.current.buildSavePayload();
     expect(payload.ok).toBe(true);
     if (payload.ok && payload.session.mode === 'advanced') {
-      expect(payload.session.intervals).toHaveLength(10);
+      expect(payload.session.intervals).toHaveLength(12);
       expect(payload.session.intervals[0]).not.toHaveProperty('_key');
     }
   });

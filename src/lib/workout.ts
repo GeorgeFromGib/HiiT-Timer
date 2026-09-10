@@ -12,6 +12,7 @@ export interface Segment {
   power?: number;       // W — spinning sessions only
   activityLabel?: string;
   circuitNumber?: number;
+  cooldownTaper?: boolean; // cooldown segment: auto-taper speed & incline over the phase
 }
 
 export interface Interval {
@@ -22,6 +23,7 @@ export interface Interval {
   resistance?: number;  // 1–10 — spinning sessions; overrides session-level SpinValues
   power?: number;       // W — spinning sessions; overrides session-level SpinValues
   activityLabel?: string;
+  cooldownTaper?: boolean; // cooldown intervals (advanced run mode): auto-taper speed & incline
 }
 
 export interface WorkoutConfig {

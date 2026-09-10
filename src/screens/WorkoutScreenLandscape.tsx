@@ -24,6 +24,8 @@ export default function WorkoutScreenLandscape({
   status,
   displayCountdown,
   flashing,
+  pillScale,
+  pillOpacity,
   intervalNum,
   pct,
   displayRemaining,
@@ -45,6 +47,8 @@ export default function WorkoutScreenLandscape({
   status: Status;
   displayCountdown: string;
   flashing: boolean;
+  pillScale?: Animated.AnimatedInterpolation<number>;
+  pillOpacity?: Animated.AnimatedInterpolation<number>;
   intervalNum: number;
   pct: number;
   displayRemaining: string;
@@ -175,12 +179,12 @@ export default function WorkoutScreenLandscape({
           </Text>
 
           {!isPreStart && seg.speed !== undefined && (
-            <View style={[styles.pill, segPill(phaseColor)]}>
+            <Animated.View style={[styles.pill, segPill(phaseColor), pillScale ? { transform: [{ scale: pillScale }], opacity: pillOpacity } : null]}>
               <Text style={[styles.pillText, { color: phaseColor }]}>
                 {formatSpeed(seg.speed, settings.speedUnit)}
                 {seg.incline !== undefined ? ` · ${seg.incline}%` : ''}
               </Text>
-            </View>
+            </Animated.View>
           )}
           {!isPreStart && seg.resistance !== undefined && seg.power !== undefined && (
             <View style={[styles.pill, segPill(phaseColor)]}>

@@ -7,7 +7,7 @@ import {
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
 import { type PresetLevel } from '../lib/presets';
-import { INTENSITY_PRESETS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
+import { INTENSITY_PRESETS, PRESET_WARMUP_COOLDOWN_SECONDS, findMatchingIntensityPresetForIntervals } from '../lib/intensityPresets';
 import {
   totalDuration, computeRoundsForTargetDuration,
   type Interval, type Phase, type Segment,
@@ -42,6 +42,7 @@ export interface EditSessionDraft {
   runSpeeds:           RunSpeeds;
   runInclines:         RunInclines;
   inclineEnabled:      boolean;
+  cooldownTaper:       boolean;
   spinValues:          SpinValues;
   activeTimingPreset:  PresetLevel | null;
   targetLengthMinutes: number;
@@ -98,7 +99,9 @@ export interface EditSessionInterface {
   openInclinePicker:            (field: keyof RunInclines) => void;
   openIntervalInclinePicker:    (key: string) => void;
   clearIntervalIncline:         (key: string) => void;
+  toggleIntervalCooldownTaper:  (key: string) => void;
   setInclineEnabled:            (enabled: boolean) => void;
+  setCooldownTaper:             (enabled: boolean) => void;
   buildSavePayload:         () => SavePayload;
 }
 
@@ -148,8 +151,8 @@ export function useEditSession(
   // Mode sub-hooks
   const easyEdit     = useEasyModeEdit(existing);
   const circuitEdit  = useCircuitModeEdit(existing, startTabata);
-  const intervalEdit = useIntervalListEdit(existing, startTabata);
-  const speedSpinEdit = useSpeedAndSpinEdit(existing);
+  const intervalEdit = useIntervalListEdit(existing, startTabata, !existing && initialActivityType === 'run');
+  const speedSpinEdit = useSpeedAndSpinEdit(existing, initialActivityType);
 
   // Derived from each sub-hook's own preset checkpoint — not manually flagged at each call site.
   const timingDirty = mode === 'advanced' ? intervalEdit.isTimingDirty
@@ -252,17 +255,18 @@ export function useEditSession(
       mode, name: '', existingId: '', folderId: sessionFolderId,
       intervals: cleanIntervals, easyConfig: easyEdit.easyConfig, activityType,
       runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines,
-      inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues,
+      inclineEnabled: speedSpinEdit.inclineEnabled, cooldownTaper: speedSpinEdit.cooldownTaper,
+      spinValues: speedSpinEdit.spinValues,
       circuitData: circuitDraftData(),
     });
     return getSessionSegments(draft);
-  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervalEdit.intervals, activityType, speedSpinEdit.runSpeeds, speedSpinEdit.runInclines, speedSpinEdit.inclineEnabled, speedSpinEdit.spinValues,
+  }, [mode, easyEdit.fieldValues, easyEdit.rounds, intervalEdit.intervals, activityType, speedSpinEdit.runSpeeds, speedSpinEdit.runInclines, speedSpinEdit.inclineEnabled, speedSpinEdit.cooldownTaper, speedSpinEdit.spinValues,
       circuitEdit.circuitWarmup, circuitEdit.circuitCooldown, circuitEdit.circuitCount, circuitEdit.circuitRest]);
 
   function toggleMode(advanced: boolean) {
     if (advanced) {
       if (intervalEdit.intervals.length === 0 || easyDirty) {
-        intervalEdit.buildFromEasy(easyEdit.easyConfig);
+        intervalEdit.buildFromEasy(easyEdit.easyConfig, speedSpinEdit.cooldownTaper);
         setEasyDirty(false);
       }
       setMode('advanced');
@@ -308,14 +312,17 @@ export function useEditSession(
   function applyDurationPreset(level: PresetLevel) {
     const p = INTENSITY_PRESETS[level];
     confirmIfDirty(timingDirty, 'alerts.overwriteTimingMessage', () => {
+      // A preset standardises warm-up and cool-down to 5 minutes (see applyIntensityPreset);
+      // rounds must be computed against those same values to hit the target length.
+      const wc = PRESET_WARMUP_COOLDOWN_SECONDS;
       const rounds = computeRoundsForTargetDuration(
-        easyEdit.fieldValues.warmup, p.work, p.rest, easyEdit.fieldValues.cooldown,
+        wc, p.work, p.rest, wc,
         targetLengthMinutes * 60,
       );
       easyEdit.applyIntensityPreset(p.work, p.rest, rounds, level);
       if (mode === 'advanced') {
-        const config = { warmup: easyEdit.fieldValues.warmup, high: Math.max(1, p.work), low: p.rest, rounds, cooldown: easyEdit.fieldValues.cooldown };
-        intervalEdit.buildFromEasy(config);
+        const config = { warmup: wc, high: Math.max(1, p.work), low: p.rest, rounds, cooldown: wc };
+        intervalEdit.buildFromEasy(config, speedSpinEdit.cooldownTaper);
         setEasyDirty(false);
       } else {
         setEasyDirty(true);
@@ -384,7 +391,8 @@ export function useEditSession(
       mode, name: name.trim(), existingId: existing?.id, folderId: sessionFolderId,
       intervals: cleanIntervals, easyConfig: easyEdit.easyConfig, activityType,
       runSpeeds: speedSpinEdit.runSpeeds, runInclines: speedSpinEdit.runInclines,
-      inclineEnabled: speedSpinEdit.inclineEnabled, spinValues: speedSpinEdit.spinValues,
+      inclineEnabled: speedSpinEdit.inclineEnabled, cooldownTaper: speedSpinEdit.cooldownTaper,
+      spinValues: speedSpinEdit.spinValues,
       circuitData: circuitDraftData(),
     });
     return { ok: true, session, isNew: !existing };
@@ -424,6 +432,7 @@ export function useEditSession(
     runSpeeds:  speedSpinEdit.runSpeeds,
     runInclines: speedSpinEdit.runInclines,
     inclineEnabled: speedSpinEdit.inclineEnabled,
+    cooldownTaper: speedSpinEdit.cooldownTaper,
     spinValues: speedSpinEdit.spinValues,
     activeTimingPreset,
     targetLengthMinutes,
@@ -489,7 +498,9 @@ export function useEditSession(
     openInclinePicker:         (field) => pickerState.openInclinePicker(field, speedSpinEdit.runInclines[field]),
     openIntervalInclinePicker,
     clearIntervalIncline:      intervalEdit.clearIntervalIncline,
+    toggleIntervalCooldownTaper: intervalEdit.toggleIntervalCooldownTaper,
     setInclineEnabled:         speedSpinEdit.setInclineEnabled,
+    setCooldownTaper:          speedSpinEdit.setCooldownTaper,
     buildSavePayload,
   };
 }

@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 import { fmtDuration, type Interval } from '../lib/workout';
 import { useTheme, withOpacity, glowShadow, type ThemeTokens } from '../theme';
 import DragHandle from './DragHandle';
@@ -26,6 +27,8 @@ export interface IntervalRowProps {
   displayIncline?:         number;
   onOpenInclinePicker?:    () => void;
   onClearIncline?:         () => void;
+  cooldownTaperOn?:        boolean;
+  onToggleCooldownTaper?:  () => void;
 }
 
 export default function IntervalRow({
@@ -36,6 +39,7 @@ export default function IntervalRow({
   displayResistance, onOpenResistancePicker, onClearResistance,
   displayPower, onOpenPowerPicker, onClearPower,
   displayIncline, onOpenInclinePicker, onClearIncline,
+  cooldownTaperOn, onToggleCooldownTaper,
 }: IntervalRowProps) {
   const { T } = useTheme();
   const { t } = useTranslation();
@@ -52,6 +56,33 @@ export default function IntervalRow({
         <Text style={[styles.phasePillText, { color: phaseColor }]}>{t('phasesAbbr.' + interval.type)}</Text>
       </Pressable>
 
+      {onToggleCooldownTaper && (
+        <Pressable
+          onPress={onToggleCooldownTaper}
+          disabled={locked}
+          hitSlop={8}
+          accessibilityRole="switch"
+          accessibilityState={{ checked: !!cooldownTaperOn }}
+          accessibilityLabel={t('edit.cooldownTaperChip')}
+        >
+          <View style={[
+            styles.taperChip,
+            { borderColor: cooldownTaperOn ? phaseColor : T.hairline },
+            cooldownTaperOn && { backgroundColor: withOpacity(phaseColor, 0x22) },
+          ]}>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M3 5h5v5h5v5h5v5"
+                stroke={cooldownTaperOn ? phaseColor : T.faintText}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
+          </View>
+        </Pressable>
+      )}
+
       {onLabelChange !== undefined && interval.type === 'work' && (
         <TextInput
           style={[styles.labelInput, { color: T.text, borderColor: T.hairline }]}
@@ -66,7 +97,7 @@ export default function IntervalRow({
       {displaySpeed !== undefined && onOpenSpeedPicker && (
         <Pressable onPress={onOpenSpeedPicker} onLongPress={onClearSpeed} delayLongPress={500} hitSlop={8} style={styles.intervalSpeed}>
           <View style={[styles.settingChip, { borderColor: T.hairline }]}>
-            <Text style={styles.intervalDurationText}>
+            <Text style={styles.intervalDurationText} numberOfLines={1}>
               {displaySpeed.value}
               <Text style={styles.intervalSpeedUnit}>{' '}{displaySpeed.unit}</Text>
             </Text>
@@ -83,7 +114,7 @@ export default function IntervalRow({
           style={styles.spinChip}
         >
           <View style={[styles.settingChip, { borderColor: T.hairline }]}>
-            <Text style={styles.intervalDurationText}>{displayResistance}<Text style={styles.spinChipUnit}>R</Text></Text>
+            <Text style={styles.intervalDurationText} numberOfLines={1}>{displayResistance}<Text style={styles.spinChipUnit}>R</Text></Text>
           </View>
         </Pressable>
       )}
@@ -97,7 +128,7 @@ export default function IntervalRow({
           style={styles.spinChip}
         >
           <View style={[styles.settingChip, { borderColor: T.hairline }]}>
-            <Text style={styles.intervalDurationText}>
+            <Text style={styles.intervalDurationText} numberOfLines={1}>
               {displayPower}<Text style={styles.spinChipUnit}>W</Text>
             </Text>
           </View>
@@ -113,7 +144,7 @@ export default function IntervalRow({
           style={styles.spinChip}
         >
           <View style={[styles.settingChip, { borderColor: T.hairline }]}>
-            <Text style={styles.intervalDurationText}>
+            <Text style={styles.intervalDurationText} numberOfLines={1}>
               {displayIncline}<Text style={styles.spinChipUnit}>%</Text>
             </Text>
           </View>
@@ -133,7 +164,7 @@ export default function IntervalRow({
         ]}
       >
         <View style={[styles.settingChip, { borderColor: T.hairline }]}>
-          <Text style={styles.intervalDurationText}>{fmtDuration(interval.dur)}</Text>
+          <Text style={styles.intervalDurationText} numberOfLines={1}>{fmtDuration(interval.dur)}</Text>
         </View>
       </Pressable>
     </View>
@@ -183,6 +214,7 @@ function makeStyles(T: ThemeTokens) {
       borderRadius: 8,
       paddingHorizontal: 8,
       paddingVertical: 4,
+      flexShrink: 0,
     },
     labelInput: {
       flex: 1,
@@ -220,6 +252,12 @@ function makeStyles(T: ThemeTokens) {
       fontFamily: 'Inter_400Regular',
       fontSize: 11,
       color: T.subText,
+    },
+    taperChip: {
+      borderWidth: 1.5,
+      borderRadius: 8,
+      paddingHorizontal: 6,
+      paddingVertical: 3,
     },
   });
 }

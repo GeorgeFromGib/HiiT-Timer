@@ -24,6 +24,7 @@ const baseInput = {
   runSpeeds,
   runInclines,
   inclineEnabled: false,
+  cooldownTaper: false,
   spinValues: undefined,
   circuitData: undefined,
 };
@@ -73,6 +74,23 @@ describe('buildSessionFromDraft', () => {
       mode: 'advanced',
       intervals,
     });
+  });
+
+  it('sets cooldownTaper on a run session only when the flag is on', () => {
+    const on = buildSessionFromDraft({
+      ...baseInput, mode: 'easy', name: 'Taper Run', activityType: 'run', cooldownTaper: true,
+    });
+    expect(on).toMatchObject({ activityType: 'run', cooldownTaper: true });
+
+    const off = buildSessionFromDraft({
+      ...baseInput, mode: 'easy', name: 'Plain Run', activityType: 'run', cooldownTaper: false,
+    });
+    expect(off).not.toHaveProperty('cooldownTaper');
+  });
+
+  it('never sets cooldownTaper on a non-run session', () => {
+    const session = buildSessionFromDraft({ ...baseInput, cooldownTaper: true });
+    expect(session).not.toHaveProperty('cooldownTaper');
   });
 
   it('builds a spinning session when spinValues is provided', () => {

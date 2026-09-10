@@ -14,6 +14,7 @@ export interface SpeedAndSpinEdit {
   runSpeeds:          RunSpeeds;
   runInclines:        RunInclines;
   inclineEnabled:     boolean;
+  cooldownTaper:      boolean;
   spinValues:         SpinValues;
   activeSpeedPreset:  PresetLevel | null;
   activeInclinePreset: PresetLevel | null;
@@ -22,53 +23,70 @@ export interface SpeedAndSpinEdit {
   setRunSpeed:        (field: keyof RunSpeeds, value: number) => void;
   setRunIncline:      (field: keyof RunInclines, value: number) => void;
   setInclineEnabled:  (enabled: boolean) => void;
+  setCooldownTaper:   (enabled: boolean) => void;
   setSpinValue:       (field: keyof SpinValues, value: number) => void;
   applySpeedPreset:   (level: PresetLevel) => void;
   applyInclinePreset: (level: PresetLevel) => void;
   applySpinPreset:    (level: PresetLevel) => void;
 }
 
+// A brand-new session starts on preset level 1 for every axis (timing, speed,
+// incline, spin). Existing sessions keep their saved values.
+const NEW_PRESET_LEVEL: PresetLevel = '1';
+
 export function useSpeedAndSpinEdit(
   existing: Session | undefined,
+  newActivityType?: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata',
 ): SpeedAndSpinEdit {
   const initRunSpeeds = existing && existing.mode !== 'circuit'
-    ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : DEFAULT_RUN_SPEEDS;
+    ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : SPEED_PRESETS[NEW_PRESET_LEVEL];
   const initRunInclines = existing && existing.mode !== 'circuit' && existing.activityType === 'run'
-    ? (existing.runInclines ?? DEFAULT_RUN_INCLINES) : DEFAULT_RUN_INCLINES;
+    ? (existing.runInclines ?? DEFAULT_RUN_INCLINES) : INCLINE_PRESETS[NEW_PRESET_LEVEL];
   const initInclineEnabled = existing && existing.mode !== 'circuit' && existing.activityType === 'run'
     ? (existing.inclineEnabled ?? true) : true;
+  // New treadmill (run) sessions default the cooldown taper ON; existing sessions
+  // keep whatever they were saved with.
+  const initCooldownTaper = existing && existing.mode !== 'circuit' && existing.activityType === 'run'
+    ? (existing.cooldownTaper ?? false)
+    : (!existing && newActivityType === 'run');
   const initSpinValues = existing && existing.mode !== 'circuit' && existing.activityType === 'spinning'
-    ? (existing.spinValues ?? DEFAULT_SPIN_VALUES) : DEFAULT_SPIN_VALUES;
+    ? (existing.spinValues ?? DEFAULT_SPIN_VALUES) : SPIN_PRESETS[NEW_PRESET_LEVEL];
 
   const [runSpeeds, setRunSpeeds]     = useState<RunSpeeds>(initRunSpeeds);
   const [runInclines, setRunInclines] = useState<RunInclines>(initRunInclines);
   const [inclineEnabled, setInclineEnabled] = useState<boolean>(initInclineEnabled);
+  const [cooldownTaper, setCooldownTaper] = useState<boolean>(initCooldownTaper);
   const [spinValues, setSpinValues]   = useState<SpinValues>(initSpinValues);
   const [speedsDirty, setSpeedsDirty]   = useState(false);
   const [inclineDirty, setInclineDirty] = useState(false);
   const [spinDirty,   setSpinDirty]     = useState(false);
   const [activeSpeedPreset, setActiveSpeedPreset] = useState<PresetLevel | null>(() =>
     existing && existing.mode !== 'circuit' && existing.runSpeeds
-      ? findMatchingSpeedPreset(existing.runSpeeds) : null
+      ? findMatchingSpeedPreset(existing.runSpeeds)
+      : existing ? null : NEW_PRESET_LEVEL
   );
   const [activeInclinePreset, setActiveInclinePreset] = useState<PresetLevel | null>(() =>
     existing && existing.mode !== 'circuit' && existing.activityType === 'run' && existing.runInclines
-      ? findMatchingInclinePreset(existing.runInclines) : null
+      ? findMatchingInclinePreset(existing.runInclines)
+      : existing ? null : NEW_PRESET_LEVEL
   );
   const [activeSpinPreset, setActiveSpinPreset] = useState<PresetLevel | null>(() =>
     existing && existing.mode !== 'circuit' && existing.activityType === 'spinning' && existing.spinValues
-      ? findMatchingSpinPreset(existing.spinValues) : null
+      ? findMatchingSpinPreset(existing.spinValues)
+      : existing ? null : NEW_PRESET_LEVEL
   );
 
   const runSpeedsDraft       = useDraft(initRunSpeeds);
   const runInclinesDraft     = useDraft(initRunInclines);
   const inclineEnabledDraft  = useDraft(initInclineEnabled);
+  const cooldownTaperDraft   = useDraft(initCooldownTaper);
   const spinValuesDraft      = useDraft(initSpinValues);
 
   const hasChanges = useMemo(
     () => runSpeedsDraft.isDirty(runSpeeds) || runInclinesDraft.isDirty(runInclines)
-      || inclineEnabledDraft.isDirty(inclineEnabled) || spinValuesDraft.isDirty(spinValues),
-    [runSpeeds, runInclines, inclineEnabled, spinValues],
+      || inclineEnabledDraft.isDirty(inclineEnabled) || cooldownTaperDraft.isDirty(cooldownTaper)
+      || spinValuesDraft.isDirty(spinValues),
+    [runSpeeds, runInclines, inclineEnabled, cooldownTaper, spinValues],
   );
 
   function setRunSpeed(field: keyof RunSpeeds, value: number) {
@@ -114,9 +132,9 @@ export function useSpeedAndSpinEdit(
   }
 
   return {
-    runSpeeds, runInclines, inclineEnabled, spinValues,
+    runSpeeds, runInclines, inclineEnabled, cooldownTaper, spinValues,
     activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges,
-    setRunSpeed, setRunIncline, setInclineEnabled, setSpinValue,
+    setRunSpeed, setRunIncline, setInclineEnabled, setCooldownTaper, setSpinValue,
     applySpeedPreset, applyInclinePreset, applySpinPreset,
   };
 }

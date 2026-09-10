@@ -218,6 +218,22 @@ describe('useIntervalListEdit', () => {
       'warmup', 'work', 'rest', 'work', 'rest', 'cooldown',
     ]);
     expect(result.current.intervals.every(iv => typeof iv._key === 'string')).toBe(true);
+    expect(result.current.intervals.every(iv => iv.cooldownTaper === undefined)).toBe(true);
+  });
+
+  it('buildFromEasy stamps cooldownTaper on the cooldown interval when asked', async () => {
+    const { result } = await renderHook(() => useIntervalListEdit(undefined));
+    await act(async () => result.current.buildFromEasy({ warmup: 10, high: 20, low: 5, rounds: 1, cooldown: 15 }, true));
+    expect(result.current.intervals.find(iv => iv.type === 'cooldown')!.cooldownTaper).toBe(true);
+    expect(result.current.intervals.find(iv => iv.type === 'work')!.cooldownTaper).toBeUndefined();
+  });
+
+  it('addInterval defaults a new cooldown to tapered for a new run session', async () => {
+    const { result } = await renderHook(() => useIntervalListEdit(undefined, false, true));
+    await act(async () => result.current.addInterval('cooldown'));
+    await act(async () => result.current.addInterval('work'));
+    expect(result.current.intervals.find(iv => iv.type === 'cooldown')!.cooldownTaper).toBe(true);
+    expect(result.current.intervals.find(iv => iv.type === 'work')!.cooldownTaper).toBeUndefined();
   });
 
   it('buildFromEasy resets isTimingDirty (checkpoint) but hasChanges still reflects divergence from the original session', async () => {

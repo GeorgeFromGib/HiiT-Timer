@@ -80,6 +80,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
         runSpeeds: DEFAULT_RUN_SPEEDS,
         runInclines: DEFAULT_RUN_INCLINES,
         inclineEnabled: true,
+        cooldownTaper: false,
         spinValues: undefined,
         circuitData: undefined,
       });

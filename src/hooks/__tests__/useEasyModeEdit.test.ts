@@ -15,20 +15,20 @@ const advancedSession: Session = {
 };
 
 describe('useEasyModeEdit', () => {
-  it('falls back to DEFAULTS when no existing session is given', async () => {
+  it('a new session starts on intensity preset 1 with a 5-minute warm-up/cool-down', async () => {
     const { result } = await renderHook(() => useEasyModeEdit(undefined));
-    expect(result.current.fieldValues).toEqual({ warmup: 30, work: 30, rest: 15, cooldown: 30 });
-    expect(result.current.rounds).toBe(4);
-    expect(result.current.easyConfig).toEqual({ warmup: 30, high: 30, low: 15, rounds: 4, cooldown: 30 });
-    expect(result.current.activeTimingPreset).toBeNull();
+    expect(result.current.fieldValues).toEqual({ warmup: 300, work: 20, rest: 40, cooldown: 300 });
+    expect(result.current.rounds).toBe(5);
+    expect(result.current.easyConfig).toEqual({ warmup: 300, high: 20, low: 40, rounds: 5, cooldown: 300 });
+    expect(result.current.activeTimingPreset).toBe('1');
     expect(result.current.hasChanges).toBe(false);
     expect(result.current.isTimingDirty).toBe(false);
   });
 
-  it('falls back to DEFAULTS for a non-easy (advanced) session', async () => {
+  it('uses the new-session defaults for a non-easy (advanced) session', async () => {
     const { result } = await renderHook(() => useEasyModeEdit(advancedSession));
-    expect(result.current.fieldValues.warmup).toBe(30);
-    expect(result.current.rounds).toBe(4);
+    expect(result.current.fieldValues.warmup).toBe(300);
+    expect(result.current.rounds).toBe(5);
   });
 
   it('seeds field values from an existing easy session', async () => {
@@ -96,13 +96,13 @@ describe('useEasyModeEdit', () => {
   });
 
   it('setFieldEnabled(true) on a field that started at 0 falls back to the DEFAULTS value', async () => {
-    // initW=0 -> lastNonZero seeded with DEFAULTS.warmup (30) per the `initW || DEFAULTS.warmup` fallback
+    // initW=0 -> lastNonZero seeded with DEFAULTS.warmup (300) per the `initW || DEFAULTS.warmup` fallback
     const { result } = await renderHook(() => useEasyModeEdit(easySession({ warmup: 0 })));
     expect(result.current.fieldValues.warmup).toBe(0);
 
     let returned: number | undefined;
     await act(async () => { returned = result.current.setFieldEnabled('warmup', true); });
-    expect(returned).toBe(30);
+    expect(returned).toBe(300);
   });
 
   it('setRounds updates rounds and clears the active preset', async () => {
@@ -124,6 +124,9 @@ describe('useEasyModeEdit', () => {
     expect(result.current.fieldValues.work).toBe(50);
     expect(result.current.fieldValues.rest).toBe(10);
     expect(result.current.rounds).toBe(6);
+    // a preset standardises warm-up and cool-down to 5 minutes
+    expect(result.current.fieldValues.warmup).toBe(300);
+    expect(result.current.fieldValues.cooldown).toBe(300);
     expect(result.current.activeTimingPreset).toBe('5');
     expect(result.current.isTimingDirty).toBe(false);
     // hasChanges still reflects divergence from the originally loaded session
@@ -141,14 +144,14 @@ describe('useEasyModeEdit', () => {
     expect(result.current.rounds).toBe(0);
   });
 
-  it('reset restores all fields to DEFAULTS and clears the active preset', async () => {
+  it('reset restores all fields to the preset-1 defaults', async () => {
     const { result } = await renderHook(() => useEasyModeEdit(easySession()));
     await act(async () => result.current.setField('warmup', 999));
     await act(async () => result.current.setRounds(20));
 
     await act(async () => result.current.reset());
-    expect(result.current.fieldValues).toEqual({ warmup: 30, work: 30, rest: 15, cooldown: 30 });
-    expect(result.current.rounds).toBe(4);
-    expect(result.current.activeTimingPreset).toBeNull();
+    expect(result.current.fieldValues).toEqual({ warmup: 300, work: 20, rest: 40, cooldown: 300 });
+    expect(result.current.rounds).toBe(5);
+    expect(result.current.activeTimingPreset).toBe('1');
   });
 });

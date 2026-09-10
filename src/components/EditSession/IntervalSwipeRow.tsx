@@ -32,6 +32,8 @@ interface Props {
   displayIncline?:         number;
   onOpenInclinePicker?:    () => void;
   onClearIncline?:         () => void;
+  cooldownTaperOn?:        boolean;
+  onToggleCooldownTaper?:  () => void;
 }
 
 const IntervalSwipeDuplicateAction = React.forwardRef<
@@ -71,6 +73,7 @@ export default function IntervalSwipeRow({
   displayResistance, onOpenResistancePicker, onClearResistance,
   displayPower, onOpenPowerPicker, onClearPower,
   displayIncline, onOpenInclinePicker, onClearIncline,
+  cooldownTaperOn, onToggleCooldownTaper,
 }: Props) {
   const { t } = useTranslation();
   const duplicateRef = useRef<{ reset: () => void } | null>(null);
@@ -97,6 +100,8 @@ export default function IntervalSwipeRow({
       displayIncline={displayIncline}
       onOpenInclinePicker={onOpenInclinePicker}
       onClearIncline={onClearIncline}
+      cooldownTaperOn={cooldownTaperOn}
+      onToggleCooldownTaper={onToggleCooldownTaper}
     />
   );
 

@@ -6,6 +6,9 @@ export interface IntensityPreset {
   rest: number;
 }
 
+// Applying an interval preset also standardises warm-up and cool-down to 5 minutes.
+export const PRESET_WARMUP_COOLDOWN_SECONDS = 300;
+
 export const INTENSITY_PRESETS: Record<PresetLevel, IntensityPreset> = {
   '1': { work: 20, rest: 40 },
   '2': { work: 30, rest: 30 },

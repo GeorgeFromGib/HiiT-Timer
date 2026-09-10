@@ -12,6 +12,7 @@ export interface SessionDraftInput {
   runSpeeds:      RunSpeeds;
   runInclines:    RunInclines;
   inclineEnabled: boolean;
+  cooldownTaper:  boolean;
   spinValues:     SpinValues | undefined;
   circuitData:    { warmup: number; cooldown: number; circuits: number; circuitRest: number; tabata: boolean } | undefined;
 }
@@ -19,7 +20,7 @@ export interface SessionDraftInput {
 export function buildSessionFromDraft(input: SessionDraftInput): Session {
   const {
     mode, name, easyConfig, intervals, activityType, runSpeeds, existingId,
-    circuitData, spinValues, runInclines, inclineEnabled, folderId,
+    circuitData, spinValues, runInclines, inclineEnabled, cooldownTaper, folderId,
   } = input;
   const base = { id: existingId ?? newId(), name, folderId };
   if (mode === 'circuit') {
@@ -38,7 +39,7 @@ export function buildSessionFromDraft(input: SessionDraftInput): Session {
     throw new Error('spinValues must be provided for spinning sessions');
   }
   const activityProps =
-    activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds, runInclines, inclineEnabled } :
+    activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds, runInclines, inclineEnabled, ...(cooldownTaper ? { cooldownTaper: true } : {}) } :
     activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues: spinValues! } :
     {};
   if (mode === 'easy') {

@@ -24,15 +24,20 @@ export interface IntervalListEdit {
   clearIntervalSpeed:      (key: string) => void;
   setIntervalIncline:      (key: string, value: number) => void;
   clearIntervalIncline:    (key: string) => void;
+  toggleIntervalCooldownTaper: (key: string) => void;
   setIntervalResistance:   (key: string, value: number) => void;
   clearIntervalResistance: (key: string) => void;
   setIntervalPower:        (key: string, value: number) => void;
   clearIntervalPower:      (key: string) => void;
-  buildFromEasy:           (config: EasyConfig) => void;
+  buildFromEasy:           (config: EasyConfig, cooldownTaper?: boolean) => void;
   tryConvertToEasy:        typeof tryConvertToEasy;
 }
 
-export function useIntervalListEdit(existing: Session | undefined, startTabata = false): IntervalListEdit {
+export function useIntervalListEdit(
+  existing: Session | undefined,
+  startTabata = false,
+  defaultCooldownTaper = false,
+): IntervalListEdit {
   const initIntervals =
     existing?.mode === 'advanced' || existing?.mode === 'circuit' ? existing.intervals
     : startTabata ? buildTabataIntervals()
@@ -73,6 +78,7 @@ export function useIntervalListEdit(existing: Session | undefined, startTabata =
       type,
       dur:           last?.dur ?? 30,
       activityLabel: last?.activityLabel,
+      ...(type === 'cooldown' && defaultCooldownTaper ? { cooldownTaper: true } : {}),
     })]);
   }
 
@@ -123,6 +129,10 @@ export function useIntervalListEdit(existing: Session | undefined, startTabata =
     setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, incline: undefined } : iv));
   }
 
+  function toggleIntervalCooldownTaper(key: string) {
+    setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, cooldownTaper: !iv.cooldownTaper } : iv));
+  }
+
   function setIntervalResistance(key: string, value: number) {
     setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, resistance: value } : iv));
   }
@@ -139,8 +149,10 @@ export function useIntervalListEdit(existing: Session | undefined, startTabata =
     setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, power: undefined } : iv));
   }
 
-  function buildFromEasy(config: EasyConfig) {
-    const built = buildIntervalsFromEasy(config);
+  function buildFromEasy(config: EasyConfig, cooldownTaper = false) {
+    const built = buildIntervalsFromEasy(config).map(iv =>
+      iv.type === 'cooldown' && cooldownTaper ? { ...iv, cooldownTaper: true } : iv,
+    );
     setIntervals(built.map(toLocal));
     presetCheckpoint.commit(built);
   }
@@ -150,7 +162,7 @@ export function useIntervalListEdit(existing: Session | undefined, startTabata =
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     setActivityLabel,
     setIntervalDuration, setIntervalSpeed, clearIntervalSpeed,
-    setIntervalIncline, clearIntervalIncline,
+    setIntervalIncline, clearIntervalIncline, toggleIntervalCooldownTaper,
     setIntervalResistance, clearIntervalResistance, setIntervalPower, clearIntervalPower,
     buildFromEasy, tryConvertToEasy,
   };

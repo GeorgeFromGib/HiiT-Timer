@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { useDraft } from './useDraft';
 import { type Session } from '../lib/sessions';
 import { type PresetLevel } from '../lib/presets';
-import { findMatchingIntensityPreset, INTENSITY_PRESETS } from '../lib/intensityPresets';
+import { findMatchingIntensityPreset, INTENSITY_PRESETS, PRESET_WARMUP_COOLDOWN_SECONDS } from '../lib/intensityPresets';
 import { type TimeField } from './editSessionTypes';
 
 type EasyConfig = { warmup: number; high: number; low: number; rounds: number; cooldown: number };
@@ -23,7 +23,16 @@ export interface EasyModeEdit {
   reset:                () => void;
 }
 
-const DEFAULTS = { warmup: 30, work: 30, rest: 15, rounds: 4, cooldown: 30 };
+// A brand-new session (and reset()) starts on intensity preset 1, with the
+// standard 5-minute warm-up and cool-down.
+const NEW_PRESET_LEVEL: PresetLevel = '1';
+const DEFAULTS = {
+  warmup:   PRESET_WARMUP_COOLDOWN_SECONDS,
+  work:     INTENSITY_PRESETS[NEW_PRESET_LEVEL].work,
+  rest:     INTENSITY_PRESETS[NEW_PRESET_LEVEL].rest,
+  rounds:   5, // 5×(20+40) + 300 + 300 = 15 min, the default target length
+  cooldown: PRESET_WARMUP_COOLDOWN_SECONDS,
+};
 
 export function useEasyModeEdit(
   initial: Session | undefined,
@@ -43,7 +52,7 @@ export function useEasyModeEdit(
   const [activeTimingPreset, setActiveTimingPreset] = useState<PresetLevel | null>(() =>
     initial?.mode === 'easy'
       ? findMatchingIntensityPreset(initial.config.high, initial.config.low)
-      : null
+      : NEW_PRESET_LEVEL
   );
 
   const setters: Record<TimeField, (v: number) => void> = {
@@ -89,11 +98,17 @@ export function useEasyModeEdit(
   }
 
   function applyIntensityPreset(wk: number, r: number, rd: number, level: PresetLevel) {
+    // A preset also standardises warm-up and cool-down to 5 minutes.
+    const wc = PRESET_WARMUP_COOLDOWN_SECONDS;
+    setWarmup(wc);
+    setCooldown(wc);
+    lastNonZero.current.warmup = wc;
+    lastNonZero.current.cooldown = wc;
     setWork(wk);
     setRest(r);
     setRounds_(rd);
     setActiveTimingPreset(level);
-    presetCheckpoint.commit({ warmup, work: wk, rest: r, rounds: rd, cooldown });
+    presetCheckpoint.commit({ warmup: wc, work: wk, rest: r, rounds: rd, cooldown: wc });
   }
 
   function reset() {
@@ -102,7 +117,7 @@ export function useEasyModeEdit(
     setRest(DEFAULTS.rest);
     setRounds_(DEFAULTS.rounds);
     setCooldown(DEFAULTS.cooldown);
-    setActiveTimingPreset(null);
+    setActiveTimingPreset(NEW_PRESET_LEVEL);
   }
 
   const fieldValues: Record<TimeField, number> = { warmup, work, rest, cooldown };

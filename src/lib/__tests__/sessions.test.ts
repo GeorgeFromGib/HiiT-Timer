@@ -2,6 +2,8 @@ import {
   spinValueForPhase,
   speedForPhase,
   inclineForPhase,
+  cooldownTaper,
+  cooldownBase,
   getSessionSegments,
   loadSessions,
   saveSessions,
@@ -68,6 +70,119 @@ describe('inclineForPhase', () => {
     expect(inclineForPhase('cooldown', inclines)).toBe(1);
     expect(inclineForPhase('circuitRest', inclines)).toBe(1.5);
     expect(inclineForPhase('finish', inclines)).toBe(1.5);
+  });
+});
+
+describe('cooldownTaper', () => {
+  // seg = point through the cooldown, 0 (start) .. 1 (end)
+  it('1. tapers 10 km/h / 6% over a 5-minute cooldown per the checkpoint table', () => {
+    const at = (p: number) => cooldownTaper(10, 6, p);
+    expect(at(0)).toEqual({ speed: 6.5, incline: 6 });     //  0:00
+    expect(at(0.25)).toEqual({ speed: 5.5, incline: 4.5 }); //  1:15
+    expect(at(0.5)).toEqual({ speed: 5, incline: 3 });      //  2:30
+    expect(at(0.75)).toEqual({ speed: 4.5, incline: 1.5 }); //  3:45
+    expect(at(1)).toEqual({ speed: 4, incline: 0 });        //  5:00
+  });
+
+  it('2. tapers 12 km/h / 8% over a 10-minute cooldown per the checkpoint table', () => {
+    const at = (p: number) => cooldownTaper(12, 8, p);
+    expect(at(0)).toEqual({ speed: 7.8, incline: 8 });
+    expect(at(0.25)).toEqual({ speed: 6.6, incline: 6 });
+    expect(at(0.5)).toEqual({ speed: 6, incline: 4 });
+    expect(at(0.75)).toEqual({ speed: 5.4, incline: 2 });
+    expect(at(1)).toEqual({ speed: 4.8, incline: 0 });
+  });
+
+  it('3. is relative to the given base speed, not any global/max speed', () => {
+    // At the 50% checkpoint the tapered speed is exactly half the base, whatever
+    // the base is — proving it scales with the preceding phase, not a fixed max.
+    expect(cooldownTaper(8, undefined, 0.5).speed).toBeCloseTo(4.0, 5);
+    expect(cooldownTaper(9, undefined, 0.5).speed).toBeCloseTo(4.5, 5);
+    expect(cooldownTaper(13, undefined, 0.5).speed).toBeCloseTo(6.5, 5);
+    expect(cooldownTaper(16, undefined, 0.5).speed).toBeCloseTo(8.0, 5);
+  });
+
+  it('4. never drops speed below 40% of the base, even after rounding', () => {
+    for (const base of [10, 11.3, 12, 7.7, 15.55]) {
+      for (let p = 0; p <= 1.001; p += 0.05) {
+        expect(cooldownTaper(base, undefined, p).speed).toBeGreaterThanOrEqual(base * 0.4 - 1e-9);
+      }
+      expect(cooldownTaper(base, undefined, 1).speed).toBeGreaterThanOrEqual(base * 0.4 - 1e-9);
+    }
+  });
+
+  it('5. always reaches 0% incline by the end of the cooldown', () => {
+    expect(cooldownTaper(12, 8, 1).incline).toBe(0);
+    expect(cooldownTaper(10, 0.3, 1).incline).toBe(0);
+    expect(cooldownTaper(9, 15, 1).incline).toBe(0);
+  });
+
+  it('6. never produces a negative incline', () => {
+    for (const inc of [0, 0.5, 3, 8, 15]) {
+      for (let p = 0; p <= 1.5; p += 0.1) {
+        expect(cooldownTaper(10, inc, p).incline).toBeGreaterThanOrEqual(0);
+      }
+    }
+  });
+
+  it('7. is percentage-based, so any cooldown duration gives the same taper', () => {
+    const progressAt = (elapsed: number, total: number) => elapsed / total;
+    // 50% through a 5-min cooldown vs 50% through a 20-min cooldown
+    expect(cooldownTaper(12, 8, progressAt(150, 300)))
+      .toEqual(cooldownTaper(12, 8, progressAt(600, 1200)));
+    expect(cooldownTaper(12, 8, progressAt(75, 300)))
+      .toEqual(cooldownTaper(12, 8, progressAt(300, 1200)));
+  });
+
+  it('9. keeps incline at 0% when the preceding incline is already 0%', () => {
+    for (let p = 0; p <= 1; p += 0.1) {
+      expect(cooldownTaper(10, 0, p).incline).toBe(0);
+    }
+  });
+
+  it('10. rounds speed to 0.1 and incline to 0.5', () => {
+    expect(cooldownTaper(9.97, undefined, 0).speed).toBeCloseTo(6.5, 5);   // 0.65*9.97 = 6.4805
+    expect(cooldownTaper(10.03, undefined, 0).speed).toBeCloseTo(6.5, 5);  // 0.65*10.03 = 6.5195
+    expect(cooldownTaper(10, 3, 0.25).incline).toBeCloseTo(2.5, 5);        // 3*0.75 = 2.25 -> 2.5
+    expect(cooldownTaper(10, 7, 0.1).incline % 0.5).toBeCloseTo(0, 5);
+  });
+
+  it('omits incline entirely when the base incline is undefined (incline disabled)', () => {
+    expect(cooldownTaper(10, undefined, 0.5)).toEqual({ speed: 5 });
+  });
+});
+
+describe('cooldownBase', () => {
+  const seg = (partial: Partial<import('../workout').Segment>): import('../workout').Segment =>
+    ({ phase: 'work', duration: 60, startAt: 0, endAt: 60, index: 0, ...partial } as import('../workout').Segment);
+
+  it('returns the last preceding segment that has a non-zero speed', () => {
+    const segs = [
+      seg({ phase: 'work', speed: 12, incline: 5 }),
+      seg({ phase: 'rest', speed: 6, incline: 2 }),
+      seg({ phase: 'cooldown' }),
+    ];
+    expect(cooldownBase(segs, 2)).toEqual({ speed: 6, incline: 2 });
+  });
+
+  it('8. returns null when no preceding segment has a usable speed (fallback path)', () => {
+    expect(cooldownBase([seg({ speed: 0 }), seg({ phase: 'cooldown' })], 1)).toBeNull();
+    expect(cooldownBase([seg({}), seg({ phase: 'cooldown' })], 1)).toBeNull();
+    expect(cooldownBase([seg({ phase: 'cooldown' })], 0)).toBeNull();
+  });
+
+  it('skips back over a zero-speed rest phase to the last real running speed', () => {
+    const segs = [
+      seg({ phase: 'work', speed: 10, incline: 4 }),
+      seg({ phase: 'rest', speed: 0 }),
+      seg({ phase: 'cooldown' }),
+    ];
+    expect(cooldownBase(segs, 2)).toEqual({ speed: 10, incline: 4 });
+  });
+
+  it('carries an already-zero preceding incline through unchanged', () => {
+    const segs = [seg({ phase: 'work', speed: 10, incline: 0 }), seg({ phase: 'cooldown' })];
+    expect(cooldownBase(segs, 1)).toEqual({ speed: 10, incline: 0 });
   });
 });
 
@@ -157,6 +272,32 @@ describe('getSessionSegments', () => {
     };
     const segs = getSessionSegments(session);
     expect(segs.every(s => s.speed === undefined)).toBe(true);
+  });
+
+  it('stamps cooldownTaper on the cooldown segment for an easy-mode run session with the flag', () => {
+    const session: Session = {
+      id: '1', name: 'Run', folderId: 'f', mode: 'easy', activityType: 'run',
+      config: { warmup: 10, high: 20, low: 5, rounds: 1, cooldown: 10 },
+      runSpeeds: DEFAULT_RUN_SPEEDS, cooldownTaper: true,
+    };
+    const segs = getSessionSegments(session);
+    expect(segs.find(s => s.phase === 'cooldown')!.cooldownTaper).toBe(true);
+    expect(segs.find(s => s.phase === 'work')!.cooldownTaper).toBeUndefined();
+  });
+
+  it('ignores the session-level cooldownTaper flag in advanced mode; uses the interval flag', () => {
+    const session: Session = {
+      id: '1', name: 'Run', folderId: 'f', mode: 'advanced', activityType: 'run',
+      intervals: [
+        { type: 'work', dur: 20 },
+        { type: 'cooldown', dur: 60, cooldownTaper: true },
+        { type: 'cooldown', dur: 60 },
+      ],
+      runSpeeds: DEFAULT_RUN_SPEEDS, cooldownTaper: true,
+    };
+    const segs = getSessionSegments(session);
+    expect(segs[1].cooldownTaper).toBe(true);
+    expect(segs[2].cooldownTaper).toBeUndefined();
   });
 
   it('applies spin values using defaults when spinValues is missing', () => {

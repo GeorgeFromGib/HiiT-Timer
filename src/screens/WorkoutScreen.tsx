@@ -21,7 +21,7 @@ import {
 import { formatSpeed } from '../lib/speedUnit';
 import { useTranslation } from '../hooks/useTranslation';
 import { appAlert } from '../lib/appAlert';
-import { getSessionSegments } from '../lib/sessions';
+import { getSessionSegments, cooldownTaper, cooldownBase } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -186,10 +186,61 @@ export default function WorkoutScreen({
   }, []);
 
   const effectiveIndex = currentIndex >= 0 ? currentIndex : 0;
-  const seg            = segments[effectiveIndex];
+  const rawSeg         = segments[effectiveIndex];
   const nextSeg        = segments[effectiveIndex + 1];
+
+  // ── Treadmill cooldown taper (docs/todo.md item 1) ──
+  // While in the cooldown, recompute the shown speed/incline every tick from how
+  // far through the cooldown we are, relative to the phase before it. Falls back
+  // to the segment's flat cooldown value when there's no usable base speed.
+  // `cooldownTaper` is stamped onto the cooldown segment by getSessionSegments
+  // (per-session in easy mode, per-interval in advanced mode).
+  const taperOn = (status === 'running' || status === 'paused');
+  const cdBase = taperOn && rawSeg.phase === 'cooldown' && rawSeg.cooldownTaper
+    ? cooldownBase(segments, effectiveIndex) : null;
+  const cdProgress = rawSeg.duration > 0
+    ? Math.max(0, Math.min(1, 1 - remainingInSegment / rawSeg.duration)) : 0;
+  const seg = cdBase
+    ? { ...rawSeg, ...cooldownTaper(cdBase.speed, cdBase.incline, cdProgress) }
+    : rawSeg;
+  const displaySegments = seg !== rawSeg
+    ? segments.map((s, i) => (i === effectiveIndex ? seg : s))
+    : segments;
+
+  // Next-up preview: show the cooldown's first tapered value, not its stale flat one.
+  const nextCdBase = taperOn && nextSeg?.phase === 'cooldown' && nextSeg.cooldownTaper
+    ? cooldownBase(segments, effectiveIndex + 1) : null;
+  const nextSeg_ = nextCdBase
+    ? { ...nextSeg, ...cooldownTaper(nextCdBase.speed, nextCdBase.incline, 0) }
+    : nextSeg;
+
   const phaseColor     = T.phases[seg.phase];
   const nextPhaseColor = nextSeg ? T.phases[nextSeg.phase] : null;
+
+  // Flash the speed/incline pill for ~3s whenever the shown value steps down.
+  const pillPulse = useRef(new Animated.Value(0)).current;
+  const pillPulseAnimRef = useRef<Animated.CompositeAnimation | null>(null);
+  const prevPillKeyRef = useRef('');
+  useEffect(() => {
+    if (seg.phase !== 'cooldown' || seg.speed === undefined) { prevPillKeyRef.current = ''; return; }
+    const key = `${formatSpeed(seg.speed, settings.speedUnit)}|${seg.incline ?? ''}`;
+    if (prevPillKeyRef.current && prevPillKeyRef.current !== key) {
+      pillPulseAnimRef.current?.stop();
+      pillPulse.setValue(0);
+      pillPulseAnimRef.current = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pillPulse, { toValue: 1, duration: 250, useNativeDriver: true }),
+          Animated.timing(pillPulse, { toValue: 0, duration: 250, useNativeDriver: true }),
+        ]),
+        { iterations: 6 }, // 6 × 500ms ≈ 3s
+      );
+      pillPulseAnimRef.current.start(() => pillPulse.setValue(0));
+    }
+    prevPillKeyRef.current = key;
+  }, [seg.phase, seg.speed, seg.incline, settings.speedUnit, pillPulse]);
+  useEffect(() => () => pillPulseAnimRef.current?.stop(), [pillPulse]);
+  const pillPulseScale = pillPulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.12] });
+  const pillPulseOpacity = pillPulse.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] });
 
   useEffect(() => {
     progressAnim.setValue(1);
@@ -241,12 +292,14 @@ export default function WorkoutScreen({
     return (
       <WorkoutScreenLandscape
         session={session}
-        segments={segments}
+        segments={displaySegments}
         currentIndex={currentIndex}
         totalDur={TOTAL_DUR}
         status={status}
         displayCountdown={displayCountdown}
         flashing={flashing}
+        pillScale={pillPulseScale}
+        pillOpacity={pillPulseOpacity}
         intervalNum={intervalNum}
         pct={pct}
         displayRemaining={displayRemaining}
@@ -313,15 +366,17 @@ export default function WorkoutScreen({
           })()}
 
           {seg.speed !== undefined && !isPreStart && (
-            <View style={[styles.speedPill, {
+            <Animated.View style={[styles.speedPill, {
               backgroundColor: withOpacity(phaseColor, 0x21),
               borderColor:     withOpacity(phaseColor, 0x59),
+              transform: [{ scale: pillPulseScale }],
+              opacity: pillPulseOpacity,
             }]}>
               <Text style={[styles.speedPillText, { color: phaseColor }]}>
                 {formatSpeed(seg.speed, settings.speedUnit)}
                 {seg.incline !== undefined ? ` · ${seg.incline}%` : ''}
               </Text>
-            </View>
+            </Animated.View>
           )}
 
           {seg.resistance !== undefined && seg.power !== undefined && !isPreStart && (
@@ -428,10 +483,10 @@ export default function WorkoutScreen({
             <Text style={[styles.nextPhase, { color: nextPhaseColor!, marginLeft: 5 }]}>
               {t('workout.phase.' + nextSeg.phase)}
             </Text>
-            {nextSeg.speed !== undefined && (
+            {nextSeg_.speed !== undefined && (
               <Text style={[styles.nextPhase, { color: nextPhaseColor! }]}>
-                {formatSpeed(nextSeg.speed, settings.speedUnit)}
-                {nextSeg.incline !== undefined ? ` · ${nextSeg.incline}%` : ''}
+                {formatSpeed(nextSeg_.speed, settings.speedUnit)}
+                {nextSeg_.incline !== undefined ? ` · ${nextSeg_.incline}%` : ''}
               </Text>
             )}
             {nextSeg.resistance !== undefined && nextSeg.power !== undefined && (
