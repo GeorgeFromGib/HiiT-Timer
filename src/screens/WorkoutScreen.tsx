@@ -21,7 +21,7 @@ import {
 import { formatSpeed } from '../lib/speedUnit';
 import { useTranslation } from '../hooks/useTranslation';
 import { appAlert } from '../lib/appAlert';
-import { getSessionSegments, cooldownTaper, cooldownBase, cooldownTaperSpin, cooldownBaseSpin } from '../lib/sessions';
+import { getSessionSegments, taperedCooldownSegment } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -190,35 +190,31 @@ export default function WorkoutScreen({
   const nextSeg        = segments[effectiveIndex + 1];
 
   // ── Cooldown taper (docs/todo.md item 1) ──
-  // While in the cooldown, recompute the shown effort from how far through the
-  // cooldown we are, relative to the phase before it: on a treadmill that's speed
-  // (incline pinned flat at 0%), on a bike it's resistance & power. It steps down
-  // only at the 25/50/75% marks and then holds. Falls back to the segment's flat
-  // cooldown value when there's no usable base effort. `cooldownTaper` is stamped
-  // onto the cooldown segment by getSessionSegments (per-session in easy mode,
-  // per-interval in advanced mode).
+  // `taperedCooldownSegment` owns the whole rule; here we only supply how far
+  // through the cooldown we are and swap the result into the segment list. It's a
+  // no-op unless we're mid-workout on a cooldown that has the taper enabled.
   const taperOn = (status === 'running' || status === 'paused');
   const cdProgress = rawSeg.duration > 0
     ? Math.max(0, Math.min(1, 1 - remainingInSegment / rawSeg.duration)) : 0;
-  const taperCooldown = <S extends typeof rawSeg>(s: S, atIndex: number, progress: number): S => {
-    if (!(taperOn && s.phase === 'cooldown' && s.cooldownTaper)) return s;
-    if (s.resistance !== undefined) {
-      const b = cooldownBaseSpin(segments, atIndex);
-      return b ? { ...s, ...cooldownTaperSpin(b.resistance, b.power, progress) } : s;
-    }
-    const b = cooldownBase(segments, atIndex);
-    return b ? { ...s, ...cooldownTaper(b.speed, b.incline, progress) } : s;
-  };
 
-  const seg = taperCooldown(rawSeg, effectiveIndex, cdProgress);
+  const seg = taperOn ? taperedCooldownSegment(segments, effectiveIndex, cdProgress) : rawSeg;
   const displaySegments = seg !== rawSeg
     ? segments.map((s, i) => (i === effectiveIndex ? seg : s))
     : segments;
   // Next-up preview: show the cooldown's first tapered value, not its stale flat one.
-  const nextSeg_ = nextSeg ? taperCooldown(nextSeg, effectiveIndex + 1, 0) : nextSeg;
+  const nextSeg_ = nextSeg && taperOn
+    ? taperedCooldownSegment(segments, effectiveIndex + 1, 0)
+    : nextSeg;
 
   const phaseColor     = T.phases[seg.phase];
   const nextPhaseColor = nextSeg ? T.phases[nextSeg.phase] : null;
+
+  // In a tapering cooldown, lead the settings pill with the taper glyph.
+  const taperIcon = seg.phase === 'cooldown' && seg.cooldownTaper && status !== 'preStart' ? (
+    <Svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+      <Path d="M3 5h5v5h5v5h5v5" stroke={phaseColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  ) : null;
 
   // Flash the speed/incline pill for ~3s whenever the shown value steps down.
   const pillPulse = useRef(new Animated.Value(0)).current;
@@ -375,6 +371,7 @@ export default function WorkoutScreen({
               transform: [{ scale: pillPulseScale }],
               opacity: pillPulseOpacity,
             }]}>
+              {taperIcon}
               <Text style={[styles.speedPillText, { color: phaseColor }]}>
                 {formatSpeed(seg.speed, settings.speedUnit)}
                 {seg.incline !== undefined ? ` · ${seg.incline}%` : ''}
@@ -387,6 +384,7 @@ export default function WorkoutScreen({
               backgroundColor: withOpacity(phaseColor, 0x21),
               borderColor:     withOpacity(phaseColor, 0x59),
             }]}>
+              {taperIcon}
               <Text style={[styles.spinPillLabel, { color: phaseColor }]}>R</Text>
               <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.resistance}</Text>
               <Text style={[styles.spinPillLabel, { color: phaseColor }]}>·</Text>
@@ -658,6 +656,9 @@ function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
     textShadowRadius: 30,
   },
   speedPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     borderRadius: 20,
     borderWidth: 1.5,
     paddingHorizontal: 16,

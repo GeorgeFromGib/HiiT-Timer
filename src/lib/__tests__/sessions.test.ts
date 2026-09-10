@@ -2,10 +2,8 @@ import {
   spinValueForPhase,
   speedForPhase,
   inclineForPhase,
-  cooldownTaper,
-  cooldownTaperSpin,
-  cooldownBase,
-  cooldownBaseSpin,
+  cooldownTaperFactor,
+  taperedCooldownSegment,
   getSessionSegments,
   loadSessions,
   saveSessions,
@@ -75,175 +73,96 @@ describe('inclineForPhase', () => {
   });
 });
 
-describe('cooldownTaper', () => {
-  // seg = point through the cooldown, 0 (start) .. 1 (end)
-  it('1. steps 10 km/h down a 5-minute cooldown per the checkpoint table, then holds; incline flat at 0', () => {
-    const at = (p: number) => cooldownTaper(10, 6, p);
-    expect(at(0)).toEqual({ speed: 7.5, incline: 0 });    //  0:00
-    expect(at(0.25)).toEqual({ speed: 6.5, incline: 0 }); //  1:15
-    expect(at(0.5)).toEqual({ speed: 6, incline: 0 });    //  2:30
-    expect(at(0.75)).toEqual({ speed: 5.5, incline: 0 }); //  3:45
-    expect(at(1)).toEqual({ speed: 5.5, incline: 0 });    //  5:00 — holds the 75% value, never hits the 50% floor
+describe('cooldownTaperFactor', () => {
+  it('steps at the 25/50/75% marks and holds the 75% value to the end', () => {
+    expect(cooldownTaperFactor(0)).toBeCloseTo(0.75, 5);
+    expect(cooldownTaperFactor(0.1)).toBeCloseTo(0.75, 5);   // holds within band 1
+    expect(cooldownTaperFactor(0.24)).toBeCloseTo(0.75, 5);
+    expect(cooldownTaperFactor(0.25)).toBeCloseTo(0.65, 5);
+    expect(cooldownTaperFactor(0.49)).toBeCloseTo(0.65, 5);
+    expect(cooldownTaperFactor(0.5)).toBeCloseTo(0.6, 5);
+    expect(cooldownTaperFactor(0.75)).toBeCloseTo(0.55, 5);
+    expect(cooldownTaperFactor(0.99)).toBeCloseTo(0.55, 5);  // capped at the 75% mark
+    expect(cooldownTaperFactor(1)).toBeCloseTo(0.55, 5);     // 50% curve point never reached
   });
 
-  it('2. steps 12 km/h down a 10-minute cooldown per the checkpoint table, then holds; incline flat at 0', () => {
-    const at = (p: number) => cooldownTaper(12, 8, p);
-    expect(at(0)).toEqual({ speed: 9, incline: 0 });
-    expect(at(0.25)).toEqual({ speed: 7.8, incline: 0 });
-    expect(at(0.5)).toEqual({ speed: 7.2, incline: 0 });
-    expect(at(0.75)).toEqual({ speed: 6.6, incline: 0 });
-    expect(at(1)).toEqual({ speed: 6.6, incline: 0 }); // holds the 75% value to the end
-  });
-
-  it('3. is relative to the given base speed, not any global/max speed', () => {
-    // At the 50% checkpoint the tapered speed is a fixed 60% of the base, whatever
-    // the base is — proving it scales with the preceding phase, not a fixed max.
-    expect(cooldownTaper(8, undefined, 0.5).speed).toBeCloseTo(4.8, 5);
-    expect(cooldownTaper(9, undefined, 0.5).speed).toBeCloseTo(5.4, 5);
-    expect(cooldownTaper(13, undefined, 0.5).speed).toBeCloseTo(7.8, 5);
-    expect(cooldownTaper(15, undefined, 0.5).speed).toBeCloseTo(9.0, 5);
-  });
-
-  it('4. never drops speed below 40% of the base, even after rounding', () => {
-    for (const base of [10, 11.3, 12, 7.7, 15.55]) {
-      for (let p = 0; p <= 1.001; p += 0.05) {
-        expect(cooldownTaper(base, undefined, p).speed).toBeGreaterThanOrEqual(base * 0.4 - 1e-9);
-      }
-      expect(cooldownTaper(base, undefined, 1).speed).toBeGreaterThanOrEqual(base * 0.4 - 1e-9);
-    }
-  });
-
-  it('5. runs the cooldown at a flat 0% incline the whole phase, whatever the preceding incline', () => {
-    for (const inc of [0, 0.3, 3, 8, 15]) {
-      for (let p = 0; p <= 1; p += 0.1) {
-        expect(cooldownTaper(10, inc, p).incline).toBe(0);
-      }
-    }
-  });
-
-  it('7. is percentage-based, so any cooldown duration gives the same taper', () => {
-    const progressAt = (elapsed: number, total: number) => elapsed / total;
-    // 50% through a 5-min cooldown vs 50% through a 20-min cooldown
-    expect(cooldownTaper(12, 8, progressAt(150, 300)))
-      .toEqual(cooldownTaper(12, 8, progressAt(600, 1200)));
-    expect(cooldownTaper(12, 8, progressAt(75, 300)))
-      .toEqual(cooldownTaper(12, 8, progressAt(300, 1200)));
-  });
-
-  it('10. rounds speed to a 0.1 step', () => {
-    expect(cooldownTaper(9.97, undefined, 0).speed).toBeCloseTo(7.5, 5);   // 0.75*9.97 = 7.4775
-    expect(cooldownTaper(10.03, undefined, 0).speed).toBeCloseTo(7.5, 5);  // 0.75*10.03 = 7.5225
-    expect((cooldownTaper(10.7, undefined, 0.25).speed * 10) % 1).toBeCloseTo(0, 5);
-  });
-
-  it('omits incline entirely when the base incline is undefined (incline disabled)', () => {
-    expect(cooldownTaper(10, undefined, 0.5)).toEqual({ speed: 6 });
-  });
-
-  it('11. steps down only at the 25/50/75% marks, holding flat between and after', () => {
-    const at = (p: number) => cooldownTaper(10, 6, p);
-    // band 1: [0, 25%) — same as the start
-    expect(at(0.10)).toEqual(at(0));
-    expect(at(0.24)).toEqual(at(0));
-    // value changes exactly at each mark
-    expect(at(0.25)).not.toEqual(at(0.24));
-    expect(at(0.50)).not.toEqual(at(0.49));
-    expect(at(0.75)).not.toEqual(at(0.74));
-    // holds flat across the rest of each band
-    expect(at(0.40)).toEqual(at(0.25));
-    expect(at(0.66)).toEqual(at(0.50));
-    // the 75% value is the last change — it holds all the way to the end
-    expect(at(0.99)).toEqual(at(0.75));
-    expect(at(1)).toEqual(at(0.75));
+  it('clamps out-of-range progress', () => {
+    expect(cooldownTaperFactor(-1)).toBeCloseTo(0.75, 5);
+    expect(cooldownTaperFactor(5)).toBeCloseTo(0.55, 5);
   });
 });
 
-describe('cooldownBase', () => {
+describe('taperedCooldownSegment', () => {
   const seg = (partial: Partial<import('../workout').Segment>): import('../workout').Segment =>
     ({ phase: 'work', duration: 60, startAt: 0, endAt: 60, index: 0, ...partial } as import('../workout').Segment);
 
-  it('returns the last preceding segment that has a non-zero speed', () => {
+  // work -> rest -> tapered cooldown; base effort comes from the rest segment.
+  const runSegs = (rest: Partial<import('../workout').Segment> = { speed: 6, incline: 2 }) => [
+    seg({ phase: 'work', speed: 12, incline: 6 }),
+    seg({ phase: 'rest', ...rest }),
+    seg({ phase: 'cooldown', speed: 4, incline: 3, cooldownTaper: true }),
+  ];
+  const spinSegs = (rest: Partial<import('../workout').Segment> = { resistance: 6, power: 90 }) => [
+    seg({ phase: 'work', resistance: 12, power: 220 }),
+    seg({ phase: 'rest', ...rest }),
+    seg({ phase: 'cooldown', resistance: 3, power: 60, cooldownTaper: true }),
+  ];
+
+  it('steps treadmill speed down at the 25/50/75% marks relative to the phase before the cooldown', () => {
+    const at = (p: number) => taperedCooldownSegment(runSegs(), 2, p).speed;
+    expect(at(0)).toBeCloseTo(4.5, 5);    // 0.75 * 6
+    expect(at(0.1)).toBeCloseTo(4.5, 5);  // holds
+    expect(at(0.25)).toBeCloseTo(3.9, 5); // 0.65 * 6
+    expect(at(0.5)).toBeCloseTo(3.6, 5);  // 0.6 * 6
+    expect(at(0.75)).toBeCloseTo(3.3, 5); // 0.55 * 6
+    expect(at(1)).toBeCloseTo(3.3, 5);    // holds the 75% value to the end
+  });
+
+  it('pins the cooldown incline to a flat 0% whatever the preceding incline', () => {
+    for (const inc of [0, 3, 8]) {
+      for (const p of [0, 0.25, 0.5, 0.75, 1]) {
+        expect(taperedCooldownSegment(runSegs({ speed: 6, incline: inc }), 2, p).incline).toBe(0);
+      }
+    }
+  });
+
+  it('omits incline when the preceding segment has none (treadmill incline disabled)', () => {
     const segs = [
-      seg({ phase: 'work', speed: 12, incline: 5 }),
-      seg({ phase: 'rest', speed: 6, incline: 2 }),
-      seg({ phase: 'cooldown' }),
+      seg({ phase: 'work', speed: 12 }),
+      seg({ phase: 'rest', speed: 6 }),
+      seg({ phase: 'cooldown', speed: 4, cooldownTaper: true }),
     ];
-    expect(cooldownBase(segs, 2)).toEqual({ speed: 6, incline: 2 });
+    expect(taperedCooldownSegment(segs, 2, 0.5)).not.toHaveProperty('incline');
   });
 
-  it('8. returns null when no preceding segment has a usable speed (fallback path)', () => {
-    expect(cooldownBase([seg({ speed: 0 }), seg({ phase: 'cooldown' })], 1)).toBeNull();
-    expect(cooldownBase([seg({}), seg({ phase: 'cooldown' })], 1)).toBeNull();
-    expect(cooldownBase([seg({ phase: 'cooldown' })], 0)).toBeNull();
+  it('steps spinning resistance & power down the same way, floored at 1', () => {
+    const at = (p: number) => taperedCooldownSegment(spinSegs(), 2, p);
+    expect(at(0)).toMatchObject({ resistance: 5, power: 68 });    // 0.75 * {6, 90}
+    expect(at(0.25)).toMatchObject({ resistance: 4, power: 59 }); // 0.65 * {6, 90}
+    expect(at(0.75)).toMatchObject({ resistance: 3, power: 50 }); // 0.55 * {6, 90}
+    expect(at(1)).toMatchObject(at(0.75));
+    expect(taperedCooldownSegment(spinSegs({ resistance: 1, power: 1 }), 2, 0.75).resistance).toBeGreaterThanOrEqual(1);
   });
 
-  it('skips back over a zero-speed rest phase to the last real running speed', () => {
-    const segs = [
+  it('anchors to the last effort before the cooldown, skipping a zero-effort rest', () => {
+    const runZeroRest = [
       seg({ phase: 'work', speed: 10, incline: 4 }),
       seg({ phase: 'rest', speed: 0 }),
-      seg({ phase: 'cooldown' }),
+      seg({ phase: 'cooldown', speed: 4, incline: 2, cooldownTaper: true }),
     ];
-    expect(cooldownBase(segs, 2)).toEqual({ speed: 10, incline: 4 });
+    expect(taperedCooldownSegment(runZeroRest, 2, 0).speed).toBeCloseTo(7.5, 5); // 0.75 * 10 (work)
   });
 
-  it('carries an already-zero preceding incline through unchanged', () => {
-    const segs = [seg({ phase: 'work', speed: 10, incline: 0 }), seg({ phase: 'cooldown' })];
-    expect(cooldownBase(segs, 1)).toEqual({ speed: 10, incline: 0 });
-  });
+  it('returns the segment untouched when the taper is off, it is not a cooldown, or nothing precedes it', () => {
+    const off = runSegs();
+    off[2] = seg({ phase: 'cooldown', speed: 4, incline: 3 }); // no cooldownTaper flag
+    expect(taperedCooldownSegment(off, 2, 0.5)).toBe(off[2]);
 
-  it('taper runs the cooldown flat at 0% incline from the start, whatever ran before it', () => {
-    const segs = [
-      seg({ phase: 'work', speed: 11, incline: 6 }),
-      seg({ phase: 'rest', speed: 6, incline: 3 }),
-      seg({ phase: 'cooldown' }),
-    ];
-    const base = cooldownBase(segs, 2)!;
-    for (const p of [0, 0.25, 0.5, 0.75, 1]) {
-      expect(cooldownTaper(base.speed, base.incline, p).incline).toBe(0);
-    }
-  });
-});
+    const segs = runSegs();
+    expect(taperedCooldownSegment(segs, 0, 0.5)).toBe(segs[0]); // not a cooldown
 
-describe('cooldownTaperSpin', () => {
-  it('steps resistance & power down at the 25/50/75% marks, then holds to the end', () => {
-    const at = (p: number) => cooldownTaperSpin(20, 200, p);
-    expect(at(0)).toEqual({ resistance: 15, power: 150 });    // 75%
-    expect(at(0.1)).toEqual(at(0));                            // holds within band 1
-    expect(at(0.25)).toEqual({ resistance: 13, power: 130 });  // 65%
-    expect(at(0.5)).toEqual({ resistance: 12, power: 120 });   // 60%
-    expect(at(0.75)).toEqual({ resistance: 11, power: 110 });  // 55%
-    expect(at(0.99)).toEqual(at(0.75));                        // holds after the last change
-    expect(at(1)).toEqual(at(0.75));                           // 50% curve point never reached
-  });
-
-  it('scales with the given base, not a fixed max, and never returns below 1', () => {
-    expect(cooldownTaperSpin(8, 40, 0.5)).toEqual({ resistance: 5, power: 24 }); // 0.6 * base, rounded
-    expect(cooldownTaperSpin(1, 1, 0.75).resistance).toBeGreaterThanOrEqual(1);
-    expect(cooldownTaperSpin(1, 1, 0.75).power).toBeGreaterThanOrEqual(1);
-  });
-});
-
-describe('cooldownBaseSpin', () => {
-  const seg = (partial: Partial<import('../workout').Segment>): import('../workout').Segment =>
-    ({ phase: 'work', duration: 60, startAt: 0, endAt: 60, index: 0, ...partial } as import('../workout').Segment);
-
-  it('returns the last preceding segment that has a real effort set', () => {
-    const segs = [
-      seg({ phase: 'work', resistance: 8, power: 180 }),
-      seg({ phase: 'rest', resistance: 3, power: 60 }),
-      seg({ phase: 'cooldown' }),
-    ];
-    expect(cooldownBaseSpin(segs, 2)).toEqual({ resistance: 3, power: 60 });
-  });
-
-  it('skips a zeroed rest phase and returns null when nothing before has effort', () => {
-    const segs = [
-      seg({ phase: 'work', resistance: 8, power: 180 }),
-      seg({ phase: 'rest', resistance: 0, power: 0 }),
-      seg({ phase: 'cooldown' }),
-    ];
-    expect(cooldownBaseSpin(segs, 2)).toEqual({ resistance: 8, power: 180 });
-    expect(cooldownBaseSpin([seg({ phase: 'cooldown' })], 0)).toBeNull();
+    const noPrior = [seg({ phase: 'cooldown', speed: 4, incline: 3, cooldownTaper: true })];
+    expect(taperedCooldownSegment(noPrior, 0, 0.5)).toBe(noPrior[0]); // nothing before it
   });
 });
 

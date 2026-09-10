@@ -115,6 +115,15 @@ export default function EditSessionScreen({ session: existing, activityType, fol
   // See docs/todo.md item 1.
   const cooldownAuto = (isRun || isSpinning) && cooldownTaper;
 
+  // Per-phase config cell state, shared by the speed / incline / resistance / power grids:
+  // a cell is "AUTO" (taper owns it) or disabled (its phase is switched off).
+  const phaseCellState = (phase: Phase) => ({
+    isAuto: phase === 'cooldown' && cooldownAuto,
+    isPhaseDisabled:
+      (phase === 'warmup' && fieldValues.warmup === 0) ||
+      (phase === 'cooldown' && fieldValues.cooldown === 0),
+  });
+
   // Rendered above the speed presets (run) / spin presets (spinning), easy mode only.
   const cooldownTaperToggle = (
     <View style={styles.fieldGroup}>
@@ -148,11 +157,11 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     { label: t('phases.rest'),     field: 'rest'     },
   ];
 
-  const speedFields: { label: string; field: keyof RunSpeeds }[] = [
-    { label: t('phases.warmup'),   field: 'warmupSpeed'   },
-    { label: t('phases.work'),     field: 'workSpeed'     },
-    { label: t('phases.rest'),     field: 'restSpeed'     },
-    { label: t('phases.cooldown'), field: 'cooldownSpeed' },
+  const speedFields: { label: string; field: keyof RunSpeeds; phase: Phase }[] = [
+    { label: t('phases.warmup'),   field: 'warmupSpeed',   phase: 'warmup'   },
+    { label: t('phases.work'),     field: 'workSpeed',     phase: 'work'     },
+    { label: t('phases.rest'),     field: 'restSpeed',     phase: 'rest'     },
+    { label: t('phases.cooldown'), field: 'cooldownSpeed', phase: 'cooldown' },
   ];
 
   async function handleSave() {
@@ -596,9 +605,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <View style={styles.configGrid}>
                       {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                         const field = `${phase}Resistance` as keyof SpinValues;
-                        const isAuto = phase === 'cooldown' && cooldownAuto;
-                        const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
-                          || (phase === 'cooldown' && fieldValues.cooldown === 0);
+                        const { isAuto, isPhaseDisabled } = phaseCellState(phase);
                         return (
                           <View key={field} style={styles.configCell}>
                             <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
@@ -620,9 +627,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <View style={styles.configGrid}>
                       {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                         const field = `${phase}Power` as keyof SpinValues;
-                        const isAuto = phase === 'cooldown' && cooldownAuto;
-                        const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
-                          || (phase === 'cooldown' && fieldValues.cooldown === 0);
+                        const { isAuto, isPhaseDisabled } = phaseCellState(phase);
                         return (
                           <View key={field} style={styles.configCell}>
                             <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
@@ -659,10 +664,8 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                 highLabel={t('edit.presetHardRun')}
               />
               <View style={styles.configGrid}>
-                {speedFields.map(({ label, field }) => {
-                  const isAuto = field === 'cooldownSpeed' && cooldownAuto;
-                  const isPhaseDisabled = (field === 'warmupSpeed' && fieldValues.warmup === 0)
-                    || (field === 'cooldownSpeed' && fieldValues.cooldown === 0);
+                {speedFields.map(({ label, field, phase }) => {
+                  const { isAuto, isPhaseDisabled } = phaseCellState(phase);
                   return (
                     <View key={field} style={styles.configCell}>
                       <Text style={styles.configCellLabel}>{label}</Text>
@@ -701,9 +704,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
               <View style={styles.configGrid}>
                 {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                   const field = `${phase}Incline` as keyof RunInclines;
-                  const isAuto = phase === 'cooldown' && cooldownAuto;
-                  const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
-                    || (phase === 'cooldown' && fieldValues.cooldown === 0);
+                  const { isAuto, isPhaseDisabled } = phaseCellState(phase);
                   return (
                     <View key={field} style={styles.configCell}>
                       <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
