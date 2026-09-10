@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../theme';
 
@@ -16,6 +16,27 @@ interface Props {
 export default function WheelColumn({ values, selected, onChange }: Props) {
   const { T } = useTheme();
   const ref = useRef<ScrollView>(null);
+  // Index we last reported via onChange — used to tell our own echo apart from
+  // an external change (mount, or the picker reopening on a new value).
+  const lastIdx = useRef<number | null>(null);
+
+  // The `contentOffset` prop below only seeds the position on mount and is a
+  // no-op on Android, so imperatively snap the wheel whenever `selected` is set
+  // from outside. Skip echoes of our own onChange to leave the native snap alone.
+  useEffect(() => {
+    if (selected === lastIdx.current) return;
+    lastIdx.current = selected;
+    const id = requestAnimationFrame(() =>
+      ref.current?.scrollTo({ y: selected * ITEM_H, animated: false }),
+    );
+    return () => cancelAnimationFrame(id);
+  }, [selected]);
+
+  const report = (offsetY: number) => {
+    const i = Math.max(0, Math.min(values.length - 1, Math.round(offsetY / ITEM_H)));
+    lastIdx.current = i;
+    onChange(i);
+  };
 
   return (
     <View style={styles.wrap}>
@@ -33,14 +54,8 @@ export default function WheelColumn({ values, selected, onChange }: Props) {
         decelerationRate="fast"
         contentContainerStyle={{ paddingVertical: ITEM_H * 2 }}
         contentOffset={{ x: 0, y: selected * ITEM_H }}
-        onMomentumScrollEnd={e => {
-          const i = Math.round(e.nativeEvent.contentOffset.y / ITEM_H);
-          onChange(Math.max(0, Math.min(values.length - 1, i)));
-        }}
-        onScrollEndDrag={e => {
-          const i = Math.round(e.nativeEvent.contentOffset.y / ITEM_H);
-          onChange(Math.max(0, Math.min(values.length - 1, i)));
-        }}
+        onMomentumScrollEnd={e => report(e.nativeEvent.contentOffset.y)}
+        onScrollEndDrag={e => report(e.nativeEvent.contentOffset.y)}
       >
         {values.map((v, i) => (
           <View key={i} style={styles.item}>
