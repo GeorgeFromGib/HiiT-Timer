@@ -413,6 +413,9 @@ describe('openRoundsPicker / commitPicker (rounds)', () => {
 
     await act(async () => result.current.commitPicker({ selected: [6] })); // rounds -> 7
     expect(result.current.draft.rounds).toBe(7);
+    // 300 + 7*(20+40) + 300 = 1020s -> 17 min
+    expect(result.current.draft.targetLengthMinutes).toBe(17);
+    expect(result.current.draft.previewTotal).toBe(1020);
     expect(alert.current).toBeNull();
   });
 
