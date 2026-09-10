@@ -88,7 +88,19 @@ describe('buildSessionFromDraft', () => {
     expect(off).not.toHaveProperty('cooldownTaper');
   });
 
-  it('never sets cooldownTaper on a non-run session', () => {
+  it('sets cooldownTaper on a spinning session only when the flag is on', () => {
+    const on = buildSessionFromDraft({
+      ...baseInput, mode: 'easy', name: 'Taper Spin', activityType: 'spinning', spinValues, cooldownTaper: true,
+    });
+    expect(on).toMatchObject({ activityType: 'spinning', cooldownTaper: true });
+
+    const off = buildSessionFromDraft({
+      ...baseInput, mode: 'easy', name: 'Plain Spin', activityType: 'spinning', spinValues, cooldownTaper: false,
+    });
+    expect(off).not.toHaveProperty('cooldownTaper');
+  });
+
+  it('never sets cooldownTaper on a session that is neither run nor spinning', () => {
     const session = buildSessionFromDraft({ ...baseInput, cooldownTaper: true });
     expect(session).not.toHaveProperty('cooldownTaper');
   });

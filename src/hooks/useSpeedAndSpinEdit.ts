@@ -44,11 +44,12 @@ export function useSpeedAndSpinEdit(
     ? (existing.runInclines ?? DEFAULT_RUN_INCLINES) : INCLINE_PRESETS[NEW_PRESET_LEVEL];
   const initInclineEnabled = existing && existing.mode !== 'circuit' && existing.activityType === 'run'
     ? (existing.inclineEnabled ?? true) : true;
-  // New treadmill (run) sessions default the cooldown taper ON; existing sessions
-  // keep whatever they were saved with.
-  const initCooldownTaper = existing && existing.mode !== 'circuit' && existing.activityType === 'run'
+  // New treadmill (run) and spinning sessions default the cooldown taper ON;
+  // existing sessions keep whatever they were saved with.
+  const initCooldownTaper = existing && existing.mode !== 'circuit'
+    && (existing.activityType === 'run' || existing.activityType === 'spinning')
     ? (existing.cooldownTaper ?? false)
-    : (!existing && newActivityType === 'run');
+    : (!existing && (newActivityType === 'run' || newActivityType === 'spinning'));
   const initSpinValues = existing && existing.mode !== 'circuit' && existing.activityType === 'spinning'
     ? (existing.spinValues ?? DEFAULT_SPIN_VALUES) : SPIN_PRESETS[NEW_PRESET_LEVEL];
 

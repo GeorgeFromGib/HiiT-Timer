@@ -21,7 +21,7 @@ import {
 import { formatSpeed } from '../lib/speedUnit';
 import { useTranslation } from '../hooks/useTranslation';
 import { appAlert } from '../lib/appAlert';
-import { getSessionSegments, cooldownTaper, cooldownBase } from '../lib/sessions';
+import { getSessionSegments, cooldownTaper, cooldownBase, cooldownTaperSpin, cooldownBaseSpin } from '../lib/sessions';
 import type { Session } from '../lib/sessions';
 import { useTheme, withOpacity, buttonShadow, THEME_TOKENS, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
@@ -189,30 +189,33 @@ export default function WorkoutScreen({
   const rawSeg         = segments[effectiveIndex];
   const nextSeg        = segments[effectiveIndex + 1];
 
-  // ── Treadmill cooldown taper (docs/todo.md item 1) ──
-  // While in the cooldown, recompute the shown speed/incline every tick from how
-  // far through the cooldown we are, relative to the phase before it. Falls back
-  // to the segment's flat cooldown value when there's no usable base speed.
-  // `cooldownTaper` is stamped onto the cooldown segment by getSessionSegments
-  // (per-session in easy mode, per-interval in advanced mode).
+  // ── Cooldown taper (docs/todo.md item 1) ──
+  // While in the cooldown, recompute the shown effort from how far through the
+  // cooldown we are, relative to the phase before it: on a treadmill that's speed
+  // (incline pinned flat at 0%), on a bike it's resistance & power. It steps down
+  // only at the 25/50/75% marks and then holds. Falls back to the segment's flat
+  // cooldown value when there's no usable base effort. `cooldownTaper` is stamped
+  // onto the cooldown segment by getSessionSegments (per-session in easy mode,
+  // per-interval in advanced mode).
   const taperOn = (status === 'running' || status === 'paused');
-  const cdBase = taperOn && rawSeg.phase === 'cooldown' && rawSeg.cooldownTaper
-    ? cooldownBase(segments, effectiveIndex) : null;
   const cdProgress = rawSeg.duration > 0
     ? Math.max(0, Math.min(1, 1 - remainingInSegment / rawSeg.duration)) : 0;
-  const seg = cdBase
-    ? { ...rawSeg, ...cooldownTaper(cdBase.speed, cdBase.incline, cdProgress) }
-    : rawSeg;
+  const taperCooldown = <S extends typeof rawSeg>(s: S, atIndex: number, progress: number): S => {
+    if (!(taperOn && s.phase === 'cooldown' && s.cooldownTaper)) return s;
+    if (s.resistance !== undefined) {
+      const b = cooldownBaseSpin(segments, atIndex);
+      return b ? { ...s, ...cooldownTaperSpin(b.resistance, b.power, progress) } : s;
+    }
+    const b = cooldownBase(segments, atIndex);
+    return b ? { ...s, ...cooldownTaper(b.speed, b.incline, progress) } : s;
+  };
+
+  const seg = taperCooldown(rawSeg, effectiveIndex, cdProgress);
   const displaySegments = seg !== rawSeg
     ? segments.map((s, i) => (i === effectiveIndex ? seg : s))
     : segments;
-
   // Next-up preview: show the cooldown's first tapered value, not its stale flat one.
-  const nextCdBase = taperOn && nextSeg?.phase === 'cooldown' && nextSeg.cooldownTaper
-    ? cooldownBase(segments, effectiveIndex + 1) : null;
-  const nextSeg_ = nextCdBase
-    ? { ...nextSeg, ...cooldownTaper(nextCdBase.speed, nextCdBase.incline, 0) }
-    : nextSeg;
+  const nextSeg_ = nextSeg ? taperCooldown(nextSeg, effectiveIndex + 1, 0) : nextSeg;
 
   const phaseColor     = T.phases[seg.phase];
   const nextPhaseColor = nextSeg ? T.phases[nextSeg.phase] : null;

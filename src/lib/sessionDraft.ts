@@ -40,7 +40,7 @@ export function buildSessionFromDraft(input: SessionDraftInput): Session {
   }
   const activityProps =
     activityType === 'run'      ? { activityType: 'run'      as const, runSpeeds, runInclines, inclineEnabled, ...(cooldownTaper ? { cooldownTaper: true } : {}) } :
-    activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues: spinValues! } :
+    activityType === 'spinning' ? { activityType: 'spinning' as const, spinValues: spinValues!, ...(cooldownTaper ? { cooldownTaper: true } : {}) } :
     {};
   if (mode === 'easy') {
     return { ...base, ...activityProps, mode: 'easy', config: easyConfig };

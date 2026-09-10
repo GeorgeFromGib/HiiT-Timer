@@ -110,10 +110,23 @@ export default function EditSessionScreen({ session: existing, activityType, fol
     appAlert('info', t('edit.inclineTipTitle'), t('edit.inclineTipBody'));
   }, [isEditing, isRun, settings.inclineTipSeen, updateSettings, t]);
 
-  // Treadmill cooldown taper (per-session, run only) owns the cooldown speed/
-  // incline — the per-phase inputs go read-only "AUTO" and the cooldown enable
-  // toggle is hidden. See docs/todo.md item 1.
-  const cooldownAuto = isRun && cooldownTaper;
+  // Cooldown taper (per-session, run or spinning) owns the cooldown effort — the
+  // per-phase inputs go read-only "AUTO" and the cooldown enable toggle is hidden.
+  // See docs/todo.md item 1.
+  const cooldownAuto = (isRun || isSpinning) && cooldownTaper;
+
+  // Rendered above the speed presets (run) / spin presets (spinning), easy mode only.
+  const cooldownTaperToggle = (
+    <View style={styles.fieldGroup}>
+      <View style={[styles.modeToggleRow, { justifyContent: 'space-between' }]}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.fieldLabel}>{t('edit.cooldownTaperLabel')}</Text>
+          <Text style={styles.intervalsHint}>{t('edit.cooldownTaperHint')}</Text>
+        </View>
+        <SettingsToggle value={cooldownTaper} onChange={setCooldownTaper} />
+      </View>
+    </View>
+  );
 
   const addPhaseOptions: Phase[] = isCircuit
     ? ['work', 'rest']
@@ -455,9 +468,10 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                 keyExtractor={iv => iv._key}
                 onDragEnd={({ data }) => reorderIntervals(data)}
                 renderItem={({ item: iv, drag, isActive }: RenderItemParams<LocalInterval>) => {
-                  // Advanced run mode: cooldown intervals get their own taper toggle;
-                  // when on, it owns speed & incline so those chips are hidden.
-                  const ivTaperable = isRun && iv.type === 'cooldown';
+                  // Advanced run/spinning mode: cooldown intervals get their own taper
+                  // toggle (independent of the easy-mode one); when on, it owns the
+                  // effort chips (speed & incline, or resistance & power) so they hide.
+                  const ivTaperable = (isRun || isSpinning) && iv.type === 'cooldown';
                   const ivTapered = ivTaperable && !!iv.cooldownTaper;
                   return (
                   <IntervalSwipeRow
@@ -471,12 +485,12 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     displaySpeed={isRun && !ivTapered ? getIntervalDisplaySpeed(iv, runSpeeds, isMiles) : undefined}
                     onOpenSpeedPicker={isRun && !ivTapered ? () => openIntervalSpeedPicker(iv._key, isMiles) : undefined}
                     onClearSpeed={isRun && !ivTapered ? () => clearIntervalSpeed(iv._key) : undefined}
-                    displayResistance={isSpinning ? (iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance) : undefined}
-                    onOpenResistancePicker={isSpinning ? () => openIntervalResistancePicker(iv._key) : undefined}
-                    onClearResistance={isSpinning ? () => clearIntervalResistance(iv._key) : undefined}
-                    displayPower={isSpinning ? (iv.power ?? spinValueForPhase(iv.type, spinValues).power) : undefined}
-                    onOpenPowerPicker={isSpinning ? () => openIntervalPowerPicker(iv._key) : undefined}
-                    onClearPower={isSpinning ? () => clearIntervalPower(iv._key) : undefined}
+                    displayResistance={isSpinning && !ivTapered ? (iv.resistance ?? spinValueForPhase(iv.type, spinValues).resistance) : undefined}
+                    onOpenResistancePicker={isSpinning && !ivTapered ? () => openIntervalResistancePicker(iv._key) : undefined}
+                    onClearResistance={isSpinning && !ivTapered ? () => clearIntervalResistance(iv._key) : undefined}
+                    displayPower={isSpinning && !ivTapered ? (iv.power ?? spinValueForPhase(iv.type, spinValues).power) : undefined}
+                    onOpenPowerPicker={isSpinning && !ivTapered ? () => openIntervalPowerPicker(iv._key) : undefined}
+                    onClearPower={isSpinning && !ivTapered ? () => clearIntervalPower(iv._key) : undefined}
                     displayIncline={isRun && inclineEnabled && !ivTapered ? (iv.incline ?? inclineForPhase(iv.type, runInclines)) : undefined}
                     onOpenInclinePicker={isRun && inclineEnabled && !ivTapered ? () => openIntervalInclinePicker(iv._key) : undefined}
                     onClearIncline={isRun && inclineEnabled && !ivTapered ? () => clearIntervalIncline(iv._key) : undefined}
@@ -572,6 +586,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
 
               {isSpinning && (
                 <>
+                  {cooldownTaperToggle}
                   <View style={styles.fieldGroup}>
                     <Text style={styles.fieldLabel}>{t('edit.spinPresets')}</Text>
                     <PresetStrip onApply={applySpinPreset} activePreset={activeSpinPreset} />
@@ -581,17 +596,18 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <View style={styles.configGrid}>
                       {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                         const field = `${phase}Resistance` as keyof SpinValues;
+                        const isAuto = phase === 'cooldown' && cooldownAuto;
                         const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
                           || (phase === 'cooldown' && fieldValues.cooldown === 0);
                         return (
                           <View key={field} style={styles.configCell}>
                             <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
                             <Pressable
-                              style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                              style={[styles.configInput, (isPhaseDisabled || isAuto) && styles.configInputDisabled]}
                               onPress={() => openSpinResistancePicker(field)}
-                              disabled={isPhaseDisabled}
+                              disabled={isPhaseDisabled || isAuto}
                             >
-                              <Text style={styles.configInputText}>{isPhaseDisabled ? '—' : spinValues[field]}</Text>
+                              <Text style={styles.configInputText}>{isAuto ? t('edit.cooldownAuto') : isPhaseDisabled ? '—' : spinValues[field]}</Text>
                             </Pressable>
                           </View>
                         );
@@ -604,18 +620,19 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                     <View style={styles.configGrid}>
                       {(['warmup', 'work', 'rest', 'cooldown'] as const).map(phase => {
                         const field = `${phase}Power` as keyof SpinValues;
+                        const isAuto = phase === 'cooldown' && cooldownAuto;
                         const isPhaseDisabled = (phase === 'warmup' && fieldValues.warmup === 0)
                           || (phase === 'cooldown' && fieldValues.cooldown === 0);
                         return (
                           <View key={field} style={styles.configCell}>
                             <Text style={styles.configCellLabel}>{t('phases.' + phase)}</Text>
                             <Pressable
-                              style={[styles.configInput, isPhaseDisabled && styles.configInputDisabled]}
+                              style={[styles.configInput, (isPhaseDisabled || isAuto) && styles.configInputDisabled]}
                               onPress={() => openSpinPowerPicker(field)}
-                              disabled={isPhaseDisabled}
+                              disabled={isPhaseDisabled || isAuto}
                             >
                               <Text style={styles.configInputText}>
-                                {isPhaseDisabled ? '—' : <>{spinValues[field]}<Text style={styles.speedUnitText}>W</Text></>}
+                                {isAuto ? t('edit.cooldownAuto') : isPhaseDisabled ? '—' : <>{spinValues[field]}<Text style={styles.speedUnitText}>W</Text></>}
                               </Text>
                             </Pressable>
                           </View>
@@ -628,18 +645,8 @@ export default function EditSessionScreen({ session: existing, activityType, fol
             </>
           )}
 
-          {/* Treadmill cooldown taper — per-session, easy-mode run only */}
-          {isRun && !isAdvanced && !isCircuit && (
-            <View style={styles.fieldGroup}>
-              <View style={[styles.modeToggleRow, { justifyContent: 'space-between' }]}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.fieldLabel}>{t('edit.cooldownTaperLabel')}</Text>
-                  <Text style={styles.intervalsHint}>{t('edit.cooldownTaperHint')}</Text>
-                </View>
-                <SettingsToggle value={cooldownTaper} onChange={setCooldownTaper} />
-              </View>
-            </View>
-          )}
+          {/* Cooldown taper — per-session, easy-mode run (spinning renders it above the spin presets) */}
+          {isRun && !isAdvanced && !isCircuit && cooldownTaperToggle}
 
           {/* Speeds — only shown in Easy mode (Advanced mode has speed presets inline above intervals) */}
           {isRun && !isAdvanced && !isCircuit && (

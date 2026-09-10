@@ -97,16 +97,18 @@ export function inclineForPhase(phase: Phase, inclines: RunInclines): number {
 }
 
 // ── Cooldown taper (docs/todo.md item 1) ─────────────────────────────────────
-// Treadmill cooldown that continuously eases speed and incline down, relative to
-// the phase that ran *immediately before* the cooldown — never the session max.
-// Pure + unit-agnostic: speed percentages work identically for km/h or mph.
-const COOLDOWN_SPEED_CURVE = [0.65, 0.55, 0.5, 0.45, 0.4]; // at 0 / 25 / 50 / 75 / 100 %
-const SPEED_STEP = 0.1;   // km/h display precision (matches the speed picker)
-const INCLINE_STEP = 0.5; // % display precision (matches the incline picker)
+// Cooldown that eases the working effort down in three steps — at the 25 / 50 /
+// 75 % marks of the phase, holding flat between — relative to the phase that ran
+// immediately before the cooldown, never the session max. The phase then finishes
+// on that 75 %-mark value: the final 100 % curve point is never reached. On a
+// treadmill that's speed (incline runs flat at 0%); on a bike it's resistance and
+// power. Pure + unit-agnostic: the percentages work identically for km/h or mph.
+const COOLDOWN_TAPER_CURVE = [0.75, 0.65, 0.6, 0.55, 0.5]; // % of the pre-cooldown effort, at 0/25/50/75/100%
+const SPEED_STEP = 0.1; // km/h display precision (matches the speed picker)
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
 const roundTo = (v: number, step: number) => {
-  const inv = Math.round(1 / step); // 10 for 0.1, 2 for 0.5 — avoids float dust in v*inv/inv
+  const inv = Math.round(1 / step); // 10 for 0.1 — avoids float dust in v*inv/inv
   return Math.round(v * inv) / inv;
 };
 
@@ -118,10 +120,21 @@ function lerpCurve(curve: number[], progress: number): number {
 }
 
 /**
- * Speed (km/h) and incline (%) to show at a point through the cooldown.
- * `progress` is 0 at the start of the cooldown and 1 at the end.
- * `baseIncline === undefined` → incline omitted (treadmill incline disabled).
- * Speed is floored at 40% of `baseSpeed` even after rounding; incline never < 0.
+ * Stepped taper multiplier through the cooldown. `progress` is 0 at the start and
+ * 1 at the end; it's quantised to quarters and capped at the 75 % mark, so the
+ * value steps down only at 25 / 50 / 75 % and then holds to the end (the 100 %
+ * curve point is never reached). Shared by the treadmill and spinning tapers.
+ */
+export function cooldownTaperFactor(progress: number): number {
+  const step = Math.min(0.75, Math.floor(clamp01(progress) * 4) / 4);
+  return lerpCurve(COOLDOWN_TAPER_CURVE, step);
+}
+
+/**
+ * Treadmill cooldown: `speed` (km/h) stepped down per cooldownTaperFactor, plus a
+ * flat 0% incline. `baseIncline === undefined` → incline omitted (treadmill
+ * incline disabled); otherwise incline is 0 for the whole phase — never tapered.
+ * Speed is floored at 40% of `baseSpeed` even after rounding.
  */
 export function cooldownTaper(
   baseSpeed: number,
@@ -129,15 +142,32 @@ export function cooldownTaper(
   progress: number,
 ): { speed: number; incline?: number } {
   const floor = Math.ceil(baseSpeed * 0.4 * 10 - 1e-9) / 10; // 40% of base, snapped up to a 0.1 step
-  const speed = Math.max(roundTo(lerpCurve(COOLDOWN_SPEED_CURVE, progress) * baseSpeed, SPEED_STEP), floor);
-  if (baseIncline === undefined) return { speed };
-  return { speed, incline: Math.max(0, roundTo(baseIncline * (1 - clamp01(progress)), INCLINE_STEP)) };
+  const speed = Math.max(roundTo(cooldownTaperFactor(progress) * baseSpeed, SPEED_STEP), floor);
+  return baseIncline === undefined ? { speed } : { speed, incline: 0 };
 }
 
 /**
- * Reference speed/incline for a cooldown taper: the last segment before
- * `cooldownIndex` that has a usable (non-zero) speed. Returns null when there is
- * none — the caller should then fall back to the flat cooldown value.
+ * Spinning cooldown: `resistance` and `power` stepped down per cooldownTaperFactor.
+ * Both are whole numbers on the bike, so they round to integers, floored at 1.
+ */
+export function cooldownTaperSpin(
+  baseResistance: number,
+  basePower: number,
+  progress: number,
+): { resistance: number; power: number } {
+  const f = cooldownTaperFactor(progress);
+  return {
+    resistance: Math.max(1, Math.round(baseResistance * f)),
+    power: Math.max(1, Math.round(basePower * f)),
+  };
+}
+
+/**
+ * Reference speed for a treadmill cooldown taper: the last segment before
+ * `cooldownIndex` that has a usable (non-zero) speed. `incline` is carried only so
+ * the caller can tell whether treadmill incline is enabled at all. Returns null
+ * when nothing before the cooldown has a usable speed — the caller then falls
+ * back to the flat cooldown value.
  */
 export function cooldownBase(
   segments: Segment[],
@@ -146,6 +176,24 @@ export function cooldownBase(
   for (let i = cooldownIndex - 1; i >= 0; i--) {
     const s = segments[i];
     if (s.speed !== undefined && s.speed > 0) return { speed: s.speed, incline: s.incline };
+  }
+  return null;
+}
+
+/**
+ * Reference resistance/power for a spinning cooldown taper: the last segment
+ * before `cooldownIndex` with a real effort set. Returns null when there is none
+ * — the caller then falls back to the flat cooldown values.
+ */
+export function cooldownBaseSpin(
+  segments: Segment[],
+  cooldownIndex: number,
+): { resistance: number; power: number } | null {
+  for (let i = cooldownIndex - 1; i >= 0; i--) {
+    const s = segments[i];
+    if (s.resistance !== undefined && s.power !== undefined && (s.resistance > 0 || s.power > 0)) {
+      return { resistance: s.resistance, power: s.power };
+    }
   }
   return null;
 }
@@ -169,13 +217,15 @@ export function getSessionSegments(session: Session): Segment[] {
     : expandWorkout(session.config);
   const overrides = session.mode === 'advanced' ? session.intervals : undefined;
 
+  // Cooldown taper flag: per-interval in advanced mode, per-session in easy mode.
+  // Stamped on the cooldown segment for both treadmill and spinning sessions.
+  const taperFor = (phase: Phase, iv: Interval | undefined) =>
+    phase === 'cooldown'
+      && (session.mode === 'advanced' ? !!iv?.cooldownTaper : !!session.cooldownTaper)
+      ? { cooldownTaper: true } : {};
+
   if (session.activityType === 'run' && session.runSpeeds) {
     const runSpeeds = session.runSpeeds;
-    // Cooldown taper flag: per-interval in advanced mode, per-session in easy mode.
-    const taperFor = (phase: Phase, iv: Interval | undefined) =>
-      phase === 'cooldown'
-        && (session.mode === 'advanced' ? !!iv?.cooldownTaper : !!session.cooldownTaper)
-        ? { cooldownTaper: true } : {};
     if (session.inclineEnabled === false) {
       return withActivityValues(base, overrides, (phase, iv) => ({
         speed: iv?.speed ?? speedForPhase(phase, runSpeeds),
@@ -196,6 +246,7 @@ export function getSessionSegments(session: Session): Segment[] {
       return {
         resistance: iv?.resistance ?? defaults.resistance,
         power:      iv?.power      ?? defaults.power,
+        ...taperFor(phase, iv),
       };
     });
   }

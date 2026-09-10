@@ -59,23 +59,26 @@ describe('useSpeedAndSpinEdit', () => {
     expect(result.current.inclineEnabled).toBe(false);
   });
 
-  it('defaults cooldownTaper ON for a new run session, OFF otherwise', async () => {
+  it('defaults cooldownTaper ON for a new run or spinning session, OFF otherwise', async () => {
     const newRun = await renderHook(() => useSpeedAndSpinEdit(undefined, 'run'));
     expect(newRun.result.current.cooldownTaper).toBe(true);
 
+    const newSpin = await renderHook(() => useSpeedAndSpinEdit(undefined, 'spinning'));
+    expect(newSpin.result.current.cooldownTaper).toBe(true);
+
     const newGeneral = await renderHook(() => useSpeedAndSpinEdit(undefined, 'general'));
     expect(newGeneral.result.current.cooldownTaper).toBe(false);
-
-    const newSpin = await renderHook(() => useSpeedAndSpinEdit(undefined, 'spinning'));
-    expect(newSpin.result.current.cooldownTaper).toBe(false);
   });
 
-  it('keeps an existing run session on its saved cooldownTaper value', async () => {
+  it('keeps an existing run or spinning session on its saved cooldownTaper value', async () => {
     const off = await renderHook(() => useSpeedAndSpinEdit(runSession(), 'run'));
     expect(off.result.current.cooldownTaper).toBe(false);
 
     const on = await renderHook(() => useSpeedAndSpinEdit(runSession({ cooldownTaper: true }), 'run'));
     expect(on.result.current.cooldownTaper).toBe(true);
+
+    const spinOn = await renderHook(() => useSpeedAndSpinEdit(spinSession({ cooldownTaper: true })));
+    expect(spinOn.result.current.cooldownTaper).toBe(true);
   });
 
   it('seeds spinValues and detects the matching preset for a spinning session', async () => {
