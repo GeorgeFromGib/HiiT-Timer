@@ -24,13 +24,6 @@ The silent keep-alive audio track is what defeats iOS JS timer throttling when t
 
 Implement pixel-close to the designs. Colors, spacing, and interactions are final.
 
-### Versioning
-
-Format is `MAJOR.MINOR.PATCH`:
-- MAJOR — breaking change or significant new product (rare, usually signals a full rewrite or incompatible data migration)
-- MINOR — new features, backwards compatible
-- PATCH — bug fixes, no new features
-
 ### Planning
 - When you have finshed written a plan from a spec ask if you should run the karpathy skill on it.
 
