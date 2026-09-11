@@ -37,6 +37,18 @@ Rules:
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
 
+## Cross-project backlog (SimpleBrain)
+
+Ideas, bugs, and todos for this project live in SimpleBrain's shared backlog, not in this repo. Use the `sb` CLI at `~/simplebrain/bin/sb` (works even if the web UI isn't running):
+
+    ~/simplebrain/bin/sb add bug "..." --project clear-hiit --priority high
+    ~/simplebrain/bin/sb add idea "..." --project clear-hiit
+    ~/simplebrain/bin/sb add todo "..." --project clear-hiit
+    ~/simplebrain/bin/sb list --project clear-hiit --status open
+    ~/simplebrain/bin/sb done SB-12
+
+When George mentions a bug, idea, or todo in conversation, log it there (project slug: `clear-hiit`) rather than just noting it in chat or filing it under Lessons below.
+
 ## Self-learning
 
 When I correct you, or you catch yourself making a mistake: before continuing,
