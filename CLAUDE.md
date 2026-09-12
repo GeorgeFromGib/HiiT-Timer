@@ -41,13 +41,17 @@ Rules:
 
 Ideas, bugs, and todos for this project live in SimpleBrain's shared backlog, not in this repo. Use the `sb` CLI at `~/simplebrain/bin/sb` (works even if the web UI isn't running):
 
-    ~/simplebrain/bin/sb add bug "..." --project clear-hiit --priority high
-    ~/simplebrain/bin/sb add idea "..." --project clear-hiit
-    ~/simplebrain/bin/sb add todo "..." --project clear-hiit
+    ~/simplebrain/bin/sb add bug "short title" --project clear-hiit --priority high --notes "longer description if required"
+    ~/simplebrain/bin/sb add idea "short title" --project clear-hiit --notes "longer description if required"
+    ~/simplebrain/bin/sb add todo "short title" --project clear-hiit --notes "longer description if required"
     ~/simplebrain/bin/sb list --project clear-hiit --status open
     ~/simplebrain/bin/sb done SB-12
 
+Keep `title` short; put detail in `--notes` only when needed.
+
 When George mentions a bug, idea, or todo in conversation, log it there (project slug: `clear-hiit`) rather than just noting it in chat or filing it under Lessons below.
+
+When closing an issue (`sb done`), include in the notes the app version + build number and a description of the fix done.
 
 ## Self-learning
 
