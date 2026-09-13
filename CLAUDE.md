@@ -9,6 +9,10 @@ Background audio reliability **will not work in Expo Go**. Test on a dev build:
 No React Navigation library — `App.tsx` holds a `Route` state and switches between screens manually. Routes are typed in `src/navigation.ts`:
 
 
+### Watch app parity
+
+When adding or changing workout features, check whether the change needs a corresponding update in the watch app (`ios/` Swift, e.g. `WorkoutTimerEngine`/`IntervalDTO`) — JS-only logic silently doesn't run on Apple Watch.
+
 ### iOS background reliability
 
 The silent keep-alive audio track is what defeats iOS JS timer throttling when the screen is locked. This requires:
