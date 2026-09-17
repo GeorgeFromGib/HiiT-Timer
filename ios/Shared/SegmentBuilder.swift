@@ -126,6 +126,14 @@ func segmentsForSession(_ session: SessionDTO) -> [Segment] {
 
   let overrides = session.mode == "advanced" ? session.intervals : nil
 
+  // Ports src/lib/sessions.ts's taperFlag — the taper decision travels on the
+  // segment (per-interval in advanced mode, per-session in easy) so it survives
+  // reindexing; taperedCooldownSegment reads it back at workout time.
+  func taperFlag(_ phase: Phase, _ override: IntervalDTO?) -> Bool {
+    guard phase == .cooldown else { return false }
+    return session.mode == "advanced" ? (override?.cooldownTaper ?? false) : (session.cooldownTaper ?? false)
+  }
+
   if session.activityType == "run", let speeds = session.runSpeeds {
     let inclineEnabled = session.inclineEnabled != false
     return base.enumerated().map { i, seg in
@@ -135,6 +143,7 @@ func segmentsForSession(_ session: SessionDTO) -> [Segment] {
       if inclineEnabled, let inclines = session.runInclines {
         s.incline = override?.incline ?? inclineForPhase(seg.phase, inclines)
       }
+      s.cooldownTaper = taperFlag(seg.phase, override)
       return s
     }
   }
@@ -146,11 +155,72 @@ func segmentsForSession(_ session: SessionDTO) -> [Segment] {
       let override = overrides?.indices.contains(i) == true ? overrides?[i] : nil
       s.resistance = override?.resistance ?? resistanceForPhase(seg.phase, sv)
       s.power = override?.power ?? powerForPhase(seg.phase, sv)
+      s.cooldownTaper = taperFlag(seg.phase, override)
       return s
     }
   }
 
   return base
+}
+
+// ── Cooldown taper — ports src/lib/sessions.ts's cooldownTaperFactor /
+// taperedCooldownSegment. See that file for the full rationale; kept in sync
+// field-for-field so the watch shows the same stepped-down effort as the phone.
+private let cooldownTaperCurve: [Double] = [0.75, 0.65, 0.6, 0.55, 0.5]
+private let speedStep = 0.1
+
+private func clamp01(_ n: Double) -> Double { min(1, max(0, n)) }
+
+private func roundTo(_ v: Double, _ step: Double) -> Double {
+  let inv = (1 / step).rounded()
+  return (v * inv).rounded() / inv
+}
+
+private func lerpCurve(_ curve: [Double], _ progress: Double) -> Double {
+  let p = clamp01(progress)
+  let span = 1 / Double(curve.count - 1)
+  let i = min(curve.count - 2, Int(floor(p / span)))
+  return curve[i] + (curve[i + 1] - curve[i]) * ((p - Double(i) * span) / span)
+}
+
+func cooldownTaperFactor(_ progress: Double) -> Double {
+  let step = min(0.75, floor(clamp01(progress) * 4) / 4)
+  return lerpCurve(cooldownTaperCurve, step)
+}
+
+/// The last segment before `cooldownIndex` with a real effort set. Assumes
+/// `segments[i].index == i`, true for every builder above.
+private func priorEffortSegment(_ segments: [Segment], _ cooldownIndex: Int) -> Segment? {
+  guard cooldownIndex > 0, cooldownIndex <= segments.count else { return nil }
+  for i in stride(from: cooldownIndex - 1, through: 0, by: -1) {
+    let s = segments[i]
+    if let speed = s.speed, speed > 0 { return s }
+    if let resistance = s.resistance, let power = s.power, resistance > 0 || power > 0 { return s }
+  }
+  return nil
+}
+
+/// The cooldown segment as it should be shown `progress` (0...1) of the way
+/// through it. Returns `segments[index]` untouched when it isn't a tapering
+/// cooldown or nothing before it had a usable effort.
+func taperedCooldownSegment(_ segments: [Segment], index: Int, progress: Double) -> Segment? {
+  guard index >= 0, index < segments.count else { return nil }
+  let seg = segments[index]
+  guard seg.phase == .cooldown, seg.cooldownTaper else { return seg }
+  guard let prior = priorEffortSegment(segments, index) else { return seg }
+
+  let f = cooldownTaperFactor(progress)
+  var out = seg
+  if let resistance = prior.resistance, let power = prior.power {
+    out.resistance = max(1, (resistance * f).rounded())
+    out.power = max(1, (power * f).rounded())
+    return out
+  }
+  guard let priorSpeed = prior.speed else { return seg }
+  let floor = (priorSpeed * 0.4 * 10 - 1e-9).rounded(.up) / 10
+  out.speed = max(roundTo(f * priorSpeed, speedStep), floor)
+  if prior.incline != nil { out.incline = 0 }
+  return out
 }
 
 /// Exercises still to come in the wearer's current circuit round, in display

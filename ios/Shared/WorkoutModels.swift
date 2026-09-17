@@ -17,6 +17,7 @@ struct Segment: Equatable {
   var circuitNumber: Int? = nil
   var resistance: Double? = nil
   var power: Double? = nil
+  var cooldownTaper: Bool = false
 }
 
 struct WorkoutConfig: Codable, Hashable {
@@ -35,6 +36,7 @@ struct IntervalDTO: Codable, Hashable {
   var activityLabel: String? = nil
   var resistance: Double? = nil
   var power: Double? = nil
+  var cooldownTaper: Bool? = nil
 }
 
 /// Mirrors src/lib/sessions.ts's SpinValues.
@@ -87,6 +89,7 @@ struct SessionDTO: Codable, Hashable {
   var cooldown: Double? = nil
   var circuitRest: Double? = nil
   var spinValues: SpinValuesDTO? = nil
+  var cooldownTaper: Bool? = nil
 
   /// Standard (no activityType), Treadmill (activityType == "run"), and
   /// Spinning (activityType == "spinning") sessions run in easy or advanced

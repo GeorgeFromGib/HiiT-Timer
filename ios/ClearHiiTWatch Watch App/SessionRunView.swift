@@ -179,6 +179,12 @@ struct SessionRunView: View {
       return AnyView(alwaysOnView(state: state, segment: segment))
     }
 
+    // Cooldown taper: swap in the stepped-down speed/incline/resistance/power
+    // for display only, mirroring WorkoutScreen.tsx's taperedCooldownSegment use.
+    let rawDuration = segment?.duration ?? 0
+    let progress = rawDuration > 0 ? max(0, min(1, 1 - state.remainingInSegment / rawDuration)) : 0
+    let segment = taperedCooldownSegment(engineHolder.segments, index: state.currentIndex, progress: progress) ?? segment
+
     return AnyView(TabView(selection: $runningPage) {
       HStack(spacing: 16) {
         Button(action: togglePause) {
