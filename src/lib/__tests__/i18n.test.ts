@@ -2,6 +2,7 @@ import { i18n, detectLanguage, getCongratsMessages } from '../i18n';
 import en from '../../locales/en';
 import es from '../../locales/es';
 import fr from '../../locales/fr';
+import de from '../../locales/de';
 
 describe('i18n', () => {
   it('translates a known key in the default (en) locale', () => {
@@ -14,6 +15,10 @@ describe('i18n', () => {
 
   it('translates a known key in the fr locale', () => {
     expect(i18n.t('speech.complete', { locale: 'fr' })).toBe(fr.speech.complete);
+  });
+
+  it('translates a known key in the de locale', () => {
+    expect(i18n.t('speech.complete', { locale: 'de' })).toBe(de.speech.complete);
   });
 });
 
@@ -36,9 +41,15 @@ describe('detectLanguage', () => {
     expect(detectLanguage()).toBe('fr');
   });
 
-  it('falls back to "en" for an unsupported language code', () => {
+  it('returns "de" when expo-localization reports a German locale', () => {
     const { getLocales } = jest.requireMock('expo-localization');
     getLocales.mockReturnValueOnce([{ languageCode: 'de', measurementSystem: 'metric' }]);
+    expect(detectLanguage()).toBe('de');
+  });
+
+  it('falls back to "en" for an unsupported language code', () => {
+    const { getLocales } = jest.requireMock('expo-localization');
+    getLocales.mockReturnValueOnce([{ languageCode: 'it', measurementSystem: 'metric' }]);
     expect(detectLanguage()).toBe('en');
   });
 
@@ -79,8 +90,13 @@ describe('getCongratsMessages', () => {
     expect(getCongratsMessages()).toBe(fr.congrats);
   });
 
-  it('defaults to the English congrats list for an unrecognized locale', () => {
+  it('returns the German congrats list when i18n.locale is "de"', () => {
     i18n.locale = 'de';
+    expect(getCongratsMessages()).toBe(de.congrats);
+  });
+
+  it('defaults to the English congrats list for an unrecognized locale', () => {
+    i18n.locale = 'it';
     expect(getCongratsMessages()).toBe(en.congrats);
   });
 });

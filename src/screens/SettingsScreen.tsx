@@ -188,32 +188,30 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
 
         {/* ── Language ── */}
         <SettingsSection title={t('settings.language')}>
-          <SettingsRow
-            label={t('settings.language')}
-            sub={t('settings.languageSub')}
-            last
-            right={
-              <View style={styles.segControl}>
-                {(['en', 'es', 'fr'] as const).map(lng => (
-                  <Pressable
-                    key={lng}
-                    onPress={() => updateSettings('language', lng)}
-                    style={[
-                      styles.segBtn,
-                      settings.language === lng && { backgroundColor: T.accent },
-                    ]}
-                  >
-                    <Text style={[
-                      styles.segBtnText,
-                      { color: settings.language === lng ? T.btnGlyph : T.subText },
-                    ]}>
-                      {lng === 'en' ? 'English' : lng === 'es' ? 'Español' : 'Français'}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            }
-          />
+          <View style={styles.languageRow}>
+            <Text style={styles.rowLabel}>{t('settings.language')}</Text>
+            <Text style={styles.rowSub}>{t('settings.languageSub')}</Text>
+            <View style={[styles.segControl, styles.segControlFull]}>
+              {(['en', 'es', 'fr', 'de'] as const).map(lng => (
+                <Pressable
+                  key={lng}
+                  onPress={() => updateSettings('language', lng)}
+                  style={[
+                    styles.segBtn,
+                    styles.segBtnFlex,
+                    settings.language === lng && { backgroundColor: T.accent },
+                  ]}
+                >
+                  <Text style={[
+                    styles.segBtnText,
+                    { color: settings.language === lng ? T.btnGlyph : T.subText },
+                  ]}>
+                    {lng === 'en' ? 'English' : lng === 'es' ? 'Español' : lng === 'fr' ? 'Français' : 'Deutsch'}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
         </SettingsSection>
 
         {/* ── Audio ── */}
@@ -490,14 +488,40 @@ function makeStyles(T: ThemeTokens) {
       borderWidth: 1.5,
       borderColor: T.hairline,
     },
+    segControlFull: {
+      marginTop: 10,
+      alignSelf: 'stretch',
+    },
     segBtn: {
       paddingHorizontal: 12,
       paddingVertical: 6,
+    },
+    segBtnFlex: {
+      flex: 1,
+      alignItems: 'center',
     },
     segBtnText: {
       fontFamily: 'Inter_700Bold',
       fontSize: 12,
       letterSpacing: 12 * 0.04,
+    },
+
+    // Language row (label/sub stacked above a full-width segmented control)
+    languageRow: {
+      paddingVertical: 13,
+      paddingHorizontal: 16,
+    },
+    rowLabel: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 15,
+      color: T.text,
+      lineHeight: 20,
+    },
+    rowSub: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 12,
+      color: T.faintText,
+      marginTop: 2,
     },
   });
 }

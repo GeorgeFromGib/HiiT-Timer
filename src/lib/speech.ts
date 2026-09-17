@@ -7,6 +7,7 @@ const LANGUAGE_CODES: Record<Language, string> = {
   en: 'en-US',
   es: 'es-ES',
   fr: 'fr-FR',
+  de: 'de-DE',
 };
 
 async function speak(text: string, language: Language, onDone?: () => void): Promise<void> {

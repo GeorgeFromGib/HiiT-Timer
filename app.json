@@ -19,7 +19,7 @@
           "audio",
           "remote-notification"
         ],
-        "CFBundleLocalizations": ["en", "es", "fr"]
+        "CFBundleLocalizations": ["en", "es", "fr", "de"]
       }
     },
     "android": {

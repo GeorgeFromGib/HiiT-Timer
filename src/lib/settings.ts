@@ -16,7 +16,7 @@ export interface Settings {
   soundVolume: number; // 0–100
   speedUnit: 'km' | 'miles';
   speedUnitIsManuallySet: boolean;
-  language: 'en' | 'es' | 'fr';
+  language: 'en' | 'es' | 'fr' | 'de';
   languageIsManuallySet: boolean;
   hideFolders: boolean;
   onboardingVersion: number;
