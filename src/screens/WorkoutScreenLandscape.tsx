@@ -441,8 +441,8 @@ function makeStyles(T: ThemeTokens, s: number) { return StyleSheet.create({
   },
   pillText: {
     fontFamily: 'Inter_700Bold',
-    fontSize: Math.round(15 * s),
-    letterSpacing: 15 * 0.02,
+    fontSize: Math.round(19 * s),
+    letterSpacing: 19 * 0.02,
   },
   bigTime: {
     fontFamily: 'ChakraPetch_700Bold',

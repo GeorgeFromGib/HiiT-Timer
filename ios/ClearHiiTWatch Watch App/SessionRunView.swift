@@ -49,6 +49,8 @@ struct SessionRunView: View {
   @State private var runningPage: RunningPage = .timer
   @State private var hasAutoStarted = false
   @State private var showTerminateConfirm = false
+  @State private var taperFlash = false
+  @State private var taperFlashTask: Task<Void, Never>? = nil
   @Environment(\.dismiss) private var dismiss
   @Environment(\.isLuminanceReduced) private var isLuminanceReduced
   @Environment(\.scenePhase) private var scenePhase
@@ -161,6 +163,24 @@ struct SessionRunView: View {
     .padding()
   }
 
+  // repeatCount(_:autoreverses:) on a single state toggle didn't visibly
+  // pulse on-device — steps the value back and forth explicitly instead,
+  // mirroring WorkoutScreen.tsx's Animated.loop(sequence(...), {iterations:6}).
+  private func flashTaperPulse() {
+    taperFlashTask?.cancel()
+    taperFlash = false
+    taperFlashTask = Task { @MainActor in
+      for _ in 0..<6 {
+        guard !Task.isCancelled else { return }
+        withAnimation(.easeInOut(duration: 0.25)) { taperFlash = true }
+        try? await Task.sleep(nanoseconds: 250_000_000)
+        guard !Task.isCancelled else { return }
+        withAnimation(.easeInOut(duration: 0.25)) { taperFlash = false }
+        try? await Task.sleep(nanoseconds: 250_000_000)
+      }
+    }
+  }
+
   private func runningView(state: TimerState, segment: Segment?) -> some View {
     func togglePause() {
       switch state.status {
@@ -184,6 +204,11 @@ struct SessionRunView: View {
     let rawDuration = segment?.duration ?? 0
     let progress = rawDuration > 0 ? max(0, min(1, 1 - state.remainingInSegment / rawDuration)) : 0
     let segment = taperedCooldownSegment(engineHolder.segments, index: state.currentIndex, progress: progress) ?? segment
+
+    // Empty once we leave cooldown so the first cooldown frame's key change
+    // (from whatever the prior phase was) doesn't fire a haptic — only an
+    // in-cooldown step-down should, mirroring WorkoutScreen.tsx's pillPulse.
+    let taperKey = segment?.cooldownTaper == true ? "\(segment?.speed ?? -1)|\(segment?.resistance ?? -1)" : ""
 
     return AnyView(TabView(selection: $runningPage) {
       HStack(spacing: 16) {
@@ -245,6 +270,12 @@ struct SessionRunView: View {
 
           HStack {
             HStack(alignment: .lastTextBaseline, spacing: 4) {
+              if segment?.cooldownTaper == true {
+                Image(systemName: "stairs")
+                  .font(.caption)
+                  .foregroundStyle(phaseColor[.cooldown]!)
+                  .scaleEffect(y: -1)
+              }
               Text(String(format: "%.1f", speed))
                 .font(.system(size: 30, weight: .semibold, design: .rounded))
                 .monospacedDigit()
@@ -252,6 +283,8 @@ struct SessionRunView: View {
                 .font(.caption2)
                 .foregroundStyle(.secondary)
             }
+            .scaleEffect(taperFlash ? 1.12 : 1)
+            .opacity(taperFlash ? 0.3 : 1)
             if let incline = segment?.incline {
               Spacer()
               Text(String(format: "%.0f%% inc", incline))
@@ -265,6 +298,12 @@ struct SessionRunView: View {
             .monospacedDigit()
 
           HStack(alignment: .lastTextBaseline, spacing: 4) {
+            if segment?.cooldownTaper == true {
+              Image(systemName: "stairs")
+                .font(.caption)
+                .foregroundStyle(phaseColor[.cooldown]!)
+                .scaleEffect(y: -1)
+            }
             Text("R\(Int(resistance))")
               .font(.system(size: 24, weight: .semibold, design: .rounded))
               .monospacedDigit()
@@ -274,6 +313,8 @@ struct SessionRunView: View {
               .font(.system(size: 24, weight: .semibold, design: .rounded))
               .monospacedDigit()
           }
+          .scaleEffect(taperFlash ? 1.12 : 1)
+          .opacity(taperFlash ? 0.3 : 1)
         } else {
           Text(fmtTimer(state.remainingInSegment))
             .font(.system(size: 46, weight: .bold, design: .rounded))
@@ -333,6 +374,12 @@ struct SessionRunView: View {
       .tag(RunningPage.timer)
     }
     .tabViewStyle(.page)
+    .onChange(of: taperKey) { oldValue, newValue in
+      if !oldValue.isEmpty && oldValue != newValue {
+        HapticsController.play(for: .cooldown)
+        flashTaperPulse()
+      }
+    }
     .overlay {
       // Always present regardless of which page is showing, so Double Tap
       // pauses/resumes from either the controls or timer page.

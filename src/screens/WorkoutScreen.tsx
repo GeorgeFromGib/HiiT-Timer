@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -224,6 +225,7 @@ export default function WorkoutScreen({
     if (seg.phase !== 'cooldown' || seg.speed === undefined) { prevPillKeyRef.current = ''; return; }
     const key = `${formatSpeed(seg.speed, settings.speedUnit)}|${seg.incline ?? ''}`;
     if (prevPillKeyRef.current && prevPillKeyRef.current !== key) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       pillPulseAnimRef.current?.stop();
       pillPulse.setValue(0);
       pillPulseAnimRef.current = Animated.loop(
