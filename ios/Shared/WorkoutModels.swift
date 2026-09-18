@@ -133,14 +133,20 @@ func dedupeFoldersById(_ folders: [FolderDTO]) -> [FolderDTO] {
   return result
 }
 
-let phaseWord: [Phase: String] = [
-  .warmup: "WARM UP",
-  .work: "WORK",
-  .rest: "RECOVER",
-  .cooldown: "COOL DOWN",
-  .circuitRest: "BREAK",
-  .finish: "",
+/// Mirrors src/locales/{en,es,fr,de}.ts's `run.phase` block. Keyed by
+/// Settings.language, synced from the phone via WorkoutSync/PreferenceRecord
+/// (see WorkoutStore.fetchLanguage) since the watch has no i18n system of
+/// its own.
+private let phaseWordsByLanguage: [String: [Phase: String]] = [
+  "en": [.warmup: "WARM UP", .work: "WORK", .rest: "RECOVER", .cooldown: "COOL DOWN", .circuitRest: "BREAK", .finish: ""],
+  "es": [.warmup: "CALENTAMIENTO", .work: "TRABAJO", .rest: "RECUPERA", .cooldown: "ENFRIAMIENTO", .circuitRest: "PAUSA", .finish: ""],
+  "fr": [.warmup: "ÉCHAUFFEMENT", .work: "TRAVAIL", .rest: "RÉCUPÉRATION", .cooldown: "RETOUR AU CALME", .circuitRest: "PAUSE", .finish: ""],
+  "de": [.warmup: "AUFWÄRMEN", .work: "ARBEIT", .rest: "ERHOLUNG", .cooldown: "ABKÜHLEN", .circuitRest: "PAUSE", .finish: ""],
 ]
+
+func phaseWords(forLanguage language: String) -> [Phase: String] {
+  phaseWordsByLanguage[language] ?? phaseWordsByLanguage["en"]!
+}
 
 /// Clock-style format for the live timer display: "45", "1:30", "2:05:30".
 func fmtTimer(_ seconds: Double) -> String {

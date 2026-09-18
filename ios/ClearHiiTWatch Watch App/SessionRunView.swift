@@ -20,16 +20,19 @@ private let controlGhostBg = Color.white.opacity(0.05)
 private let controlHairline = Color.white.opacity(0.10)
 private let controlSubText = Color.white.opacity(0.72)
 
-/// Matches src/locales/en.ts's `congrats` list — the watch has no i18n system,
-/// so this is a small English-only subset for the done screen.
-let congratsMessages = [
-  "You crushed it.",
-  "That's what you're made of.",
-  "Every rep counted.",
-  "Earned.",
-  "Done. Well done.",
-  "Session closed.",
+/// Small subset (indices 0,1,2,4,15,19) of src/locales/{en,es,fr,de}.ts's
+/// `congrats` list, keyed by Settings.language — see phaseWordsByLanguage in
+/// WorkoutModels.swift for why the watch keeps its own copy of phone strings.
+private let congratsMessagesByLanguage: [String: [String]] = [
+  "en": ["You crushed it.", "That's what you're made of.", "Every rep counted.", "Earned.", "Done. Well done.", "Session closed."],
+  "es": ["Lo lograste.", "De eso estás hecho.", "Cada repetición contó.", "Merecido.", "Hecho. Bien hecho.", "Sesión cerrada."],
+  "fr": ["Tu l'as écrasé.", "C'est de ça que tu es fait.", "Chaque répétition a compté.", "Mérité.", "Fait. Bien fait.", "Séance terminée."],
+  "de": ["Du hast es geschafft.", "Genau dafür bist du gemacht.", "Jede Wiederholung hat gezählt.", "Verdient.", "Erledigt. Gut gemacht.", "Einheit abgeschlossen."],
 ]
+
+func congratsMessages(forLanguage language: String) -> [String] {
+  congratsMessagesByLanguage[language] ?? congratsMessagesByLanguage["en"]!
+}
 
 private enum RunningPage: Hashable {
   case controls
@@ -258,7 +261,7 @@ struct SessionRunView: View {
             .foregroundStyle(controlSubText)
         }
 
-        Text(segment?.activityLabel ?? segment.map { phaseWord[$0.phase] ?? "" } ?? "")
+        Text(segment?.activityLabel ?? segment.map { engineHolder.phaseWord[$0.phase] ?? "" } ?? "")
           .font(.system(size: 22, weight: .bold, design: .rounded))
           .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
           .multilineTextAlignment(.center)
@@ -411,7 +414,7 @@ struct SessionRunView: View {
   /// minimize what's drawn.
   private func alwaysOnView(state: TimerState, segment: Segment?) -> some View {
     VStack(spacing: 8) {
-      Text(segment?.activityLabel ?? segment.map { phaseWord[$0.phase] ?? "" } ?? "")
+      Text(segment?.activityLabel ?? segment.map { engineHolder.phaseWord[$0.phase] ?? "" } ?? "")
         .font(.system(size: 20, weight: .semibold, design: .rounded))
         .foregroundStyle(.primary)
         .multilineTextAlignment(.center)
@@ -497,7 +500,8 @@ private final class EngineHolder: ObservableObject {
   let segments: [Segment]
   @Published private(set) var currentSegment: Segment?
   @Published private(set) var liveStats = WorkoutLiveStats()
-  let congratsMessage: String = congratsMessages.randomElement() ?? ""
+  let congratsMessage: String
+  let phaseWord: [Phase: String]
   private var cancellable: AnyCancellable?
   private let workoutSession: WorkoutSessionCoordinator
   private let session: SessionDTO
@@ -512,6 +516,9 @@ private final class EngineHolder: ObservableObject {
     self.segments = segments
     self.currentSegment = segments.first
     self.session = session
+    let language = WorkoutStore.shared.fetchLanguage()
+    self.phaseWord = phaseWords(forLanguage: language)
+    self.congratsMessage = congratsMessages(forLanguage: language).randomElement() ?? ""
     self.workoutSession = WorkoutSessionCoordinator(
       recorder: HealthKitWorkoutManager(),
       activityType: hkActivityType(for: session),

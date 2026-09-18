@@ -4,6 +4,6 @@
 
 RCT_EXTERN_METHOD(syncSessionsData:(NSString *)json)
 
-RCT_EXTERN_METHOD(syncPreferences:(BOOL)hideFolders)
+RCT_EXTERN_METHOD(syncPreferences:(BOOL)hideFolders language:(NSString *)language)
 
 @end

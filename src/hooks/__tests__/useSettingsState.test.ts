@@ -121,17 +121,24 @@ describe('useSettingsState', () => {
     expect(result.current.settings.theme).toBe(DEFAULT_SETTINGS.theme);
   });
 
-  it('pushes hideFolders to the watch once settings finish loading', async () => {
+  it('pushes hideFolders and language to the watch once settings finish loading', async () => {
     filesMock.set(SETTINGS_PATH, JSON.stringify({ hideFolders: false }));
     await renderHook(() => useSettingsState());
-    expect(syncPreferences).toHaveBeenCalledWith(false);
+    expect(syncPreferences).toHaveBeenCalledWith(false, 'en');
   });
 
   it('updateSettings("hideFolders", ...) re-pushes the value to the watch', async () => {
     const { result } = await renderHook(() => useSettingsState());
     (syncPreferences as jest.Mock).mockClear();
     await act(async () => result.current.updateSettings('hideFolders', false));
-    expect(syncPreferences).toHaveBeenCalledWith(false);
+    expect(syncPreferences).toHaveBeenCalledWith(false, 'en');
+  });
+
+  it('updateSettings("language", ...) re-pushes the value to the watch', async () => {
+    const { result } = await renderHook(() => useSettingsState());
+    (syncPreferences as jest.Mock).mockClear();
+    await act(async () => result.current.updateSettings('language', 'fr'));
+    expect(syncPreferences).toHaveBeenCalledWith(true, 'fr');
   });
 
   it('updateSettings for an unrelated field does not re-push hideFolders', async () => {

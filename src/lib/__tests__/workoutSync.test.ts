@@ -26,19 +26,19 @@ describe('syncSessionsData', () => {
 });
 
 describe('syncPreferences', () => {
-  it('calls the native WorkoutSync.syncPreferences method with the hideFolders value', () => {
+  it('calls the native WorkoutSync.syncPreferences method with the hideFolders and language values', () => {
     const syncMock = jest.fn();
     NativeModules.WorkoutSync = { syncPreferences: syncMock };
 
-    syncPreferences(false);
+    syncPreferences(false, 'fr');
 
     expect(syncMock).toHaveBeenCalledTimes(1);
-    expect(syncMock).toHaveBeenCalledWith(false);
+    expect(syncMock).toHaveBeenCalledWith(false, 'fr');
   });
 
   it('does not throw when the native module is unavailable', () => {
     NativeModules.WorkoutSync = undefined;
 
-    expect(() => syncPreferences(true)).not.toThrow();
+    expect(() => syncPreferences(true, 'en')).not.toThrow();
   });
 });

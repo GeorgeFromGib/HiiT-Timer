@@ -11,6 +11,7 @@
     <entity name="PreferenceRecord" representedClassName="PreferenceRecord" syncable="YES" codeGenerationType="class">
         <attribute name="hideFolders" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="language" optional="YES" attributeType="String"/>
     </entity>
     <entity name="SessionRecord" representedClassName="SessionRecord" syncable="YES" codeGenerationType="class">
         <attribute name="folderId" optional="YES" attributeType="String"/>

@@ -12,9 +12,9 @@ export function syncSessionsData(data: SessionsData): void {
   }
 }
 
-export function syncPreferences(hideFolders: boolean): void {
+export function syncPreferences(hideFolders: boolean, language: string): void {
   try {
-    NativeModules.WorkoutSync?.syncPreferences(hideFolders);
+    NativeModules.WorkoutSync?.syncPreferences(hideFolders, language);
   } catch (e) {
     console.warn('workoutSync: syncPreferences failed', e);
   }

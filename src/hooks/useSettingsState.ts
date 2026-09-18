@@ -49,7 +49,7 @@ export function useSettingsState(): SettingsState {
       if (!s.speedUnitIsManuallySet || !s.languageIsManuallySet) saveSettings(resolved);
       // Push the current value once on launch too — the watch's local copy
       // otherwise never learns about it until the user next toggles it.
-      syncPreferences(resolved.hideFolders);
+      syncPreferences(resolved.hideFolders, resolved.language);
     });
   }, []);
 
@@ -63,8 +63,8 @@ export function useSettingsState(): SettingsState {
     setSettings(prev => {
       const next = withManualOverride(prev, key, value);
       saveSettings(next);
-      if (key === ('hideFolders' satisfies keyof Settings)) {
-        syncPreferences(next.hideFolders);
+      if (key === ('hideFolders' satisfies keyof Settings) || key === ('language' satisfies keyof Settings)) {
+        syncPreferences(next.hideFolders, next.language);
       }
       return next;
     });

@@ -9,8 +9,8 @@ class WorkoutSync: NSObject {
   }
 
   @objc
-  func syncPreferences(_ hideFolders: Bool) {
-    WorkoutStore.shared.applyPreferences(hideFolders: hideFolders)
+  func syncPreferences(_ hideFolders: Bool, language: String) {
+    WorkoutStore.shared.applyPreferences(hideFolders: hideFolders, language: language)
   }
 
   @objc

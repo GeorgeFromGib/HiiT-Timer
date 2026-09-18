@@ -79,11 +79,12 @@ final class WorkoutStore {
 
   private static let preferencesRecordId = "app"
 
-  func applyPreferences(hideFolders: Bool) {
+  func applyPreferences(hideFolders: Bool, language: String) {
     let context = container.newBackgroundContext()
     context.perform {
       let record = self.fetchOrCreate(entityName: "PreferenceRecord", id: Self.preferencesRecordId, in: context)
       record.setValue(hideFolders, forKey: "hideFolders")
+      record.setValue(language, forKey: "language")
       do {
         try context.save()
       } catch {
@@ -150,6 +151,20 @@ extension WorkoutStore {
       return true
     }
     return hideFolders
+  }
+
+  /// Defaults to "en" when no preference has synced yet, matching
+  /// src/lib/settings.ts's DEFAULT_SETTINGS.language.
+  func fetchLanguage() -> String {
+    let context = container.viewContext
+    let request = NSFetchRequest<NSManagedObject>(entityName: "PreferenceRecord")
+    request.predicate = NSPredicate(format: "id == %@", Self.preferencesRecordId)
+    request.fetchLimit = 1
+    guard let record = try? context.fetch(request).first,
+          let language = record.value(forKey: "language") as? String else {
+      return "en"
+    }
+    return language
   }
 
   func fetchFolders() -> [FolderDTO] {
