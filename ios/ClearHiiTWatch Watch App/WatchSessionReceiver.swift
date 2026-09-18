@@ -88,9 +88,22 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
   }
 
   func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+    if message["kind"] as? String == "preferences" {
+      applyIncomingPreferences(message)
+      return
+    }
     DispatchQueue.main.async {
       self.applyIncoming(message)
     }
+  }
+
+  // Preferences arrive as a one-off sendMessage, distinct from the
+  // updateApplicationContext channel above used for live-session state — so
+  // it can't accidentally be mistaken for (and clear) an active live session.
+  private func applyIncomingPreferences(_ message: [String: Any]) {
+    guard let language = message["language"] as? String,
+          let hideFolders = message["hideFolders"] as? Bool else { return }
+    WorkoutStore.shared.applyPreferences(hideFolders: hideFolders, language: language)
   }
 
   // Rejects an out-of-order delivery (see isNewerLiveSessionUpdate) before it

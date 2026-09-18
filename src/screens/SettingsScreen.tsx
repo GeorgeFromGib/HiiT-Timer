@@ -222,6 +222,7 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
             right={<SettingsToggle value={settings.soundOff} onChange={v => updateSettings('soundOff', v)} />}
           />
           <VolumeRow
+            label={t('settings.volumeLabel')}
             value={settings.soundVolume}
             onChange={v => updateSettings('soundVolume', v)}
             disabled={settings.soundOff}

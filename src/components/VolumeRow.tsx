@@ -3,7 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useTheme, type ThemeTokens } from '../theme';
 
-export function VolumeRow({ value, onChange, disabled = false }: {
+export function VolumeRow({ label, value, onChange, disabled = false }: {
+  label: string;
   value: number; // 0–100
   onChange: (v: number) => void;
   disabled?: boolean;
@@ -14,7 +15,7 @@ export function VolumeRow({ value, onChange, disabled = false }: {
   return (
     <View style={[styles.row, styles.rowBorder, disabled && { opacity: 0.4 }, { flexDirection: 'column', alignItems: 'stretch', paddingBottom: 8 }]}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={styles.rowLabel}>Volume</Text>
+        <Text style={styles.rowLabel}>{label}</Text>
         <Text style={[styles.rowSub, { marginTop: 0 }]}>{value}%</Text>
       </View>
       <Slider

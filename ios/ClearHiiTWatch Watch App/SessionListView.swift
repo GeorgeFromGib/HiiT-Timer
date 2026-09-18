@@ -10,6 +10,8 @@ struct SessionListView: View {
   @State private var showFolders = false
 
   var body: some View {
+    let language = WorkoutStore.shared.fetchLanguage()
+
     Group {
       if showFolders {
         List(folders) { folder in
@@ -18,7 +20,7 @@ struct SessionListView: View {
           }
         }
       } else if sessions.isEmpty {
-        Text(folderId == nil ? "No sessions synced yet" : "No sessions in this folder")
+        Text(folderId == nil ? watchString("noSessionsSynced", forLanguage: language) : watchString("noSessionsInFolder", forLanguage: language))
           .multilineTextAlignment(.center)
           .foregroundStyle(.secondary)
       } else {
@@ -27,7 +29,7 @@ struct SessionListView: View {
         }
       }
     }
-    .navigationTitle(folderName ?? "Sessions")
+    .navigationTitle(folderName ?? watchString("sessions", forLanguage: language))
     .onAppear(perform: load)
     // CloudKit merges land in the view context while this screen may already
     // be on-screen (no push/pop to re-trigger onAppear) — reload whenever

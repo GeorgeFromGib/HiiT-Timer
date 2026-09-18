@@ -72,7 +72,7 @@ struct SessionRunView: View {
 
     Group {
       if state.status == .finished {
-        SessionDoneView(congratsMessage: engineHolder.congratsMessage, onDone: { dismiss() })
+        SessionDoneView(congratsMessage: engineHolder.congratsMessage, language: engineHolder.language, onDone: { dismiss() })
       } else if let countdown {
         CountdownView(count: countdown)
       } else if state.status == .idle {
@@ -153,7 +153,7 @@ struct SessionRunView: View {
         .font(.headline)
         .multilineTextAlignment(.center)
       Button(action: beginCountdown) {
-        Text("Start")
+        Text(watchString("start", forLanguage: engineHolder.language))
           .font(.headline)
           .foregroundStyle(controlGlyph)
           .padding(.horizontal, 20)
@@ -290,7 +290,7 @@ struct SessionRunView: View {
             .opacity(taperFlash ? 0.3 : 1)
             if let incline = segment?.incline {
               Spacer()
-              Text(String(format: "%.0f%% inc", incline))
+              Text(String(format: "%.0f%% \(watchString("incline", forLanguage: engineHolder.language))", incline))
                 .font(.system(size: 20, weight: .medium, design: .rounded))
                 .foregroundStyle(.secondary)
             }
@@ -345,7 +345,7 @@ struct SessionRunView: View {
         .foregroundStyle(.secondary)
 
         if session.mode == "circuit", let circuitNumber = segment?.circuitNumber {
-          Text("Circuit \(circuitNumber) / \(session.circuits ?? circuitNumber)")
+          Text("\(watchString("circuit", forLanguage: engineHolder.language)) \(circuitNumber) / \(session.circuits ?? circuitNumber)")
             .font(.caption2)
             .foregroundStyle(.secondary)
         }
@@ -356,7 +356,7 @@ struct SessionRunView: View {
             ScrollView {
               VStack(alignment: .leading, spacing: 2) {
                 ForEach(Array(upNext.enumerated()), id: \.offset) { index, name in
-                  Text(index == 0 ? "Nxt: \(name)" : name)
+                  Text(index == 0 ? "\(watchString("next", forLanguage: engineHolder.language)): \(name)" : name)
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                 }
@@ -394,12 +394,12 @@ struct SessionRunView: View {
           .allowsHitTesting(false)
       }
     }
-    .confirmationDialog("End Workout?", isPresented: $showTerminateConfirm, titleVisibility: .visible) {
+    .confirmationDialog(watchString("endWorkoutTitle", forLanguage: engineHolder.language), isPresented: $showTerminateConfirm, titleVisibility: .visible) {
       // Leaving here by any means (this button, the back chevron, swipe, or
       // the cover's system dismiss) ends the peer's mirrored session too —
       // discardIfUnfinished (called from onDisappear below) broadcasts it.
-      Button("End Workout", role: .destructive) { dismiss() }
-      Button("Continue", role: .cancel) {}
+      Button(watchString("endWorkout", forLanguage: engineHolder.language), role: .destructive) { dismiss() }
+      Button(watchString("continue", forLanguage: engineHolder.language), role: .cancel) {}
     })
   }
 
@@ -467,6 +467,7 @@ private struct CountdownView: View {
 /// message. A basic celebration screen — no stats recap (that's phone-only).
 struct SessionDoneView: View {
   let congratsMessage: String
+  let language: String
   let onDone: () -> Void
 
   var body: some View {
@@ -478,7 +479,7 @@ struct SessionDoneView: View {
         .font(.headline)
         .multilineTextAlignment(.center)
       Button(action: onDone) {
-        Text("Done")
+        Text(watchString("done", forLanguage: language))
           .font(.headline)
           .foregroundStyle(controlGlyph)
           .padding(.horizontal, 20)
@@ -502,6 +503,7 @@ private final class EngineHolder: ObservableObject {
   @Published private(set) var liveStats = WorkoutLiveStats()
   let congratsMessage: String
   let phaseWord: [Phase: String]
+  let language: String
   private var cancellable: AnyCancellable?
   private let workoutSession: WorkoutSessionCoordinator
   private let session: SessionDTO
@@ -517,6 +519,7 @@ private final class EngineHolder: ObservableObject {
     self.currentSegment = segments.first
     self.session = session
     let language = WorkoutStore.shared.fetchLanguage()
+    self.language = language
     self.phaseWord = phaseWords(forLanguage: language)
     self.congratsMessage = congratsMessages(forLanguage: language).randomElement() ?? ""
     self.workoutSession = WorkoutSessionCoordinator(

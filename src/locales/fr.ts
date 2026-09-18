@@ -165,6 +165,7 @@ export const fr: typeof en = {
     audio: 'Audio',
     soundOffLabel: 'Son désactivé',
     soundOffSub: "Couper tout l'audio",
+    volumeLabel: 'Volume',
     soundCuesLabel: 'Signaux sonores',
     soundCuesSub: 'Jouer des tonalités lors des changements de phase',
     finalBeepLabel: 'Bip de fin de compte à rebours',
@@ -406,6 +407,15 @@ export const fr: typeof en = {
   theme: {
     tidal: { name: 'Tidal', note: 'Bleu-vert profond · calme' },
     daybreak: { name: 'Daybreak', note: 'Clair · papier chaud' },
+  },
+  privacyPolicy: {
+    title: 'Déclaration de confidentialité de ClearHiiT',
+    lastUpdated: 'Dernière mise à jour : 19 juin 2026',
+    section1: 'ClearHiiT ne collecte, ne stocke ni ne partage aucune donnée personnelle.',
+    section2: "Toutes les données de l'application — y compris vos réglages d'entraînement, minuteurs et préférences — sont stockées localement sur votre appareil et ne sont jamais transmises à nous ni à des tiers. Nous n'utilisons aucun service d'analyse, de publicité ou de suivi.",
+    section3: "Comme ClearHiiT ne collecte aucune information personnelle, il n'existe aucune donnée à consulter, supprimer ou transférer. Si vous supprimez l'application, toutes les données stockées localement sont effacées de votre appareil.",
+    section4: "ClearHiiT ne s'intègre à aucun service tiers qui recevrait vos données.",
+    section5: 'Pour toute question concernant cette politique, contactez-moi à george@georgegaskindev.com.',
   },
 };
 

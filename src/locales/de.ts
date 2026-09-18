@@ -165,6 +165,7 @@ export const de: typeof en = {
     audio: 'Audio',
     soundOffLabel: 'Ton aus',
     soundOffSub: 'Gesamten Ton stummschalten',
+    volumeLabel: 'Lautstärke',
     soundCuesLabel: 'Ton-Signale',
     soundCuesSub: 'Töne bei Phasenwechseln abspielen',
     finalBeepLabel: 'Countdown-Signalton',
@@ -406,6 +407,15 @@ export const de: typeof en = {
   theme: {
     tidal: { name: 'Tidal', note: 'Tiefes Petrol · ruhig' },
     daybreak: { name: 'Daybreak', note: 'Hell · warmes Papier' },
+  },
+  privacyPolicy: {
+    title: 'Datenschutzerklärung für ClearHiiT',
+    lastUpdated: 'Zuletzt aktualisiert: 19. Juni 2026',
+    section1: 'ClearHiiT erhebt, speichert oder teilt keine personenbezogenen Daten.',
+    section2: 'Alle App-Daten – einschließlich deiner Trainingseinstellungen, Timer und Präferenzen – werden lokal auf deinem Gerät gespeichert und niemals an uns oder Dritte übermittelt. Wir verwenden keinerlei Analyse-, Werbe- oder Tracking-Dienste.',
+    section3: 'Da ClearHiiT keine personenbezogenen Daten erhebt, gibt es keine Daten, auf die zugegriffen, die gelöscht oder übertragen werden könnten. Wenn du die App löschst, werden alle lokal gespeicherten Daten von deinem Gerät entfernt.',
+    section4: 'ClearHiiT bindet keine Drittanbieterdienste ein, die deine Daten erhalten würden.',
+    section5: 'Falls du Fragen zu dieser Richtlinie hast, kontaktiere mich bitte unter george@georgegaskindev.com.',
   },
 };
 

@@ -163,6 +163,7 @@ export const en = {
     audio: 'Audio',
     soundOffLabel: 'Sound off',
     soundOffSub: 'Mute all audio',
+    volumeLabel: 'Volume',
     soundCuesLabel: 'Sound cues',
     soundCuesSub: 'Play tones on phase changes',
     finalBeepLabel: 'Final countdown beep',
@@ -404,6 +405,15 @@ export const en = {
   theme: {
     tidal: { name: 'Tidal', note: 'Deep teal · calm' },
     daybreak: { name: 'Daybreak', note: 'Light · warm paper' },
+  },
+  privacyPolicy: {
+    title: 'Privacy Statement for ClearHiiT',
+    lastUpdated: 'Last updated: June 19, 2026',
+    section1: 'ClearHiiT does not collect, store, or share any personal data.',
+    section2: 'All app data — including your workout settings, timers, and preferences — is stored locally on your device and is never transmitted to us or to any third party. We do not use analytics, advertising, or tracking services of any kind.',
+    section3: 'Since ClearHiiT does not collect any personal information, there is no data to access, delete, or transfer. If you delete the app, all locally stored data is removed from your device.',
+    section4: 'ClearHiiT does not integrate with any third-party services that would receive your data.',
+    section5: 'If you have any questions about this policy, please contact me at george@georgegaskindev.com.',
   },
 };
 

@@ -2,38 +2,22 @@ import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, type ThemeTokens } from '../theme';
+import { useTranslation } from '../hooks/useTranslation';
 import ScreenHeader from '../components/ScreenHeader';
-
-const POLICY_SECTIONS = [
-  {
-    heading: 'Privacy Statement for ClearHiiT',
-    body: 'Last updated: June 19, 2026',
-  },
-  {
-    heading: null,
-    body: 'ClearHiiT does not collect, store, or share any personal data.',
-  },
-  {
-    heading: null,
-    body: 'All app data — including your workout settings, timers, and preferences — is stored locally on your device and is never transmitted to us or to any third party. We do not use analytics, advertising, or tracking services of any kind.',
-  },
-  {
-    heading: null,
-    body: 'Since ClearHiiT does not collect any personal information, there is no data to access, delete, or transfer. If you delete the app, all locally stored data is removed from your device.',
-  },
-  {
-    heading: null,
-    body: 'ClearHiiT does not integrate with any third-party services that would receive your data.',
-  },
-  {
-    heading: null,
-    body: 'If you have any questions about this policy, please contact me at george@georgegaskindev.com.',
-  },
-];
 
 export default function PrivacyPolicyScreen({ onBack }: { onBack: () => void }) {
   const { T } = useTheme();
+  const { t } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
+
+  const POLICY_SECTIONS = [
+    { heading: t('privacyPolicy.title'), body: t('privacyPolicy.lastUpdated') },
+    { heading: null, body: t('privacyPolicy.section1') },
+    { heading: null, body: t('privacyPolicy.section2') },
+    { heading: null, body: t('privacyPolicy.section3') },
+    { heading: null, body: t('privacyPolicy.section4') },
+    { heading: null, body: t('privacyPolicy.section5') },
+  ];
 
   return (
     <LinearGradient
@@ -47,7 +31,7 @@ export default function PrivacyPolicyScreen({ onBack }: { onBack: () => void }) 
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <ScreenHeader onBack={onBack} title="Privacy Statement" style={styles.header} />
+        <ScreenHeader onBack={onBack} title={t('settings.privacyPolicy')} style={styles.header} />
         {POLICY_SECTIONS.map((section, i) => (
           <React.Fragment key={i}>
             {section.heading && (
