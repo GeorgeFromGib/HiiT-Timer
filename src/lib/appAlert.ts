@@ -54,6 +54,14 @@ export function confirmIfDirty(dirty: boolean, messageKey: string, apply: () => 
   );
 }
 
+// Shared "this warmup/cooldown is quite short" warning, used by both easy-mode
+// field edits and circuit warmup/cooldown edits.
+export function warnIfShortDuration(secs: number): void {
+  if (secs < 300) {
+    appAlert('warning', i18n.t('alerts.shortWarmupCooldownTitle'), i18n.t('alerts.shortWarmupCooldownMessage'));
+  }
+}
+
 export function useAppAlert(): AppAlertRequest | null {
   return useSyncExternalStore(
     onChange => { listeners.add(onChange); return () => listeners.delete(onChange); },

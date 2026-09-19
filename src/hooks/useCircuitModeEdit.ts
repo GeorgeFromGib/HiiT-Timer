@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useDraft } from './useDraft';
+import { warnIfShortDuration } from '../lib/appAlert';
 import { TABATA } from '../lib/workout';
 import { type Session } from '../lib/sessions';
+import { type CommitResult } from './usePickerState';
 
 export interface CircuitModeEdit {
   circuitWarmup:   number;
@@ -11,6 +13,8 @@ export interface CircuitModeEdit {
   tabata:          boolean;
   hasChanges:      boolean;
   set:             (field: 'warmup' | 'cooldown' | 'rest' | 'count', value: number) => void;
+  // Handles the CommitResult variants this mode owns; returns false for any other variant.
+  commit:          (result: CommitResult) => boolean;
   reset:           () => void;
 }
 
@@ -51,6 +55,19 @@ export function useCircuitModeEdit(initial: Session | undefined, startTabata = f
     stateSetters[field](value);
   }
 
+  function commit(result: CommitResult): boolean {
+    switch (result.type) {
+      case 'circuitWarmup':   set('warmup', result.secs); warnIfShortDuration(result.secs); return true;
+      case 'circuitCooldown': set('cooldown', result.secs); warnIfShortDuration(result.secs); return true;
+      case 'circuitRest':     set('rest', result.secs); return true;
+      case 'circuitCount':    set('count', result.value); return true;
+      // 3 min is a deliberate, allowed choice for Tabata — no short-duration warning.
+      case 'tabataWarmup':    set('warmup', result.secs); return true;
+      case 'tabataCooldown':  set('cooldown', result.secs); return true;
+      default: return false;
+    }
+  }
+
   function reset() {
     setCircuitWarmup(DEFAULTS.warmup);
     setCircuitCooldown(DEFAULTS.cooldown);
@@ -59,5 +76,5 @@ export function useCircuitModeEdit(initial: Session | undefined, startTabata = f
     setTabataState(initT);
   }
 
-  return { circuitWarmup, circuitCooldown, circuitRest, circuitCount, tabata, hasChanges, set, reset };
+  return { circuitWarmup, circuitCooldown, circuitRest, circuitCount, tabata, hasChanges, set, commit, reset };
 }

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { i18n } from '../lib/i18n';
-import { appAlert, confirmIfDirty } from '../lib/appAlert';
+import { appAlert, confirmIfDirty, warnIfShortDuration } from '../lib/appAlert';
 import {
   getSessionSegments, speedForPhase, spinValueForPhase, inclineForPhase,
   type Session, type RunSpeeds, type RunInclines, type SpinValues,
@@ -165,12 +165,6 @@ export function useEditSession(
       : undefined;
   }
 
-  function warnIfShortDuration(secs: number) {
-    if (secs < 300) {
-      appAlert('warning', i18n.t('alerts.shortWarmupCooldownTitle'), i18n.t('alerts.shortWarmupCooldownMessage'));
-    }
-  }
-
   // Keeps total session length constant when warmup/work/rest/cooldown changes by re-solving
   // rounds against the pre-change total, using the field values as they stood before this edit.
   function recalcRoundsForFieldChange(field: TimeField, newSecs: number) {
@@ -193,6 +187,8 @@ export function useEditSession(
       count:    circuitEdit.circuitCount,
     },
     (result) => {
+      // 'rounds'/'field'/'targetDuration' stay here: they read/write coordinator-level
+      // state (lengthIsSet, targetLengthMinutes, easyDirty) that no single mode hook owns.
       if (result.type === 'rounds') {
         if (lengthIsSet && result.value !== easyEdit.rounds) {
           appAlert('warning', i18n.t('alerts.roundsChangeLengthTitle'), i18n.t('alerts.roundsChangeLengthMessage'));
@@ -208,39 +204,9 @@ export function useEditSession(
         if (result.field === 'warmup' || result.field === 'cooldown') warnIfShortDuration(result.secs);
       } else if (result.type === 'targetDuration') {
         applyTimePresetMinutes(result.minutes);
-      } else if (result.type === 'speed') {
-        speedSpinEdit.setRunSpeed(result.field, result.kmh);
-      } else if (result.type === 'intervalSpeed') {
-        intervalEdit.setIntervalSpeed(result.key, result.kmh);
-      } else if (result.type === 'spinResistance') {
-        speedSpinEdit.setSpinValue(result.field, result.value);
-      } else if (result.type === 'spinPower') {
-        speedSpinEdit.setSpinValue(result.field, result.value);
-      } else if (result.type === 'intervalResistance') {
-        intervalEdit.setIntervalResistance(result.key, result.value);
-      } else if (result.type === 'intervalPower') {
-        intervalEdit.setIntervalPower(result.key, result.value);
-      } else if (result.type === 'incline') {
-        speedSpinEdit.setRunIncline(result.field, result.value);
-      } else if (result.type === 'intervalIncline') {
-        intervalEdit.setIntervalIncline(result.key, result.value);
-      } else if (result.type === 'circuitWarmup') {
-        circuitEdit.set('warmup', result.secs);
-        warnIfShortDuration(result.secs);
-      } else if (result.type === 'circuitCooldown') {
-        circuitEdit.set('cooldown', result.secs);
-        warnIfShortDuration(result.secs);
-      } else if (result.type === 'circuitRest') {
-        circuitEdit.set('rest', result.secs);
-      } else if (result.type === 'circuitCount') {
-        circuitEdit.set('count', result.value);
-      } else if (result.type === 'tabataWarmup') {
-        // 3 min is a deliberate, allowed choice for Tabata — no short-duration warning.
-        circuitEdit.set('warmup', result.secs);
-      } else if (result.type === 'tabataCooldown') {
-        circuitEdit.set('cooldown', result.secs);
-      } else if (result.type === 'interval') {
-        intervalEdit.setIntervalDuration(result.key, result.secs);
+      } else {
+        // Every other variant belongs to exactly one mode hook, which knows how to apply it.
+        circuitEdit.commit(result) || speedSpinEdit.commit(result) || intervalEdit.commit(result);
       }
     },
   );

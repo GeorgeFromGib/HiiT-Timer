@@ -1,0 +1,689 @@
+[
+  {
+    "name": "easyPlain",
+    "session": {
+      "id": "fx-1",
+      "name": "Easy Plain",
+      "folderId": "default",
+      "mode": "easy",
+      "config": {
+        "warmup": 300,
+        "high": 20,
+        "low": 40,
+        "rounds": 5,
+        "cooldown": 300
+      }
+    },
+    "expectedSegments": [
+      {
+        "phase": "warmup",
+        "duration": 300,
+        "index": 0,
+        "startAt": 0,
+        "endAt": 300
+      },
+      {
+        "phase": "work",
+        "duration": 20,
+        "index": 1,
+        "startAt": 300,
+        "endAt": 320
+      },
+      {
+        "phase": "rest",
+        "duration": 40,
+        "index": 2,
+        "startAt": 320,
+        "endAt": 360
+      },
+      {
+        "phase": "work",
+        "duration": 20,
+        "index": 3,
+        "startAt": 360,
+        "endAt": 380
+      },
+      {
+        "phase": "rest",
+        "duration": 40,
+        "index": 4,
+        "startAt": 380,
+        "endAt": 420
+      },
+      {
+        "phase": "work",
+        "duration": 20,
+        "index": 5,
+        "startAt": 420,
+        "endAt": 440
+      },
+      {
+        "phase": "rest",
+        "duration": 40,
+        "index": 6,
+        "startAt": 440,
+        "endAt": 480
+      },
+      {
+        "phase": "work",
+        "duration": 20,
+        "index": 7,
+        "startAt": 480,
+        "endAt": 500
+      },
+      {
+        "phase": "rest",
+        "duration": 40,
+        "index": 8,
+        "startAt": 500,
+        "endAt": 540
+      },
+      {
+        "phase": "work",
+        "duration": 20,
+        "index": 9,
+        "startAt": 540,
+        "endAt": 560
+      },
+      {
+        "phase": "rest",
+        "duration": 40,
+        "index": 10,
+        "startAt": 560,
+        "endAt": 600
+      },
+      {
+        "phase": "cooldown",
+        "duration": 300,
+        "index": 11,
+        "startAt": 600,
+        "endAt": 900
+      }
+    ]
+  },
+  {
+    "name": "advancedRunOverride",
+    "session": {
+      "id": "fx-2",
+      "name": "Advanced Run Override",
+      "folderId": "default",
+      "mode": "advanced",
+      "activityType": "run",
+      "runSpeeds": {
+        "warmupSpeed": 5,
+        "workSpeed": 11,
+        "restSpeed": 6,
+        "cooldownSpeed": 4
+      },
+      "runInclines": {
+        "warmupIncline": 0,
+        "workIncline": 2,
+        "restIncline": 0,
+        "cooldownIncline": 0
+      },
+      "intervals": [
+        {
+          "type": "warmup",
+          "dur": 60
+        },
+        {
+          "type": "work",
+          "dur": 30,
+          "speed": 14
+        },
+        {
+          "type": "rest",
+          "dur": 15
+        },
+        {
+          "type": "work",
+          "dur": 30
+        },
+        {
+          "type": "rest",
+          "dur": 15
+        },
+        {
+          "type": "cooldown",
+          "dur": 60,
+          "cooldownTaper": true
+        }
+      ]
+    },
+    "expectedSegments": [
+      {
+        "phase": "warmup",
+        "duration": 60,
+        "startAt": 0,
+        "endAt": 60,
+        "index": 0,
+        "speed": 5,
+        "incline": 0
+      },
+      {
+        "phase": "work",
+        "duration": 30,
+        "startAt": 60,
+        "endAt": 90,
+        "index": 1,
+        "speed": 14,
+        "incline": 2
+      },
+      {
+        "phase": "rest",
+        "duration": 15,
+        "startAt": 90,
+        "endAt": 105,
+        "index": 2,
+        "speed": 6,
+        "incline": 0
+      },
+      {
+        "phase": "work",
+        "duration": 30,
+        "startAt": 105,
+        "endAt": 135,
+        "index": 3,
+        "speed": 11,
+        "incline": 2
+      },
+      {
+        "phase": "rest",
+        "duration": 15,
+        "startAt": 135,
+        "endAt": 150,
+        "index": 4,
+        "speed": 6,
+        "incline": 0
+      },
+      {
+        "phase": "cooldown",
+        "duration": 60,
+        "startAt": 150,
+        "endAt": 210,
+        "index": 5,
+        "speed": 4,
+        "incline": 0,
+        "cooldownTaper": true
+      }
+    ]
+  },
+  {
+    "name": "circuitBasic",
+    "session": {
+      "id": "fx-3",
+      "name": "Circuit Basic",
+      "folderId": "default",
+      "mode": "circuit",
+      "intervals": [
+        {
+          "type": "work",
+          "dur": 30,
+          "activityLabel": "Burpees"
+        },
+        {
+          "type": "rest",
+          "dur": 15
+        }
+      ],
+      "circuits": 3,
+      "warmup": 60,
+      "cooldown": 60,
+      "circuitRest": 20
+    },
+    "expectedSegments": [
+      {
+        "phase": "warmup",
+        "duration": 60,
+        "index": 0,
+        "startAt": 0,
+        "endAt": 60
+      },
+      {
+        "phase": "work",
+        "duration": 30,
+        "activityLabel": "Burpees",
+        "circuitNumber": 1,
+        "index": 1,
+        "startAt": 60,
+        "endAt": 90
+      },
+      {
+        "phase": "rest",
+        "duration": 15,
+        "circuitNumber": 1,
+        "index": 2,
+        "startAt": 90,
+        "endAt": 105
+      },
+      {
+        "phase": "circuitRest",
+        "duration": 20,
+        "index": 3,
+        "startAt": 105,
+        "endAt": 125
+      },
+      {
+        "phase": "work",
+        "duration": 30,
+        "activityLabel": "Burpees",
+        "circuitNumber": 2,
+        "index": 4,
+        "startAt": 125,
+        "endAt": 155
+      },
+      {
+        "phase": "rest",
+        "duration": 15,
+        "circuitNumber": 2,
+        "index": 5,
+        "startAt": 155,
+        "endAt": 170
+      },
+      {
+        "phase": "circuitRest",
+        "duration": 20,
+        "index": 6,
+        "startAt": 170,
+        "endAt": 190
+      },
+      {
+        "phase": "work",
+        "duration": 30,
+        "activityLabel": "Burpees",
+        "circuitNumber": 3,
+        "index": 7,
+        "startAt": 190,
+        "endAt": 220
+      },
+      {
+        "phase": "rest",
+        "duration": 15,
+        "circuitNumber": 3,
+        "index": 8,
+        "startAt": 220,
+        "endAt": 235
+      },
+      {
+        "phase": "cooldown",
+        "duration": 60,
+        "index": 9,
+        "startAt": 235,
+        "endAt": 295
+      }
+    ]
+  },
+  {
+    "name": "easyRunTaper",
+    "session": {
+      "id": "fx-4",
+      "name": "Easy Run Taper",
+      "folderId": "default",
+      "mode": "easy",
+      "config": {
+        "warmup": 300,
+        "high": 60,
+        "low": 30,
+        "rounds": 3,
+        "cooldown": 300
+      },
+      "activityType": "run",
+      "runSpeeds": {
+        "warmupSpeed": 5,
+        "workSpeed": 12,
+        "restSpeed": 6,
+        "cooldownSpeed": 4
+      },
+      "runInclines": {
+        "warmupIncline": 0,
+        "workIncline": 3,
+        "restIncline": 0,
+        "cooldownIncline": 0
+      },
+      "inclineEnabled": true,
+      "cooldownTaper": true
+    },
+    "expectedSegments": [
+      {
+        "phase": "warmup",
+        "duration": 300,
+        "index": 0,
+        "startAt": 0,
+        "endAt": 300,
+        "speed": 5,
+        "incline": 0
+      },
+      {
+        "phase": "work",
+        "duration": 60,
+        "index": 1,
+        "startAt": 300,
+        "endAt": 360,
+        "speed": 12,
+        "incline": 3
+      },
+      {
+        "phase": "rest",
+        "duration": 30,
+        "index": 2,
+        "startAt": 360,
+        "endAt": 390,
+        "speed": 6,
+        "incline": 0
+      },
+      {
+        "phase": "work",
+        "duration": 60,
+        "index": 3,
+        "startAt": 390,
+        "endAt": 450,
+        "speed": 12,
+        "incline": 3
+      },
+      {
+        "phase": "rest",
+        "duration": 30,
+        "index": 4,
+        "startAt": 450,
+        "endAt": 480,
+        "speed": 6,
+        "incline": 0
+      },
+      {
+        "phase": "work",
+        "duration": 60,
+        "index": 5,
+        "startAt": 480,
+        "endAt": 540,
+        "speed": 12,
+        "incline": 3
+      },
+      {
+        "phase": "rest",
+        "duration": 30,
+        "index": 6,
+        "startAt": 540,
+        "endAt": 570,
+        "speed": 6,
+        "incline": 0
+      },
+      {
+        "phase": "cooldown",
+        "duration": 300,
+        "index": 7,
+        "startAt": 570,
+        "endAt": 870,
+        "speed": 4,
+        "incline": 0,
+        "cooldownTaper": true
+      }
+    ]
+  },
+  {
+    "name": "easySpinning",
+    "session": {
+      "id": "fx-5",
+      "name": "Easy Spinning",
+      "folderId": "default",
+      "mode": "easy",
+      "config": {
+        "warmup": 180,
+        "high": 40,
+        "low": 20,
+        "rounds": 4,
+        "cooldown": 180
+      },
+      "activityType": "spinning",
+      "spinValues": {
+        "warmupResistance": 3,
+        "warmupPower": 85,
+        "workResistance": 7,
+        "workPower": 180,
+        "restResistance": 2,
+        "restPower": 60,
+        "cooldownResistance": 3,
+        "cooldownPower": 85
+      }
+    },
+    "expectedSegments": [
+      {
+        "phase": "warmup",
+        "duration": 180,
+        "index": 0,
+        "startAt": 0,
+        "endAt": 180,
+        "resistance": 3,
+        "power": 85
+      },
+      {
+        "phase": "work",
+        "duration": 40,
+        "index": 1,
+        "startAt": 180,
+        "endAt": 220,
+        "resistance": 7,
+        "power": 180
+      },
+      {
+        "phase": "rest",
+        "duration": 20,
+        "index": 2,
+        "startAt": 220,
+        "endAt": 240,
+        "resistance": 2,
+        "power": 60
+      },
+      {
+        "phase": "work",
+        "duration": 40,
+        "index": 3,
+        "startAt": 240,
+        "endAt": 280,
+        "resistance": 7,
+        "power": 180
+      },
+      {
+        "phase": "rest",
+        "duration": 20,
+        "index": 4,
+        "startAt": 280,
+        "endAt": 300,
+        "resistance": 2,
+        "power": 60
+      },
+      {
+        "phase": "work",
+        "duration": 40,
+        "index": 5,
+        "startAt": 300,
+        "endAt": 340,
+        "resistance": 7,
+        "power": 180
+      },
+      {
+        "phase": "rest",
+        "duration": 20,
+        "index": 6,
+        "startAt": 340,
+        "endAt": 360,
+        "resistance": 2,
+        "power": 60
+      },
+      {
+        "phase": "work",
+        "duration": 40,
+        "index": 7,
+        "startAt": 360,
+        "endAt": 400,
+        "resistance": 7,
+        "power": 180
+      },
+      {
+        "phase": "rest",
+        "duration": 20,
+        "index": 8,
+        "startAt": 400,
+        "endAt": 420,
+        "resistance": 2,
+        "power": 60
+      },
+      {
+        "phase": "cooldown",
+        "duration": 180,
+        "index": 9,
+        "startAt": 420,
+        "endAt": 600,
+        "resistance": 3,
+        "power": 85
+      }
+    ]
+  },
+  {
+    "name": "advancedRunNoIncline",
+    "session": {
+      "id": "fx-6",
+      "name": "Advanced Run No Incline",
+      "folderId": "default",
+      "mode": "advanced",
+      "activityType": "run",
+      "runSpeeds": {
+        "warmupSpeed": 5,
+        "workSpeed": 11,
+        "restSpeed": 6,
+        "cooldownSpeed": 4
+      },
+      "inclineEnabled": false,
+      "intervals": [
+        {
+          "type": "warmup",
+          "dur": 60
+        },
+        {
+          "type": "work",
+          "dur": 30
+        },
+        {
+          "type": "rest",
+          "dur": 15
+        },
+        {
+          "type": "cooldown",
+          "dur": 60
+        }
+      ]
+    },
+    "expectedSegments": [
+      {
+        "phase": "warmup",
+        "duration": 60,
+        "startAt": 0,
+        "endAt": 60,
+        "index": 0,
+        "speed": 5
+      },
+      {
+        "phase": "work",
+        "duration": 30,
+        "startAt": 60,
+        "endAt": 90,
+        "index": 1,
+        "speed": 11
+      },
+      {
+        "phase": "rest",
+        "duration": 15,
+        "startAt": 90,
+        "endAt": 105,
+        "index": 2,
+        "speed": 6
+      },
+      {
+        "phase": "cooldown",
+        "duration": 60,
+        "startAt": 105,
+        "endAt": 165,
+        "index": 3,
+        "speed": 4
+      }
+    ]
+  },
+  {
+    "name": "easyRunMissingInclinesField",
+    "session": {
+      "id": "fx-7",
+      "name": "Easy Run Missing Inclines Field",
+      "folderId": "default",
+      "mode": "easy",
+      "config": {
+        "warmup": 300,
+        "high": 60,
+        "low": 30,
+        "rounds": 2,
+        "cooldown": 300
+      },
+      "activityType": "run",
+      "runSpeeds": {
+        "warmupSpeed": 5,
+        "workSpeed": 12,
+        "restSpeed": 6,
+        "cooldownSpeed": 4
+      }
+    },
+    "expectedSegments": [
+      {
+        "phase": "warmup",
+        "duration": 300,
+        "index": 0,
+        "startAt": 0,
+        "endAt": 300,
+        "speed": 5,
+        "incline": 1.5
+      },
+      {
+        "phase": "work",
+        "duration": 60,
+        "index": 1,
+        "startAt": 300,
+        "endAt": 360,
+        "speed": 12,
+        "incline": 4
+      },
+      {
+        "phase": "rest",
+        "duration": 30,
+        "index": 2,
+        "startAt": 360,
+        "endAt": 390,
+        "speed": 6,
+        "incline": 1.5
+      },
+      {
+        "phase": "work",
+        "duration": 60,
+        "index": 3,
+        "startAt": 390,
+        "endAt": 450,
+        "speed": 12,
+        "incline": 4
+      },
+      {
+        "phase": "rest",
+        "duration": 30,
+        "index": 4,
+        "startAt": 450,
+        "endAt": 480,
+        "speed": 6,
+        "incline": 1.5
+      },
+      {
+        "phase": "cooldown",
+        "duration": 300,
+        "index": 5,
+        "startAt": 480,
+        "endAt": 780,
+        "speed": 4,
+        "incline": 1
+      }
+    ]
+  }
+]

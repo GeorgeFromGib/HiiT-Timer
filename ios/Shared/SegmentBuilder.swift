@@ -140,7 +140,8 @@ func segmentsForSession(_ session: SessionDTO) -> [Segment] {
       var s = seg
       let override = overrides?.indices.contains(i) == true ? overrides?[i] : nil
       s.speed = override?.speed ?? speedForPhase(seg.phase, speeds)
-      if inclineEnabled, let inclines = session.runInclines {
+      if inclineEnabled {
+        let inclines = session.runInclines ?? defaultRunInclines
         s.incline = override?.incline ?? inclineForPhase(seg.phase, inclines)
       }
       s.cooldownTaper = taperFlag(seg.phase, override)

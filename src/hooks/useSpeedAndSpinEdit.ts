@@ -9,6 +9,7 @@ import {
   type PresetLevel, SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS,
   findMatchingSpeedPreset, findMatchingInclinePreset, findMatchingSpinPreset,
 } from '../lib/presets';
+import { type CommitResult } from './usePickerState';
 
 export interface SpeedAndSpinEdit {
   runSpeeds:          RunSpeeds;
@@ -20,6 +21,8 @@ export interface SpeedAndSpinEdit {
   activeInclinePreset: PresetLevel | null;
   activeSpinPreset:   PresetLevel | null;
   hasChanges:         boolean;
+  // Handles the CommitResult variants this mode owns; returns false for any other variant.
+  commit:             (result: CommitResult) => boolean;
   setRunSpeed:        (field: keyof RunSpeeds, value: number) => void;
   setRunIncline:      (field: keyof RunInclines, value: number) => void;
   setInclineEnabled:  (enabled: boolean) => void;
@@ -108,6 +111,16 @@ export function useSpeedAndSpinEdit(
     setActiveSpinPreset(null);
   }
 
+  function commit(result: CommitResult): boolean {
+    switch (result.type) {
+      case 'speed':          setRunSpeed(result.field, result.kmh); return true;
+      case 'spinResistance':
+      case 'spinPower':      setSpinValue(result.field, result.value); return true;
+      case 'incline':        setRunIncline(result.field, result.value); return true;
+      default: return false;
+    }
+  }
+
   function applySpeedPreset(level: PresetLevel) {
     confirmIfDirty(speedsDirty, 'alerts.overwriteSpeedMessage', () => {
       setRunSpeeds(SPEED_PRESETS[level]);
@@ -134,7 +147,7 @@ export function useSpeedAndSpinEdit(
 
   return {
     runSpeeds, runInclines, inclineEnabled, cooldownTaper, spinValues,
-    activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges,
+    activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges, commit,
     setRunSpeed, setRunIncline, setInclineEnabled, setCooldownTaper, setSpinValue,
     applySpeedPreset, applyInclinePreset, applySpinPreset,
   };

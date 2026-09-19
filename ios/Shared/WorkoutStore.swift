@@ -49,16 +49,17 @@ final class WorkoutStore {
         }
       }
 
+      // Decoded through the same SessionDTO used by the read path (decodeRunnableSessions),
+      // rather than a second, hand-rolled parse of the same JSON shape.
+      let decoder = JSONDecoder()
       for session in sessions {
-        guard let id = session["id"] as? String, let folderId = session["folderId"] as? String else { continue }
-        let record = self.fetchOrCreate(entityName: "SessionRecord", id: id, in: context)
-        record.setValue(folderId, forKey: "folderId")
-        record.setValue(session["name"] as? String, forKey: "name")
+        guard let sessionJSON = try? JSONSerialization.data(withJSONObject: session),
+              let dto = try? decoder.decode(SessionDTO.self, from: sessionJSON) else { continue }
+        let record = self.fetchOrCreate(entityName: "SessionRecord", id: dto.id, in: context)
+        record.setValue(dto.folderId, forKey: "folderId")
+        record.setValue(dto.name, forKey: "name")
         record.setValue(Date(), forKey: "updatedAt")
-        if let sessionJSON = try? JSONSerialization.data(withJSONObject: session),
-           let sessionJSONString = String(data: sessionJSON, encoding: .utf8) {
-          record.setValue(sessionJSONString, forKey: "json")
-        }
+        record.setValue(String(data: sessionJSON, encoding: .utf8), forKey: "json")
       }
 
       // The incoming payload is always the full current library, so anything

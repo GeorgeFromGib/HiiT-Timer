@@ -73,6 +73,9 @@ struct RunInclines: Codable, Hashable {
   let cooldownIncline: Double
 }
 
+/// Mirrors src/lib/sessions.ts's DEFAULT_RUN_INCLINES (INCLINE_PRESETS['3']).
+let defaultRunInclines = RunInclines(warmupIncline: 1.5, workIncline: 4, restIncline: 1.5, cooldownIncline: 1)
+
 struct SessionDTO: Codable, Hashable {
   let id: String
   let name: String
