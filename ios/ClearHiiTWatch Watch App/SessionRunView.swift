@@ -108,6 +108,7 @@ struct SessionRunView: View {
     .onDisappear {
       if connectivity.activeSessionId == session.id { connectivity.activeSessionId = nil }
       countdownTask?.cancel()
+      taperFlashTask?.cancel()
       engineHolder.discardIfUnfinished()
       onDismiss?()
     }

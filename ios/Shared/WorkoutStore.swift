@@ -49,15 +49,20 @@ final class WorkoutStore {
         }
       }
 
-      // Decoded through the same SessionDTO used by the read path (decodeRunnableSessions),
-      // rather than a second, hand-rolled parse of the same JSON shape.
+      // Validated through the same SessionDTO used by the read path (decodeRunnableSessions)
+      // where possible, but a decode failure still syncs id/folderId/name/json leniently —
+      // otherwise a session with an unrecognized shape silently keeps its stale record forever
+      // (it's excluded from neither update nor the deletion sweep below).
       let decoder = JSONDecoder()
       for session in sessions {
-        guard let sessionJSON = try? JSONSerialization.data(withJSONObject: session),
-              let dto = try? decoder.decode(SessionDTO.self, from: sessionJSON) else { continue }
-        let record = self.fetchOrCreate(entityName: "SessionRecord", id: dto.id, in: context)
-        record.setValue(dto.folderId, forKey: "folderId")
-        record.setValue(dto.name, forKey: "name")
+        guard let id = session["id"] as? String, let folderId = session["folderId"] as? String,
+              let sessionJSON = try? JSONSerialization.data(withJSONObject: session) else { continue }
+        if (try? decoder.decode(SessionDTO.self, from: sessionJSON)) == nil {
+          print("[WorkoutStore] applySessionsDataJSON: session \(id) failed strict decode, syncing leniently")
+        }
+        let record = self.fetchOrCreate(entityName: "SessionRecord", id: id, in: context)
+        record.setValue(folderId, forKey: "folderId")
+        record.setValue(session["name"] as? String, forKey: "name")
         record.setValue(Date(), forKey: "updatedAt")
         record.setValue(String(data: sessionJSON, encoding: .utf8), forKey: "json")
       }

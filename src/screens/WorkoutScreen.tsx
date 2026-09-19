@@ -217,15 +217,19 @@ export default function WorkoutScreen({
     </Svg>
   ) : null;
 
-  // Flash the speed/incline pill for ~3s whenever the shown value steps down.
+  // Flash the speed/incline (or spin resistance/power) pill for ~3s whenever the shown value steps down.
   const pillPulse = useRef(new Animated.Value(0)).current;
   const pillPulseAnimRef = useRef<Animated.CompositeAnimation | null>(null);
   const prevPillKeyRef = useRef('');
   useEffect(() => {
-    if (seg.phase !== 'cooldown' || seg.speed === undefined) { prevPillKeyRef.current = ''; return; }
-    const key = `${formatSpeed(seg.speed, settings.speedUnit)}|${seg.incline ?? ''}`;
+    const isRun = seg.speed !== undefined;
+    const isSpin = seg.resistance !== undefined;
+    if (seg.phase !== 'cooldown' || (!isRun && !isSpin)) { prevPillKeyRef.current = ''; return; }
+    const key = isRun
+      ? `${formatSpeed(seg.speed!, settings.speedUnit)}|${seg.incline ?? ''}`
+      : `${seg.resistance}|${seg.power ?? ''}`;
     if (prevPillKeyRef.current && prevPillKeyRef.current !== key) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      if (settings.hapticFeedback) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       pillPulseAnimRef.current?.stop();
       pillPulse.setValue(0);
       pillPulseAnimRef.current = Animated.loop(
@@ -238,7 +242,7 @@ export default function WorkoutScreen({
       pillPulseAnimRef.current.start(() => pillPulse.setValue(0));
     }
     prevPillKeyRef.current = key;
-  }, [seg.phase, seg.speed, seg.incline, settings.speedUnit, pillPulse]);
+  }, [seg.phase, seg.speed, seg.incline, seg.resistance, seg.power, settings.speedUnit, settings.hapticFeedback, pillPulse]);
   useEffect(() => () => pillPulseAnimRef.current?.stop(), [pillPulse]);
   const pillPulseScale = pillPulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.12] });
   const pillPulseOpacity = pillPulse.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] });
@@ -382,9 +386,11 @@ export default function WorkoutScreen({
           )}
 
           {seg.resistance !== undefined && seg.power !== undefined && !isPreStart && (
-            <View style={[styles.spinPill, {
+            <Animated.View style={[styles.spinPill, {
               backgroundColor: withOpacity(phaseColor, 0x21),
               borderColor:     withOpacity(phaseColor, 0x59),
+              transform: [{ scale: pillPulseScale }],
+              opacity: pillPulseOpacity,
             }]}>
               {taperIcon}
               <Text style={[styles.spinPillLabel, { color: phaseColor }]}>R</Text>
@@ -392,7 +398,7 @@ export default function WorkoutScreen({
               <Text style={[styles.spinPillLabel, { color: phaseColor }]}>·</Text>
               <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.power}</Text>
               <Text style={[styles.spinPillLabel, { color: phaseColor }]}>W</Text>
-            </View>
+            </Animated.View>
           )}
 
           {seg.activityLabel !== undefined && !isPreStart && (
