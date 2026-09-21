@@ -49,6 +49,10 @@ export const es: typeof en = {
     trialReminderBody: 'Quedan solo unos días. Desbloquea ClearHiiT Premium para conservar todas tus carpetas, sonidos personalizados y estadísticas.',
     trialReminderLater: 'Quizás más tarde',
     viewFolders: 'Ver carpetas',
+    foldersPromptTitle: '¿Se está llenando?',
+    foldersPromptBody: 'Organiza tus sesiones en carpetas para mantener tu lista ordenada.',
+    foldersPromptNotNow: 'Quizás más tarde',
+    foldersPromptEnable: 'Usar carpetas',
   },
   folders: {
     title: 'Carpetas',

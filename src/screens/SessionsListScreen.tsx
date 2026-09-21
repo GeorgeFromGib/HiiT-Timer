@@ -40,7 +40,7 @@ import { useTranslation } from '../hooks/useTranslation';
 export default function SessionsListScreen({ folderId, onNavigate }: { folderId?: string; onNavigate: (route: Route) => void }) {
   const { T } = useTheme();
   const { t } = useTranslation();
-  const { settings } = useSettings();
+  const { settings, updateSettings } = useSettings();
   const styles = useMemo(() => makeStyles(T), [T]);
   const [data, setData] = useState<SessionsData>({ folders: [], sessions: [] });
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
@@ -122,6 +122,13 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
     const next = { ...data, sessions: nextSessions };
     setData(next);
     saveSessions(next);
+    if (nextSessions.length === 6 && settings.hideFolders && !settings.foldersPromptSeen) {
+      updateSettings('foldersPromptSeen', true);
+      appAlert('info', t('sessions.foldersPromptTitle'), t('sessions.foldersPromptBody'), [
+        { text: t('sessions.foldersPromptNotNow'), style: 'cancel' },
+        { text: t('sessions.foldersPromptEnable'), onPress: () => updateSettings('hideFolders', false) },
+      ]);
+    }
   };
 
   const handleMoveToFolder = (folderId: string) => {

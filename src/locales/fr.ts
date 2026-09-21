@@ -49,6 +49,10 @@ export const fr: typeof en = {
     trialReminderBody: 'Il ne reste que quelques jours. Débloquez ClearHiiT Premium pour conserver tous vos dossiers, sons personnalisés et statistiques.',
     trialReminderLater: 'Plus tard',
     viewFolders: 'Voir les dossiers',
+    foldersPromptTitle: 'Ça se remplit ?',
+    foldersPromptBody: 'Organisez vos séances en dossiers pour garder une liste bien rangée.',
+    foldersPromptNotNow: 'Plus tard',
+    foldersPromptEnable: 'Utiliser les dossiers',
   },
   folders: {
     title: 'Dossiers',

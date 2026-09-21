@@ -29,6 +29,8 @@ export interface Settings {
   inclineTipSeen: boolean;
   watchTipSeen: boolean;
   minimalVoiceTipSeen: boolean;
+  // Shown once when the session list first crosses 5 sessions with folders hidden.
+  foldersPromptSeen: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -54,6 +56,7 @@ export const DEFAULT_SETTINGS: Settings = {
   inclineTipSeen: false,
   watchTipSeen: false,
   minimalVoiceTipSeen: false,
+  foldersPromptSeen: false,
 };
 
 const SETTINGS_FILE = 'settings_v1.json';

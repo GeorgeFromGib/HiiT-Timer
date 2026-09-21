@@ -47,6 +47,10 @@ export const en = {
     trialReminderBody: 'Just a few days left. Unlock ClearHiiT Premium to keep every folder, custom sound, and stat.',
     trialReminderLater: 'Maybe later',
     viewFolders: 'View Folders',
+    foldersPromptTitle: 'Getting crowded?',
+    foldersPromptBody: 'Organize your sessions into folders to keep your list tidy.',
+    foldersPromptNotNow: 'Maybe later',
+    foldersPromptEnable: 'Use Folders',
   },
   folders: {
     title: 'Folders',

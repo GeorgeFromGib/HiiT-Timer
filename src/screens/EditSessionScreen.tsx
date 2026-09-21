@@ -175,6 +175,13 @@ export default function EditSessionScreen({ session: existing, activityType, fol
       ? [...data.sessions, payload.session]
       : data.sessions.map(s => (s.id === payload.session.id ? payload.session : s));
     await saveSessions({ ...data, sessions: nextSessions });
+    if (nextSessions.length === 6 && settings.hideFolders && !settings.foldersPromptSeen) {
+      updateSettings('foldersPromptSeen', true);
+      appAlert('info', t('sessions.foldersPromptTitle'), t('sessions.foldersPromptBody'), [
+        { text: t('sessions.foldersPromptNotNow'), style: 'cancel' },
+        { text: t('sessions.foldersPromptEnable'), onPress: () => updateSettings('hideFolders', false) },
+      ]);
+    }
     onBack();
   }
 

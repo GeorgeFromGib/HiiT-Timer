@@ -49,6 +49,10 @@ export const de: typeof en = {
     trialReminderBody: 'Nur noch ein paar Tage. Schalte ClearHiiT Premium frei, um alle Ordner, benutzerdefinierten Sounds und Statistiken zu behalten.',
     trialReminderLater: 'Vielleicht später',
     viewFolders: 'Ordner anzeigen',
+    foldersPromptTitle: 'Wird es voll?',
+    foldersPromptBody: 'Organisiere deine Einheiten in Ordnern, damit deine Liste übersichtlich bleibt.',
+    foldersPromptNotNow: 'Vielleicht später',
+    foldersPromptEnable: 'Ordner verwenden',
   },
   folders: {
     title: 'Ordner',
