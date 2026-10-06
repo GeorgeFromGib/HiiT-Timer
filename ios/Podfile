@@ -63,6 +63,13 @@ target 'ClearHiiT' do
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
 
+    # Some pods (e.g. RNCAsyncStorage) declare a deployment target below Xcode's supported 15.0 floor.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |bc|
+        bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1' if bc.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15.0
+      end
+    end
+
     # Xcode 26 simulator fix: prebuilt Expo xcframeworks reference SwiftUICore symbols,
     # but Xcode 26's simulator SDK now restricts which products may link SwiftUICore.
     # We create a local SwiftUICore.tbd stub without the allowable-clients restriction

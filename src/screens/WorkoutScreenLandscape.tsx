@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Path, Rect } from 'react-native-svg';
+import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { useTranslation } from '../hooks/useTranslation';
 import type { Session } from '../lib/sessions';
 import { useSettings } from '../lib/settingsContext';
@@ -70,6 +70,19 @@ export default function WorkoutScreenLandscape({
 
   // Measure the area the digits get, then size the font to nearly fill it.
   const [digitsBox, setDigitsBox] = useState({ w: 0, h: 0 });
+
+  // Level the +1 round button with the interval progress strip: measure both
+  // in window coords and pad the right column's bottom by the difference.
+  const trackRef = useRef<View>(null);
+  const extendColRef = useRef<View>(null);
+  const [roundPad, setRoundPad] = useState(0);
+  const alignRound = () => {
+    trackRef.current?.measureInWindow((_x, ty, _w, th) => {
+      extendColRef.current?.measureInWindow((_cx, cy, _cw, ch) => {
+        setRoundPad(Math.max(0, cy + ch - (ty + th / 2 + Math.round(56 * scale) / 2)));
+      });
+    });
+  };
 
   const isPreStart = status === 'preStart';
   const isIdle = status === 'idle';
@@ -231,7 +244,7 @@ export default function WorkoutScreenLandscape({
           {t('workout.intervalSuffix', { total: segments.length })}
         </Text>
 
-        <View style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
+        <View ref={trackRef} onLayout={alignRound} style={[styles.progressTrack, isPreStart && { opacity: 0 }]}>
           <Animated.View
             style={[
               styles.progressFill,
@@ -256,6 +269,21 @@ export default function WorkoutScreenLandscape({
               <Text style={[styles.nextLabel, { color: nextPhaseColor }]}>
                 {t('workout.phase.' + nextSeg.phase)}
               </Text>
+              {nextSeg.speed !== undefined && (
+                <Text style={[styles.nextDur, { color: nextPhaseColor }]}>
+                  {formatSpeed(nextSeg.speed, settings.speedUnit)}
+                  {nextSeg.incline !== undefined ? ` · ${nextSeg.incline}%` : ''}
+                </Text>
+              )}
+              {nextSeg.resistance !== undefined && nextSeg.power !== undefined && (
+                <Text style={[styles.nextDur, { color: nextPhaseColor }]}>
+                  {`R${nextSeg.resistance} · ${nextSeg.power}W`}
+                </Text>
+              )}
+              <Svg width={Math.round(16 * scale)} height={Math.round(16 * scale)} viewBox="0 0 20 20" fill="none">
+                <Circle cx="10" cy="10" r="7.5" stroke={T.subText} strokeWidth={2} />
+                <Path d="M10 5.5V10l3 2" stroke={T.subText} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+              </Svg>
               <Text style={[styles.nextDur, { color: T.subText }]}>{fmtTimer(nextSeg.duration)}</Text>
             </>
           ) : (
@@ -271,16 +299,6 @@ export default function WorkoutScreenLandscape({
               nextSeg={nextSeg}
               style={[styles.intervalCounter, { color: T.onBg }]}
             />
-            {session.mode !== 'circuit' && (
-              <ExtendControls
-                onExtend={onExtend}
-                onAddRound={onAddRound}
-                color={phaseColor}
-                disabled={isIdle}
-                addRoundDisabled={seg.phase === 'cooldown'}
-                size={Math.round(56 * scale)}
-              />
-            )}
           </View>
 
           <View style={styles.timelineBlock}>
@@ -334,6 +352,22 @@ export default function WorkoutScreenLandscape({
           </View>
         </View>
       </View>
+
+      {/* ── Right column: extend controls stacked vertically ── */}
+      {session.mode !== 'circuit' && (
+        <View ref={extendColRef} onLayout={alignRound} style={[styles.extendCol, { paddingBottom: roundPad }, isPreStart && { opacity: 0 }]}>
+          <ExtendControls
+            vertical
+            style={{ flex: 1 }}
+            onExtend={onExtend}
+            onAddRound={onAddRound}
+            color={phaseColor}
+            disabled={isIdle}
+            addRoundDisabled={seg.phase === 'cooldown'}
+            size={Math.round(56 * scale)}
+          />
+        </View>
+      )}
     </LinearGradient>
   );
 }
@@ -377,6 +411,12 @@ function makeStyles(T: ThemeTokens, s: number) { return StyleSheet.create({
     backgroundColor: T.accent,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  extendCol: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
   },
 
   mainCol: {

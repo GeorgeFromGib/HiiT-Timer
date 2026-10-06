@@ -15,6 +15,8 @@ interface Props {
   size?: number;
   /** Push the +Ns group and the +1 round button to opposite edges (portrait). */
   spread?: boolean;
+  /** Stack all three buttons in one column (landscape right edge). */
+  vertical?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -24,7 +26,7 @@ interface Props {
  * layouts; text sizing derives from `size` so callers only pass one number.
  */
 export default function ExtendControls({
-  onExtend, onAddRound, color, disabled, addRoundDisabled, size = 68, spread, style,
+  onExtend, onAddRound, color, disabled, addRoundDisabled, size = 68, spread, vertical, style,
 }: Props) {
   const { t } = useTranslation();
   const fontSize = Math.round(size * 0.28);
@@ -37,8 +39,8 @@ export default function ExtendControls({
   };
 
   return (
-    <View style={[styles.row, spread ? styles.spread : { gap }, style]}>
-      <View style={[styles.group, { gap }]}>
+    <View style={[styles.row, vertical && styles.col, spread ? styles.spread : { gap }, style]}>
+      <View style={[styles.group, vertical && styles.col, vertical && styles.fill, { gap }]}>
         {SECONDS_OPTIONS.map((secs) => (
           <GhostBtn key={secs} onPress={() => onExtend(secs)} disabled={disabled} color={color} size={size}>
             <Text style={labelStyle}>{`+${secs}s`}</Text>
@@ -60,5 +62,7 @@ export default function ExtendControls({
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center' },
   spread: { justifyContent: 'space-between', alignSelf: 'stretch' },
+  col: { flexDirection: 'column' },
+  fill: { flex: 1, justifyContent: 'center' },
   group: { flexDirection: 'row', alignItems: 'center' },
 });
