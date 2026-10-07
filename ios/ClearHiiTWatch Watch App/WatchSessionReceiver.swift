@@ -27,6 +27,8 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
   // that throw was being swallowed by `try?`). Hold the latest context here
   // and flush it once activation actually completes instead of losing it.
   private var pendingOutgoingContext: [String: Any]?
+  // History records queued before activation completes — same reasoning as above.
+  private var pendingHistory: [[String: Any]] = []
 
   private override init() {
     super.init()
@@ -43,6 +45,18 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
       "status": status,
       "updatedAt": Date().timeIntervalSince1970,
     ])
+  }
+
+  /// Queued, guaranteed delivery (survives the phone app being asleep or the
+  /// watch going out of range) — unlike the live-session channels above, which
+  /// are latest-state-wins.
+  func sendHistoryRecord(_ record: WatchHistoryRecord) {
+    guard WCSession.isSupported() else { return }
+    guard WCSession.default.activationState == .activated else {
+      pendingHistory.append(record.userInfo)
+      return
+    }
+    WCSession.default.transferUserInfo(record.userInfo)
   }
 
   private func send(_ context: [String: Any]) {
@@ -75,7 +89,10 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
   func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
     DispatchQueue.main.async {
       self.applyIncoming(session.receivedApplicationContext)
-      guard activationState == .activated, let pending = self.pendingOutgoingContext else { return }
+      guard activationState == .activated else { return }
+      self.pendingHistory.forEach { WCSession.default.transferUserInfo($0) }
+      self.pendingHistory.removeAll()
+      guard let pending = self.pendingOutgoingContext else { return }
       self.pendingOutgoingContext = nil
       self.send(pending)
     }

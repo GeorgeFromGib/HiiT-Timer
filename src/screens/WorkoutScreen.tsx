@@ -34,7 +34,7 @@ import CircuitSetCounter from '../components/CircuitSetCounter';
 import SessionCompleteScreen from './SessionCompleteScreen';
 import WorkoutScreenLandscape from './WorkoutScreenLandscape';
 import { checkAndRequestReview } from '../lib/reviewState';
-import { updateLiveSession, type LiveSessionState } from '../lib/liveSessionSync';
+import { updateLiveSession, ownsRun, type LiveSessionState } from '../lib/liveSessionSync';
 import { useLiveSessionMirror } from '../hooks/useLiveSessionMirror';
 import { appendEntry, buildHistoryEntry, newId } from '../lib/history';
 import { summarizeRun } from '../lib/sessionStats';
@@ -108,18 +108,14 @@ export default function WorkoutScreen({
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
   }, false, initialResume);
 
-  // Logging: this device only records runs it owns — a finish applied from the
-  // peer's live broadcast is that peer's to log.
+  // Logging: only the device that started the run records it — a mirror of the peer's
+  // run leaves that to the starter (the watch sends its own record to the phone).
   const [historyEntryId, setHistoryEntryId] = useState<string>();
-  const remoteFinishRef = useRef(false);
-  const applyLiveState = useCallback((s: 'running' | 'paused' | 'finished', e: number) => {
-    if (s === 'finished') remoteFinishRef.current = true;
-    applyIncomingLiveState(s, e);
-  }, [applyIncomingLiveState]);
+  const ownsRunRef = useRef(ownsRun(session.id, initialResumeElapsed, incomingLiveSession, Date.now()));
 
   useEffect(() => {
-    if (status !== 'finished') { remoteFinishRef.current = false; setHistoryEntryId(undefined); return; }
-    if (remoteFinishRef.current) return;
+    if (status !== 'finished') { setHistoryEntryId(undefined); return; }
+    if (!ownsRunRef.current) return;
     const summary = summarizeRun(segments, TOTAL_DUR, stats);
     const id = newId();
     const entry = buildHistoryEntry({ id, session, plannedSecs: TOTAL_DUR, summary, activeSecs: summary.totalSecs, completed: true });
@@ -157,7 +153,7 @@ export default function WorkoutScreen({
           {
             text: t('alerts.terminate'),
             onPress: () => {
-              const entry = buildHistoryEntry({
+              const entry = !ownsRunRef.current ? null : buildHistoryEntry({
                 id: newId(), session, plannedSecs: TOTAL_DUR, activeSecs: elapsed, completed: false,
                 summary: summarizeRun(segments, TOTAL_DUR, stats),
               });
@@ -184,7 +180,7 @@ export default function WorkoutScreen({
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
 
   const liveMirror = useLiveSessionMirror(
-    session.id, session.name, incomingLiveSession, status, elapsed, applyLiveState, onBack,
+    session.id, session.name, incomingLiveSession, status, elapsed, applyIncomingLiveState, onBack,
   );
 
   const handleSkip = useCallback(() => {

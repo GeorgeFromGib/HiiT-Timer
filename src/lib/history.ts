@@ -39,14 +39,29 @@ export async function loadHistory(): Promise<HistoryEntry[]> {
   return Array.isArray(data) ? data : [];
 }
 
-export async function appendEntry(entry: HistoryEntry): Promise<void> {
-  const entries = await loadHistory();
-  writeJsonFile(HISTORY_FILE, [...entries, entry]);
+// Writes are read-modify-write on one file, so run them one at a time — queued watch
+// records can arrive back to back and would otherwise overwrite each other.
+let writeQueue: Promise<unknown> = Promise.resolve();
+function serialized(task: () => Promise<void>): Promise<void> {
+  const next = writeQueue.then(task, task);
+  writeQueue = next.catch(() => {});
+  return next;
 }
 
-export async function setFeeling(id: string, feeling: Feeling | undefined): Promise<void> {
-  const entries = await loadHistory();
-  writeJsonFile(HISTORY_FILE, entries.map(e => (e.id === id ? { ...e, feeling } : e)));
+/** No-op if an entry with the same id exists (watch records can be redelivered). */
+export function appendEntry(entry: HistoryEntry): Promise<void> {
+  return serialized(async () => {
+    const entries = await loadHistory();
+    if (entries.some(e => e.id === entry.id)) return;
+    writeJsonFile(HISTORY_FILE, [...entries, entry]);
+  });
+}
+
+export function setFeeling(id: string, feeling: Feeling | undefined): Promise<void> {
+  return serialized(async () => {
+    const entries = await loadHistory();
+    writeJsonFile(HISTORY_FILE, entries.map(e => (e.id === id ? { ...e, feeling } : e)));
+  });
 }
 
 function activityTypeOf(session: Session): HistoryEntry['activityType'] {

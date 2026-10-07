@@ -449,6 +449,7 @@ struct SessionRunView: View {
       try? await Task.sleep(nanoseconds: 1_000_000_000)
       guard !Task.isCancelled else { return }
       countdown = nil
+      engineHolder.ownsRun = true
       engineHolder.start()
     }
   }
@@ -512,6 +513,10 @@ private final class EngineHolder: ObservableObject {
   private let connectivity = WatchSessionReceiver.shared
   private var heartbeatTimer: Timer?
   private var lastAppliedRemoteUpdatedAt: Date?
+  /// True only when this watch started the run itself (not a mirror of a
+  /// phone-started one) — the owner is the one device that logs it to History.
+  var ownsRun = false
+  private let historyId = "\(Int(Date().timeIntervalSince1970 * 1000))-w\(Int.random(in: 0..<1_000_000))"
 
   init(session: SessionDTO, segments: [Segment]) {
     let engine = WorkoutTimerEngine(segments: segments)
@@ -546,6 +551,7 @@ private final class EngineHolder: ObservableObject {
       self?.heartbeatTimer?.invalidate()
       self?.heartbeatTimer = nil
       self?.broadcastLiveState()
+      self?.logRun(completed: true)
     }
     cancellable = engine.objectWillChange.sink { [weak self] in
       self?.objectWillChange.send()
@@ -613,11 +619,20 @@ private final class EngineHolder: ObservableObject {
     }
   }
 
+  private func logRun(completed: Bool) {
+    guard ownsRun else { return }
+    // The engine sets state.elapsed only after onFinish fires, so a finished run reads its total.
+    let elapsed = completed ? (segments.last?.endAt ?? 0) : engine.state.elapsed
+    guard let record = makeWatchHistoryRecord(id: historyId, session: session, segments: segments, elapsed: elapsed, completed: completed) else { return }
+    connectivity.sendHistoryRecord(record)
+  }
+
   func discardIfUnfinished() {
     heartbeatTimer?.invalidate()
     heartbeatTimer = nil
     switch engine.state.status {
     case .running, .paused:
+      logRun(completed: false)
       // Leaving a running/paused session by any means (back chevron, swipe,
       // cover dismiss, or the End Workout confirmation) ends the peer's
       // mirrored session too — there's no "accidental dismiss" distinction

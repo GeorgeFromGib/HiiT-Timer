@@ -17,6 +17,74 @@ func mergingLiveStats(_ current: WorkoutLiveStats, heartRate: Double?, activeEne
   return result
 }
 
+/// A finished (or abandoned) watch-owned run, sent to the phone so it lands in
+/// History (SB-27). Mirrors the phone's HistoryEntry (src/lib/history.ts) minus
+/// `source`, which the phone stamps as 'watch' on receipt. `startedAt` is epoch ms.
+struct WatchHistoryRecord: Equatable {
+  let id: String
+  let startedAt: Double
+  let sessionId: String
+  let sessionName: String
+  let activityType: String
+  let plannedSecs: Double
+  let activeSecs: Double
+  let rounds: Int
+  let workSecs: Double
+  let completed: Bool
+
+  /// WCSession.transferUserInfo payload; `kind` lets the phone tell it apart
+  /// from live-session/preferences traffic.
+  var userInfo: [String: Any] {
+    [
+      "kind": "historyEntry",
+      "id": id,
+      "startedAt": startedAt,
+      "sessionId": sessionId,
+      "sessionName": sessionName,
+      "activityType": activityType,
+      "plannedSecs": plannedSecs,
+      "activeSecs": activeSecs,
+      "rounds": rounds,
+      "workSecs": workSecs,
+      "completed": completed,
+    ]
+  }
+}
+
+/// Abandoned runs shorter than this are accidental starts — same threshold as
+/// MIN_ABANDONED_SECS in src/lib/history.ts.
+let minAbandonedSecs: Double = 5
+
+/// Builds the record for a run that ended at `elapsed` seconds. Returns nil for
+/// an abandoned run too short to count. `rounds` is the number of intervals
+/// reached and `workSecs` the work-phase time actually covered, matching what
+/// the phone derives from its own segments.
+func makeWatchHistoryRecord(
+  id: String,
+  session: SessionDTO,
+  segments: [Segment],
+  elapsed: Double,
+  completed: Bool,
+  now: Date = Date()
+) -> WatchHistoryRecord? {
+  if !completed && elapsed < minAbandonedSecs { return nil }
+  let workSecs = segments
+    .filter { $0.phase == .work }
+    .reduce(0.0) { $0 + max(0, min(elapsed, $1.endAt) - $1.startAt) }
+  return WatchHistoryRecord(
+    id: id,
+    startedAt: ((now.timeIntervalSince1970 - elapsed) * 1000).rounded(),
+    sessionId: session.id,
+    sessionName: session.name,
+    activityType: session.isTabata ? "tabata" : (session.mode == "circuit" ? "circuit" : (session.activityType ?? "general")),
+    plannedSecs: segments.last?.endAt ?? 0,
+    activeSecs: elapsed.rounded(),
+    rounds: segments.filter { $0.startAt < elapsed }.count,
+    workSecs: workSecs.rounded(),
+    completed: completed
+  )
+}
+
 protocol WorkoutSessionRecording: AnyObject {
   var onStatsUpdate: ((WorkoutLiveStats) -> Void)? { get set }
   func requestAuthorization(_ completion: @escaping (Bool) -> Void)

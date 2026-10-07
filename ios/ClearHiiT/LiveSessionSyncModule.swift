@@ -8,13 +8,19 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
   private static var didActivate = false
   private var hasListeners = false
   private var lastForwardedUpdatedAt: Date?
+  // History records can arrive (queued transferUserInfo flush) before JS has
+  // subscribed; hold them and flush in startObserving rather than drop them.
+  private var pendingHistory: [[String: Any]] = []
 
   override func supportedEvents() -> [String]! {
-    ["LiveSessionUpdate"]
+    ["LiveSessionUpdate", "WatchHistoryEntry"]
   }
 
   override func startObserving() {
     hasListeners = true
+    let queued = pendingHistory
+    pendingHistory.removeAll()
+    queued.forEach { forwardHistoryToJS($0) }
     // Activate eagerly here rather than waiting for an outbound broadcast —
     // a phone that only ever *receives* watch-started sessions (never starts
     // its own) would otherwise never activate WCSession at all and could
@@ -100,6 +106,19 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
 
   func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
     forwardToJS(applicationContext)
+  }
+
+  func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+    guard userInfo["kind"] as? String == "historyEntry" else { return }
+    DispatchQueue.main.async { [weak self] in self?.forwardHistoryToJS(userInfo) }
+  }
+
+  private func forwardHistoryToJS(_ payload: [String: Any]) {
+    guard hasListeners else {
+      pendingHistory.append(payload)
+      return
+    }
+    sendEvent(withName: "WatchHistoryEntry", body: payload)
   }
 
   func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {

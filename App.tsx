@@ -44,6 +44,8 @@ import { useSettingsState } from './src/hooks/useSettingsState';
 import { configureAudioSession } from './src/lib/audio';
 import { checkForUpdate } from './src/lib/versionCheck';
 import { loadSessions } from './src/lib/sessions';
+import { subscribeToWatchHistory } from './src/lib/watchHistory';
+import { appendEntry } from './src/lib/history';
 import { subscribeToLiveSessionUpdates, nextLiveSessionAction, refreshLiveSession, type LiveSessionState } from './src/lib/liveSessionSync';
 
 function RouteScreen({ children }: { children: ReactNode }) {
@@ -80,6 +82,7 @@ export default function App() {
   const launchInFlightRef = useRef(false);
 
   useEffect(() => subscribeToLiveSessionUpdates(setLiveSessionState), []);
+  useEffect(() => subscribeToWatchHistory(appendEntry), []);
 
   // Catches up on a session the watch started while this device was
   // asleep/locked/backgrounded — the native side only pushes updates while

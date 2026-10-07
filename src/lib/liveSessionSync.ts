@@ -115,6 +115,24 @@ export function nextLiveSessionAction(
   return { type: 'launchNew', sessionId: incoming.sessionId, resumeElapsed: elapsed };
 }
 
+/**
+ * Whether this device started the run itself (and so is the one that logs it to
+ * History), as opposed to mirroring a run the other device started — launched
+ * with a resume offset, or opened onto a session the peer is already running live.
+ */
+export function ownsRun(
+  sessionId: string,
+  initialResumeElapsed: number | undefined,
+  incoming: LiveSessionState | null | undefined,
+  nowMs: number,
+): boolean {
+  if (initialResumeElapsed !== undefined) return false;
+  const mirroring = !!incoming && incoming.sessionId === sessionId
+    && (incoming.status === 'running' || incoming.status === 'paused')
+    && isLiveSessionFresh(incoming, nowMs);
+  return !mirroring;
+}
+
 export function parseLiveSessionState(event: unknown): LiveSessionState | null {
   if (typeof event !== 'object' || event === null) return null;
   const e = event as Record<string, unknown>;
