@@ -56,3 +56,21 @@ export function applyExtend(stats: SessionStats, secs: number): SessionStats {
 export function applyAddRound(stats: SessionStats, secs: number): SessionStats {
   return { ...stats, addedRoundSecs: stats.addedRoundSecs + secs };
 }
+
+export interface RunSummary {
+  totalSecs: number;
+  workSecs:  number;
+  intervals: number;
+}
+
+/** What actually happened vs. the plan: segment totals adjusted by skips/rewinds. */
+export function summarizeRun(segments: Segment[], totalDur: number, stats: SessionStats): RunSummary {
+  const workSecs = segments
+    .filter(s => s.phase === 'work')
+    .reduce((sum, s) => sum + s.duration, 0) - stats.skippedWorkSecs + stats.skipBackWorkSecs;
+  return {
+    totalSecs: totalDur - stats.skippedSecs + stats.skipBackSecs,
+    workSecs,
+    intervals: segments.length - stats.skippedCount + stats.skipBackWorkCount,
+  };
+}

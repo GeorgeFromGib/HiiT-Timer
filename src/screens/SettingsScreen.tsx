@@ -30,7 +30,7 @@ import { loadSessions, type SessionsData } from '../lib/sessions';
 // ══════════════════════════════════════════════════════════════
 // SETTINGS SCREEN
 // ══════════════════════════════════════════════════════════════
-export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: () => void; onPrivacyPolicy: () => void }) {
+export default function SettingsScreen({ onBack, onPrivacyPolicy, onShowWhatsNew }: { onBack: () => void; onPrivacyPolicy: () => void; onShowWhatsNew?: () => void }) {
   const { T, themeKey } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
@@ -301,6 +301,11 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy }: { onBack: ()
                   onChange={v => updateSettings('onboardingVersion', v ? 0 : CURRENT_ONBOARDING_VERSION)}
                 />
               }
+            />
+            <SettingsRow
+              label="Show updates page"
+              sub="Open the what's-new screen now"
+              right={<Pressable onPress={onShowWhatsNew} style={styles.devBtn}><Text style={styles.devBtnText}>Show</Text></Pressable>}
             />
             <SettingsRow
               label="Force update prompt"

@@ -36,6 +36,8 @@ import WorkoutScreenLandscape from './WorkoutScreenLandscape';
 import { checkAndRequestReview } from '../lib/reviewState';
 import { updateLiveSession, type LiveSessionState } from '../lib/liveSessionSync';
 import { useLiveSessionMirror } from '../hooks/useLiveSessionMirror';
+import { appendEntry, buildHistoryEntry, newId } from '../lib/history';
+import { summarizeRun } from '../lib/sessionStats';
 
 export default function WorkoutScreen({
   session, onBack, initialResumeElapsed, initialStatus, incomingLiveSession, onLiveSessionDismiss,
@@ -106,6 +108,26 @@ export default function WorkoutScreen({
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
   }, false, initialResume);
 
+  // Logging: this device only records runs it owns — a finish applied from the
+  // peer's live broadcast is that peer's to log.
+  const [historyEntryId, setHistoryEntryId] = useState<string>();
+  const remoteFinishRef = useRef(false);
+  const applyLiveState = useCallback((s: 'running' | 'paused' | 'finished', e: number) => {
+    if (s === 'finished') remoteFinishRef.current = true;
+    applyIncomingLiveState(s, e);
+  }, [applyIncomingLiveState]);
+
+  useEffect(() => {
+    if (status !== 'finished') { remoteFinishRef.current = false; setHistoryEntryId(undefined); return; }
+    if (remoteFinishRef.current) return;
+    const summary = summarizeRun(segments, TOTAL_DUR, stats);
+    const id = newId();
+    const entry = buildHistoryEntry({ id, session, plannedSecs: TOTAL_DUR, summary, activeSecs: summary.totalSecs, completed: true });
+    if (!entry) return;
+    setHistoryEntryId(id);
+    appendEntry(entry);
+  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps -- log once per finish, not on every stats/segments change
+
   const reset = useCallback(() => {
     resetEngine();
     setSegments(initialSegments);
@@ -135,6 +157,11 @@ export default function WorkoutScreen({
           {
             text: t('alerts.terminate'),
             onPress: () => {
+              const entry = buildHistoryEntry({
+                id: newId(), session, plannedSecs: TOTAL_DUR, activeSecs: elapsed, completed: false,
+                summary: summarizeRun(segments, TOTAL_DUR, stats),
+              });
+              if (entry) appendEntry(entry);
               // One-shot terminal broadcast so the peer (which may have
               // auto-launched this same session) ends it too, instead of
               // ticking away a workout that no longer exists on this device.
@@ -149,7 +176,7 @@ export default function WorkoutScreen({
     } else {
       onBack();
     }
-  }, [status, onBack, t, onLiveSessionDismiss, session.id, session.name, elapsed]);
+  }, [status, onBack, t, onLiveSessionDismiss, session, elapsed, segments, TOTAL_DUR, stats]);
 
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);
@@ -157,7 +184,7 @@ export default function WorkoutScreen({
   useEffect(() => () => { if (flashTimerRef.current) clearTimeout(flashTimerRef.current); }, []);
 
   const liveMirror = useLiveSessionMirror(
-    session.id, session.name, incomingLiveSession, status, elapsed, applyIncomingLiveState, onBack,
+    session.id, session.name, incomingLiveSession, status, elapsed, applyLiveState, onBack,
   );
 
   const handleSkip = useCallback(() => {
@@ -286,6 +313,7 @@ export default function WorkoutScreen({
         totalDur={TOTAL_DUR}
         congratsMsg={congratsMsg}
         stats={stats}
+        historyEntryId={historyEntryId}
         showConfetti={settings.congratsMessage}
         onDone={onBack}
         onRepeat={reset}

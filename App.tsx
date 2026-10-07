@@ -67,6 +67,7 @@ export default function App() {
 
   const [audioReady, setAudioReady] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [previewWhatsNew, setPreviewWhatsNew] = useState(false); // dev-only
   const [sessionsEpoch, setSessionsEpoch] = useState(0);
   const { route, navigate, goBack, resetTo } = useNavigationStack({ name: 'Sessions' });
   const { settings, loading: settingsLoading, updateSettings } = useSettingsState();
@@ -185,6 +186,7 @@ export default function App() {
           <SettingsScreen
             onBack={() => navigate(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
             onPrivacyPolicy={() => navigate({ name: 'PrivacyPolicy' })}
+            onShowWhatsNew={() => { setPreviewWhatsNew(true); setShowOnboarding(true); }}
           />
         </RouteScreen>
       )}
@@ -201,8 +203,10 @@ export default function App() {
       )}
       <OnboardingModal
         visible={showOnboarding}
+        forceWhatsNew={previewWhatsNew}
         onConfirm={showFolders => {
           setShowOnboarding(false);
+          if (previewWhatsNew) { setPreviewWhatsNew(false); return; } // stay on Settings
           setSessionsEpoch(e => e + 1);
           resetTo(showFolders ? { name: 'Folders' } : { name: 'Sessions' });
         }}

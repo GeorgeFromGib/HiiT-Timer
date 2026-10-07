@@ -8,6 +8,10 @@ import PhaseStrip from '../components/PhaseStrip';
 import { fmtTimer, type Segment } from '../lib/workout';
 import type { Session } from '../lib/sessions';
 import type { SessionStats } from '../hooks/useWorkoutSession';
+import { summarizeRun } from '../lib/sessionStats';
+import { setFeeling, shouldAskFeeling, type Feeling } from '../lib/history';
+import { appAlert } from '../lib/appAlert';
+import FeelingPicker from '../components/FeelingPicker';
 
 /** Stat-card time format: always mm:ss (or h:mm:ss), never bare seconds. */
 function fmtStatTime(s: number): string {
@@ -21,6 +25,7 @@ interface Props {
   totalDur:     number;
   congratsMsg:  string;
   stats:        SessionStats;
+  historyEntryId?: string;
   showConfetti: boolean;
   onDone:       () => void;
   onRepeat:     () => void;
@@ -36,10 +41,9 @@ function StatCard({ label, value, accent, T, uiScale }: { label: string; value: 
   );
 }
 
-export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, stats, showConfetti, onDone, onRepeat }: Props) {
+export default function SessionCompleteScreen({ session, segments, totalDur, congratsMsg, stats, historyEntryId, showConfetti, onDone, onRepeat }: Props) {
   const {
-    skippedCount, skippedSecs, skippedWorkSecs, extendedSecs,
-    addedRoundSecs, skipBackSecs, skipBackWorkSecs, skipBackWorkCount,
+    skippedCount, skippedSecs, extendedSecs, addedRoundSecs, skipBackSecs,
   } = stats;
   const { T } = useTheme();
   const { t } = useTranslation();
@@ -49,11 +53,21 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
   const uiScale = Math.min(1, (Math.max(screenWidth, screenHeight) / 844) / Math.max(1, PixelRatio.getFontScale()));
   const styles = useMemo(() => makeStyles(T, uiScale), [T, uiScale]);
 
-  const workSecs = segments
-    .filter(s => s.phase === 'work')
-    .reduce((sum, s) => sum + s.duration, 0) - skippedWorkSecs + skipBackWorkSecs;
-  const displayTotalDur = totalDur - skippedSecs + skipBackSecs;
-  const intervalsCount  = segments.length - skippedCount + skipBackWorkCount;
+  const { workSecs, totalSecs: displayTotalDur, intervals: intervalsCount } = summarizeRun(segments, totalDur, stats);
+  const [feeling, setFeelingState] = useState<Feeling>();
+  const askFeeling = !!historyEntryId && shouldAskFeeling(totalDur, stats.skippedSecs, workSecs);
+  // Nudge once for a rating if the picker is up and unanswered, but let them finish without one.
+  const handleDone = () => {
+    if (!askFeeling || feeling) { onDone(); return; }
+    appAlert('info', t('alerts.rateFeelingTitle'), t('alerts.rateFeelingMessage'), [
+      { text: t('alerts.doneWithoutRating'), onPress: onDone, style: 'cancel' },
+      { text: t('alerts.rateFeeling') },
+    ]);
+  };
+  const handleFeeling = (f: Feeling | undefined) => {
+    setFeelingState(f);
+    if (historyEntryId) setFeeling(historyEntryId, f);
+  };
 
   const checkAnim    = useRef(new Animated.Value(0)).current;
   const eyebrowAnim  = useRef(new Animated.Value(0)).current;
@@ -168,6 +182,12 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
     </>
   );
 
+  const feelingBlock = askFeeling && (
+    <View style={styles.feelingWrap}>
+      <FeelingPicker value={feeling} onChange={handleFeeling} />
+    </View>
+  );
+
   const recapBlock = (
     <Animated.View style={[styles.recapWrap, { opacity: recapAnim, transform: [{ translateY: recapAnim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
       <Text style={[styles.recapLabel, { color: T.faintText }]}>{t('complete.sessionRecap')}</Text>
@@ -177,7 +197,7 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
 
   const actionsBlock = (
     <View style={styles.actions}>
-      <Pressable onPress={onDone} style={[styles.doneBtn, { backgroundColor: T.accent, ...buttonShadow(T) }]}>
+      <Pressable onPress={handleDone} style={[styles.doneBtn, { backgroundColor: T.accent, ...buttonShadow(T) }]}>
         <Text style={[styles.doneBtnText, { color: T.btnGlyph }]}>{t('complete.done')}</Text>
       </Pressable>
       <Pressable onPress={onRepeat} style={[styles.repeatBtn, { backgroundColor: T.ghostBg, borderColor: T.hairline }]}>
@@ -227,6 +247,7 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
           </View>
           <View style={styles.landscapeRight}>
             {statsBlock}
+            {feelingBlock}
             {recapBlock}
             {actionsBlock}
           </View>
@@ -237,6 +258,7 @@ export default function SessionCompleteScreen({ session, segments, totalDur, con
           {heroBlock}
           {headlineBlock}
           {statsBlock}
+          {feelingBlock}
           {recapBlock}
           {actionsBlock}
         </>
@@ -346,6 +368,9 @@ function makeStyles(T: ThemeTokens, s: number = 1) { return StyleSheet.create({
     letterSpacing: 9.5 * 0.12,
     textTransform: 'uppercase',
     textAlign: 'center',
+  },
+  feelingWrap: {
+    marginTop: Math.round(30 * s),
   },
   recapWrap: {
     marginTop: Math.round(16 * s),

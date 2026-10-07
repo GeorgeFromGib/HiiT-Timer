@@ -10,14 +10,15 @@ import { computeRoundsForTargetDuration, warmupCooldownForDuration } from '../li
 import { useTranslation } from '../hooks/useTranslation';
 import SessionSetupChat from './SessionSetupChat';
 
-export const CURRENT_ONBOARDING_VERSION = 2;
+export const CURRENT_ONBOARDING_VERSION = 3;
 
 interface Props {
   visible: boolean;
   onConfirm: (showFolders: boolean) => void;
+  forceWhatsNew?: boolean; // dev preview: show the what's-new step regardless of onboardingVersion
 }
 
-export default function OnboardingModal({ visible, onConfirm }: Props) {
+export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: Props) {
   const { T, themeKey } = useTheme();
   const { settings, updateSettings } = useSettings();
   const { t } = useTranslation();
@@ -38,7 +39,7 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   // solution framing instead, then the full 1.1 setup steps. Upgraders from 1.1
   // already made those setup choices during their original onboarding, so they
   // just see what's-new and go straight to done.
-  const isFreshInstall = settings.onboardingVersion === 0;
+  const isFreshInstall = !forceWhatsNew && settings.onboardingVersion === 0;
   const STEPS = [...(isFreshInstall ? ['problem', 'solution', 'appearance', 'folders', 'voiceCues', 'name', 'sessionIntro', 'sessionSetup'] : ['whatsNew']), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
@@ -125,31 +126,21 @@ export default function OnboardingModal({ visible, onConfirm }: Props) {
   // problem/solution screens instead (see STEPS above).
   const FEATURES = [
     {
-      titleKey: 'onboarding.feature4Title',
-      subKey: 'onboarding.feature4Sub',
+      titleKey: 'onboarding.feature7Title',
+      subKey: 'onboarding.feature7Sub',
       icon: (
         <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <Path d="M3 20 9 8l4 6 3-5 5 11" />
+          <Path d="M5 18V13M10 18V9M15 18V5" />
         </Svg>
       ),
     },
     {
-      titleKey: 'onboarding.feature5Title',
-      subKey: 'onboarding.feature5Sub',
+      titleKey: 'onboarding.feature8Title',
+      subKey: 'onboarding.feature8Sub',
       icon: (
         <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <Path d="M11 5 6 9H3v6h3l5 4V5z" />
-          <Path d="M16.5 12h4" />
-        </Svg>
-      ),
-    },
-    {
-      titleKey: 'onboarding.feature6Title',
-      subKey: 'onboarding.feature6Sub',
-      icon: (
-        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <Rect x={6} y={6} width={12} height={12} rx={3} />
-          <Path d="M9 6V4h6v2M9 20v-2h6v2M12 10v3l1.5 1" />
+          <Rect x={3} y={7} width={18} height={10} rx={2.5} />
+          <Path d="M14 7v10" />
         </Svg>
       ),
     },

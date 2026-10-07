@@ -1,0 +1,82 @@
+import { readJsonFile, writeJsonFile } from './jsonFile';
+import { newId } from './sessions';
+import type { Session } from './sessions';
+import type { RunSummary } from './sessionStats';
+
+// A HistoryEntry is one completed/abandoned run of a Session (template). Name and
+// config are snapshotted so history survives template edits and deletes.
+export type Feeling = 'easy' | 'right' | 'hard';
+
+export interface HistoryEntry {
+  id:           string;
+  startedAt:    number;   // epoch ms
+  sessionId:    string;
+  sessionName:  string;
+  activityType: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata';
+  plannedSecs:  number;
+  activeSecs:   number;
+  rounds:       number;   // interval count, same figure as the complete screen's "Intervals"
+  workSecs:     number;
+  completed:    boolean;  // false = abandoned via "terminate"
+  feeling?:     Feeling;  // only set on completed
+  source:       'phone' | 'watch';
+}
+
+const HISTORY_FILE = 'history.json';
+
+// Runs shorter than this are accidental starts, not worth logging when abandoned.
+export const MIN_ABANDONED_SECS = 5;
+
+// Skipping half the plan or more, or having no work time, makes a rating meaningless.
+export function shouldAskFeeling(plannedSecs: number, skippedSecs: number, workSecs: number): boolean {
+  return workSecs > 0 && skippedSecs < plannedSecs / 2;
+}
+
+export { newId };
+
+export async function loadHistory(): Promise<HistoryEntry[]> {
+  const data = await readJsonFile<HistoryEntry[]>(HISTORY_FILE);
+  return Array.isArray(data) ? data : [];
+}
+
+export async function appendEntry(entry: HistoryEntry): Promise<void> {
+  const entries = await loadHistory();
+  writeJsonFile(HISTORY_FILE, [...entries, entry]);
+}
+
+export async function setFeeling(id: string, feeling: Feeling | undefined): Promise<void> {
+  const entries = await loadHistory();
+  writeJsonFile(HISTORY_FILE, entries.map(e => (e.id === id ? { ...e, feeling } : e)));
+}
+
+function activityTypeOf(session: Session): HistoryEntry['activityType'] {
+  if (session.mode === 'circuit') return session.tabata ? 'tabata' : 'circuit';
+  return session.activityType ?? 'general';
+}
+
+/** Returns null for abandoned runs too short to count. */
+export function buildHistoryEntry(args: {
+  id:          string;
+  session:     Session;
+  plannedSecs: number;
+  summary:     RunSummary;
+  activeSecs:  number;
+  completed:   boolean;
+  now?:        number;
+}): HistoryEntry | null {
+  const { id, session, plannedSecs, summary, activeSecs, completed, now = Date.now() } = args;
+  if (!completed && activeSecs < MIN_ABANDONED_SECS) return null;
+  return {
+    id,
+    startedAt:    now - Math.round(activeSecs * 1000),
+    sessionId:    session.id,
+    sessionName:  session.name,
+    activityType: activityTypeOf(session),
+    plannedSecs,
+    activeSecs:   Math.round(activeSecs),
+    rounds:       summary.intervals,
+    workSecs:     summary.workSecs,
+    completed,
+    source:       'phone',
+  };
+}

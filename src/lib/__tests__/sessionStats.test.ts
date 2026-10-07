@@ -1,4 +1,4 @@
-import { ZERO_STATS, applySkip, applySkipBack, applyExtend, applyAddRound, type SessionStats } from '../sessionStats';
+import { ZERO_STATS, applySkip, applySkipBack, applyExtend, applyAddRound, summarizeRun, type SessionStats } from '../sessionStats';
 import type { Segment } from '../workout';
 
 const workSeg: Segment = { phase: 'work', duration: 20, startAt: 0, endAt: 20, index: 0 };
@@ -129,5 +129,23 @@ describe('composition of multiple stat mutations', () => {
       skipBackWorkSecs: 0,
       skipBackWorkCount: 0,
     });
+  });
+});
+
+describe('summarizeRun', () => {
+  const segs = [workSeg, restSeg, { ...workSeg, startAt: 30, endAt: 50, index: 2 }];
+
+  it('sums planned totals when nothing was skipped', () => {
+    expect(summarizeRun(segs, 50, ZERO_STATS)).toEqual({ totalSecs: 50, workSecs: 40, intervals: 3 });
+  });
+
+  it('subtracts skipped intervals and time', () => {
+    const stats = applySkip(ZERO_STATS, workSeg, 8);
+    expect(summarizeRun(segs, 50, stats)).toEqual({ totalSecs: 42, workSecs: 32, intervals: 2 });
+  });
+
+  it('adds back rewound work time and count', () => {
+    const stats = applySkipBack(ZERO_STATS, workSeg, 6);
+    expect(summarizeRun(segs, 50, stats)).toEqual({ totalSecs: 56, workSecs: 46, intervals: 4 });
   });
 });
