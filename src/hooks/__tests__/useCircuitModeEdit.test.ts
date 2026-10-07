@@ -98,7 +98,7 @@ describe('useCircuitModeEdit', () => {
   it('startTabata seeds the canonical locked config for a brand-new Tabata session', async () => {
     const { result } = await renderHook(() => useCircuitModeEdit(undefined, true));
 
-    expect(result.current.tabata).toBe(true);
+    expect(result.current.circuitType).toBe('tabata');
     expect(result.current.circuitWarmup).toBe(300);
     expect(result.current.circuitCooldown).toBe(300);
     expect(result.current.circuitRest).toBe(0);
@@ -109,17 +109,17 @@ describe('useCircuitModeEdit', () => {
   it('an existing circuit session ignores startTabata and keeps its saved values', async () => {
     const { result } = await renderHook(() => useCircuitModeEdit(circuitSession, true));
 
-    expect(result.current.tabata).toBe(false);
+    expect(result.current.circuitType).toBeUndefined();
     expect(result.current.circuitWarmup).toBe(15);
   });
 
-  it('seeds tabata=true from a saved Tabata circuit with no spurious changes', async () => {
+  it('seeds circuitType tabata from a saved Tabata circuit with no spurious changes', async () => {
     const tabataSession: Session = {
-      ...circuitSession, tabata: true, warmup: 300, cooldown: 300, circuitRest: 0, circuits: 1,
+      ...circuitSession, activityType: 'tabata', warmup: 300, cooldown: 300, circuitRest: 0, circuits: 1,
     };
     const { result } = await renderHook(() => useCircuitModeEdit(tabataSession));
 
-    expect(result.current.tabata).toBe(true);
+    expect(result.current.circuitType).toBe('tabata');
     expect(result.current.hasChanges).toBe(false);
   });
 

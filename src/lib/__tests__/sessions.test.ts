@@ -14,6 +14,7 @@ import {
   renameFolder,
   moveSessionToFolder,
   deleteFolder,
+  migrateLegacyTabataFlag,
   DEFAULT_RUN_SPEEDS,
   DEFAULT_RUN_INCLINES,
   DEFAULT_SPIN_VALUES,
@@ -574,5 +575,46 @@ describe('deleteFolder', () => {
     const result = deleteFolder('f1', null, data);
     expect(result.folders.map(f => f.id)).toEqual(['f2']);
     expect(result.sessions.map(s => s.id)).toEqual(['s2']);
+  });
+});
+
+describe('migrateLegacyTabataFlag', () => {
+  const circuit = { id: 'c', name: 'C', folderId: 'f', mode: 'circuit', intervals: [], circuits: 1, warmup: 300, cooldown: 300, circuitRest: 0 };
+  const data = (sessions: unknown[]) => ({ folders: [], sessions }) as unknown as SessionsData;
+
+  it('turns tabata:true into activityType "tabata" and drops the flag', () => {
+    const { data: out, changed } = migrateLegacyTabataFlag(data([{ ...circuit, tabata: true }]));
+    expect(changed).toBe(true);
+    expect(out.sessions[0]).toMatchObject({ activityType: 'tabata' });
+    expect(out.sessions[0]).not.toHaveProperty('tabata');
+  });
+
+  it('drops tabata:false without adding a type', () => {
+    const { data: out } = migrateLegacyTabataFlag(data([{ ...circuit, tabata: false }]));
+    expect(out.sessions[0]).not.toHaveProperty('tabata');
+    expect(out.sessions[0]).not.toHaveProperty('activityType');
+  });
+
+  it('leaves already-migrated and other sessions untouched', () => {
+    const input = data([{ ...circuit, activityType: 'tabata' }, { id: 'e', name: 'E', folderId: 'f', mode: 'easy', config: {} }]);
+    const { data: out, changed } = migrateLegacyTabataFlag(input);
+    expect(changed).toBe(false);
+    expect(out).toBe(input);
+  });
+});
+
+describe('loadSessions legacy tabata migration', () => {
+  it('migrates a stored tabata:true session and persists the new shape', async () => {
+    const files = jest.requireMock('expo-file-system').__files as Map<string, string>;
+    files.clear();
+    files.set('document/sessions_v2.json', JSON.stringify({
+      folders: [{ id: 'default', name: 'Default', icon: 'folder', createdAt: 0, orderIndex: 0 }],
+      sessions: [{ id: 'c', name: 'T', folderId: 'default', mode: 'circuit', intervals: [], circuits: 1, warmup: 300, cooldown: 300, circuitRest: 0, tabata: true }],
+    }));
+    const loaded = await loadSessions();
+    expect(loaded.sessions[0]).toMatchObject({ activityType: 'tabata' });
+    const stored = JSON.parse(files.get('document/sessions_v2.json')!);
+    expect(stored.sessions[0].activityType).toBe('tabata');
+    expect(stored.sessions[0]).not.toHaveProperty('tabata');
   });
 });

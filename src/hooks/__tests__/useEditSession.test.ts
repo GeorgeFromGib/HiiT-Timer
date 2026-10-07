@@ -712,14 +712,15 @@ describe('initialActivityType "tabata"', () => {
     expect(d.hasChanges).toBe(false);
   });
 
-  it('buildSavePayload persists tabata:true with the expanded interval list', async () => {
+  it('buildSavePayload persists activityType tabata with the expanded interval list', async () => {
     const { result } = await renderHook(() => useEditSession(undefined, onBack, 'tabata'));
     await act(async () => result.current.setName('Tabata One'));
 
     const payload = result.current.buildSavePayload();
     expect(payload.ok).toBe(true);
     if (payload.ok && payload.session.mode === 'circuit') {
-      expect(payload.session.tabata).toBe(true);
+      expect((payload.session as { activityType?: string }).activityType).toBe('tabata');
+      expect(payload.session).not.toHaveProperty('tabata');
       expect(payload.session.circuits).toBe(1);
       expect(payload.session.warmup).toBe(300);
       expect(payload.session.cooldown).toBe(300);

@@ -93,9 +93,6 @@ struct SessionDTO: Codable, Hashable {
   var circuitRest: Double? = nil
   var spinValues: SpinValuesDTO? = nil
   var cooldownTaper: Bool? = nil
-  /// Circuit sessions created as the Tabata type (src/lib/sessions.ts). Runs as an
-  /// ordinary circuit — this only identifies the type (e.g. for History).
-  var tabata: Bool? = nil
 
   /// Standard (no activityType), Treadmill (activityType == "run"), and
   /// Spinning (activityType == "spinning") sessions run in easy or advanced
@@ -110,7 +107,7 @@ struct SessionDTO: Codable, Hashable {
   }
 
   var isTabata: Bool {
-    mode == "circuit" && tabata == true
+    mode == "circuit" && activityType == "tabata"
   }
 
   var isSpinning: Bool {

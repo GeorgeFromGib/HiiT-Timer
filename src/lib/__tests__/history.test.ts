@@ -45,7 +45,7 @@ describe('history store', () => {
 });
 
 describe('buildHistoryEntry', () => {
-  const session = { id: 's1', name: 'Tabata Blast', folderId: 'f', mode: 'circuit', intervals: [], circuits: 1, warmup: 0, cooldown: 0, circuitRest: 0, tabata: true } as Session;
+  const session = { id: 's1', name: 'Tabata Blast', folderId: 'f', mode: 'circuit', intervals: [], circuits: 1, warmup: 0, cooldown: 0, circuitRest: 0, activityType: 'tabata' } as Session;
   const base = { id: 'x', session, plannedSecs: 600, summary: { totalSecs: 590, workSecs: 240, intervals: 8 }, now: 100_000 };
 
   it('builds a completed entry from the run summary', () => {

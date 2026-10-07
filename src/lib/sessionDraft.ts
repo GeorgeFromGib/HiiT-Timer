@@ -14,7 +14,7 @@ export interface SessionDraftInput {
   inclineEnabled: boolean;
   cooldownTaper:  boolean;
   spinValues:     SpinValues | undefined;
-  circuitData:    { warmup: number; cooldown: number; circuits: number; circuitRest: number; tabata: boolean } | undefined;
+  circuitData:    { warmup: number; cooldown: number; circuits: number; circuitRest: number; activityType: 'tabata' | undefined } | undefined;
 }
 
 export function buildSessionFromDraft(input: SessionDraftInput): Session {
@@ -32,7 +32,7 @@ export function buildSessionFromDraft(input: SessionDraftInput): Session {
       warmup: circuitData!.warmup,
       cooldown: circuitData!.cooldown,
       circuitRest: circuitData!.circuitRest,
-      ...(circuitData!.tabata ? { tabata: true } : {}),
+      ...(circuitData!.activityType ? { activityType: circuitData!.activityType } : {}),
     };
   }
   if (activityType === 'spinning' && spinValues === undefined) {

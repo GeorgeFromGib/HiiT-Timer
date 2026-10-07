@@ -5,18 +5,16 @@ import { BASE_SVG_STROKE } from './svgStroke';
 import { ACTIVITY_ICON_SHAPES } from './activityIconShapes';
 
 interface Props {
-  activityType?: 'run' | 'spinning';
+  // 'tabata' sessions are stored as circuits but shown as their own type.
+  activityType?: 'run' | 'spinning' | 'tabata';
   mode: 'easy' | 'advanced' | 'circuit';
-  // Tabata is stored as a locked circuit but shown as its own type — pass this so the
-  // header/card glyph reads "Tabata" instead of "Circuit".
-  tabata?: boolean;
   size?: number;
 }
 
-export default function ActivityTypeIcon({ activityType, mode, tabata, size = 16 }: Props) {
+export default function ActivityTypeIcon({ activityType, mode, size = 16 }: Props) {
   const { T } = useTheme();
 
-  if (tabata) {
+  if (activityType === 'tabata') {
     const p = { ...BASE_SVG_STROKE, stroke: T.phases.work };
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24">

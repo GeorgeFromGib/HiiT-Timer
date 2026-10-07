@@ -161,7 +161,7 @@ export function useEditSession(
 
   function circuitDraftData() {
     return mode === 'circuit'
-      ? { warmup: circuitEdit.circuitWarmup, cooldown: circuitEdit.circuitCooldown, circuits: circuitEdit.circuitCount, circuitRest: circuitEdit.circuitRest, tabata: circuitEdit.tabata }
+      ? { warmup: circuitEdit.circuitWarmup, cooldown: circuitEdit.circuitCooldown, circuits: circuitEdit.circuitCount, circuitRest: circuitEdit.circuitRest, activityType: circuitEdit.circuitType }
       : undefined;
   }
 
@@ -410,7 +410,7 @@ export function useEditSession(
     circuitCooldown: circuitEdit.circuitCooldown,
     circuitRest:     circuitEdit.circuitRest,
     circuitCount:    circuitEdit.circuitCount,
-    tabataMode:      circuitEdit.tabata,
+    tabataMode:      circuitEdit.circuitType === 'tabata',
   };
 
   return {

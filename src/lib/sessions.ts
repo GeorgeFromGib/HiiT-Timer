@@ -81,12 +81,11 @@ export function spinValueForPhase(phase: Phase, values: SpinValues): { resistanc
 export type Session =
   | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; cooldownTaper?: boolean; spinValues?: SpinValues; mode: 'easy'; config: WorkoutConfig }
   | { id: string; name: string; folderId: string; activityType?: 'run' | 'spinning'; runSpeeds?: RunSpeeds; runInclines?: RunInclines; inclineEnabled?: boolean; cooldownTaper?: boolean; spinValues?: SpinValues; mode: 'advanced'; intervals: Interval[] }
-  // `tabata`: session created as the Tabata type — a circuit locked to the canonical
-  // 8×(20s/10s) + 5-min warmup/cooldown protocol. Set once at creation, never toggled.
-  // Editor/display-only flag — the expanded segments are an ordinary circuit, so
-  // Swift/widgets need no change. ponytail: add to SessionDTO only if native ever needs
-  // to show a "Tabata" badge.
-  | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number; tabata?: boolean };
+  // Circuit `activityType: 'tabata'`: session created as the Tabata type — a circuit locked
+  // to the canonical 8×(20s/10s) + 5-min warmup/cooldown protocol. Set once at creation,
+  // never toggled. The expanded segments are an ordinary circuit, so only the editor,
+  // icon, history and the watch's SessionDTO read it.
+  | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number; activityType?: 'tabata' };
 
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   return expandPhaseMap(speeds.warmupSpeed, speeds.workSpeed, speeds.restSpeed, speeds.cooldownSpeed)[phase];
@@ -278,7 +277,22 @@ export async function loadSessions(language: Language = 'en'): Promise<SessionsD
   if (Array.isArray(parsed)) {
     return migrateSessionsToFolders(parsed);
   }
-  return parsed;
+  const { data, changed } = migrateLegacyTabataFlag(parsed);
+  if (changed) await saveSessions(data); // persist + re-sync to the watch once
+  return data;
+}
+
+// Tabata sessions used to be a circuit with `tabata: true`; the type is now
+// `activityType: 'tabata'`, alongside 'run'/'spinning' on other session modes.
+export function migrateLegacyTabataFlag(data: SessionsData): { data: SessionsData; changed: boolean } {
+  let changed = false;
+  const sessions = data.sessions.map(s => {
+    if (!('tabata' in s)) return s;
+    changed = true;
+    const { tabata, ...rest } = s as typeof s & { tabata?: boolean };
+    return (tabata ? { ...rest, activityType: 'tabata' } : rest) as Session;
+  });
+  return { data: changed ? { ...data, sessions } : data, changed };
 }
 
 export async function saveSessions(data: SessionsData): Promise<void> {

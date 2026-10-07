@@ -259,8 +259,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
           right={
             <ActivityTypeIcon
               mode={isCircuit ? 'circuit' : 'easy'}
-              tabata={circuitLocked}
-              activityType={draftActivityType}
+              activityType={circuitLocked ? 'tabata' : draftActivityType}
               size={32}
             />
           }

@@ -65,7 +65,7 @@ export function setFeeling(id: string, feeling: Feeling | undefined): Promise<vo
 }
 
 function activityTypeOf(session: Session): HistoryEntry['activityType'] {
-  if (session.mode === 'circuit') return session.tabata ? 'tabata' : 'circuit';
+  if (session.mode === 'circuit') return session.activityType ?? 'circuit';
   return session.activityType ?? 'general';
 }
 

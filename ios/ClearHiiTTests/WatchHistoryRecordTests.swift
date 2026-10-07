@@ -1,9 +1,9 @@
 import XCTest
 
 final class WatchHistoryRecordTests: XCTestCase {
-  private func session(mode: String = "easy", activityType: String? = nil, tabata: Bool? = nil) -> SessionDTO {
+  private func session(mode: String = "easy", activityType: String? = nil) -> SessionDTO {
     SessionDTO(id: "s1", name: "Run", folderId: "f", activityType: activityType, runSpeeds: nil, runInclines: nil,
-               inclineEnabled: nil, mode: mode, config: nil, intervals: nil, tabata: tabata)
+               inclineEnabled: nil, mode: mode, config: nil, intervals: nil)
   }
 
   // work 0-20, rest 20-30, work 30-50
@@ -46,13 +46,13 @@ final class WatchHistoryRecordTests: XCTestCase {
   }
 
   func testTabataSessionIsLoggedAsTabata() throws {
-    let r = try XCTUnwrap(makeWatchHistoryRecord(id: "x", session: session(mode: "circuit", tabata: true), segments: segments, elapsed: 50, completed: true))
+    let r = try XCTUnwrap(makeWatchHistoryRecord(id: "x", session: session(mode: "circuit", activityType: "tabata"), segments: segments, elapsed: 50, completed: true))
     XCTAssertEqual(r.activityType, "tabata")
   }
 
   func testTabataFlagDecodesFromSyncedJSONAndStaysRunnable() throws {
     let json = #"""
-    {"id":"t1","name":"Tabata","folderId":"f","mode":"circuit","circuits":8,"warmup":300,"cooldown":300,"circuitRest":0,"tabata":true,"intervals":[]}
+    {"id":"t1","name":"Tabata","folderId":"f","mode":"circuit","circuits":8,"warmup":300,"cooldown":300,"circuitRest":0,"activityType":"tabata","intervals":[]}
     """#
     let dto = try JSONDecoder().decode(SessionDTO.self, from: Data(json.utf8))
     XCTAssertTrue(dto.isTabata)

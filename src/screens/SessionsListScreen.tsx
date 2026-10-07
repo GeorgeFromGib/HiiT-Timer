@@ -320,7 +320,7 @@ export default function SessionsListScreen({ folderId, onNavigate }: { folderId?
               style={styles.typeMenuRow}
               onPress={() => handleCreateSession('tabata')}
             >
-              <ActivityTypeIcon mode="circuit" tabata size={18} />
+              <ActivityTypeIcon mode="circuit" activityType="tabata" size={18} />
               <Text style={styles.typeMenuText}>{t('edit.tabata')}</Text>
             </Pressable>
             <View style={styles.typeMenuSeparator} />

@@ -17,7 +17,7 @@ interface Props {
  */
 export default function CircuitSetCounter({ session, seg, nextSeg, style }: Props) {
   const { t } = useTranslation();
-  if (session.mode !== 'circuit' || session.tabata) return null;
+  if (session.mode !== 'circuit' || session.activityType === 'tabata') return null;
 
   if (seg.circuitNumber !== undefined) {
     return <Text style={style}>{t('workout.circuit')} {seg.circuitNumber} / {session.circuits}</Text>;
