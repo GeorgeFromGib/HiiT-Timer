@@ -17,6 +17,12 @@ export const de: typeof en = {
     intervals: 'Intervalle',
     intervalsAbbr: 'Int.',
   },
+  tabs: {
+    home: 'Start',
+    history: 'Verlauf',
+    settings: 'Einstellungen',
+    a11y: 'Hauptregisterkarten',
+  },
   phases: {
     warmup:      'Aufwärmen',
     work:        'Arbeit',

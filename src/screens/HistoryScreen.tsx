@@ -27,7 +27,7 @@ function fmtMins(s: number): string {
   return `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m`;
 }
 
-export default function HistoryScreen({ onBack, onChooseSession }: { onBack: () => void; onChooseSession: () => void }) {
+export default function HistoryScreen({ onChooseSession }: { onChooseSession: () => void }) {
   const { T } = useTheme();
   const { t, locale } = useTranslation();
   const styles = useMemo(() => makeStyles(T), [T]);
@@ -39,7 +39,7 @@ export default function HistoryScreen({ onBack, onChooseSession }: { onBack: () 
   const sorted = useMemo(() => [...(entries ?? [])].sort((a, b) => b.startedAt - a.startedAt), [entries]);
 
   const header = (
-    <ScreenHeader onBack={onBack} subtitle={t('history.subtitle')} title={t('history.title')} style={styles.header} />
+    <ScreenHeader subtitle={t('history.subtitle')} title={t('history.title')} style={styles.header} />
   );
 
   if (entries === null) {

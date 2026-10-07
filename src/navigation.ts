@@ -42,3 +42,21 @@ export function useNavigationStack(initialRoute: Route): NavigationStack {
 
   return { route: stack[stack.length - 1], navigate, goBack, resetTo };
 }
+
+export type Tab = 'home' | 'history' | 'settings';
+
+// Which bottom tab a route belongs to; null = detail/full-screen route (bar hidden).
+export function tabForRoute(route: Route): Tab | null {
+  switch (route.name) {
+    case 'Folders':
+    case 'Sessions': return 'home';
+    case 'History':  return 'history';
+    case 'Settings': return 'settings';
+    default:         return null;
+  }
+}
+
+export function routeForTab(tab: Tab, hideFolders: boolean): Route {
+  if (tab === 'home') return hideFolders ? { name: 'Sessions' } : { name: 'Folders' };
+  return tab === 'history' ? { name: 'History' } : { name: 'Settings' };
+}

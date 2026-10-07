@@ -9,7 +9,7 @@ const entry = (id: string, over: Partial<HistoryEntry> = {}): HistoryEntry => ({
 });
 
 const renderScreen = (onChooseSession = jest.fn()) =>
-  render(<HistoryScreen onBack={jest.fn()} onChooseSession={onChooseSession} />);
+  render(<HistoryScreen onChooseSession={onChooseSession} />);
 
 describe('HistoryScreen', () => {
   beforeEach(() => jest.requireMock('expo-file-system').__files.clear());

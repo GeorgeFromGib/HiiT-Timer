@@ -1,4 +1,4 @@
-import { AppState, LogBox } from 'react-native';
+import { AppState, LogBox, View } from 'react-native';
 
 // RN new-arch bug: ScrollView's keyboard-scroll calls measureLayout with a non-native ref.
 // LogBox suppresses the in-app overlay; console.error override suppresses Metro terminal output.
@@ -34,7 +34,8 @@ import HistoryScreen from './src/screens/HistoryScreen';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import OnboardingModal, { CURRENT_ONBOARDING_VERSION } from './src/components/OnboardingModal';
 import AppAlertModal from './src/components/AppAlertModal';
-import { useNavigationStack } from './src/navigation';
+import TabBar from './src/components/TabBar';
+import { useNavigationStack, tabForRoute, routeForTab } from './src/navigation';
 import { ThemeContext, THEME_TOKENS, useTheme } from './src/theme';
 import { type ThemeKey } from './src/lib/settings';
 import { SettingsContext } from './src/lib/settingsContext';
@@ -157,12 +158,14 @@ export default function App() {
 
   const themeKey = settings.theme;
   const T = THEME_TOKENS[themeKey];
+  const activeTab = tabForRoute(route);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: T.bgGradient[1] }}>
     <PremiumContext.Provider value={premiumState}>
     <SettingsContext.Provider value={{ settings, updateSettings }}>
     <ThemeContext.Provider value={{ T, themeKey, setTheme }}>
+      <View style={{ flex: 1 }}>
       {route.name === 'Workout' && (
         <RouteScreen>
           <WorkoutScreen
@@ -188,9 +191,7 @@ export default function App() {
       {route.name === 'Settings' && (
         <RouteScreen>
           <SettingsScreen
-            onBack={() => navigate(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
             onPrivacyPolicy={() => navigate({ name: 'PrivacyPolicy' })}
-            onHistory={() => navigate({ name: 'History' })}
             onShowWhatsNew={() => { setPreviewWhatsNew(true); setShowOnboarding(true); }}
           />
         </RouteScreen>
@@ -198,7 +199,6 @@ export default function App() {
       {route.name === 'History' && (
         <RouteScreen>
           <HistoryScreen
-            onBack={goBack}
             onChooseSession={() => resetTo(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
           />
         </RouteScreen>
@@ -214,6 +214,8 @@ export default function App() {
       {route.name === 'Sessions' && (
         <RouteScreen><SessionsListScreen key={sessionsEpoch} folderId={route.folderId} onNavigate={navigate} /></RouteScreen>
       )}
+      </View>
+      {activeTab && <TabBar active={activeTab} onSelect={tab => resetTo(routeForTab(tab, settings.hideFolders))} />}
       <OnboardingModal
         visible={showOnboarding}
         forceWhatsNew={previewWhatsNew}

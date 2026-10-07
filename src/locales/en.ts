@@ -15,6 +15,12 @@ export const en = {
     intervals: 'intervals',
     intervalsAbbr: 'Int.',
   },
+  tabs: {
+    home: 'Home',
+    history: 'History',
+    settings: 'Settings',
+    a11y: 'Main tabs',
+  },
   phases: {
     warmup:      'Warm Up',
     work:        'Work',

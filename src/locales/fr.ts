@@ -17,6 +17,12 @@ export const fr: typeof en = {
     intervals: 'intervalles',
     intervalsAbbr: 'Int.',
   },
+  tabs: {
+    home: 'Accueil',
+    history: 'Historique',
+    settings: 'Réglages',
+    a11y: 'Onglets principaux',
+  },
   phases: {
     warmup:      'Échauffement',
     work:        'Travail',
