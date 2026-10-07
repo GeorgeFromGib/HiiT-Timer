@@ -149,6 +149,12 @@ export const en = {
     chooseSession: 'CHOOSE A SESSION',
     rangeA11y: 'Time range',
     backA11y: 'Back',
+    activity: 'Activity',
+    byMinutes: 'by active minutes',
+    weeksAgo: '%{count} weeks ago',
+    less: 'Less',
+    more: 'More',
+    cellA11y: '%{mins} min',
   },
   congrats: [
     'You crushed it.',

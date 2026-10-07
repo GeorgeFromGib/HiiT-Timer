@@ -151,6 +151,12 @@ export const es: typeof en = {
     chooseSession: 'ELEGIR UNA SESIÓN',
     rangeA11y: 'Intervalo de tiempo',
     backA11y: 'Atrás',
+    activity: 'Actividad',
+    byMinutes: 'por minutos activos',
+    weeksAgo: 'hace %{count} semanas',
+    less: 'Menos',
+    more: 'Más',
+    cellA11y: '%{mins} min',
   },
   congrats: [
     'Lo lograste.',

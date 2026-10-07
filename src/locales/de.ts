@@ -151,6 +151,12 @@ export const de: typeof en = {
     chooseSession: 'EINHEIT WÄHLEN',
     rangeA11y: 'Zeitraum',
     backA11y: 'Zurück',
+    activity: 'Aktivität',
+    byMinutes: 'nach aktiven Minuten',
+    weeksAgo: 'vor %{count} Wochen',
+    less: 'Weniger',
+    more: 'Mehr',
+    cellA11y: '%{mins} Min.',
   },
   congrats: [
     'Du hast es geschafft.',

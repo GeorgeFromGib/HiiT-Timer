@@ -5,6 +5,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { useTheme, withOpacity, buttonShadow, type ThemeTokens } from '../theme';
 import ScreenHeader from '../components/ScreenHeader';
 import { useTranslation } from '../hooks/useTranslation';
+import Heatmap from '../components/Heatmap';
 import { FeelIcon } from '../components/FeelingPicker';
 import { loadHistory, type HistoryEntry } from '../lib/history';
 import { currentStreak, longestStreak, totals, completionRate, entriesInRange, localDayNumber, type StatsRange } from '../lib/historyStats';
@@ -115,6 +116,14 @@ export default function HistoryScreen({ onBack, onChooseSession }: { onBack: () 
           </View>
         </View>
 
+        <View style={[styles.card, { marginTop: 10, paddingTop: 13, paddingHorizontal: 14, paddingBottom: 11 }]}>
+          <View style={styles.heatHeader}>
+            <Text style={styles.label}>{t('history.activity')}</Text>
+            <Text style={styles.heatSub}>{t('history.byMinutes')}</Text>
+          </View>
+          <Heatmap entries={entries} />
+        </View>
+
         <Text style={[styles.label, { marginTop: 20, marginBottom: 8, paddingLeft: 2 }]}>{t('history.recent')}</Text>
         <View style={[styles.card, { overflow: 'hidden' }]}>
           {listed.map((e, i) => (
@@ -160,6 +169,8 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   totalsRow: { flexDirection: 'row', marginTop: 14 },
   totalCell: { flex: 1, alignItems: 'center' },
   totalValue: { fontFamily: 'ChakraPetch_700Bold', fontSize: 22, lineHeight: 24 },
+  heatHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 },
+  heatSub: { fontFamily: 'Inter_600SemiBold', fontSize: 10, letterSpacing: 10 * 0.04, color: T.faintText },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 14 },
   rowName: { fontFamily: 'Inter_700Bold', fontSize: 14 },
   rowMeta: { fontFamily: 'Inter_600SemiBold', fontSize: 11.5, color: T.faintText, marginTop: 2 },

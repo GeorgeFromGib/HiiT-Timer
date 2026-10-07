@@ -1,4 +1,4 @@
-import { currentStreak, longestStreak, totals, completionRate, localDayNumber } from '../historyStats';
+import { currentStreak, longestStreak, totals, completionRate, localDayNumber, heatmapBuckets, heatLevel } from '../historyStats';
 import type { HistoryEntry } from '../history';
 
 const NOW = new Date(2026, 9, 6, 15, 0).getTime(); // Tue 6 Oct 2026, local
@@ -74,5 +74,39 @@ describe('localDayNumber', () => {
     const b = localDayNumber(new Date(2026, 9, 25, 23, 30).getTime());
     const c = localDayNumber(new Date(2026, 9, 26, 0, 30).getTime());
     expect([b - a, c - b]).toEqual([1, 1]);
+  });
+});
+
+describe('heatmapBuckets', () => {
+  // NOW is Tuesday, so the current week is Mon(1 ago) Tue(0 ago, today) + 5 future days.
+  const run = (daysAgo: number, secs: number, over: Partial<HistoryEntry> = {}) => e(daysAgo, { activeSecs: secs, ...over });
+
+  it('returns `weeks` columns of 7 cells, oldest first', () => {
+    const g = heatmapBuckets([], 12, NOW);
+    expect(g).toHaveLength(12);
+    g.forEach(col => expect(col).toHaveLength(7));
+    expect(g[11][1].daysAgo).toBe(0);   // today = Tue in the last column
+    expect(g[11][0].daysAgo).toBe(1);   // Mon
+    expect(g[10][1].daysAgo).toBe(7);   // Tue a week earlier
+  });
+
+  it('marks days after today in the current week as future', () => {
+    const last = heatmapBuckets([], 12, NOW)[11];
+    expect(last.map(c => c.future)).toEqual([false, false, true, true, true, true, true]);
+  });
+
+  it('sums minutes per day, including abandoned runs', () => {
+    const g = heatmapBuckets([run(0, 600), run(0, 300, { completed: false }), run(1, 120)], 12, NOW);
+    expect(g[11][1].mins).toBe(15);
+    expect(g[11][0].mins).toBe(2);
+  });
+
+  it('buckets minutes into levels at the thresholds', () => {
+    expect([0, 0.5, 9.99, 10, 19.99, 20, 39.99, 40, 120].map(heatLevel)).toEqual([0, 1, 1, 2, 2, 3, 3, 4, 4]);
+  });
+
+  it('ignores runs older than the window', () => {
+    const g = heatmapBuckets([run(12 * 7 + 5, 3600)], 12, NOW);
+    expect(g.flat().every(c => c.level === 0)).toBe(true);
   });
 });

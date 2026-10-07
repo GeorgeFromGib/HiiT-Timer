@@ -85,4 +85,13 @@ describe('HistoryScreen', () => {
     await findByText('Run a');
     expect(getAllByText('2').length).toBeGreaterThanOrEqual(3); // current, longest, week workouts
   });
+
+  it('heatmap shows today\'s active minutes and the legend', async () => {
+    await appendEntry(entry('a', { activeSecs: 600 }));
+    const { findByLabelText, getByText } = await renderScreen();
+    expect(await findByLabelText('10 min')).toBeTruthy();
+    expect(getByText('11 weeks ago')).toBeTruthy();
+    expect(getByText('Mon')).toBeTruthy();
+    expect(getByText('Sun')).toBeTruthy();
+  });
 });
