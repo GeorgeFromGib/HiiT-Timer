@@ -144,6 +144,18 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
         </Svg>
       ),
     },
+    {
+      titleKey: 'onboarding.feature9Title',
+      subKey: 'onboarding.feature9Sub',
+      icon: (
+        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <Rect x={4} y={4} width={7} height={7} rx={1.5} />
+          <Rect x={13} y={4} width={7} height={7} rx={1.5} />
+          <Rect x={4} y={13} width={7} height={7} rx={1.5} />
+          <Rect x={13} y={13} width={7} height={7} rx={1.5} />
+        </Svg>
+      ),
+    },
   ];
 
 

@@ -242,6 +242,8 @@ export const es: typeof en = {
     feature7Sub: 'Valora cada entrenamiento terminado: muy fácil, justo bien o muy difícil.',
     feature8Title: 'Controles en horizontal',
     feature8Sub: 'En horizontal, los controles de extensión pasan a la columna derecha, y la velocidad, inclinación y potencia de la siguiente fase van en su propia línea.',
+    feature9Title: 'Historial de entrenamientos',
+    feature9Sub: 'Consulta tus rachas, totales semanales y mensuales y un mapa de actividad en Ajustes.',
     appearanceSub: 'Elige el estilo que verás cada vez que abras la app. Siempre puedes cambiarlo después en Ajustes.',
     foldersSub: '¿Quieres organizar tus sesiones en carpetas?',
     voiceCuesSub: '¿Quieres avisos de voz en lugar de tonos de alerta?',

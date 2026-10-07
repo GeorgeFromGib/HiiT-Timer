@@ -240,6 +240,8 @@ export const en = {
     feature7Sub: 'Rate each finished workout as too easy, just right or too hard.',
     feature8Title: 'Landscape controls',
     feature8Sub: "In landscape, the extend controls now sit in the right column, with the next phase's speed, incline and power on their own line.",
+    feature9Title: 'Workout history',
+    feature9Sub: 'See your streaks, weekly and monthly totals, and an activity heatmap in Settings.',
     appearanceSub: "Pick the look you'll see every time you open the app. You can always change it later in Settings.",
     foldersSub: 'Do you want to organize your sessions into folders?',
     voiceCuesSub: 'Do you want voice prompts instead of alert chimes?',

@@ -242,6 +242,8 @@ export const de: typeof en = {
     feature7Sub: 'Bewerte jede beendete Einheit: zu leicht, genau richtig oder zu schwer.',
     feature8Title: 'Querformat-Steuerung',
     feature8Sub: 'Im Querformat liegen die Verlängerungs-Regler jetzt in der rechten Spalte, und Tempo, Steigung und Leistung der nächsten Phase stehen in einer eigenen Zeile.',
+    feature9Title: 'Trainingsverlauf',
+    feature9Sub: 'Sieh deine Serien, Wochen- und Monatssummen und eine Aktivitäts-Heatmap in den Einstellungen.',
     appearanceSub: 'Wähle das Erscheinungsbild, das du bei jedem Öffnen der App siehst. Du kannst es später jederzeit in den Einstellungen ändern.',
     foldersSub: 'Möchtest du deine Einheiten in Ordnern organisieren?',
     voiceCuesSub: 'Möchtest du Sprachansagen statt Signaltöne?',
