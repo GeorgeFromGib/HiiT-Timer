@@ -1,0 +1,15 @@
+diff --git a/node_modules/expo-screen-orientation/ios/ScreenOrientationRegistry.swift b/node_modules/expo-screen-orientation/ios/ScreenOrientationRegistry.swift
+index 9e0b369..df912e7 100644
+--- a/node_modules/expo-screen-orientation/ios/ScreenOrientationRegistry.swift
++++ b/node_modules/expo-screen-orientation/ios/ScreenOrientationRegistry.swift
+@@ -93,8 +93,9 @@ public class ScreenOrientationRegistry: NSObject, UIApplicationDelegate {
+         let windowScene = self.rootViewController?.view.window?.windowScene
+         windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: orientationMask))
+         self.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
++      } else {
++        UIDevice.current.setValue(newOrientation.rawValue, forKey: "orientation")
+       }
+-      UIDevice.current.setValue(newOrientation.rawValue, forKey: "orientation")
+       UIViewController.attemptRotationToDeviceOrientation()
+ 
+       if self.currentScreenOrientation == .unknown {
