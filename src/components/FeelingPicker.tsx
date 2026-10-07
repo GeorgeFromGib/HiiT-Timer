@@ -11,21 +11,21 @@ const FEELINGS: { key: Feeling; bars: number; label: 'feelEasy' | 'feelRight' | 
   { key: 'hard',  bars: 3, label: 'feelHard' },
 ];
 
-function feelColor(T: ThemeTokens, f: Feeling): string {
+export function feelColor(T: ThemeTokens, f: Feeling): string {
   if (f === 'easy') return T.phases.warmup;
   if (f === 'hard') return T.phases.work;
   return T.accent;
 }
 
 // Three ascending bars — fill count encodes the feeling.
-export function FeelIcon({ feeling, size = 16 }: { feeling: Feeling; size?: number }) {
+export function FeelIcon({ feeling, size = 16 }: { feeling?: Feeling; size?: number }) {
   const { T } = useTheme();
-  const { bars } = FEELINGS.find(f => f.key === feeling)!;
+  const bars = FEELINGS.find(f => f.key === feeling)?.bars ?? 0;
   return (
     <Svg width={size} height={size} viewBox="0 0 16 16">
       {[0, 1, 2].map(i => (
         <Rect key={i} x={1 + i * 5.2} y={11 - i * 4} width={3.6} height={4 + i * 4} rx={1.2}
-          fill={i < bars ? feelColor(T, feeling) : T.hairline} />
+          fill={feeling && i < bars ? feelColor(T, feeling) : T.hairline} />
       ))}
     </Svg>
   );

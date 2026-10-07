@@ -30,7 +30,7 @@ import { loadSessions, type SessionsData } from '../lib/sessions';
 // ══════════════════════════════════════════════════════════════
 // SETTINGS SCREEN
 // ══════════════════════════════════════════════════════════════
-export default function SettingsScreen({ onBack, onPrivacyPolicy, onShowWhatsNew }: { onBack: () => void; onPrivacyPolicy: () => void; onShowWhatsNew?: () => void }) {
+export default function SettingsScreen({ onBack, onPrivacyPolicy, onHistory, onShowWhatsNew }: { onBack: () => void; onPrivacyPolicy: () => void; onHistory: () => void; onShowWhatsNew?: () => void }) {
   const { T, themeKey } = useTheme();
   const styles = useMemo(() => makeStyles(T), [T]);
 
@@ -82,6 +82,21 @@ export default function SettingsScreen({ onBack, onPrivacyPolicy, onShowWhatsNew
       >
         {/* ── Header ── */}
         <ScreenHeader onBack={onBack} subtitle={t('settings.subtitle')} title={t('settings.title')} style={styles.header} />
+
+        {/* ── History ── */}
+        <SettingsSection title={t('history.subtitle')}>
+          <Pressable onPress={onHistory}>
+            <SettingsRow
+              label={t('history.rowLabel')}
+              right={
+                <Svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+                  <Path d="M6 12L10 8 6 4" stroke={T.faintText} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+                </Svg>
+              }
+              last
+            />
+          </Pressable>
+        </SettingsSection>
 
         {/* ── Profile ── */}
         <SettingsSection title={t('settings.profile')}>

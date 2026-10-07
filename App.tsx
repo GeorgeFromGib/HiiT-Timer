@@ -30,6 +30,7 @@ import SessionsListScreen from './src/screens/SessionsListScreen';
 import WorkoutScreen from './src/screens/WorkoutScreen';
 import EditSessionScreen from './src/screens/EditSessionScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import HistoryScreen from './src/screens/HistoryScreen';
 import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
 import OnboardingModal, { CURRENT_ONBOARDING_VERSION } from './src/components/OnboardingModal';
 import AppAlertModal from './src/components/AppAlertModal';
@@ -186,7 +187,16 @@ export default function App() {
           <SettingsScreen
             onBack={() => navigate(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
             onPrivacyPolicy={() => navigate({ name: 'PrivacyPolicy' })}
+            onHistory={() => navigate({ name: 'History' })}
             onShowWhatsNew={() => { setPreviewWhatsNew(true); setShowOnboarding(true); }}
+          />
+        </RouteScreen>
+      )}
+      {route.name === 'History' && (
+        <RouteScreen>
+          <HistoryScreen
+            onBack={goBack}
+            onChooseSession={() => resetTo(settings.hideFolders ? { name: 'Sessions' } : { name: 'Folders' })}
           />
         </RouteScreen>
       )}

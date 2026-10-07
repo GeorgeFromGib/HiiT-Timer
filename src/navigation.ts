@@ -7,6 +7,7 @@ export type Route =
   | { name: 'Workout'; session: Session; initialResumeElapsed?: number; initialStatus?: 'running' | 'paused' }
   | { name: 'EditSession'; session?: Session; activityType?: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata'; folderId?: string }
   | { name: 'Settings' }
+  | { name: 'History' }
   | { name: 'PrivacyPolicy' };
 
 export interface NavigationStack {
