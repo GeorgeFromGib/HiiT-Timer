@@ -2,7 +2,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 
 export interface HrSample { bpm: number; ts: number } // ts: epoch ms
 
-const STALE_MS = 15_000;
+const STALE_MS = 10_000;
 const ZONE_FLOORS = [0.5, 0.6, 0.7, 0.8, 0.9]; // fraction of max HR where zones 1–5 begin
 const FALLBACK_MAX_HR = 190; // used when HealthKit has no date of birth
 
@@ -38,11 +38,10 @@ export async function getAge(): Promise<number | null> {
   }
 }
 
-/** Starts the native HealthKit query; returns an unsubscribe that stops it. */
+/** Subscribes to the watch's live heart rate (relayed by LiveSessionSync); returns an unsubscribe. */
 export function startHeartRate(onSample: (s: HrSample) => void): () => void {
-  const native = NativeModules.HeartRate;
+  const native = NativeModules.LiveSessionSync;
   if (!native) return () => {};
-  const sub = new NativeEventEmitter(native).addListener('HeartRateSample', onSample);
-  native.start();
-  return () => { sub.remove(); native.stop(); };
+  const sub = new NativeEventEmitter(native).addListener('WatchHeartRate', onSample);
+  return () => sub.remove();
 }

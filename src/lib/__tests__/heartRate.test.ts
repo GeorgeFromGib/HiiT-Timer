@@ -14,7 +14,7 @@ describe('maxHrFromAge', () => {
 
 describe('freshBpm', () => {
   const s = { bpm: 150, ts: 1_000_000 };
-  it('returns bpm when fresh', () => expect(freshBpm(s, 1_015_000)).toBe(150));
-  it('returns null when stale', () => expect(freshBpm(s, 1_015_001)).toBeNull());
+  it('returns bpm when fresh', () => expect(freshBpm(s, 1_010_000)).toBe(150));
+  it('returns null when stale', () => expect(freshBpm(s, 1_010_001)).toBeNull());
   it('returns null with no sample', () => expect(freshBpm(null, 1_000_000)).toBeNull());
 });

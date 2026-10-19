@@ -13,7 +13,7 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
   private var pendingHistory: [[String: Any]] = []
 
   override func supportedEvents() -> [String]! {
-    ["LiveSessionUpdate", "WatchHistoryEntry"]
+    ["LiveSessionUpdate", "WatchHistoryEntry", "WatchHeartRate"]
   }
 
   override func startObserving() {
@@ -122,6 +122,10 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
   }
 
   func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+    if let sample = heartRateSample(fromMessage: message) {
+      if hasListeners { sendEvent(withName: "WatchHeartRate", body: ["bpm": sample.bpm, "ts": sample.ts]) }
+      return
+    }
     forwardToJS(message)
   }
 

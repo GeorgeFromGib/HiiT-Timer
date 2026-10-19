@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  freshBpm, getAge, maxHrFromAge, startHeartRate, zoneFor, type HrSample,
+  freshBpm, getAge, maxHrFromAge, requestHeartRateAccess, startHeartRate, zoneFor, type HrSample,
 } from '../lib/heartRate';
 
 /** Live `{ bpm, zone }` while `enabled`, or null when there's no recent sample. */
@@ -12,7 +12,9 @@ export function useHeartRate(enabled: boolean): { bpm: number; zone: number } | 
   useEffect(() => {
     if (!enabled) { setSample(null); return; }
     let cancelled = false;
-    getAge().then(age => { if (!cancelled) setMaxHr(maxHrFromAge(age)); });
+    // Asked on every start, not just from the Settings toggle: iOS only prompts while
+    // access is undetermined, and the setting may predate the prompt ever running.
+    requestHeartRateAccess().then(() => getAge()).then(age => { if (!cancelled) setMaxHr(maxHrFromAge(age)); });
     const stop = startHeartRate(setSample);
     const tick = setInterval(() => setNow(Date.now()), 2000); // lets a silent watch age the sample out
     return () => { cancelled = true; stop(); clearInterval(tick); };

@@ -101,4 +101,16 @@ final class LiveSessionStateTests: XCTestCase {
     let lastAccepted = Date(timeIntervalSince1970: 1000)
     XCTAssertTrue(isNewerLiveSessionUpdate(updatedAt: Date(timeIntervalSince1970: 1001), lastAccepted: lastAccepted))
   }
+
+  func test_heartRateMessage_roundTrips() {
+    let message = heartRateMessage(bpm: 151.6, now: Date(timeIntervalSince1970: 1_700_000_000))
+    let sample = heartRateSample(fromMessage: message)
+    XCTAssertEqual(sample?.bpm, 152)
+    XCTAssertEqual(sample?.ts, 1_700_000_000_000)
+  }
+
+  func test_heartRateSample_nilForOtherMessages() {
+    XCTAssertNil(heartRateSample(fromMessage: [:]))
+    XCTAssertNil(heartRateSample(fromMessage: ["kind": "preferences", "bpm": 150, "ts": 1.0]))
+  }
 }

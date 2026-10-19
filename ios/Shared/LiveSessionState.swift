@@ -94,3 +94,16 @@ func nextLiveSessionAction(
   }
   return .launchNew(sessionId: incoming.sessionId, resumeElapsed: elapsed)
 }
+
+/// Watch → phone live heart rate, sent with `sendMessage` (never queued — a late
+/// reading isn't worth showing). `ts` is epoch ms, matching the JS `HrSample`.
+func heartRateMessage(bpm: Double, now: Date) -> [String: Any] {
+  ["kind": "heartRate", "bpm": Int(bpm.rounded()), "ts": (now.timeIntervalSince1970 * 1000).rounded()]
+}
+
+func heartRateSample(fromMessage message: [String: Any]) -> (bpm: Int, ts: Double)? {
+  guard message["kind"] as? String == "heartRate",
+        let bpm = message["bpm"] as? Int,
+        let ts = message["ts"] as? Double else { return nil }
+  return (bpm, ts)
+}

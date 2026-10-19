@@ -59,6 +59,13 @@ final class WatchSessionReceiver: NSObject, ObservableObject, WCSessionDelegate 
     WCSession.default.transferUserInfo(record.userInfo)
   }
 
+  /// Live-only: dropped when the phone isn't reachable.
+  func sendHeartRate(_ bpm: Double) {
+    guard WCSession.isSupported(), WCSession.default.activationState == .activated,
+          WCSession.default.isReachable else { return }
+    WCSession.default.sendMessage(heartRateMessage(bpm: bpm, now: Date()), replyHandler: nil, errorHandler: nil)
+  }
+
   private func send(_ context: [String: Any]) {
     guard WCSession.isSupported() else { return }
     guard WCSession.default.activationState == .activated else {

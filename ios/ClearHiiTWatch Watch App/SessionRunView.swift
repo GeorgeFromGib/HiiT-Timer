@@ -536,6 +536,7 @@ private final class EngineHolder: ObservableObject {
     workoutSession.requestAuthorization { _ in }
     workoutSession.onStatsUpdate = { [weak self] stats in
       self?.liveStats = stats
+      if let bpm = stats.heartRate { self?.connectivity.sendHeartRate(bpm) }
     }
     engine.onTransition = { [weak self] _, to in
       self?.currentSegment = to
