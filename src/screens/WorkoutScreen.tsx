@@ -36,6 +36,7 @@ import WorkoutScreenLandscape from './WorkoutScreenLandscape';
 import { checkAndRequestReview } from '../lib/reviewState';
 import { updateLiveSession, ownsRun, type LiveSessionState } from '../lib/liveSessionSync';
 import { useHeartRate } from '../hooks/useHeartRate';
+import { ZONE_COLORS } from '../lib/heartRate';
 import { useLiveSessionMirror } from '../hooks/useLiveSessionMirror';
 import { appendEntry, buildHistoryEntry, newId } from '../lib/history';
 import { summarizeRun } from '../lib/sessionStats';
@@ -126,6 +127,18 @@ export default function WorkoutScreen({
   }, [status]); // eslint-disable-line react-hooks/exhaustive-deps -- log once per finish, not on every stats/segments change
 
   const hr = useHeartRate(settings.showHeartRate && (status === 'running' || status === 'paused'));
+  // Heart icon beats while the watch is feeding data.
+  const heartBeat = useRef(new Animated.Value(1)).current;
+  const hasHr = hr !== null;
+  useEffect(() => {
+    if (!hasHr) { heartBeat.setValue(1); return; }
+    const loop = Animated.loop(Animated.sequence([
+      Animated.timing(heartBeat, { toValue: 1.3, duration: 250, useNativeDriver: true }),
+      Animated.timing(heartBeat, { toValue: 1, duration: 1250, useNativeDriver: true }),
+    ]));
+    loop.start();
+    return () => loop.stop();
+  }, [hasHr, heartBeat]);
 
   const reset = useCallback(() => {
     resetEngine();
@@ -345,6 +358,8 @@ export default function WorkoutScreen({
         onExtend={handleExtend}
         onAddRound={appendLastTwo}
         onBack={handleBackPress}
+        hr={hr}
+        heartBeat={heartBeat}
       />
     );
   }
@@ -366,7 +381,7 @@ export default function WorkoutScreen({
       />
 
       {/* ── Phase center block ── */}
-      <View style={styles.phaseBlock}>
+      <View style={[styles.phaseBlock, { top: Math.round(24 * uiScale) }]}>
         {/* icon + label: anchored to bottom of top half */}
         <View style={styles.phaseTop}>
           <View style={[styles.iconBadge, {
@@ -428,13 +443,11 @@ export default function WorkoutScreen({
             </Animated.View>
           )}
 
-          {hr && !isPreStart && (
-            <View style={[styles.speedPill, {
-              backgroundColor: withOpacity(phaseColor, 0x21),
-              borderColor:     withOpacity(phaseColor, 0x59),
-            }]}>
-              <Text style={[styles.speedPillText, { color: phaseColor }]}>
-                {`♥ ${hr.bpm}${hr.zone > 0 ? ` · Z${hr.zone}` : ''}`}
+          {settings.showHeartRate && !isPreStart && (
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: Math.round(8 * uiScale), marginBottom: -Math.round(8 * uiScale) }}>
+              <Animated.Text style={[styles.speedPillText, { fontSize: Math.round(24 * uiScale), color: ZONE_COLORS[hr?.zone ?? 0], transform: [{ scale: heartBeat }] }]}>♥</Animated.Text>
+              <Text style={[styles.speedPillText, { fontSize: Math.round(24 * uiScale), color: ZONE_COLORS[hr?.zone ?? 0] }]}>
+                {hr ? `${hr.bpm} · Z${hr.zone}` : '--'}
               </Text>
             </View>
           )}

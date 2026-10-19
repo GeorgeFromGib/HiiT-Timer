@@ -17,6 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5E59C9A5300FC71E00C04775"
                BuildableName = "ClearHiiTWatch Watch App.app"
+               BlueprintName = "ClearHiiTWatch Watch App"
                ReferencedContainer = "container:ClearHiiT.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

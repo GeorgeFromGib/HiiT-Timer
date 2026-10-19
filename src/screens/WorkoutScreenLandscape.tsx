@@ -6,6 +6,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import type { Session } from '../lib/sessions';
 import { useSettings } from '../lib/settingsContext';
 import { formatSpeed } from '../lib/speedUnit';
+import { ZONE_COLORS } from '../lib/heartRate';
 import type { Segment } from '../lib/workout';
 import { fmtTimer } from '../lib/workout';
 import { buttonShadow, useTheme, withOpacity, type ThemeTokens } from '../theme';
@@ -39,6 +40,8 @@ export default function WorkoutScreenLandscape({
   onExtend,
   onAddRound,
   onBack,
+  hr,
+  heartBeat,
 }: {
   session: Session;
   segments: Segment[];
@@ -62,6 +65,8 @@ export default function WorkoutScreenLandscape({
   onExtend: (secs: number) => void;
   onAddRound: () => void;
   onBack: () => void;
+  hr: { bpm: number; zone: number } | null;
+  heartBeat: Animated.Value;
 }) {
   const { settings } = useSettings();
   const { t } = useTranslation();
@@ -79,7 +84,7 @@ export default function WorkoutScreenLandscape({
   const alignRound = () => {
     trackRef.current?.measureInWindow((_x, ty, _w, th) => {
       extendColRef.current?.measureInWindow((_cx, cy, _cw, ch) => {
-        setRoundPad(Math.max(0, cy + ch - (ty + th / 2 + Math.round(56 * scale) / 2)));
+        setRoundPad(Math.max(0, cy + ch - (ty + th / 2 + Math.round(68 * scale) / 2)));
       });
     });
   };
@@ -292,6 +297,14 @@ export default function WorkoutScreenLandscape({
         </View>
 
         <View style={[styles.infoRail, isPreStart && { opacity: 0 }]}>
+          {settings.showHeartRate && (
+            <View style={styles.hrRead}>
+              <Animated.Text style={[styles.hrText, { color: ZONE_COLORS[hr?.zone ?? 0], transform: [{ scale: heartBeat }] }]}>♥</Animated.Text>
+              <Text style={[styles.hrText, { color: ZONE_COLORS[hr?.zone ?? 0] }]}>
+                {hr ? `${hr.bpm} · Z${hr.zone}` : '--'}
+              </Text>
+            </View>
+          )}
           <View style={styles.railLeft}>
             <CircuitSetCounter
               session={session}
@@ -364,7 +377,7 @@ export default function WorkoutScreenLandscape({
             color={phaseColor}
             disabled={isIdle}
             addRoundDisabled={seg.phase === 'cooldown'}
-            size={Math.round(56 * scale)}
+            size={Math.round(68 * scale)}
           />
         </View>
       )}
@@ -538,6 +551,20 @@ function makeStyles(T: ThemeTokens, s: number) { return StyleSheet.create({
     width: '100%',
     gap: Math.round(9 * s),
     marginTop: Math.round(2 * s),
+  },
+  hrRead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    // Box taller than the glyphs so nothing clips; negative margin re-centres it on the 18pt timelineBar.
+    height: Math.round(36 * s),
+    marginTop: -Math.round(9 * s),
+    gap: Math.round(6 * s),
+  },
+  hrText: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: Math.round(28 * s),
+    lineHeight: Math.round(36 * s),
   },
   railLeft: {
     alignItems: 'center',

@@ -4,6 +4,8 @@ export interface HrSample { bpm: number; ts: number } // ts: epoch ms
 
 const STALE_MS = 10_000;
 const ZONE_FLOORS = [0.5, 0.6, 0.7, 0.8, 0.9]; // fraction of max HR where zones 1–5 begin
+/** Colour by zone (index = zone): grey, blue, green, yellow, orange, red. */
+export const ZONE_COLORS = ['#8a9ba0', '#46a6ff', '#5fd38a', '#f5c542', '#ff8a3d', '#ff5a5f'];
 const FALLBACK_MAX_HR = 190; // used when HealthKit has no date of birth
 
 /** Zone 1–5, or 0 when below zone 1. */
