@@ -205,6 +205,8 @@ export const de: typeof en = {
     congratsSub: 'Vollbildfeier am Ende des Workouts',
     countdownFlashLabel: 'Countdown-Blinken',
     countdownFlashSub: 'Ziffern blinken in den letzten 3 Sekunden jedes Intervalls',
+    showHeartRateLabel: "Herzfrequenz anzeigen",
+    showHeartRateSub: "Live-BPM und Zone aus Apple Health. Starte zuerst ein Training auf deiner Apple Watch",
     keepAwakeLabel: 'Bildschirm wach halten',
     keepAwakeSub: 'Verhindert, dass der Bildschirm während des Workouts in den Ruhezustand geht',
     hapticLabel: 'Haptisches Feedback',

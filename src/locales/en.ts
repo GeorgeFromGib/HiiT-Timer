@@ -203,6 +203,8 @@ export const en = {
     congratsSub: 'Full-screen celebration at workout end',
     countdownFlashLabel: 'Countdown flash',
     countdownFlashSub: 'Digits flash on last 3 seconds of each interval',
+    showHeartRateLabel: "Show heart rate",
+    showHeartRateSub: "Live BPM and zone from Apple Health. Start a Workout on your Apple Watch first",
     keepAwakeLabel: 'Keep screen awake',
     keepAwakeSub: 'Prevent display sleep during workout',
     hapticLabel: 'Haptic feedback',

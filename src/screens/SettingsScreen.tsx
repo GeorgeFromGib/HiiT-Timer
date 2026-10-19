@@ -25,6 +25,7 @@ import Constants from 'expo-constants';
 import { VolumeRow } from '../components/VolumeRow';
 import PaywallModal from '../components/PaywallModal';
 import { CURRENT_ONBOARDING_VERSION } from '../components/OnboardingModal';
+import { requestHeartRateAccess } from '../lib/heartRate';
 import { loadSessions, type SessionsData } from '../lib/sessions';
 
 // ══════════════════════════════════════════════════════════════
@@ -142,6 +143,14 @@ export default function SettingsScreen({ onPrivacyPolicy, onShowWhatsNew }: { on
             label={t('settings.countdownFlashLabel')}
             sub={t('settings.countdownFlashSub')}
             right={<SettingsToggle value={settings.countdownFlash} onChange={v => updateSettings('countdownFlash', v)} />}
+          />
+          <SettingsRow
+            label={t('settings.showHeartRateLabel')}
+            sub={t('settings.showHeartRateSub')}
+            right={<SettingsToggle value={settings.showHeartRate} onChange={v => {
+              updateSettings('showHeartRate', v);
+              if (v) requestHeartRateAccess();
+            }} />}
           />
           <SettingsRow
             label={t('settings.keepAwakeLabel')}

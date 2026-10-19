@@ -44,6 +44,8 @@
 		E1A2B3C4D5E64F708192A3B4 /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F2B3C4D5E6F708192A3B4C5D /* LiveSessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C6B5A4938271605F4E3D2C1 /* LiveSessionState.swift */; };
+		C0FFEE03C0FFEE03C0FFEE03 /* HeartRateModule.m in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE01C0FFEE01C0FFEE01 /* HeartRateModule.m */; };
+		C0FFEE04C0FFEE04C0FFEE04 /* HeartRateModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE02C0FFEE02C0FFEE02 /* HeartRateModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,6 +138,8 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ClearHiiT/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* ClearHiiT-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ClearHiiT-Bridging-Header.h"; path = "ClearHiiT/ClearHiiT-Bridging-Header.h"; sourceTree = "<group>"; };
+		C0FFEE01C0FFEE01C0FFEE01 /* HeartRateModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HeartRateModule.m; path = ClearHiiT/HeartRateModule.m; sourceTree = "<group>"; };
+		C0FFEE02C0FFEE02C0FFEE02 /* HeartRateModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeartRateModule.swift; path = ClearHiiT/HeartRateModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -243,6 +247,8 @@
 				5E59C9B6300FD7F300C04775 /* WorkoutSyncModule.swift */,
 				9D8C7B6A5948372615E4D3C2 /* LiveSessionSyncModule.m */,
 				3E2D1C0B9A8978675645F3E2 /* LiveSessionSyncModule.swift */,
+				C0FFEE01C0FFEE01C0FFEE01 /* HeartRateModule.m */,
+				C0FFEE02C0FFEE02C0FFEE02 /* HeartRateModule.swift */,
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
 				F11748442D0722820044C1D9 /* ClearHiiT-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
@@ -667,6 +673,8 @@
 				5E59C9B8300FD7F300C04775 /* WorkoutSyncModule.swift in Sources */,
 				A1B2C3D4E5F60718293A4B5C /* LiveSessionSyncModule.m in Sources */,
 				B2C3D4E5F60718293A4B5C6D /* LiveSessionSyncModule.swift in Sources */,
+				C0FFEE03C0FFEE03C0FFEE03 /* HeartRateModule.m in Sources */,
+				C0FFEE04C0FFEE04C0FFEE04 /* HeartRateModule.swift in Sources */,
 				AA11BB22CC33DD44EE55FF66 /* LiveSessionState.swift in Sources */,
 				5E21ECD4301161A2003B942C /* WorkoutModels.swift in Sources */,
 				5E21ECD03011611D003B942C /* SegmentBuilder.swift in Sources */,

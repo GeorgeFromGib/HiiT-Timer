@@ -205,6 +205,8 @@ export const es: typeof en = {
     congratsSub: 'Celebración a pantalla completa al terminar',
     countdownFlashLabel: 'Parpadeo de cuenta atrás',
     countdownFlashSub: 'Los dígitos parpadean en los últimos 3 segundos de cada intervalo',
+    showHeartRateLabel: "Mostrar frecuencia cardíaca",
+    showHeartRateSub: "LPM y zona en vivo desde Apple Salud. Inicia antes un entrenamiento en tu Apple Watch",
     keepAwakeLabel: 'Mantener pantalla encendida',
     keepAwakeSub: 'Evita que la pantalla se apague durante el entrenamiento',
     hapticLabel: 'Vibración háptica',

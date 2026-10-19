@@ -66,6 +66,8 @@
     <array>
       <string>_expo._tcp</string>
     </array>
+    <key>NSHealthShareUsageDescription</key>
+    <string>Clear HiiT reads your heart rate during workouts to show it and your training zone on the timer.</string>
     <key>NSLocalNetworkUsageDescription</key>
     <string>Expo Dev Launcher uses the local network to discover and connect to development servers running on your computer.</string>
     <key>NSMicrophoneUsageDescription</key>

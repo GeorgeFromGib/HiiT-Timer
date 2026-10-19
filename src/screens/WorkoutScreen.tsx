@@ -35,6 +35,7 @@ import SessionCompleteScreen from './SessionCompleteScreen';
 import WorkoutScreenLandscape from './WorkoutScreenLandscape';
 import { checkAndRequestReview } from '../lib/reviewState';
 import { updateLiveSession, ownsRun, type LiveSessionState } from '../lib/liveSessionSync';
+import { useHeartRate } from '../hooks/useHeartRate';
 import { useLiveSessionMirror } from '../hooks/useLiveSessionMirror';
 import { appendEntry, buildHistoryEntry, newId } from '../lib/history';
 import { summarizeRun } from '../lib/sessionStats';
@@ -123,6 +124,8 @@ export default function WorkoutScreen({
     setHistoryEntryId(id);
     appendEntry(entry);
   }, [status]); // eslint-disable-line react-hooks/exhaustive-deps -- log once per finish, not on every stats/segments change
+
+  const hr = useHeartRate(settings.showHeartRate && (status === 'running' || status === 'paused'));
 
   const reset = useCallback(() => {
     resetEngine();
@@ -423,6 +426,17 @@ export default function WorkoutScreen({
               <Text style={[styles.spinPillValue, { color: phaseColor }]}>{seg.power}</Text>
               <Text style={[styles.spinPillLabel, { color: phaseColor }]}>W</Text>
             </Animated.View>
+          )}
+
+          {hr && !isPreStart && (
+            <View style={[styles.speedPill, {
+              backgroundColor: withOpacity(phaseColor, 0x21),
+              borderColor:     withOpacity(phaseColor, 0x59),
+            }]}>
+              <Text style={[styles.speedPillText, { color: phaseColor }]}>
+                {`♥ ${hr.bpm}${hr.zone > 0 ? ` · Z${hr.zone}` : ''}`}
+              </Text>
+            </View>
           )}
 
           {seg.activityLabel !== undefined && !isPreStart && (

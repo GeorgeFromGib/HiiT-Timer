@@ -13,6 +13,7 @@ export interface Settings {
   soundCues: boolean;
   soundOff: boolean;
   countdownFlash: boolean;
+  showHeartRate: boolean; // live HR + zone on the timer; needs a watch Workout session running
   soundVolume: number; // 0–100
   speedUnit: 'km' | 'miles';
   speedUnitIsManuallySet: boolean;
@@ -44,6 +45,7 @@ export const DEFAULT_SETTINGS: Settings = {
   soundCues: true,
   soundOff: false,
   countdownFlash: true,
+  showHeartRate: false,
   soundVolume: 100,
   speedUnit: 'km',
   speedUnitIsManuallySet: false,
