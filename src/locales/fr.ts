@@ -249,7 +249,7 @@ export const fr: typeof en = {
     feature8Title: 'Commandes en paysage',
     feature8Sub: "En paysage, les commandes de prolongation passent dans la colonne de droite, et la vitesse, l'inclinaison et la puissance de la phase suivante ont leur propre ligne.",
     feature9Title: 'Historique des séances',
-    feature9Sub: "Consultez vos séries, vos totaux hebdomadaires et mensuels et une carte d'activité dans les Réglages.",
+    feature9Sub: "Consultez vos séries, vos totaux hebdomadaires et mensuels et une carte d'activité dans l'onglet Historique.",
     appearanceSub: 'Choisissez le style que vous verrez à chaque ouverture de l\'app. Vous pourrez toujours le changer dans les Réglages.',
     foldersSub: 'Voulez-vous organiser vos séances en dossiers ?',
     voiceCuesSub: "Voulez-vous des annonces vocales au lieu de sonneries d'alerte ?",
