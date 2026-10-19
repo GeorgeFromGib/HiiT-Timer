@@ -568,6 +568,11 @@ function makeStyles(T: ThemeTokens, s: number) { return StyleSheet.create({
   },
   railLeft: {
     alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    // Same box + offset as hrRead: centres on the 18pt timelineBar, not bar + labels.
+    height: Math.round(36 * s),
+    marginTop: -Math.round(9 * s),
     gap: Math.round(8 * s),
   },
   timelineBlock: {

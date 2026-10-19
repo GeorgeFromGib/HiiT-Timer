@@ -25,7 +25,7 @@
     <key>CFBundlePackageType</key>
     <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.5.0</string>
+    <string>1.6.0</string>
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleURLTypes</key>
@@ -44,7 +44,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>29</string>
+    <string>30</string>
     <key>ExpoWidgetsAppGroupIdentifier</key>
     <string>group.com.georgefromgib.hiittimer</string>
     <key>ExpoWidgets_EnablePushNotifications</key>
@@ -68,6 +68,8 @@
     </array>
     <key>NSHealthShareUsageDescription</key>
     <string>Clear HiiT reads your heart rate during workouts to show it and your training zone on the timer.</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>Clear HiiT saves workouts you complete with your Apple Watch, including heart rate and calories, to Health.</string>
     <key>NSLocalNetworkUsageDescription</key>
     <string>Expo Dev Launcher uses the local network to discover and connect to development servers running on your computer.</string>
     <key>NSMicrophoneUsageDescription</key>

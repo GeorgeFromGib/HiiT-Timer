@@ -381,7 +381,7 @@ export default function WorkoutScreen({
       />
 
       {/* ── Phase center block ── */}
-      <View style={[styles.phaseBlock, { top: Math.round(24 * uiScale) }]}>
+      <View style={[styles.phaseBlock, { top: Math.round((24 + (seg.activityLabel !== undefined && !isPreStart ? 12 : 0)) * uiScale) }]}>
         {/* icon + label: anchored to bottom of top half */}
         <View style={styles.phaseTop}>
           <View style={[styles.iconBadge, {
@@ -444,7 +444,7 @@ export default function WorkoutScreen({
           )}
 
           {settings.showHeartRate && !isPreStart && (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: Math.round(8 * uiScale), marginBottom: -Math.round(8 * uiScale) }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: Math.round(8 * uiScale), marginBottom: seg.activityLabel !== undefined ? Math.round(4 * uiScale) : -Math.round(8 * uiScale) }}>
               <Animated.Text style={[styles.speedPillText, { fontSize: Math.round(24 * uiScale), color: ZONE_COLORS[hr?.zone ?? 0], transform: [{ scale: heartBeat }] }]}>♥</Animated.Text>
               <Text style={[styles.speedPillText, { fontSize: Math.round(24 * uiScale), color: ZONE_COLORS[hr?.zone ?? 0] }]}>
                 {hr ? `${hr.bpm} · Z${hr.zone}` : '--'}
