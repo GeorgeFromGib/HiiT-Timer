@@ -245,7 +245,7 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
                       <View style={styles.featureIcon}>{f.icon}</View>
                       <View style={styles.featureTextBlock}>
                         <Text style={styles.featureTitle}>{t(f.titleKey)}</Text>
-                        <Text style={styles.featureSub}>{t(f.subKey)}</Text>
+                        <Text style={styles.featureSub}><RichText text={t(f.subKey)} /></Text>
                       </View>
                     </View>
                   ))}
@@ -316,7 +316,7 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
                   </Svg>
                 </View>
                 <Text style={styles.optionTitle}>{t('settings.showHeartRateLabel')}</Text>
-                <Text style={styles.optionSub}>{t('onboarding.heartRateSub')}</Text>
+                <Text style={styles.optionSub}><RichText text={t('onboarding.heartRateSub')} /></Text>
                 <View style={styles.optionToggleRow}>
                   <YesNoChoice T={T} value={showHeartRate} onChange={setShowHeartRate} />
                 </View>
@@ -425,6 +425,19 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
         </View>
       </View>
     </Modal>
+  );
+}
+
+// Renders **bold** and __underline__ spans (nestable) inside a translated string.
+function RichText({ text }: { text: string }): React.JSX.Element {
+  return (
+    <>
+      {text.split(/(\*\*.+?\*\*|__.+?__)/).map((part, i) => {
+        if (part.startsWith('**')) return <Text key={i} style={{ fontFamily: 'Inter_800ExtraBold' }}>{part.slice(2, -2)}</Text>;
+        if (part.startsWith('__')) return <Text key={i} style={{ textDecorationLine: 'underline' }}><RichText text={part.slice(2, -2)} /></Text>;
+        return part;
+      })}
+    </>
   );
 }
 
