@@ -8,9 +8,10 @@ import { buildSessionFromDraft } from '../lib/sessionDraft';
 import { loadSessions, saveSessions, DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES } from '../lib/sessions';
 import { computeRoundsForTargetDuration, warmupCooldownForDuration } from '../lib/workout';
 import { useTranslation } from '../hooks/useTranslation';
+import { requestHeartRateAccess } from '../lib/heartRate';
 import SessionSetupChat from './SessionSetupChat';
 
-export const CURRENT_ONBOARDING_VERSION = 3;
+export const CURRENT_ONBOARDING_VERSION = 4;
 
 interface Props {
   visible: boolean;
@@ -26,6 +27,7 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
 
   const [showFolders, setShowFolders] = useState(!settings.hideFolders);
   const [voiceCues, setVoiceCues] = useState(settings.voiceCues);
+  const [showHeartRate, setShowHeartRate] = useState(settings.showHeartRate);
   const [name, setName] = useState(settings.name);
   const [createFirstSession, setCreateFirstSession] = useState(false);
   const [sessionDurationMinutes, setSessionDurationMinutes] = useState(15);
@@ -40,7 +42,7 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
   // already made those setup choices during their original onboarding, so they
   // just see what's-new and go straight to done.
   const isFreshInstall = !forceWhatsNew && settings.onboardingVersion === 0;
-  const STEPS = [...(isFreshInstall ? ['problem', 'solution', 'appearance', 'folders', 'voiceCues', 'name', 'sessionIntro', 'sessionSetup'] : ['whatsNew']), 'done'] as const;
+  const STEPS = [...(isFreshInstall ? ['problem', 'solution', 'appearance', 'folders', 'voiceCues', 'heartRate', 'name', 'sessionIntro', 'sessionSetup'] : ['whatsNew', 'heartRate']), 'done'] as const;
   const STEP_COUNT = STEPS.length;
   const lastStep = step === STEP_COUNT - 1;
   const currentStep = STEPS[step];
@@ -51,6 +53,7 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
     if (!visible) return;
     setShowFolders(!settings.hideFolders);
     setVoiceCues(settings.voiceCues);
+    setShowHeartRate(settings.showHeartRate);
     setName(settings.name);
     setSessionDurationMinutes(15);
     setSessionWork(20);
@@ -63,6 +66,8 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
   async function handleConfirm() {
     updateSettings('hideFolders', !showFolders);
     updateSettings('voiceCues', voiceCues);
+    updateSettings('showHeartRate', showHeartRate);
+    if (showHeartRate && !settings.showHeartRate) requestHeartRateAccess();
     updateSettings('name', name.trim());
     updateSettings('onboardingVersion', CURRENT_ONBOARDING_VERSION);
     if (createFirstSession) {
@@ -125,6 +130,15 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
   // What's-new features — shown only to upgraders now; fresh installs get the
   // problem/solution screens instead (see STEPS above).
   const FEATURES = [
+    {
+      titleKey: 'onboarding.feature10Title',
+      subKey: 'onboarding.feature10Sub',
+      icon: (
+        <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke={T.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+          <Path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
+        </Svg>
+      ),
+    },
     {
       titleKey: 'onboarding.feature7Title',
       subKey: 'onboarding.feature7Sub',
@@ -290,6 +304,21 @@ export default function OnboardingModal({ visible, onConfirm, forceWhatsNew }: P
                 <Text style={styles.optionSub}>{t('onboarding.voiceCuesSub')}</Text>
                 <View style={styles.optionToggleRow}>
                   <YesNoChoice T={T} value={voiceCues} onChange={setVoiceCues} />
+                </View>
+              </View>
+            )}
+
+            {currentStep === 'heartRate' && (
+              <View style={styles.optionBlock}>
+                <View style={styles.glyph}>
+                  <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={T.btnGlyph} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                    <Path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" />
+                  </Svg>
+                </View>
+                <Text style={styles.optionTitle}>{t('settings.showHeartRateLabel')}</Text>
+                <Text style={styles.optionSub}>{t('onboarding.heartRateSub')}</Text>
+                <View style={styles.optionToggleRow}>
+                  <YesNoChoice T={T} value={showHeartRate} onChange={setShowHeartRate} />
                 </View>
               </View>
             )}
