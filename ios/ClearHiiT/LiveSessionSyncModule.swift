@@ -5,7 +5,6 @@ import WatchConnectivity
 
 @objc(LiveSessionSync)
 class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
-  private static var didActivate = false
   private var hasListeners = false
   private var lastForwardedUpdatedAt: Date?
   // History records can arrive (queued transferUserInfo flush) before JS has
@@ -33,11 +32,13 @@ class LiveSessionSync: RCTEventEmitter, WCSessionDelegate {
     hasListeners = false
   }
 
+  // WCSession.delegate is weak and RN can recreate this module instance (bridge
+  // reload), so re-assign it on every call rather than once per process —
+  // otherwise the old instance dies and WCSession is left with a nil delegate.
   private func ensureActivated() {
-    guard WCSession.isSupported(), !LiveSessionSync.didActivate else { return }
-    LiveSessionSync.didActivate = true
+    guard WCSession.isSupported() else { return }
     WCSession.default.delegate = self
-    WCSession.default.activate()
+    if WCSession.default.activationState != .activated { WCSession.default.activate() }
   }
 
   // JS-callable catch-up for when the app resumes from background/lock.

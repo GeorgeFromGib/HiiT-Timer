@@ -1,11 +1,17 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
+// The unmount cleanup in useLiveSessionMirror calls clearLiveSession() right
+// after a terminate broadcast; the clear would overwrite the 'terminated'
+// context before the peer reads it, so it never leaves the peer's screen.
+let lastSentStatus: string | null = null;
+
 export function updateLiveSession(
   sessionId: string,
   name: string,
   elapsed: number,
   status: 'running' | 'paused' | 'finished' | 'terminated',
 ): void {
+  lastSentStatus = status;
   try {
     // Look up NativeModules.LiveSessionSync at call time, not via a
     // destructured module-scope binding — mirrors workoutSync.ts's rationale:
@@ -18,6 +24,8 @@ export function updateLiveSession(
 }
 
 export function clearLiveSession(): void {
+  if (lastSentStatus === 'terminated') return;
+  lastSentStatus = null;
   try {
     NativeModules.LiveSessionSync?.clearLiveSession();
   } catch (e) {
