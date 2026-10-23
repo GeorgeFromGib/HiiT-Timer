@@ -150,6 +150,8 @@ export const es: typeof en = {
     today: 'Hoy',
     yesterday: 'Ayer',
     stoppedEarly: 'Detenido antes',
+    deleteTitle: 'Eliminar entrenamiento',
+    deleteMessage: "¿Quitar este entrenamiento del historial?",
     felt: 'Se sintió: %{label}',
     noRating: 'Sin valoración',
     emptyTitle: 'Aún no hay entrenamientos',

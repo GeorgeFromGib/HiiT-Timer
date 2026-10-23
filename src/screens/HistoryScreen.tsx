@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Animated, { FadeOut, LinearTransition } from 'react-native-reanimated';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -7,7 +9,8 @@ import ScreenHeader from '../components/ScreenHeader';
 import { useTranslation } from '../hooks/useTranslation';
 import Heatmap from '../components/Heatmap';
 import { FeelIcon } from '../components/FeelingPicker';
-import { loadHistory, type HistoryEntry } from '../lib/history';
+import { appAlert } from '../lib/appAlert';
+import { loadHistory, removeEntry, type HistoryEntry } from '../lib/history';
 import { currentStreak, longestStreak, totals, completionRate, entriesInRange, localDayNumber, type StatsRange } from '../lib/historyStats';
 
 const MAX_LISTED = 100; // ponytail: plain list is fine at this size; virtualise (FlatList) if history grows large
@@ -35,6 +38,18 @@ export default function HistoryScreen({ onChooseSession }: { onChooseSession: ()
   const [range, setRange] = useState<StatsRange>('week');
 
   useEffect(() => { loadHistory().then(setEntries); }, []);
+
+  const remove = (id: string) => {
+    setEntries(es => es && es.filter(e => e.id !== id));
+    removeEntry(id);
+  };
+
+  const confirmRemove = (e: HistoryEntry) => e.completed
+    ? appAlert('warning', t('history.deleteTitle'), t('history.deleteMessage'), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.delete'), style: 'destructive', onPress: () => remove(e.id) },
+      ])
+    : remove(e.id);
 
   const sorted = useMemo(() => [...(entries ?? [])].sort((a, b) => b.startedAt - a.startedAt), [entries]);
 
@@ -127,7 +142,16 @@ export default function HistoryScreen({ onChooseSession }: { onChooseSession: ()
         <Text style={[styles.label, { marginTop: 20, marginBottom: 8, paddingLeft: 2 }]}>{t('history.recent')}</Text>
         <View style={[styles.card, { overflow: 'hidden' }]}>
           {listed.map((e, i) => (
-            <View key={e.id} style={[styles.row, i < listed.length - 1 && { borderBottomWidth: 1, borderBottomColor: T.hairline }]}>
+            <Animated.View key={e.id} exiting={FadeOut.duration(200)} layout={LinearTransition}>
+            <ReanimatedSwipeable
+              overshootRight={false}
+              renderRightActions={(_p, _d, swipeable) => (
+                <Pressable accessibilityRole="button" onPress={() => { swipeable.close(); confirmRemove(e); }} style={styles.deleteAction}>
+                  <Text style={styles.deleteText}>{t('common.delete')}</Text>
+                </Pressable>
+              )}
+            >
+            <View style={[styles.row, { backgroundColor: T.card }, i < listed.length - 1 && { borderBottomWidth: 1, borderBottomColor: T.hairline }]}>
               <View style={{ flex: 1, minWidth: 0 }}>
                 <Text numberOfLines={1} style={[styles.rowName, { color: e.completed ? T.text : T.subText }]}>{e.sessionName}</Text>
                 <Text style={styles.rowMeta}>
@@ -145,6 +169,8 @@ export default function HistoryScreen({ onChooseSession }: { onChooseSession: ()
                 )}
               </View>
             </View>
+            </ReanimatedSwipeable>
+            </Animated.View>
           ))}
         </View>
       </ScrollView>
@@ -175,6 +201,8 @@ function makeStyles(T: ThemeTokens) { return StyleSheet.create({
   rowName: { fontFamily: 'Inter_700Bold', fontSize: 14 },
   rowMeta: { fontFamily: 'Inter_600SemiBold', fontSize: 11.5, color: T.faintText, marginTop: 2 },
   rowTime: { fontFamily: 'ChakraPetch_700Bold', fontSize: 14 },
+  deleteAction: { backgroundColor: '#ff5a5f', justifyContent: 'center', alignItems: 'center', width: 80 },
+  deleteText: { fontFamily: 'Inter_800ExtraBold', fontSize: 12, color: '#fff' },
   rowIcon: { width: 18, alignItems: 'center' },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10, paddingBottom: 40 },
   emptyIcon: { width: 72, height: 72, borderRadius: 36, borderWidth: 1.5, borderStyle: 'dashed', borderColor: T.hairline, alignItems: 'center', justifyContent: 'center' },

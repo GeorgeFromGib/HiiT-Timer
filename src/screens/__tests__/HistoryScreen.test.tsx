@@ -3,6 +3,19 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import HistoryScreen from '../HistoryScreen';
 import { appendEntry, type HistoryEntry } from '../../lib/history';
 
+jest.mock('react-native-reanimated', () => {
+  const { View } = require('react-native');
+  const anim = { duration: () => anim };
+  return { __esModule: true, default: { View }, FadeOut: anim, LinearTransition: {} };
+});
+
+jest.mock('react-native-gesture-handler/ReanimatedSwipeable', () => {
+  const { View } = require('react-native');
+  return { __esModule: true, default: ({ children, renderRightActions }: any) => (
+    <View>{children}{renderRightActions?.(0, 0, { close: () => {} })}</View>
+  ) };
+});
+
 const entry = (id: string, over: Partial<HistoryEntry> = {}): HistoryEntry => ({
   id, startedAt: Date.now(), sessionId: 's', sessionName: `Run ${id}`, activityType: 'general',
   plannedSecs: 600, activeSecs: 600, rounds: 8, workSecs: 240, completed: true, source: 'phone', ...over,

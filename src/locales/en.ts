@@ -148,6 +148,8 @@ export const en = {
     today: 'Today',
     yesterday: 'Yesterday',
     stoppedEarly: 'Stopped early',
+    deleteTitle: 'Delete workout',
+    deleteMessage: "Remove this workout from your history?",
     felt: 'Felt %{label}',
     noRating: 'No rating',
     emptyTitle: 'No workouts yet',

@@ -64,6 +64,13 @@ export function setFeeling(id: string, feeling: Feeling | undefined): Promise<vo
   });
 }
 
+export function removeEntry(id: string): Promise<void> {
+  return serialized(async () => {
+    const entries = await loadHistory();
+    writeJsonFile(HISTORY_FILE, entries.filter(e => e.id !== id));
+  });
+}
+
 /** Returns null for abandoned runs too short to count. */
 export function buildHistoryEntry(args: {
   id:          string;

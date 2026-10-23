@@ -150,6 +150,8 @@ export const fr: typeof en = {
     today: "Aujourd'hui",
     yesterday: 'Hier',
     stoppedEarly: 'Arrêtée tôt',
+    deleteTitle: 'Supprimer la séance',
+    deleteMessage: "Retirer cette séance de l'historique ?",
     felt: 'Ressenti : %{label}',
     noRating: "Pas d'évaluation",
     emptyTitle: "Aucune séance pour l'instant",

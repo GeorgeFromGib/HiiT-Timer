@@ -150,6 +150,8 @@ export const de: typeof en = {
     today: 'Heute',
     yesterday: 'Gestern',
     stoppedEarly: 'Vorzeitig beendet',
+    deleteTitle: 'Training löschen',
+    deleteMessage: "Dieses Training aus dem Verlauf entfernen?",
     felt: 'Gefühlt: %{label}',
     noRating: 'Keine Bewertung',
     emptyTitle: 'Noch keine Einheiten',
