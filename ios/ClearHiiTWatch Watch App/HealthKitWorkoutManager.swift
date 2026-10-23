@@ -22,10 +22,19 @@ final class HealthKitWorkoutManager: NSObject, WorkoutSessionRecording, HKLiveWo
       return
     }
     let toShare: Set<HKSampleType> = [HKObjectType.workoutType()]
-    let toRead: Set<HKObjectType> = [heartRate, energy]
+    var toRead: Set<HKObjectType> = [heartRate, energy]
+    if let dob = HKObjectType.characteristicType(forIdentifier: .dateOfBirth) { toRead.insert(dob) }
     healthStore.requestAuthorization(toShare: toShare, read: toRead) { success, _ in
       DispatchQueue.main.async { completion(success) }
     }
+  }
+
+  /// Max HR from the user's HealthKit date of birth (same rule as the phone).
+  func maxHr() -> Double {
+    let years = (try? healthStore.dateOfBirthComponents()).flatMap {
+      Calendar.current.dateComponents([.year], from: $0.date ?? Date(), to: Date()).year
+    }
+    return maxHeartRate(age: years.flatMap { $0 > 0 ? $0 : nil })
   }
 
   func start(activityType: HKWorkoutActivityType) {

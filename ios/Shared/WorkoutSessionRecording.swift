@@ -17,6 +17,29 @@ func mergingLiveStats(_ current: WorkoutLiveStats, heartRate: Double?, activeEne
   return result
 }
 
+/// Mirrors src/lib/heartRate.ts: zone 1–5 by fraction of max HR, 0 below zone 1.
+func heartRateZone(bpm: Double, maxHr: Double) -> Int {
+  [0.5, 0.6, 0.7, 0.8, 0.9].filter { bpm / maxHr >= $0 }.count
+}
+
+/// Mirrors ZONE_COLORS in src/lib/heartRate.ts (index = zone).
+let heartRateZoneColors: [UInt32] = [0x8a9ba0, 0x46a6ff, 0x5fd38a, 0xf5c542, 0xff8a3d, 0xff5a5f]
+
+/// True when black text reads better than white on this 0xRRGGBB colour (WCAG contrast).
+func prefersDarkText(onHex hex: UInt32) -> Bool {
+  func lin(_ shift: UInt32) -> Double {
+    let c = Double((hex >> shift) & 0xff) / 255
+    return c <= 0.03928 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4)
+  }
+  let lum = 0.2126 * lin(16) + 0.7152 * lin(8) + 0.0722 * lin(0)
+  return (lum + 0.05) / 0.05 > 1.05 / (lum + 0.05)
+}
+
+/// 220 − age (190 when unknown), matching maxHrFromAge on the phone.
+func maxHeartRate(age: Int?) -> Double {
+  age.map { Double(220 - $0) } ?? 190
+}
+
 /// A finished (or abandoned) watch-owned run, sent to the phone so it lands in
 /// History (SB-27). Mirrors the phone's HistoryEntry (src/lib/history.ts) minus
 /// `source`, which the phone stamps as 'watch' on receipt. `startedAt` is epoch ms.

@@ -255,7 +255,7 @@ struct SessionRunView: View {
       .padding()
       .tag(RunningPage.controls)
 
-      VStack(spacing: 4) {
+      VStack(spacing: 0) {
         if state.status == .paused {
           Image(systemName: "pause.circle.fill")
             .font(.title3)
@@ -344,6 +344,20 @@ struct SessionRunView: View {
           }
         }
         .foregroundStyle(.secondary)
+
+        if let bpm = engineHolder.liveStats.heartRate {
+          let zone = heartRateZone(bpm: bpm, maxHr: engineHolder.maxHr)
+          if zone > 0 {
+            let hex = heartRateZoneColors[zone]
+            Text("\(watchString("zone", forLanguage: engineHolder.language)) \(zone)")
+              .font(.system(size: 14, weight: .bold, design: .rounded))
+              .foregroundStyle(prefersDarkText(onHex: hex) ? Color.black : Color.white)
+              .padding(.horizontal, 10)
+              .padding(.vertical, 2)
+              .background(Color(red: Double((hex >> 16) & 0xff) / 255, green: Double((hex >> 8) & 0xff) / 255, blue: Double(hex & 0xff) / 255))
+              .clipShape(RoundedRectangle(cornerRadius: 6))
+          }
+        }
 
         if session.mode == "circuit", let circuitNumber = segment?.circuitNumber {
           Text("\(watchString("circuit", forLanguage: engineHolder.language)) \(circuitNumber) / \(session.circuits ?? circuitNumber)")
@@ -503,6 +517,7 @@ private final class EngineHolder: ObservableObject {
   let segments: [Segment]
   @Published private(set) var currentSegment: Segment?
   @Published private(set) var liveStats = WorkoutLiveStats()
+  private(set) var maxHr = maxHeartRate(age: nil)
   let congratsMessage: String
   let phaseWord: [Phase: String]
   let language: String
@@ -533,7 +548,9 @@ private final class EngineHolder: ObservableObject {
       activityType: hkActivityType(for: session),
       engine: engine
     )
-    workoutSession.requestAuthorization { _ in }
+    workoutSession.requestAuthorization { [weak self] _ in
+      self?.maxHr = HealthKitWorkoutManager().maxHr()
+    }
     workoutSession.onStatsUpdate = { [weak self] stats in
       self?.liveStats = stats
       if let bpm = stats.heartRate { self?.connectivity.sendHeartRate(bpm) }

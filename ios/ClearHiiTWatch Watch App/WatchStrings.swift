@@ -19,6 +19,7 @@ private let watchStringsByLanguage: [String: [String: String]] = [
     "sessions": "Sessions",
     "noSessionsSynced": "No sessions synced yet",
     "noSessionsInFolder": "No sessions in this folder",
+    "zone": "ZONE",
   ],
   "es": [
     "start": "Empezar",
@@ -32,6 +33,7 @@ private let watchStringsByLanguage: [String: [String: String]] = [
     "sessions": "Sesiones",
     "noSessionsSynced": "Aún no hay sesiones sincronizadas",
     "noSessionsInFolder": "No hay sesiones en esta carpeta",
+    "zone": "ZONA",
   ],
   "fr": [
     "start": "Démarrer",
@@ -45,6 +47,7 @@ private let watchStringsByLanguage: [String: [String: String]] = [
     "sessions": "Séances",
     "noSessionsSynced": "Aucune séance synchronisée pour l'instant",
     "noSessionsInFolder": "Aucune séance dans ce dossier",
+    "zone": "ZONE",
   ],
   "de": [
     "start": "Starten",
@@ -58,6 +61,7 @@ private let watchStringsByLanguage: [String: [String: String]] = [
     "sessions": "Einheiten",
     "noSessionsSynced": "Noch keine Einheiten synchronisiert",
     "noSessionsInFolder": "Keine Einheiten in diesem Ordner",
+    "zone": "ZONE",
   ],
 ]
 
