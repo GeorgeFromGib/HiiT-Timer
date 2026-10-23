@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, type StyleProp, type TextStyle } from 'react-native';
 import { useTranslation } from '../hooks/useTranslation';
-import type { Session } from '../lib/sessions';
+import { sessionKind, type Session } from '../lib/sessions';
 import type { Segment } from '../lib/workout';
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
  */
 export default function CircuitSetCounter({ session, seg, nextSeg, style }: Props) {
   const { t } = useTranslation();
-  if (session.mode !== 'circuit' || session.activityType === 'tabata') return null;
+  if (session.mode !== 'circuit' || sessionKind(session) === 'tabata') return null;
 
   if (seg.circuitNumber !== undefined) {
     return <Text style={style}>{t('workout.circuit')} {seg.circuitNumber} / {session.circuits}</Text>;

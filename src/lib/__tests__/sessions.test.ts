@@ -1,4 +1,7 @@
 import {
+  sessionKind,
+  supportsCooldownTaper,
+  SESSION_KINDS,
   spinValueForPhase,
   speedForPhase,
   inclineForPhase,
@@ -616,5 +619,24 @@ describe('loadSessions legacy tabata migration', () => {
     const stored = JSON.parse(files.get('document/sessions_v2.json')!);
     expect(stored.sessions[0].activityType).toBe('tabata');
     expect(stored.sessions[0]).not.toHaveProperty('tabata');
+  });
+});
+
+describe('sessionKind', () => {
+  const base = { id: 'a', name: 'n', folderId: 'f' };
+  const config = { warmup: 0, high: 20, low: 10, rounds: 3, cooldown: 0 };
+  const circuit = { ...base, mode: 'circuit' as const, intervals: [], circuits: 1, warmup: 0, cooldown: 0, circuitRest: 0 };
+
+  it('maps mode + activityType to one kind', () => {
+    expect(sessionKind({ ...base, mode: 'easy', config })).toBe('general');
+    expect(sessionKind({ ...base, mode: 'easy', config, activityType: 'run' })).toBe('run');
+    expect(sessionKind({ ...base, mode: 'advanced', intervals: [], activityType: 'spinning' })).toBe('spinning');
+    expect(sessionKind(circuit)).toBe('circuit');
+    expect(sessionKind({ ...circuit, activityType: 'tabata' })).toBe('tabata');
+  });
+
+  it('only run and spinning support cooldown taper', () => {
+    expect(SESSION_KINDS.filter(supportsCooldownTaper)).toEqual(['run', 'spinning']);
+    expect(supportsCooldownTaper(undefined)).toBe(false);
   });
 });

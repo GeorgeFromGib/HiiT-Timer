@@ -2,14 +2,13 @@ import { useMemo, useState } from 'react';
 import { useDraft } from './useDraft';
 import { confirmIfDirty } from '../lib/appAlert';
 import {
-  type Session, type RunSpeeds, type RunInclines, type SpinValues,
+  type Session, type SessionKind, type RunSpeeds, type RunInclines, type SpinValues, supportsCooldownTaper,
   DEFAULT_RUN_SPEEDS, DEFAULT_RUN_INCLINES, DEFAULT_SPIN_VALUES,
 } from '../lib/sessions';
 import {
   type PresetLevel, SPEED_PRESETS, INCLINE_PRESETS, SPIN_PRESETS,
   findMatchingSpeedPreset, findMatchingInclinePreset, findMatchingSpinPreset,
 } from '../lib/presets';
-import { type CommitResult } from './usePickerState';
 
 export interface SpeedAndSpinEdit {
   runSpeeds:          RunSpeeds;
@@ -21,8 +20,6 @@ export interface SpeedAndSpinEdit {
   activeInclinePreset: PresetLevel | null;
   activeSpinPreset:   PresetLevel | null;
   hasChanges:         boolean;
-  // Handles the CommitResult variants this mode owns; returns false for any other variant.
-  commit:             (result: CommitResult) => boolean;
   setRunSpeed:        (field: keyof RunSpeeds, value: number) => void;
   setRunIncline:      (field: keyof RunInclines, value: number) => void;
   setInclineEnabled:  (enabled: boolean) => void;
@@ -39,7 +36,7 @@ const NEW_PRESET_LEVEL: PresetLevel = '1';
 
 export function useSpeedAndSpinEdit(
   existing: Session | undefined,
-  newActivityType?: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata',
+  newActivityType?: SessionKind,
 ): SpeedAndSpinEdit {
   const initRunSpeeds = existing && existing.mode !== 'circuit'
     ? (existing.runSpeeds ?? DEFAULT_RUN_SPEEDS) : SPEED_PRESETS[NEW_PRESET_LEVEL];
@@ -50,9 +47,9 @@ export function useSpeedAndSpinEdit(
   // New treadmill (run) and spinning sessions default the cooldown taper ON;
   // existing sessions keep whatever they were saved with.
   const initCooldownTaper = existing && existing.mode !== 'circuit'
-    && (existing.activityType === 'run' || existing.activityType === 'spinning')
+    && supportsCooldownTaper(existing.activityType)
     ? (existing.cooldownTaper ?? false)
-    : (!existing && (newActivityType === 'run' || newActivityType === 'spinning'));
+    : (!existing && supportsCooldownTaper(newActivityType));
   const initSpinValues = existing && existing.mode !== 'circuit' && existing.activityType === 'spinning'
     ? (existing.spinValues ?? DEFAULT_SPIN_VALUES) : SPIN_PRESETS[NEW_PRESET_LEVEL];
 
@@ -111,16 +108,6 @@ export function useSpeedAndSpinEdit(
     setActiveSpinPreset(null);
   }
 
-  function commit(result: CommitResult): boolean {
-    switch (result.type) {
-      case 'speed':          setRunSpeed(result.field, result.kmh); return true;
-      case 'spinResistance':
-      case 'spinPower':      setSpinValue(result.field, result.value); return true;
-      case 'incline':        setRunIncline(result.field, result.value); return true;
-      default: return false;
-    }
-  }
-
   function applySpeedPreset(level: PresetLevel) {
     confirmIfDirty(speedsDirty, 'alerts.overwriteSpeedMessage', () => {
       setRunSpeeds(SPEED_PRESETS[level]);
@@ -147,7 +134,7 @@ export function useSpeedAndSpinEdit(
 
   return {
     runSpeeds, runInclines, inclineEnabled, cooldownTaper, spinValues,
-    activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges, commit,
+    activeSpeedPreset, activeInclinePreset, activeSpinPreset, hasChanges,
     setRunSpeed, setRunIncline, setInclineEnabled, setCooldownTaper, setSpinValue,
     applySpeedPreset, applyInclinePreset, applySpinPreset,
   };

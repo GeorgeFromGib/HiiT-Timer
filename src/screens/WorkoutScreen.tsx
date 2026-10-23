@@ -34,12 +34,11 @@ import CircuitSetCounter from '../components/CircuitSetCounter';
 import SessionCompleteScreen from './SessionCompleteScreen';
 import WorkoutScreenLandscape from './WorkoutScreenLandscape';
 import { checkAndRequestReview } from '../lib/reviewState';
-import { updateLiveSession, ownsRun, type LiveSessionState } from '../lib/liveSessionSync';
+import { updateLiveSession, type LiveSessionState } from '../lib/liveSessionSync';
 import { useHeartRate } from '../hooks/useHeartRate';
 import { ZONE_COLORS } from '../lib/heartRate';
 import { useLiveSessionMirror } from '../hooks/useLiveSessionMirror';
-import { appendEntry, buildHistoryEntry, newId } from '../lib/history';
-import { summarizeRun } from '../lib/sessionStats';
+import { useRunLogging } from '../hooks/useRunLogging';
 
 export default function WorkoutScreen({
   session, onBack, initialResumeElapsed, initialStatus, incomingLiveSession, onLiveSessionDismiss,
@@ -110,21 +109,9 @@ export default function WorkoutScreen({
     flashTimerRef.current = setTimeout(() => setFlashing(false), 250);
   }, false, initialResume);
 
-  // Logging: only the device that started the run records it — a mirror of the peer's
-  // run leaves that to the starter (the watch sends its own record to the phone).
-  const [historyEntryId, setHistoryEntryId] = useState<string>();
-  const ownsRunRef = useRef(ownsRun(session.id, initialResumeElapsed, incomingLiveSession, Date.now()));
-
-  useEffect(() => {
-    if (status !== 'finished') { setHistoryEntryId(undefined); return; }
-    if (!ownsRunRef.current) return;
-    const summary = summarizeRun(segments, TOTAL_DUR, stats);
-    const id = newId();
-    const entry = buildHistoryEntry({ id, session, plannedSecs: TOTAL_DUR, summary, activeSecs: summary.totalSecs, completed: true });
-    if (!entry) return;
-    setHistoryEntryId(id);
-    appendEntry(entry);
-  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps -- log once per finish, not on every stats/segments change
+  const { historyEntryId, logAbandoned } = useRunLogging({
+    session, segments, totalDur: TOTAL_DUR, stats, elapsed, status, initialResumeElapsed, incomingLiveSession,
+  });
 
   const hr = useHeartRate(settings.showHeartRate && (status === 'running' || status === 'paused'));
   // Heart icon beats while the watch is feeding data.
@@ -169,11 +156,7 @@ export default function WorkoutScreen({
           {
             text: t('alerts.terminate'),
             onPress: () => {
-              const entry = !ownsRunRef.current ? null : buildHistoryEntry({
-                id: newId(), session, plannedSecs: TOTAL_DUR, activeSecs: elapsed, completed: false,
-                summary: summarizeRun(segments, TOTAL_DUR, stats),
-              });
-              if (entry) appendEntry(entry);
+              logAbandoned();
               // One-shot terminal broadcast so the peer (which may have
               // auto-launched this same session) ends it too, instead of
               // ticking away a workout that no longer exists on this device.
@@ -188,7 +171,7 @@ export default function WorkoutScreen({
     } else {
       onBack();
     }
-  }, [status, onBack, t, onLiveSessionDismiss, session, elapsed, segments, TOTAL_DUR, stats]);
+  }, [status, onBack, t, onLiveSessionDismiss, session, elapsed, logAbandoned]);
 
   const progressAnim = useRef(new Animated.Value(1)).current;
   const [flashing, setFlashing] = useState(false);

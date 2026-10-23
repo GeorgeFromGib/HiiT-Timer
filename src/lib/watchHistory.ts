@@ -1,14 +1,13 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 import type { HistoryEntry } from './history';
-
-const ACTIVITY_TYPES = ['general', 'run', 'circuit', 'spinning', 'tabata'] as const;
+import { SESSION_KINDS } from './sessions';
 
 /** Validates a record sent by the watch (WatchHistoryRecord.userInfo in
  * ios/Shared/WorkoutSessionRecording.swift) and stamps it source 'watch'. */
 export function parseWatchHistoryEntry(event: unknown): HistoryEntry | null {
   if (typeof event !== 'object' || event === null) return null;
   const e = event as Record<string, unknown>;
-  const activityType = ACTIVITY_TYPES.find(a => a === e.activityType);
+  const activityType = SESSION_KINDS.find(a => a === e.activityType);
   if (
     typeof e.id !== 'string' || typeof e.startedAt !== 'number' ||
     typeof e.sessionId !== 'string' || typeof e.sessionName !== 'string' || !activityType ||

@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { i18n } from '../lib/i18n';
 import { appAlert, confirmIfDirty, warnIfShortDuration } from '../lib/appAlert';
 import {
-  getSessionSegments, speedForPhase, spinValueForPhase, inclineForPhase,
+  getSessionSegments,
   type Session, type RunSpeeds, type RunInclines, type SpinValues,
 } from '../lib/sessions';
 import { buildSessionFromDraft, validateDraft } from '../lib/sessionDraft';
@@ -12,13 +12,13 @@ import {
   totalDuration, computeRoundsForTargetDuration,
   type Interval, type Phase, type Segment,
 } from '../lib/workout';
-import { toDisplay } from '../lib/speedUnit';
 
 import { type LocalInterval, toLocal, type TimeField, type SavePayload } from './editSessionTypes';
 import { useEasyModeEdit } from './useEasyModeEdit';
 import { useCircuitModeEdit } from './useCircuitModeEdit';
 import { useIntervalListEdit } from './useIntervalListEdit';
 import { useSpeedAndSpinEdit } from './useSpeedAndSpinEdit';
+import { editPickers } from './editPickers';
 import { usePickerState, MIN_TARGET_DURATION_MINUTES, MAX_TARGET_DURATION_MINUTES, type EditSessionPicker, type PickerValues } from './usePickerState';
 
 // Re-export shared types — EditSessionScreen imports these from here
@@ -177,39 +177,33 @@ export function useEditSession(
     easyEdit.setRounds(computeRoundsForTargetDuration(newWarmup, newWork, newRest, newCooldown, currentTotal));
   }
 
-  const pickerState = usePickerState(
-    intervalEdit.intervals,
-    easyEdit.fieldValues,
-    {
-      warmup:   circuitEdit.circuitWarmup,
-      cooldown: circuitEdit.circuitCooldown,
-      rest:     circuitEdit.circuitRest,
-      count:    circuitEdit.circuitCount,
-    },
-    (result) => {
-      // 'rounds'/'field'/'targetDuration' stay here: they read/write coordinator-level
-      // state (lengthIsSet, targetLengthMinutes, easyDirty) that no single mode hook owns.
-      if (result.type === 'rounds') {
-        if (lengthIsSet && result.value !== easyEdit.rounds) {
-          appAlert('warning', i18n.t('alerts.roundsChangeLengthTitle'), i18n.t('alerts.roundsChangeLengthMessage'));
-          setLengthIsSet(false);
-        }
-        easyEdit.setRounds(result.value);
-        setEasyDirty(true);
-        setTargetLengthMinutes(nearestTargetMinutes(result.value));
-      } else if (result.type === 'field') {
-        easyEdit.setField(result.field, result.secs);
-        setEasyDirty(true);
-        recalcRoundsForFieldChange(result.field, result.secs);
-        if (result.field === 'warmup' || result.field === 'cooldown') warnIfShortDuration(result.secs);
-      } else if (result.type === 'targetDuration') {
-        applyTimePresetMinutes(result.minutes);
-      } else {
-        // Every other variant belongs to exactly one mode hook, which knows how to apply it.
-        circuitEdit.commit(result) || speedSpinEdit.commit(result) || intervalEdit.commit(result);
+  const pickerState = usePickerState();
+  const pickers = editPickers({
+    intervals: intervalEdit.intervals,
+    fieldValues: easyEdit.fieldValues,
+    circuit: circuitEdit,
+    speedSpin: speedSpinEdit,
+    intervalEdit,
+    // 'rounds'/'field'/'targetDuration' stay here: they read/write coordinator-level
+    // state (lengthIsSet, targetLengthMinutes, easyDirty) that no single mode hook owns.
+    onRounds: (rounds) => {
+      if (lengthIsSet && rounds !== easyEdit.rounds) {
+        appAlert('warning', i18n.t('alerts.roundsChangeLengthTitle'), i18n.t('alerts.roundsChangeLengthMessage'));
+        setLengthIsSet(false);
       }
+      easyEdit.setRounds(rounds);
+      setEasyDirty(true);
+      setTargetLengthMinutes(nearestTargetMinutes(rounds));
     },
-  );
+    onField: (field, secs) => {
+      easyEdit.setField(field, secs);
+      setEasyDirty(true);
+      recalcRoundsForFieldChange(field, secs);
+      if (field === 'warmup' || field === 'cooldown') warnIfShortDuration(secs);
+    },
+    onTargetDuration: applyTimePresetMinutes,
+  });
+  const { openPicker } = pickerState;
 
   function setRunSpeed(field: keyof RunSpeeds, value: number) {
     speedSpinEdit.setRunSpeed(field, value);
@@ -314,36 +308,7 @@ export function useEditSession(
   }
 
   function openCustomLengthPicker() {
-    pickerState.openTargetDurationPicker(targetLengthMinutes);
-  }
-
-  function openIntervalSpeedPicker(key: string, isMiles: boolean) {
-    const iv = intervalEdit.intervals.find(i => i._key === key);
-    if (!iv) return;
-    const kmh = iv.speed ?? speedForPhase(iv.type, speedSpinEdit.runSpeeds);
-    const displayVal = toDisplay(kmh, isMiles ? 'miles' : 'km');
-    pickerState.openIntervalSpeedPicker(key, displayVal, isMiles);
-  }
-
-  function openIntervalResistancePicker(key: string) {
-    const iv = intervalEdit.intervals.find(i => i._key === key);
-    if (!iv) return;
-    const current = iv.resistance ?? spinValueForPhase(iv.type, speedSpinEdit.spinValues).resistance;
-    pickerState.openIntervalResistancePicker(key, current);
-  }
-
-  function openIntervalPowerPicker(key: string) {
-    const iv = intervalEdit.intervals.find(i => i._key === key);
-    if (!iv) return;
-    const current = iv.power ?? spinValueForPhase(iv.type, speedSpinEdit.spinValues).power;
-    pickerState.openIntervalPowerPicker(key, current);
-  }
-
-  function openIntervalInclinePicker(key: string) {
-    const iv = intervalEdit.intervals.find(i => i._key === key);
-    if (!iv) return;
-    const current = iv.incline ?? inclineForPhase(iv.type, speedSpinEdit.runInclines);
-    pickerState.openIntervalInclinePicker(key, current);
+    openPicker(pickers.targetDuration(targetLengthMinutes));
   }
 
   function buildSavePayload(): SavePayload {
@@ -425,7 +390,7 @@ export function useEditSession(
     removeInterval,
     clearIntervals:   intervalEdit.clearIntervals,
     reorderIntervals: intervalEdit.reorderIntervals,
-    openFieldPicker:  pickerState.openFieldPicker,
+    openFieldPicker:  (field) => openPicker(pickers.field(field)),
     setFieldEnabled:  (field: TimeField, enabled: boolean) => {
       if (field === 'warmup' || field === 'cooldown') {
         const newSecs = easyEdit.setFieldEnabled(field, enabled);
@@ -436,10 +401,10 @@ export function useEditSession(
       }
       setEasyDirty(true);
     },
-    openRoundsPicker: () => pickerState.openRoundsPicker(easyEdit.rounds),
-    openIntervalPicker: pickerState.openIntervalPicker,
-    openSpeedPicker:    pickerState.openSpeedPicker,
-    openIntervalSpeedPicker,
+    openRoundsPicker: () => openPicker(pickers.rounds(easyEdit.rounds)),
+    openIntervalPicker: (key) => openPicker(pickers.interval(key)),
+    openSpeedPicker:    (field, displayValue, isMiles) => openPicker(pickers.speed(field, displayValue, isMiles)),
+    openIntervalSpeedPicker: (key, isMiles) => openPicker(pickers.intervalSpeed(key, isMiles)),
     clearIntervalSpeed: intervalEdit.clearIntervalSpeed,
     commitPicker:    pickerState.commitPicker,
     dismissPicker:   pickerState.dismissPicker,
@@ -449,20 +414,20 @@ export function useEditSession(
     applyInclinePreset: speedSpinEdit.applyInclinePreset,
     applySpinPreset:  speedSpinEdit.applySpinPreset,
     setActivityLabel: intervalEdit.setActivityLabel,
-    openCircuitWarmupPicker:   pickerState.openCircuitWarmupPicker,
-    openCircuitCooldownPicker: pickerState.openCircuitCooldownPicker,
-    openCircuitRestPicker:     pickerState.openCircuitRestPicker,
-    openCircuitsPicker:        pickerState.openCircuitCountPicker,
-    openTabataWarmupPicker:    pickerState.openTabataWarmupPicker,
-    openTabataCooldownPicker:  pickerState.openTabataCooldownPicker,
-    openSpinResistancePicker:    (field) => pickerState.openSpinResistancePicker(field, speedSpinEdit.spinValues[field]),
-    openSpinPowerPicker:         (field) => pickerState.openSpinPowerPicker(field, speedSpinEdit.spinValues[field]),
-    openIntervalResistancePicker,
-    openIntervalPowerPicker,
+    openCircuitWarmupPicker:   () => openPicker(pickers.circuitWarmup()),
+    openCircuitCooldownPicker: () => openPicker(pickers.circuitCooldown()),
+    openCircuitRestPicker:     () => openPicker(pickers.circuitRest()),
+    openCircuitsPicker:        () => openPicker(pickers.circuitCount()),
+    openTabataWarmupPicker:    () => openPicker(pickers.tabataWarmup()),
+    openTabataCooldownPicker:  () => openPicker(pickers.tabataCooldown()),
+    openSpinResistancePicker:    (field) => openPicker(pickers.spinResistance(field)),
+    openSpinPowerPicker:         (field) => openPicker(pickers.spinPower(field)),
+    openIntervalResistancePicker: (key) => openPicker(pickers.intervalResistance(key)),
+    openIntervalPowerPicker:     (key) => openPicker(pickers.intervalPower(key)),
     clearIntervalResistance: intervalEdit.clearIntervalResistance,
     clearIntervalPower:      intervalEdit.clearIntervalPower,
-    openInclinePicker:         (field) => pickerState.openInclinePicker(field, speedSpinEdit.runInclines[field]),
-    openIntervalInclinePicker,
+    openInclinePicker:         (field) => openPicker(pickers.incline(field)),
+    openIntervalInclinePicker: (key) => openPicker(pickers.intervalIncline(key)),
     clearIntervalIncline:      intervalEdit.clearIntervalIncline,
     toggleIntervalCooldownTaper: intervalEdit.toggleIntervalCooldownTaper,
     setInclineEnabled:         speedSpinEdit.setInclineEnabled,

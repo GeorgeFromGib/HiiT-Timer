@@ -55,7 +55,7 @@ final class WatchHistoryRecordTests: XCTestCase {
     {"id":"t1","name":"Tabata","folderId":"f","mode":"circuit","circuits":8,"warmup":300,"cooldown":300,"circuitRest":0,"activityType":"tabata","intervals":[]}
     """#
     let dto = try JSONDecoder().decode(SessionDTO.self, from: Data(json.utf8))
-    XCTAssertTrue(dto.isTabata)
+    XCTAssertEqual(dto.kind, .tabata)
     XCTAssertTrue(dto.isRunnableInV1)
   }
 

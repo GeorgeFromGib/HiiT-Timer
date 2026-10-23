@@ -94,25 +94,27 @@ struct SessionDTO: Codable, Hashable {
   var spinValues: SpinValuesDTO? = nil
   var cooldownTaper: Bool? = nil
 
-  /// Standard (no activityType), Treadmill (activityType == "run"), and
-  /// Spinning (activityType == "spinning") sessions run in easy or advanced
-  /// mode; Circuit sessions run via their own circuits/warmup/cooldown/circuitRest
-  /// fields. Walk still syncs to Core Data but isn't runnable on the watch yet.
-  var isRunnableInV1: Bool {
-    mode == "circuit" || ((mode == "easy" || mode == "advanced") && (activityType == nil || activityType == "run" || activityType == "spinning"))
+  /// Mirrors SessionKind in src/lib/sessions.ts. Standard (no activityType), Treadmill
+  /// ("run") and Spinning run in easy or advanced mode; Circuit and Tabata run via
+  /// their own circuits/warmup/cooldown/circuitRest fields. Anything else (e.g. Walk)
+  /// still syncs to Core Data but is `.unsupported`, so the watch filters it out.
+  var kind: SessionKind {
+    switch (mode, activityType) {
+    case ("circuit", "tabata"): return .tabata
+    case ("circuit", _): return .circuit
+    case ("easy", nil), ("advanced", nil): return .general
+    case ("easy", "run"), ("advanced", "run"): return .run
+    case ("easy", "spinning"), ("advanced", "spinning"): return .spinning
+    default: return .unsupported
+    }
   }
 
-  var isTreadmill: Bool {
-    activityType == "run"
-  }
+  var isRunnableInV1: Bool { kind != .unsupported }
+}
 
-  var isTabata: Bool {
-    mode == "circuit" && activityType == "tabata"
-  }
-
-  var isSpinning: Bool {
-    activityType == "spinning"
-  }
+/// Raw values match HistoryEntry.activityType on the phone (SessionKind in sessions.ts).
+enum SessionKind: String {
+  case general, run, circuit, spinning, tabata, unsupported
 }
 
 extension SessionDTO: Identifiable {}

@@ -267,7 +267,7 @@ struct SessionRunView: View {
           .foregroundStyle(segment.flatMap { phaseColor[$0.phase] } ?? .primary)
           .multilineTextAlignment(.center)
 
-        if session.isTreadmill, let speed = segment?.speed {
+        if session.kind == .run, let speed = segment?.speed {
           Text(fmtTimer(state.remainingInSegment))
             .font(.system(size: 50, weight: .bold, design: .rounded))
             .monospacedDigit()
@@ -296,7 +296,7 @@ struct SessionRunView: View {
                 .foregroundStyle(.secondary)
             }
           }
-        } else if session.isSpinning, let resistance = segment?.resistance, let power = segment?.power {
+        } else if session.kind == .spinning, let resistance = segment?.resistance, let power = segment?.power {
           Text(fmtTimer(state.remainingInSegment))
             .font(.system(size: 50, weight: .bold, design: .rounded))
             .monospacedDigit()

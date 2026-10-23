@@ -1,6 +1,6 @@
 import { readJsonFile, writeJsonFile } from './jsonFile';
-import { newId } from './sessions';
-import type { Session } from './sessions';
+import { newId, sessionKind } from './sessions';
+import type { Session, SessionKind } from './sessions';
 import type { RunSummary } from './sessionStats';
 
 // A HistoryEntry is one completed/abandoned run of a Session (template). Name and
@@ -12,7 +12,7 @@ export interface HistoryEntry {
   startedAt:    number;   // epoch ms
   sessionId:    string;
   sessionName:  string;
-  activityType: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata';
+  activityType: SessionKind;
   plannedSecs:  number;
   activeSecs:   number;
   rounds:       number;   // interval count, same figure as the complete screen's "Intervals"
@@ -64,11 +64,6 @@ export function setFeeling(id: string, feeling: Feeling | undefined): Promise<vo
   });
 }
 
-function activityTypeOf(session: Session): HistoryEntry['activityType'] {
-  if (session.mode === 'circuit') return session.activityType ?? 'circuit';
-  return session.activityType ?? 'general';
-}
-
 /** Returns null for abandoned runs too short to count. */
 export function buildHistoryEntry(args: {
   id:          string;
@@ -86,7 +81,7 @@ export function buildHistoryEntry(args: {
     startedAt:    now - Math.round(activeSecs * 1000),
     sessionId:    session.id,
     sessionName:  session.name,
-    activityType: activityTypeOf(session),
+    activityType: sessionKind(session),
     plannedSecs,
     activeSecs:   Math.round(activeSecs),
     rounds:       summary.intervals,

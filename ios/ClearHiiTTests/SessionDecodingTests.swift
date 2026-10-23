@@ -41,7 +41,7 @@ final class SessionDecodingTests: XCTestCase {
     XCTAssertTrue(spinning.isRunnableInV1)
   }
 
-  func test_isTreadmill_trueOnlyForRunActivityType() {
+  func test_kind_runOnlyForRunActivityType() {
     let standard = SessionDTO(id: "1", name: "S", folderId: "f", activityType: nil,
                                runSpeeds: nil, runInclines: nil, inclineEnabled: nil,
                                mode: "easy", config: WorkoutConfig(warmup: 0, high: 20, low: 10, rounds: 3, cooldown: 0),
@@ -56,12 +56,12 @@ final class SessionDecodingTests: XCTestCase {
                            runInclines: nil, inclineEnabled: nil,
                            mode: "easy", config: WorkoutConfig(warmup: 0, high: 20, low: 10, rounds: 3, cooldown: 0),
                            intervals: nil)
-    XCTAssertFalse(standard.isTreadmill)
-    XCTAssertTrue(treadmill.isTreadmill)
-    XCTAssertFalse(walk.isTreadmill)
+    XCTAssertNotEqual(standard.kind, .run)
+    XCTAssertEqual(treadmill.kind, .run)
+    XCTAssertNotEqual(walk.kind, .run)
   }
 
-  func test_isSpinning_trueOnlyForSpinningActivityType() {
+  func test_kind_spinningOnlyForSpinningActivityType() {
     let standard = SessionDTO(id: "1", name: "S", folderId: "f", activityType: nil,
                                runSpeeds: nil, runInclines: nil, inclineEnabled: nil,
                                mode: "easy", config: WorkoutConfig(warmup: 0, high: 20, low: 10, rounds: 3, cooldown: 0),
@@ -75,9 +75,9 @@ final class SessionDecodingTests: XCTestCase {
                            runInclines: nil, inclineEnabled: nil,
                            mode: "easy", config: WorkoutConfig(warmup: 0, high: 20, low: 10, rounds: 3, cooldown: 0),
                            intervals: nil)
-    XCTAssertFalse(standard.isSpinning)
-    XCTAssertTrue(spinning.isSpinning)
-    XCTAssertFalse(walk.isSpinning)
+    XCTAssertNotEqual(standard.kind, .spinning)
+    XCTAssertEqual(spinning.kind, .spinning)
+    XCTAssertNotEqual(walk.kind, .spinning)
   }
 
   func test_segmentsForSession_standardHasNoSpeed() {
@@ -215,5 +215,27 @@ final class SessionDecodingTests: XCTestCase {
     let result = dedupeFoldersById(folders)
     XCTAssertEqual(result.map(\.id), ["f1", "f2"])
     XCTAssertEqual(result[0].name, "Cardio")
+  }
+}
+
+final class SessionKindTests: XCTestCase {
+  private func dto(mode: String, activityType: String?) -> SessionDTO {
+    SessionDTO(id: "1", name: "S", folderId: "f", activityType: activityType,
+               runSpeeds: nil, runInclines: nil, inclineEnabled: nil,
+               mode: mode, config: nil, intervals: nil)
+  }
+
+  func test_kind_mapsModeAndActivityType() {
+    XCTAssertEqual(dto(mode: "easy", activityType: nil).kind, .general)
+    XCTAssertEqual(dto(mode: "advanced", activityType: "run").kind, .run)
+    XCTAssertEqual(dto(mode: "easy", activityType: "spinning").kind, .spinning)
+    XCTAssertEqual(dto(mode: "circuit", activityType: nil).kind, .circuit)
+    XCTAssertEqual(dto(mode: "circuit", activityType: "tabata").kind, .tabata)
+  }
+
+  func test_kind_unknownActivityTypeIsUnsupportedAndNotRunnable() {
+    let walk = dto(mode: "easy", activityType: "walk")
+    XCTAssertEqual(walk.kind, .unsupported)
+    XCTAssertFalse(walk.isRunnableInV1)
   }
 }

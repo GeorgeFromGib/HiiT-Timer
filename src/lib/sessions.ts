@@ -87,6 +87,21 @@ export type Session =
   // icon, history and the watch's SessionDTO read it.
   | { id: string; name: string; folderId: string; mode: 'circuit'; intervals: Interval[]; circuits: number; warmup: number; cooldown: number; circuitRest: number; activityType?: 'tabata' };
 
+// The one place that answers "what kind of session is this". Mirrors SessionKind in
+// ios/Shared/WorkoutModels.swift; the same strings are stored in HistoryEntry.activityType.
+export const SESSION_KINDS = ['general', 'run', 'circuit', 'spinning', 'tabata'] as const;
+export type SessionKind = typeof SESSION_KINDS[number];
+
+export function sessionKind(session: Session): SessionKind {
+  if (session.mode === 'circuit') return session.activityType ?? 'circuit';
+  return session.activityType ?? 'general';
+}
+
+/** Run and spinning cooldowns can auto-taper; every other kind has a flat cooldown. */
+export function supportsCooldownTaper(kind: SessionKind | undefined): boolean {
+  return kind === 'run' || kind === 'spinning';
+}
+
 export function speedForPhase(phase: Phase, speeds: RunSpeeds): number {
   return expandPhaseMap(speeds.warmupSpeed, speeds.workSpeed, speeds.restSpeed, speeds.cooldownSpeed)[phase];
 }

@@ -3,7 +3,6 @@ import { useDraft } from './useDraft';
 import { tryConvertToEasy, buildIntervalsFromEasy, buildTabataIntervals, type Interval, type Phase } from '../lib/workout';
 import { type Session } from '../lib/sessions';
 import { type LocalInterval, toLocal } from './editSessionTypes';
-import { type CommitResult } from './usePickerState';
 
 type EasyConfig = { warmup: number; high: number; low: number; rounds: number; cooldown: number };
 
@@ -13,8 +12,6 @@ export interface IntervalListEdit {
   // True when the interval list has diverged from the last buildFromEasy() call —
   // signals the coordinator to warn before a new preset overwrites it.
   isTimingDirty:           boolean;
-  // Handles the CommitResult variants this mode owns; returns false for any other variant.
-  commit:                  (result: CommitResult) => boolean;
   cyclePhase:              (key: string, phases: Phase[]) => void;
   addInterval:             (type: Phase) => void;
   duplicateInterval:       (key: string) => void;
@@ -152,17 +149,6 @@ export function useIntervalListEdit(
     setIntervals(ivs => ivs.map(iv => iv._key === key ? { ...iv, power: undefined } : iv));
   }
 
-  function commit(result: CommitResult): boolean {
-    switch (result.type) {
-      case 'intervalSpeed':      setIntervalSpeed(result.key, result.kmh); return true;
-      case 'intervalResistance': setIntervalResistance(result.key, result.value); return true;
-      case 'intervalPower':      setIntervalPower(result.key, result.value); return true;
-      case 'intervalIncline':    setIntervalIncline(result.key, result.value); return true;
-      case 'interval':           setIntervalDuration(result.key, result.secs); return true;
-      default: return false;
-    }
-  }
-
   function buildFromEasy(config: EasyConfig, cooldownTaper = false) {
     const built = buildIntervalsFromEasy(config).map(iv =>
       iv.type === 'cooldown' && cooldownTaper ? { ...iv, cooldownTaper: true } : iv,
@@ -172,7 +158,7 @@ export function useIntervalListEdit(
   }
 
   return {
-    intervals, hasChanges, isTimingDirty, commit,
+    intervals, hasChanges, isTimingDirty,
     cyclePhase, addInterval, duplicateInterval, removeInterval, clearIntervals, reorderIntervals,
     setActivityLabel,
     setIntervalDuration, setIntervalSpeed, clearIntervalSpeed,

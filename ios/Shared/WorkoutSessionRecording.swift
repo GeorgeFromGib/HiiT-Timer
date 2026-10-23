@@ -76,7 +76,7 @@ func makeWatchHistoryRecord(
     startedAt: ((now.timeIntervalSince1970 - elapsed) * 1000).rounded(),
     sessionId: session.id,
     sessionName: session.name,
-    activityType: session.isTabata ? "tabata" : (session.mode == "circuit" ? "circuit" : (session.activityType ?? "general")),
+    activityType: session.kind == .unsupported ? "general" : session.kind.rawValue,
     plannedSecs: segments.last?.endAt ?? 0,
     activeSecs: elapsed.rounded(),
     rounds: segments.filter { $0.startAt < elapsed }.count,
@@ -95,7 +95,7 @@ protocol WorkoutSessionRecording: AnyObject {
 }
 
 func hkActivityType(for session: SessionDTO) -> HKWorkoutActivityType {
-  session.isTreadmill ? .running : .highIntensityIntervalTraining
+  session.kind == .run ? .running : .highIntensityIntervalTraining
 }
 
 /// Mirrors WorkoutTimerEngine's status onto a WorkoutSessionRecording exactly

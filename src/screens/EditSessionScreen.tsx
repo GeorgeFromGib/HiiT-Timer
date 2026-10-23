@@ -14,7 +14,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 import { NestableScrollContainer, NestableDraggableFlatList, type RenderItemParams } from 'react-native-draggable-flatlist';
-import { loadSessions, saveSessions, type Session, type RunSpeeds, type RunInclines, type SpinValues, speedForPhase, spinValueForPhase, inclineForPhase } from '../lib/sessions';
+import { loadSessions, saveSessions, type Session, type RunSpeeds, type RunInclines, type SpinValues, speedForPhase, spinValueForPhase, inclineForPhase, supportsCooldownTaper, type SessionKind } from '../lib/sessions';
 import { fmtDuration, type Phase } from '../lib/workout';
 import { toDisplay } from '../lib/speedUnit';
 import { useTheme, withOpacity, buttonShadow, selectedBorder, type ThemeTokens } from '../theme';
@@ -41,7 +41,7 @@ function getIntervalDisplaySpeed(iv: LocalInterval, runSpeeds: RunSpeeds, isMile
 
 interface Props {
   session?: Session;
-  activityType?: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata';
+  activityType?: SessionKind;
   folderId?: string;
   onBack: () => void;
 }
@@ -113,7 +113,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
   // Cooldown taper (per-session, run or spinning) owns the cooldown effort — the
   // per-phase inputs go read-only "AUTO" and the cooldown enable toggle is hidden.
   // See docs/todo.md item 1.
-  const cooldownAuto = (isRun || isSpinning) && cooldownTaper;
+  const cooldownAuto = supportsCooldownTaper(draftActivityType) && cooldownTaper;
 
   // Per-phase config cell state, shared by the speed / incline / resistance / power grids:
   // a cell is "AUTO" (taper owns it) or disabled (its phase is switched off).
@@ -486,7 +486,7 @@ export default function EditSessionScreen({ session: existing, activityType, fol
                   // Advanced run/spinning mode: cooldown intervals get their own taper
                   // toggle (independent of the easy-mode one); when on, it owns the
                   // effort chips (speed & incline, or resistance & power) so they hide.
-                  const ivTaperable = (isRun || isSpinning) && iv.type === 'cooldown';
+                  const ivTaperable = supportsCooldownTaper(draftActivityType) && iv.type === 'cooldown';
                   const ivTapered = ivTaperable && !!iv.cooldownTaper;
                   return (
                   <IntervalSwipeRow

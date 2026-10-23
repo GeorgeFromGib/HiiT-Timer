@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
-import type { Session } from './lib/sessions';
+import type { Session, SessionKind } from './lib/sessions';
 
 export type Route =
   | { name: 'Folders' }
   | { name: 'Sessions'; folderId?: string }
   | { name: 'Workout'; session: Session; initialResumeElapsed?: number; initialStatus?: 'running' | 'paused' }
-  | { name: 'EditSession'; session?: Session; activityType?: 'general' | 'run' | 'circuit' | 'spinning' | 'tabata'; folderId?: string }
+  | { name: 'EditSession'; session?: Session; activityType?: SessionKind; folderId?: string }
   | { name: 'Settings' }
   | { name: 'History' }
   | { name: 'PrivacyPolicy' };
